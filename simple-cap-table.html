@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startup Cap Table Calculator</title>
+    <style>
+        /* Similar styling as previous calculator, with additions for tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .calculator-section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Startup Cap Table Calculator</h1>
+
+    <!-- Initial Setup -->
+    <div class="calculator-section">
+        <h2>1. Initial Setup</h2>
+        <div class="input-group">
+            <label>Total Authorized Shares:</label>
+            <input type="number" id="authorizedShares" step="1">
+        </div>
+        <div id="founderInputs">
+            <h3>Founders</h3>
+            <button onclick="addFounder()">Add Founder</button>
+            <!-- Founder inputs will be added dynamically -->
+        </div>
+        <button onclick="calculateInitialCapTable()">Calculate Initial Cap Table</button>
+        <div id="initialCapTable"></div>
+    </div>
+
+    <!-- Add Instruments -->
+    <div class="calculator-section">
+        <h2>2. Add Investment Instruments</h2>
+        <select id="instrumentType">
+            <option value="common">Common Shares</option>
+            <option value="preferred">Preferred Shares</option>
+            <option value="safe">SAFE</option>
+            <option value="convertible">Convertible Note</option>
+            <option value="esop">ESOP Pool</option>
+        </select>
+        
+        <!-- Dynamic form fields based on selection -->
+        <div id="instrumentDetails"></div>
+        <button onclick="addInstrument()">Add to Cap Table</button>
+    </div>
+
+    <!-- Current Cap Table -->
+    <div class="calculator-section">
+        <h2>Current Cap Table</h2>
+        <div id="currentCapTable"></div>
+    </div>
+
+    <!-- Conversion Calculator -->
+    <div class="calculator-section">
+        <h2>3. Conversion Calculator</h2>
+        <div class="input-group">
+            <label>New Round Valuation:</label>
+            <input type="number" id="newRoundValuation" step="any">
+        </div>
+        <div class="input-group">
+            <label>Investment Amount:</label>
+            <input type="number" id="newInvestmentAmount" step="any">
+        </div>
+        <button onclick="calculateConversion()">Calculate Conversions</button>
+        <div id="conversionResults"></div>
+    </div>
+
+    <script>
+        // State management
+        let state = {
+            authorizedShares: 0,
+            stakeholders: [],
+            instruments: []
+        };
+
+        function addFounder() {
+            const founderDiv = document.createElement('div');
+            founderDiv.innerHTML = `
+                <div class="input-group">
+                    <label>Founder Name:</label>
+                    <input type="text" class="founderName">
+                    <label>Shares:</label>
+                    <input type="number" class="founderShares" step="1">
+                </div>
+            `;
+            document.getElementById('founderInputs').appendChild(founderDiv);
+        }
+
+        function calculateInitialCapTable() {
+            const authorizedShares = parseInt(document.getElementById('authorizedShares').value);
+            state.authorizedShares = authorizedShares;
+            
+            // Get founder inputs
+            const founderNames = document.getElementsByClassName('founderName');
+            const founderShares = document.getElementsByClassName('founderShares');
+            
+            state.stakeholders = [];
+            let totalIssued = 0;
+
+            for(let i = 0; i < founderNames.length; i++) {
+                const shares = parseInt(founderShares[i].value);
+                totalIssued += shares;
+                state.stakeholders.push({
+                    name: founderNames[i].value,
+                    shares: shares,
+                    class: 'Common',
+                    price: 0.01
+                });
+            }
+
+            // Add unissued shares
+            state.stakeholders.push({
+                name: 'Unissued',
+                shares: authorizedShares - totalIssued,
+                class: 'Common',
+                price: 0
+            });
+
+            updateCapTable();
+        }
+
+        function updateCapTable() {
+            const totalShares = state.stakeholders.reduce((acc, s) => acc + s.shares, 0);
+            
+            let html = `
+                <table>
+                    <tr>
+                        <th>Stakeholder</th>
+                        <th>Quantity</th>
+                        <th>Share Class</th>
+                        <th>Price/Share</th>
+                        <th>Ownership %</th>
+                    </tr>
+            `;
+
+            state.stakeholders.forEach(s => {
+                const ownership = ((s.shares / totalShares) * 100).toFixed(2);
+                html += `
+                    <tr>
+                        <td>${s.name}</td>
+                        <td>${s.shares.toLocaleString()}</td>
+                        <td>${s.class}</td>
+                        <td>$${s.price.toFixed(2)}</td>
+                        <td>${ownership}%</td>
+                    </tr>
+                `;
+            });
+
+            html += '</table>';
+            document.getElementById('currentCapTable').innerHTML = html;
+        }
+
+        function addInstrument() {
+            const type = document.getElementById('instrumentType').value;
+            
+            // Implementation depends on type
+            switch(type) {
+                case 'safe':
+                    addSAFE();
+                    break;
+                case 'esop':
+                    addESOP();
+                    break;
+                // Add other cases
+            }
+            
+            updateCapTable();
+        }
+
+        function calculateConversion() {
+            // Implementation for converting SAFEs and notes
+            // This would handle different conversion scenarios
+        }
+
+        // Add more helper functions for specific calculations
+    </script>
+</body>
+</html>
