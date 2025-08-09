@@ -60,3 +60,206 @@
     </style>
   
 </head>
+    
+<body> 
+
+    <h1>Startup Metrics Calculator</h1>
+     <!-- MoM Growth Calculator -->
+    <div class="calculator-section">
+    <h2>Month-over-Month (MoM) Growth</h2>
+    <div class="input-group">
+        <label>Current Month Value:</label>
+        <input type="number" id="momCurrent" step="any">
+    </div>
+    <div class="input-group">
+        <label>Previous Month Value:</label>
+        <input type="number" id="momPrevious" step="any">
+    </div>
+    <button onclick="calculateMoM()">Calculate MoM Growth</button>
+    <div id="momResult" class="result"></div>
+    </div>
+
+    <!-- YoY Growth Calculator -->
+    <div class="calculator-section">
+    <h2>Year-over-Year (YoY) Growth</h2>
+    <div class="input-group">
+        <label>Current Year Value:</label>
+        <input type="number" id="yoyCurrent" step="any">
+    </div>
+    <div class="input-group">
+        <label>Previous Year Value:</label>
+        <input type="number" id="yoyPrevious" step="any">
+    </div>
+    <button onclick="calculateYoY()">Calculate YoY Growth</button>
+    <div id="yoyResult" class="result"></div>
+    </div>
+
+    <!-- CAGR Calculator -->
+    <div class="calculator-section">
+    <h2>Compound Annual Growth Rate (CAGR)</h2>
+    <div class="input-group">
+        <label>Beginning Value:</label>
+        <input type="number" id="cagrBegin" step="any">
+    </div>
+    <div class="input-group">
+        <label>Ending Value:</label>
+        <input type="number" id="cagrEnd" step="any">
+    </div>
+    <div class="input-group">
+        <label>Number of Years:</label>
+        <input type="number" id="cagrYears" step="any">
+    </div>
+    <button onclick="calculateCAGR()">Calculate CAGR</button>
+    <div id="cagrResult" class="result"></div>
+    </div>
+
+    <!-- CAC Calculator -->
+    <div class="calculator-section">
+    <h2>Customer Acquisition Cost (CAC)</h2>
+    <div class="input-group">
+        <label>Total Marketing Spend:</label>
+        <input type="number" id="cacSpend" step="any">
+    </div>
+    <div class="input-group">
+        <label>Total Sales Spend:</label>
+        <input type="number" id="cacSales" step="any">
+    </div>
+    <div class="input-group">
+        <label>Number of New Customers:</label>
+        <input type="number" id="cacCustomers" step="any">
+    </div>
+    <button onclick="calculateCAC()">Calculate CAC</button>
+    <div id="cacResult" class="result"></div>
+    </div>
+     <div class="calculator-section">
+        <h2>Payback Period</h2>
+        <div class="input-group">
+            <label>CAC:</label>
+            <input type="number" id="paybackCAC" step="any">
+        </div>
+        <div class="input-group">
+            <label>Monthly Revenue per Customer:</label>
+            <input type="number" id="paybackRevenue" step="any">
+        </div>
+        <button onclick="calculatePayback()">Calculate Payback Period</button>
+        <div id="paybackResult" class="result"></div>
+    </div>
+
+    <!-- Retention/Churn Calculator -->
+    <div class="calculator-section">
+        <h2>Retention & Churn Rate</h2>
+        <div class="input-group">
+            <label>Customers at Start of Period:</label>
+            <input type="number" id="retentionStart" step="any">
+        </div>
+        <div class="input-group">
+            <label>Customers Lost in Period:</label>
+            <input type="number" id="retentionLost" step="any">
+        </div>
+        <button onclick="calculateRetention()">Calculate Retention & Churn</button>
+        <div id="retentionResult" class="result"></div>
+    </div>
+
+    <!-- ARR Calculator -->
+    <div class="calculator-section">
+        <h2>Annual Recurring Revenue (ARR)</h2>
+        <div class="input-group">
+            <label>Monthly Recurring Revenue (MRR):</label>
+            <input type="number" id="arrMRR" step="any">
+        </div>
+        <button onclick="calculateARR()">Calculate ARR</button>
+        <div id="arrResult" class="result"></div>
+    </div>
+
+    <!-- LTV Calculator -->
+    <div class="calculator-section">
+        <h2>Customer Lifetime Value (LTV)</h2>
+        <div class="input-group">
+            <label>Average Monthly Revenue per Customer:</label>
+            <input type="number" id="ltvRevenue" step="any">
+        </div>
+        <div class="input-group">
+            <label>Gross Margin (%):</label>
+            <input type="number" id="ltvMargin" step="any">
+        </div>
+        <div class="input-group">
+            <label>Monthly Churn Rate (%):</label>
+            <input type="number" id="ltvChurn" step="any">
+        </div>
+        <button onclick="calculateLTV()">Calculate LTV</button>
+        <div id="ltvResult" class="result"></div>
+    </div>
+
+ 
+   <script>
+    // Month-over-Month Growth
+    function calculateMoM() {
+        const current = parseFloat(document.getElementById('momCurrent').value);
+        const previous = parseFloat(document.getElementById('momPrevious').value);
+        const growth = ((current - previous) / previous) * 100;
+        document.getElementById('momResult').innerHTML = `MoM Growth: ${growth.toFixed(2)}%`;
+    }
+
+    // Year-over-Year Growth
+    function calculateYoY() {
+        const current = parseFloat(document.getElementById('yoyCurrent').value);
+        const previous = parseFloat(document.getElementById('yoyPrevious').value);
+        const growth = ((current - previous) / previous) * 100;
+        document.getElementById('yoyResult').innerHTML = `YoY Growth: ${growth.toFixed(2)}%`;
+    }
+
+    // Compound Annual Growth Rate
+    function calculateCAGR() {
+        const begin = parseFloat(document.getElementById('cagrBegin').value);
+        const end = parseFloat(document.getElementById('cagrEnd').value);
+        const years = parseFloat(document.getElementById('cagrYears').value);
+        const cagr = (Math.pow(end / begin, 1 / years) - 1) * 100;
+        document.getElementById('cagrResult').innerHTML = `CAGR: ${cagr.toFixed(2)}%`;
+    }
+
+    // Customer Acquisition Cost
+    function calculateCAC() {
+        const spend = parseFloat(document.getElementById('cacSpend').value);
+        const sales = parseFloat(document.getElementById('cacSales').value);
+        const customers = parseFloat(document.getElementById('cacCustomers').value);
+        const cac = (spend + sales) / customers;
+        document.getElementById('cacResult').innerHTML = `CAC: $${cac.toFixed(2)}`;
+    }
+
+    // Payback Period
+    function calculatePayback() {
+        const cac = parseFloat(document.getElementById('paybackCAC').value);
+        const revenue = parseFloat(document.getElementById('paybackRevenue').value);
+        const payback = cac / revenue;
+        document.getElementById('paybackResult').innerHTML = 
+            `Payback Period: ${payback.toFixed(1)} months`;
+    }
+
+    // Retention and Churn
+    function calculateRetention() {
+        const start = parseFloat(document.getElementById('retentionStart').value);
+        const lost = parseFloat(document.getElementById('retentionLost').value);
+        const retention = ((start - lost) / start) * 100;
+        const churn = 100 - retention;
+        document.getElementById('retentionResult').innerHTML = 
+            `Retention Rate: ${retention.toFixed(2)}%<br>Churn Rate: ${churn.toFixed(2)}%`;
+    }
+
+    // Annual Recurring Revenue
+    function calculateARR() {
+        const mrr = parseFloat(document.getElementById('arrMRR').value);
+        const arr = mrr * 12;
+        document.getElementById('arrResult').innerHTML = `ARR: $${arr.toFixed(2)}`;
+    }
+
+    // Customer Lifetime Value
+    function calculateLTV() {
+        const revenue = parseFloat(document.getElementById('ltvRevenue').value);
+        const margin = parseFloat(document.getElementById('ltvMargin').value) / 100;
+        const churn = parseFloat(document.getElementById('ltvChurn').value) / 100;
+        const ltv = (revenue * margin) / churn;
+        document.getElementById('ltvResult').innerHTML = `LTV: $${ltv.toFixed(2)}`;
+    }
+    </script>
+</body>
+</html>
