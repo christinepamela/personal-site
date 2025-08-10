@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Cap Table Manager</title>
+    <!-- Include Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Include XLSX for Excel export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+    <!-- Include jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* Modern UI Styling */
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --text-color: #1f2937;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            line-height: 1.5;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            background-color: #f9fafb;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+        }
+
+        .sidebar {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .main-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #f3f4f6;
+        }
+
+        .tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        th {
+            background: #f3f4f6;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .chart-container {
+            height: 400px;
+            margin: 20px 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Advanced Cap Table Manager</h1>
+        </header>
+
+        <div class="dashboard">
+            <aside class="sidebar">
+                <nav>
+                    <ul>
+                        <li><a href="#" onclick="showSection('overview')">Overview</a></li>
+                        <li><a href="#" onclick="showSection('shareholders')">Shareholders</a></li>
+                        <li><a href="#" onclick="showSection('rounds')">Funding Rounds</a></li>
+                        <li><a href="#" onclick="showSection('esop')">ESOP Management</a></li>
+                        <li><a href="#" onclick="showSection('convertibles')">Convertible Securities</a></li>
+                        <li><a href="#" onclick="showSection('scenarios')">Scenario Planning</a></li>
+                        <li><a href="#" onclick="showSection('reports')">Reports & Export</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <main class="main-content" id="mainContent">
+                <!-- Content will be dynamically loaded here -->
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Main state management
+        const state = {
+            company: {
+                name: '',
+                authorizedShares: 0,
+                incorporationDate: null,
+                initialSharePrice: 0
+            },
+            shareholders: [],
+            rounds: [],
+            esop: {
+                pool: 0,
+                allocated: 0,
+                grants: []
+            },
+            convertibles: [],
+            scenarios: []
+        };
+
+        // Template for different sections
+        const templates = {
+            overview: `
+                <div class="card">
+                    <h2>Company Overview</h2>
+                    <div class="grid">
+                        <div class="form-group">
+                            <label>Company Name</label>
+                            <input type="text" class="form-control" id="companyName">
+                        </div>
+                        <div class="form-group">
+                            <label>Authorized Shares</label>
+                            <input type="number" class="form-control" id="authorizedShares">
+                        </div>
+                        <div class="form-group">
+                            <label>Incorporation Date</label>
+                            <input type="date" class="form-control" id="incorporationDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Initial Share Price</label>
+                            <input type="number" class="form-control" id="initialSharePrice" step="0.01">
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2>Ownership Summary</h2>
+                    <div class="chart-container">
+                        <canvas id="ownershipChart"></canvas>
+                    </div>
+                </div>
+            `,
+            // Additional templates will be added for other sections
+        };
+
+        // Continue with more code...
+    </script>
+
+    // Continue the templates object with remaining sections:
+    const templates = {
+    // Previous overview template remains the same
+    
+    shareholders: `
+        <div class="card">
+            <h2>Shareholders Management</h2>
+            <button class="btn btn-primary" onclick="addShareholder()">Add Shareholder</button>
+            <table id="shareholderTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Class</th>
+                        <th>Shares</th>
+                        <th>Price/Share</th>
+                        <th>Investment</th>
+                        <th>Ownership %</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="shareholdersList"></tbody>
+            </table>
+        </div>
+        <div class="card">
+            <h2>Share Classes</h2>
+            <button class="btn btn-secondary" onclick="addShareClass()">Add Share Class</button>
+            <div id="shareClassList"></div>
+        </div>
+    `,
+
+    rounds: `
+        <div class="card">
+            <h2>Funding Rounds</h2>
+            <div class="tabs">
+                <div class="tab active" onclick="switchRoundView('list')">Rounds List</div>
+                <div class="tab" onclick="switchRoundView('new')">New Round</div>
+                <div class="tab" onclick="switchRoundView('analysis')">Round Analysis</div>
+            </div>
+            <div id="roundsContent">
+                <table id="roundsTable">
+                    <thead>
+                        <tr>
+                            <th>Round</th>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Pre-Money</th>
+                            <th>Investment</th>
+                            <th>Post-Money</th>
+                            <th>New Shares</th>
+                            <th>Share Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="roundsList"></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card">
+            <h2>Dilution Impact</h2>
+            <div class="chart-container">
+                <canvas id="dilutionChart"></canvas>
+            </div>
+        </div>
+    `,
+
+    esop: `
+        <div class="card">
+            <h2>ESOP/ESOS Management</h2>
+            <div class="grid">
+                <div class="form-group">
+                    <label>Total ESOP Pool</label>
+                    <input type="number" class="form-control" id="esopPool">
+                </div>
+                <div class="form-group">
+                    <label>Allocated</label>
+                    <input type="number" class="form-control" id="esopAllocated" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Available</label>
+                    <input type="number" class="form-control" id="esopAvailable" readonly>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="addESOPGrant()">New Grant</button>
+            <table id="esopTable">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Grant Date</th>
+                        <th>Options</th>
+                        <th>Strike Price</th>
+                        <th>Vesting Schedule</th>
+                        <th>Vested</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="esopList"></tbody>
+            </table>
+        </div>
+        <div class="card">
+            <h2>Vesting Schedule Designer</h2>
+            <div id="vestingDesigner"></div>
+        </div>
+    `,
+
+    convertibles: `
+        <div class="card">
+            <h2>Convertible Securities</h2>
+            <div class="tabs">
+                <div class="tab active" onclick="switchConvertibleView('safe')">SAFEs</div>
+                <div class="tab" onclick="switchConvertibleView('note')">Convert. Notes</div>
+                <div class="tab" onclick="switchConvertibleView('warrant')">Warrants</div>
+            </div>
+            <button class="btn btn-primary" onclick="addConvertible()">Add New</button>
+            <table id="convertiblesTable">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Holder</th>
+                        <th>Amount</th>
+                        <th>Terms</th>
+                        <th>Issue Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="convertiblesList"></tbody>
+            </table>
+        </div>
+        <div class="card">
+            <h2>Conversion Simulator</h2>
+            <div id="conversionSimulator"></div>
+        </div>
+    `,
+
+    scenarios: `
+        <div class="card">
+            <h2>Scenario Planning</h2>
+            <div class="tabs">
+                <div class="tab active" onclick="switchScenarioView('new-round')">New Round</div>
+                <div class="tab" onclick="switchScenarioView('exit')">Exit</div>
+                <div class="tab" onclick="switchScenarioView('liquidation')">Liquidation</div>
+            </div>
+            <div id="scenarioBuilder"></div>
+        </div>
+        <div class="card">
+            <h2>Waterfall Analysis</h2>
+            <div class="chart-container">
+                <canvas id="waterfallChart"></canvas>
+            </div>
+        </div>
+    `,
+
+    reports: `
+        <div class="card">
+            <h2>Reports & Export</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Export Options</h3>
+                    <button class="btn btn-primary" onclick="exportExcel()">Export to Excel</button>
+                    <button class="btn btn-secondary" onclick="exportPDF()">Export to PDF</button>
+                    <button class="btn btn-secondary" onclick="exportJSON()">Save as JSON</button>
+                </div>
+                <div class="card">
+                    <h3>Import Data</h3>
+                    <input type="file" id="importFile" accept=".xlsx,.json">
+                    <button class="btn btn-primary" onclick="importData()">Import</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h2>Custom Reports</h2>
+            <div id="reportBuilder"></div>
+        </div>
+    `
+  };
+
+  // Add template for modal dialogs
+  const modalTemplate = `
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+  `;
+
+  // Add to the HTML
+  document.body.insertAdjacentHTML('beforeend', modalTemplate);
+// Data Management and Calculations
+class CapTableManager {
+    constructor() {
+        this.state = {
+            company: {
+                name: '',
+                authorizedShares: 0,
+                incorporationDate: null,
+                initialSharePrice: 0
+            },
+            shareholders: [],
+            rounds: [],
+            esop: {
+                pool: 0,
+                allocated: 0,
+                grants: []
+            },
+            convertibles: [],
+            scenarios: []
+        };
+    }
+
+    // Company Management
+    updateCompany(data) {
+        this.state.company = {...this.state.company, ...data};
+        this.updateUI();
+    }
+
+    // Shareholder Management
+    addShareholder(data) {
+        this.state.shareholders.push({
+            id: Date.now(),
+            ...data,
+            ownership: this.calculateOwnership(data.shares)
+        });
+        this.updateUI();
+    }
+
+    // Round Management
+    addRound(data) {
+        const round = {
+            id: Date.now(),
+            ...data,
+            impact: this.calculateRoundImpact(data)
+        };
+        this.state.rounds.push(round);
+        this.processRound(round);
+        this.updateUI();
+    }
+
+    // ESOP Management
+    addESOPGrant(data) {
+        if (this.validateESOPGrant(data)) {
+            this.state.esop.grants.push({
+                id: Date.now(),
+                ...data,
+                vestingSchedule: this.calculateVestingSchedule(data)
+            });
+            this.updateESOPPool();
+            this.updateUI();
+        }
+    }
+
+    // Convertible Securities
+    addConvertible(data) {
+        this.state.convertibles.push({
+            id: Date.now(),
+            ...data,
+            potentialShares: this.calculatePotentialShares(data)
+        });
+        this.updateUI();
+    }
+
+    // Calculations
+    calculateOwnership(shares) {
+        const totalShares = this.getTotalShares();
+        return (shares / totalShares) * 100;
+    }
+
+    calculateRoundImpact(roundData) {
+        // Calculate dilution, new share price, etc.
+        return {
+            dilution: this.calculateDilution(roundData),
+            newSharePrice: roundData.valuation / this.getTotalShares(),
+            newShares: roundData.investment / (roundData.valuation / this.getTotalShares())
+        };
+    }
+
+    calculateVestingSchedule(grantData) {
+        // Implement vesting schedule calculation
+        return {
+            schedule: this.generateVestingDates(grantData),
+            currentlyVested: this.calculateVestedAmount(grantData)
+        };
+    }
+
+    calculateWaterfall(exitValue) {
+        // Implement liquidation waterfall
+        return this.processLiquidationPreferences(exitValue);
+    }
+
+    // UI Updates
+    updateUI() {
+        this.updateCharts();
+        this.updateTables();
+        this.updateMetrics();
+    }
+}
+
+// Initialize the manager
+const capTable = new CapTableManager();
+
+// Visualization Components
+class CapTableVisualizer {
+    constructor(capTable) {
+        this.capTable = capTable;
+        this.charts = {};
+        this.initializeCharts();
+    }
+
+    initializeCharts() {
+        // Ownership Pie Chart
+        this.charts.ownership = new Chart(
+            document.getElementById('ownershipChart').getContext('2d'),
+            {
+                type: 'pie',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: this.generateColors()
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'right' },
+                        title: { display: true, text: 'Ownership Distribution' }
+                    }
+                }
+            }
+        );
+
+        // Dilution Chart
+        this.charts.dilution = new Chart(
+            document.getElementById('dilutionChart').getContext('2d'),
+            {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { stacked: true, beginAtZero: true },
+                        x: { stacked: true }
+                    }
+                }
+            }
+        );
+
+        // Waterfall Chart
+        this.charts.waterfall = new Chart(
+            document.getElementById('waterfallChart').getContext('2d'),
+            {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: this.generateColors()
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true } }
+                }
+            }
+        );
+    }
+
+    updateCharts() {
+        this.updateOwnershipChart();
+        this.updateDilutionChart();
+        this.updateWaterfallChart();
+    }
+
+    generateColors(count = 10) {
+        const colors = [
+            '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd',
+            '#10b981', '#34d399', '#6ee7b7', '#a7f3d0',
+            '#f59e0b', '#fbbf24', '#fcd34d', '#fde68a'
+        ];
+        return colors.slice(0, count);
+    }
+}
+
+// Export/Import Functionality
+class CapTableDataManager {
+    constructor(capTable) {
+        this.capTable = capTable;
+    }
+
+    async exportToExcel() {
+        const wb = XLSX.utils.book_new();
+        
+        // Summary Sheet
+        const summaryData = this.prepareSummaryData();
+        const summaryWS = XLSX.utils.json_to_sheet(summaryData);
+        XLSX.utils.book_append_sheet(wb, summaryWS, "Summary");
+
+        // Shareholders Sheet
+        const shareholdersWS = XLSX.utils.json_to_sheet(this.capTable.state.shareholders);
+        XLSX.utils.book_append_sheet(wb, shareholdersWS, "Shareholders");
+
+        // Rounds Sheet
+        const roundsWS = XLSX.utils.json_to_sheet(this.capTable.state.rounds);
+        XLSX.utils.book_append_sheet(wb, roundsWS, "Funding Rounds");
+
+        // ESOP Sheet
+        const esopWS = XLSX.utils.json_to_sheet(this.capTable.state.esop.grants);
+        XLSX.utils.book_append_sheet(wb, esopWS, "ESOP");
+
+        XLSX.writeFile(wb, `${this.capTable.state.company.name}_cap_table.xlsx`);
+    }
+
+    exportToPDF() {
+        const doc = new jsPDF();
+        
+        // Company Info
+        doc.setFontSize(20);
+        doc.text(this.capTable.state.company.name, 20, 20);
+        
+        // Summary Table
+        doc.autoTable({
+            head: [['Category', 'Value']],
+            body: this.prepareSummaryData().map(row => [row.category, row.value]),
+            startY: 30
+        });
+
+        // Shareholders Table
+        doc.autoTable({
+            head: [['Name', 'Type', 'Shares', 'Ownership %']],
+            body: this.capTable.state.shareholders.map(s => 
+                [s.name, s.type, s.shares, `${s.ownership.toFixed(2)}%`]
+            ),
+            startY: doc.lastAutoTable.finalY + 10
+        });
+
+        doc.save(`${this.capTable.state.company.name}_cap_table.pdf`);
+    }
+
+    exportJSON() {
+        const data = JSON.stringify(this.capTable.state, null, 2);
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${this.capTable.state.company.name}_cap_table.json`;
+        a.click();
+    }
+
+    async importData(file) {
+        try {
+            if (file.name.endsWith('.xlsx')) {
+                await this.importExcel(file);
+            } else if (file.name.endsWith('.json')) {
+                await this.importJSON(file);
+            }
+        } catch (error) {
+            console.error('Import failed:', error);
+            alert('Import failed. Please check the file format.');
+        }
+    }
+}
+
+// Advanced Calculations
+class CapTableCalculator {
+    constructor(capTable) {
+        this.capTable = capTable;
+    }
+
+    calculateDilution(newShares) {
+        const currentShares = this.capTable.getTotalShares();
+        const totalAfter = currentShares + newShares;
+        
+        return this.capTable.state.shareholders.map(s => ({
+            holder: s.name,
+            before: s.ownership,
+            after: (s.shares / totalAfter) * 100,
+            dilution: s.ownership - ((s.shares / totalAfter) * 100)
+        }));
+    }
+
+    calculateLiquidationWaterfall(exitValue) {
+        let remaining = exitValue;
+        const distributions = [];
+
+        // Process preferred shareholders first
+        for (const round of this.capTable.state.rounds) {
+            if (round.type === 'preferred') {
+                const liquidationPreference = round.liquidationMultiple * round.investment;
+                if (remaining >= liquidationPreference) {
+                    distributions.push({
+                        round: round.name,
+                        amount: liquidationPreference,
+                        type: 'liquidation preference'
+                    });
+                    remaining -= liquidationPreference;
+                } else {
+                    distributions.push({
+                        round: round.name,
+                        amount: remaining,
+                        type: 'liquidation preference (partial)'
+                    });
+                    remaining = 0;
+                    break;
+                }
+            }
+        }
+
+        // Distribute remaining pro-rata
+        if (remaining > 0) {
+            const totalShares = this.capTable.getTotalShares();
+            for (const shareholder of this.capTable.state.shareholders) {
+                const share = (shareholder.shares / totalShares) * remaining;
+                distributions.push({
+                    holder: shareholder.name,
+                    amount: share,
+                    type: 'pro-rata'
+                });
+            }
+        }
+
+        return distributions;
+    }
+
+    calculateConversion(convertible, triggerValuation) {
+        const conversionPrice = Math.min(
+            triggerValuation / this.capTable.getTotalShares() * (1 - convertible.discount),
+            convertible.valuationCap / this.capTable.getTotalShares()
+        );
+
+        return {
+            shares: convertible.amount / conversionPrice,
+            price: conversionPrice,
+            ownership: (convertible.amount / conversionPrice) / 
+                      (this.capTable.getTotalShares() + (convertible.amount / conversionPrice))
+        };
+    }
+
+    calculateVesting(grant, date = new Date()) {
+        const vestingStart = new Date(grant.vestingStart);
+        const cliff = new Date(vestingStart.getTime() + grant.cliff * 30 * 24 * 60 * 60 * 1000);
+        
+        if (date < cliff) return 0;
+
+        const monthsVested = (date - vestingStart) / (30 * 24 * 60 * 60 * 1000);
+        const vestedPercentage = Math.min(monthsVested / grant.vestingPeriod, 1);
+        
+        return Math.floor(grant.options * vestedPercentage);
+    }
+}
+
+// Initialize everything
+document.addEventListener('DOMContentLoaded', () => {
+    const capTable = new CapTableManager();
+    const visualizer = new CapTableVisualizer(capTable);
+    const dataManager = new CapTableDataManager(capTable);
+    const calculator = new CapTableCalculator(capTable);
+
+    // Set up event listeners
+    setupEventListeners(capTable, visualizer, dataManager, calculator);
+});
+
+// 1. Event Listeners and UI Interaction Handlers
+function setupEventListeners(capTable, visualizer, dataManager, calculator) {
+    // Navigation and Section Switching
+    document.querySelectorAll('nav a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const section = e.target.getAttribute('href').substring(1);
+            switchSection(section);
+        });
+    });
+
+    // Form Submissions and Data Entry
+    const formHandlers = {
+        // Company Information
+        companyForm: {
+            submit: (e) => {
+                e.preventDefault();
+                capTable.updateCompany({
+                    name: document.getElementById('companyName').value,
+                    authorizedShares: parseInt(document.getElementById('authorizedShares').value),
+                    incorporationDate: document.getElementById('incorporationDate').value,
+                    initialSharePrice: parseFloat(document.getElementById('initialSharePrice').value)
+                });
+                visualizer.updateCharts();
+            }
+        },
+
+        // Shareholder Management
+        shareholderForm: {
+            submit: (e) => {
+                e.preventDefault();
+                const form = e.target;
+                capTable.addShareholder({
+                    name: form.shareholderName.value,
+                    type: form.shareholderType.value,
+                    shares: parseInt(form.shares.value),
+                    shareClass: form.shareClass.value,
+                    price: parseFloat(form.pricePerShare.value),
+                    date: form.issueDate.value
+                });
+                visualizer.updateCharts();
+                form.reset();
+            }
+        },
+
+        // Round Management
+        roundForm: {
+            submit: (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const roundData = {
+                    name: form.roundName.value,
+                    type: form.roundType.value,
+                    preMoneyValuation: parseFloat(form.preMoneyValuation.value),
+                    investment: parseFloat(form.investment.value),
+                    date: form.roundDate.value,
+                    newSharePrice: parseFloat(form.sharePrice.value),
+                    preferences: {
+                        liquidationMultiple: parseFloat(form.liquidationMultiple.value),
+                        participationRights: form.participationRights.checked,
+                        antiDilution: form.antiDilution.value
+                    }
+                };
+                capTable.addRound(roundData);
+                visualizer.updateCharts();
+                form.reset();
+            }
+        },
+
+        // ESOP Management
+        esopForm: {
+            submit: (e) => {
+                e.preventDefault();
+                const form = e.target;
+                capTable.addESOPGrant({
+                    employee: form.employeeName.value,
+                    options: parseInt(form.optionsCount.value),
+                    strikePrice: parseFloat(form.strikePrice.value),
+                    vestingSchedule: {
+                        start: form.vestingStart.value,
+                        cliff: parseInt(form.cliff.value),
+                        period: parseInt(form.vestingPeriod.value),
+                        frequency: form.vestingFrequency.value
+                    }
+                });
+                visualizer.updateCharts();
+                form.reset();
+            }
+        },
+
+        // Convertible Securities
+        convertibleForm: {
+            submit: (e) => {
+                e.preventDefault();
+                const form = e.target;
+                capTable.addConvertible({
+                    type: form.instrumentType.value,
+                    holder: form.holderName.value,
+                    amount: parseFloat(form.amount.value),
+                    terms: {
+                        valuationCap: parseFloat(form.valuationCap.value),
+                        discount: parseFloat(form.discount.value) / 100,
+                        interestRate: form.interestRate ? parseFloat(form.interestRate.value) / 100 : null,
+                        maturity: form.maturityDate ? form.maturityDate.value : null
+                    }
+                });
+                visualizer.updateCharts();
+                form.reset();
+            }
+        }
+    };
+
+    // Real-time Validation and Calculation
+    const inputHandlers = {
+        validateShares: (input) => {
+            const value = parseInt(input.value);
+            const available = capTable.getAvailableShares();
+            if (value > available) {
+                input.setCustomValidity(`Only ${available} shares available`);
+            } else {
+                input.setCustomValidity('');
+            }
+        },
+
+        calculateOwnership: (input) => {
+            const shares = parseInt(input.value);
+            const ownership = calculator.calculateOwnership(shares);
+            document.getElementById('ownershipPreview').textContent = 
+                `${ownership.toFixed(2)}%`;
+        },
+
+        updateVestingSchedule: () => {
+            const schedule = calculator.generateVestingSchedule({
+                start: document.getElementById('vestingStart').value,
+                cliff: parseInt(document.getElementById('cliff').value),
+                period: parseInt(document.getElementById('vestingPeriod').value),
+                frequency: document.getElementById('vestingFrequency').value
+            });
+            displayVestingSchedule(schedule);
+        }
+    };
+
+    // Export/Import Handlers
+    document.getElementById('exportExcel').addEventListener('click', () => {
+        dataManager.exportToExcel();
+    });
+
+    document.getElementById('exportPDF').addEventListener('click', () => {
+        dataManager.exportToPDF();
+    });
+
+    document.getElementById('exportJSON').addEventListener('click', () => {
+        dataManager.exportJSON();
+    });
+
+    document.getElementById('importFile').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            dataManager.importData(file).then(() => {
+                visualizer.updateCharts();
+                alert('Import successful!');
+            }).catch(error => {
+                alert(`Import failed: ${error.message}`);
+            });
+        }
+    });
+
+    // Dynamic UI Updates
+    function setupDynamicUpdates() {
+        // Real-time ownership preview
+        document.querySelectorAll('.shares-input').forEach(input => {
+            input.addEventListener('input', () => {
+                inputHandlers.calculateOwnership(input);
+            });
+        });
+
+        // Vesting schedule preview
+        document.querySelectorAll('.vesting-input').forEach(input => {
+            input.addEventListener('change', inputHandlers.updateVestingSchedule);
+        });
+
+        // Share validation
+        document.querySelectorAll('.shares-input').forEach(input => {
+            input.addEventListener('input', () => {
+                inputHandlers.validateShares(input);
+            });
+        });
+    }
+
+    // Initialize all event listeners
+    function initializeEventListeners() {
+        // Attach form handlers
+        Object.entries(formHandlers).forEach(([formId, handlers]) => {
+            const form = document.getElementById(formId);
+            if (form) {
+                form.addEventListener('submit', handlers.submit);
+            }
+        });
+
+        // Setup dynamic updates
+        setupDynamicUpdates();
+
+        // Initialize tooltips and other UI elements
+        initializeUI();
+    }
+
+    // Call initialization
+    initializeEventListeners();
+}
+
+// Scenario Modeling System
+class ScenarioManager {
+    constructor(capTable, calculator, visualizer) {
+        this.capTable = capTable;
+        this.calculator = calculator;
+        this.visualizer = visualizer;
+        this.scenarios = new Map();
+    }
+
+    // Scenario Creation and Management
+    createScenario(type, params) {
+        const scenarioId = `scenario_${Date.now()}`;
+        const baseState = this.cloneCapTableState();
+
+        const scenario = {
+            id: scenarioId,
+            type: type,
+            params: params,
+            baseState: baseState,
+            results: null,
+            timestamp: new Date(),
+            status: 'created'
+        };
+
+        this.scenarios.set(scenarioId, scenario);
+        return scenarioId;
+    }
+
+    // Different Scenario Types
+    async modelNewRound(params) {
+        const scenarioId = this.createScenario('new_round', params);
+        const scenario = this.scenarios.get(scenarioId);
+
+        try {
+            const results = {
+                preMoneyValuation: params.preMoneyValuation,
+                investment: params.investment,
+                newShares: this.calculator.calculateNewShares(params),
+                dilution: this.calculator.calculateDilution(params),
+                newOwnership: this.calculator.calculateNewOwnership(params),
+                convertibleImpact: this.calculator.calculateConvertibleImpact(params)
+            };
+
+            scenario.results = results;
+            scenario.status = 'completed';
+            this.visualizeScenario(scenarioId);
+
+            return results;
+        } catch (error) {
+            scenario.status = 'failed';
+            scenario.error = error.message;
+            throw error;
+        }
+    }
+
+    async modelExit(params) {
+        const scenarioId = this.createScenario('exit', params);
+        const scenario = this.scenarios.get(scenarioId);
+
+        try {
+            const results = {
+                exitValue: params.exitValue,
+                distributions: this.calculator.calculateLiquidationWaterfall(params),
+                returns: this.calculator.calculateInvestorReturns(params),
+                irr: this.calculator.calculateIRR(params),
+                moic: this.calculator.calculateMOIC(params)
+            };
+
+            scenario.results = results;
+            scenario.status = 'completed';
+            this.visualizeScenario(scenarioId);
+
+            return results;
+        } catch (error) {
+            scenario.status = 'failed';
+            scenario.error = error.message;
+            throw error;
+        }
+    }
+
+    async modelSecondary(params) {
+        const scenarioId = this.createScenario('secondary', params);
+        const scenario = this.scenarios.get(scenarioId);
+
+        try {
+            const results = {
+                transactionValue: params.value,
+                sharesTraded: params.shares,
+                newOwnership: this.calculator.calculateNewOwnership(params),
+                pricePerShare: params.value / params.shares,
+                impliedValuation: (params.value / params.shares) * this.capTable.getTotalShares()
+            };
+
+            scenario.results = results;
+            scenario.status = 'completed';
+            this.visualizeScenario(scenarioId);
+
+            return results;
+        } catch (error) {
+            scenario.status = 'failed';
+            scenario.error = error.message;
+            throw error;
+        }
+    }
+
+    // Scenario Visualization
+    visualizeScenario(scenarioId) {
+        const scenario = this.scenarios.get(scenarioId);
+        const container = document.getElementById('scenarioVisualization');
+
+        // Clear previous visualization
+        container.innerHTML = '';
+
+        // Create visualization based on scenario type
+        switch (scenario.type) {
+            case 'new_round':
+                this.visualizeNewRound(scenario, container);
+                break;
+            case 'exit':
+                this.visualizeExit(scenario, container);
+                break;
+            case 'secondary':
+                this.visualizeSecondary(scenario, container);
+                break;
+        }
+    }
+
+    visualizeNewRound(scenario, container) {
+        // Create ownership chart
+        const ownershipChart = new Chart(
+            document.createElement('canvas'),
+            {
+                type: 'bar',
+                data: {
+                    labels: ['Pre-Round', 'Post-Round'],
+                    datasets: this.createOwnershipDatasets(scenario)
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Ownership %'
+                            }
+                        },
+                        x: {
+                            stacked: true
+                        }
+                    }
+                }
+            }
+        );
+        container.appendChild(ownershipChart.canvas);
+
+        // Create summary table
+        const summaryTable = this.createSummaryTable(scenario);
+        container.appendChild(summaryTable);
+    }
+
+    visualizeExit(scenario, container) {
+        // Create waterfall chart
+        const waterfallChart = new Chart(
+            document.createElement('canvas'),
+            {
+                type: 'bar',
+                data: {
+                    labels: this.createWaterfallLabels(scenario),
+                    datasets: [{
+                        data: this.createWaterfallData(scenario),
+                        backgroundColor: this.createWaterfallColors(scenario)
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Amount ($)'
+                            }
+                        }
+                    }
+                }
+            }
+        );
+        container.appendChild(waterfallChart.canvas);
+
+        // Create returns summary
+        const returnsSummary = this.createReturnsSummary(scenario);
+        container.appendChild(returnsSummary);
+    }
+
+    // Helper Methods
+    cloneCapTableState() {
+        return JSON.parse(JSON.stringify(this.capTable.state));
+    }
+
+    createSummaryTable(scenario) {
+        const table = document.createElement('table');
+        table.className = 'scenario-summary';
+        // Add summary data...
+        return table;
+    }
+
+    createReturnsSummary(scenario) {
+        const summary = document.createElement('div');
+        summary.className = 'returns-summary';
+        // Add returns data...
+        return summary;
+    }
+}
+
+// Scenario Templates
+const ScenarioTemplates = {
+    newRound: {
+        seriesA: {
+            name: "Series A Standard",
+            params: {
+                roundType: "Preferred",
+                targetRaise: 5000000,
+                preMoneyValuation: 20000000,
+                proRata: true,
+                liquidationPreference: 1,
+                participationRights: false,
+                antiDilution: "weighted-average"
+            }
+        },
+        seriesB: {
+            name: "Series B Standard",
+            params: {
+                roundType: "Preferred",
+                targetRaise: 15000000,
+                preMoneyValuation: 60000000,
+                proRata: true,
+                liquidationPreference: 1,
+                participationRights: true,
+                antiDilution: "weighted-average"
+            }
+        }
+    },
+    exit: {
+        acquisition: {
+            name: "Strategic Acquisition",
+            params: {
+                type: "M&A",
+                multiple: 3,
+                paymentType: "cash",
+                earnout: 0.2
+            }
+        },
+        ipo: {
+            name: "IPO",
+            params: {
+                type: "IPO",
+                multiple: 5,
+                lockupPeriod: 180,
+                floatPercentage: 0.2
+            }
+        }
+    }
+};
+
+// Drag and Drop Interface + Real-time Updates
+class DragDropManager {
+    constructor(capTable, visualizer) {
+        this.capTable = capTable;
+        this.visualizer = visualizer;
+        this.draggedElement = null;
+        this.initializeDragDrop();
+    }
+
+    initializeDragDrop() {
+        // Setup drag and drop zones
+        document.querySelectorAll('.draggable').forEach(element => {
+            element.setAttribute('draggable', true);
+            this.addDragListeners(element);
+        });
+
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            this.addDropListeners(zone);
+        });
+    }
+
+    addDragListeners(element) {
+        element.addEventListener('dragstart', (e) => {
+            this.draggedElement = element;
+            element.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', element.id);
+        });
+
+        element.addEventListener('dragend', () => {
+            element.classList.remove('dragging');
+            this.draggedElement = null;
+        });
+    }
+
+    addDropListeners(zone) {
+        zone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            zone.classList.add('drag-over');
+        });
+
+        zone.addEventListener('dragleave', () => {
+            zone.classList.remove('drag-over');
+        });
+
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            zone.classList.remove('drag-over');
+            const draggedId = e.dataTransfer.getData('text/plain');
+            this.handleDrop(draggedId, zone);
+        });
+    }
+
+    handleDrop(draggedId, zone) {
+        switch(zone.dataset.type) {
+            case 'shareholderList':
+                this.reorderShareholders(draggedId, zone);
+                break;
+            case 'roundsList':
+                this.reorderRounds(draggedId, zone);
+                break;
+            case 'esopPool':
+                this.handleESOPAllocation(draggedId, zone);
+                break;
+        }
+    }
+
+    reorderShareholders(shareholderId, newPosition) {
+        const shareholders = this.capTable.state.shareholders;
+        const oldIndex = shareholders.findIndex(s => s.id === shareholderId);
+        const newIndex = Array.from(newPosition.children).indexOf(this.draggedElement);
+
+        if (oldIndex !== -1 && newIndex !== -1) {
+            const [shareholder] = shareholders.splice(oldIndex, 1);
+            shareholders.splice(newIndex, 0, shareholder);
+            this.capTable.updateState({ shareholders });
+            this.visualizer.updateCharts();
+        }
+    }
+}
+
+// Real-time Updates System
+class RealTimeUpdater {
+    constructor(capTable, visualizer) {
+        this.capTable = capTable;
+        this.visualizer = visualizer;
+        this.observers = new Map();
+        this.debounceTime = 300; // milliseconds
+        this.initializeRealTimeUpdates();
+    }
+
+    initializeRealTimeUpdates() {
+        // Setup input listeners
+        document.querySelectorAll('.real-time-input').forEach(input => {
+            this.addInputListener(input);
+        });
+
+        // Setup calculation dependencies
+        this.setupDependencies();
+    }
+
+    addInputListener(input) {
+        const debounced = this.debounce((value) => {
+            this.handleInputChange(input.id, value);
+        }, this.debounceTime);
+
+        input.addEventListener('input', (e) => {
+            debounced(e.target.value);
+        });
+    }
+
+    handleInputChange(inputId, value) {
+        // Update related calculations
+        const dependencies = this.getDependencies(inputId);
+        dependencies.forEach(dep => {
+            this.updateCalculation(dep, value);
+        });
+
+        // Update visualizations
+        this.visualizer.updateCharts();
+
+        // Notify observers
+        this.notifyObservers(inputId, value);
+    }
+
+    updateCalculation(dependencyId, triggerValue) {
+        const element = document.getElementById(dependencyId);
+        if (!element) return;
+
+        switch(dependencyId) {
+            case 'totalShares':
+                this.updateTotalShares();
+                break;
+            case 'ownership':
+                this.updateOwnershipPercentages();
+                break;
+            case 'dilution':
+                this.updateDilutionImpact();
+                break;
+            case 'valuation':
+                this.updateValuation(triggerValue);
+                break;
+        }
+    }
+
+    updateTotalShares() {
+        const total = this.capTable.calculateTotalShares();
+        document.getElementById('totalShares').textContent = total.toLocaleString();
+    }
+
+    updateOwnershipPercentages() {
+        const shareholderRows = document.querySelectorAll('.shareholder-row');
+        shareholderRows.forEach(row => {
+            const shares = parseInt(row.querySelector('.shares').value);
+            const ownershipCell = row.querySelector('.ownership');
+            const percentage = this.capTable.calculateOwnershipPercentage(shares);
+            ownershipCell.textContent = `${percentage.toFixed(2)}%`;
+        });
+    }
+
+    updateDilutionImpact() {
+        const dilutionImpact = this.capTable.calculateDilutionImpact();
+        this.visualizer.updateDilutionChart(dilutionImpact);
+    }
+
+    updateValuation(newValue) {
+        const valuation = parseFloat(newValue);
+        if (!isNaN(valuation)) {
+            const sharePrice = this.capTable.calculateSharePrice(valuation);
+            document.getElementById('sharePrice').value = sharePrice.toFixed(4);
+            this.updateConvertibleSecurities(valuation);
+        }
+    }
+
+    // Observer Pattern Implementation
+    addObserver(inputId, callback) {
+        if (!this.observers.has(inputId)) {
+            this.observers.set(inputId, new Set());
+        }
+        this.observers.get(inputId).add(callback);
+    }
+
+    removeObserver(inputId, callback) {
+        if (this.observers.has(inputId)) {
+            this.observers.get(inputId).delete(callback);
+        }
+    }
+
+    notifyObservers(inputId, value) {
+        if (this.observers.has(inputId)) {
+            this.observers.get(inputId).forEach(callback => {
+                callback(value);
+            });
+        }
+    }
+
+    // Utility Functions
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    getDependencies(inputId) {
+        // Define input dependencies
+        const dependencyMap = {
+            'shares': ['totalShares', 'ownership', 'dilution'],
+            'valuation': ['sharePrice', 'convertibles'],
+            'investment': ['postMoney', 'newShares', 'dilution'],
+            'esopPool': ['dilution', 'ownership'],
+        };
+        return dependencyMap[inputId] || [];
+    }
+}
+
+// Template System for Common Scenarios
+class TemplateManager {
+    constructor(capTable) {
+        this.capTable = capTable;
+        this.templates = this.loadDefaultTemplates();
+    }
+
+    loadDefaultTemplates() {
+        return {
+            foundingStructure: [
+                {
+                    name: "Single Founder",
+                    template: {
+                        authorizedShares: 10000000,
+                        founders: [
+                            { shares: 10000000, role: "Founder & CEO" }
+                        ],
+                        esopPool: 1000000
+                    }
+                },
+                {
+                    name: "Co-Founders (Equal)",
+                    template: {
+                        authorizedShares: 10000000,
+                        founders: [
+                            { shares: 5000000, role: "Co-Founder & CEO" },
+                            { shares: 5000000, role: "Co-Founder & CTO" }
+                        ],
+                        esopPool: 1000000
+                    }
+                }
+            ],
+            investmentRounds: [
+                {
+                    name: "Seed Round",
+                    template: {
+                        type: "SAFE",
+                        typical: {
+                            amount: 500000,
+                            valuationCap: 5000000,
+                            discount: 20
+                        }
+                    }
+                },
+                {
+                    name: "Series A",
+                    template: {
+                        type: "Preferred",
+                        typical: {
+                            amount: 5000000,
+                            preMoneyValuation: 20000000,
+                            liquidationPreference: "1x",
+                            participation: "none"
+                        }
+                    }
+                }
+            ],
+            esopStructures: [
+                {
+                    name: "Standard Pool",
+                    template: {
+                        poolSize: "10%",
+                        vestingSchedule: {
+                            cliff: 12,
+                            vesting: 48,
+                            frequency: "monthly"
+                        }
+                    }
+                }
+            ]
+        };
+    }
+
+    applyTemplate(templateName, customizations = {}) {
+        const template = this.findTemplate(templateName);
+        if (!template) throw new Error(`Template ${templateName} not found`);
+
+        const mergedTemplate = this.mergeCustomizations(template, customizations);
+        return this.capTable.applyStructure(mergedTemplate);
+    }
+
+    findTemplate(templateName) {
+        // Search through all template categories
+        for (const category of Object.values(this.templates)) {
+            const template = category.find(t => t.name === templateName);
+            if (template) return template.template;
+        }
+        return null;
+    }
+
+    mergeCustomizations(template, customizations) {
+        return {
+            ...template,
+            ...customizations,
+            // Deep merge for nested objects
+            ...Object.entries(customizations).reduce((acc, [key, value]) => {
+                if (typeof value === 'object' && value !== null) {
+                    acc[key] = {...template[key], ...value};
+                }
+                return acc;
+            }, {})
+        };
+    }
+
+    saveCustomTemplate(name, structure) {
+        // Validate structure
+        if (!this.validateTemplateStructure(structure)) {
+            throw new Error('Invalid template structure');
+        }
+
+        // Save to local storage
+        const customTemplates = JSON.parse(localStorage.getItem('customTemplates') || '[]');
+        customTemplates.push({ name, template: structure });
+        localStorage.setItem('customTemplates', JSON.stringify(customTemplates));
+    }
+
+    validateTemplateStructure(structure) {
+        // Add validation logic here
+        return true;
+    }
+}
+
+
+
+
+
+
+
+
+
+</body>
+</html>
