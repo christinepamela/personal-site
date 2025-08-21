@@ -7,173 +7,34 @@
     <link rel="icon" type="image/png" href="underdog.png" />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter', sans-serif; color:#333; line-height:1.6; background-color:#FAFAFA; }
+        .header { padding:2rem 0; text-align:center; border-bottom:1px solid #E5E5E5; }
+        .brand { font-family:'Cormorant Garamond', serif; font-size:2.5rem; font-weight:500; letter-spacing:2px; color:#333; text-decoration:none; transition:opacity 0.3s ease; }
+        .brand:hover { opacity:0.85; }
+        .container { max-width:1200px; margin:4rem auto; padding:0 2rem; }
+        .page-title { font-family:'Cormorant Garamond', serif; font-size:2.5rem; margin-bottom:2rem; text-align:center; }
+        .case-studies { display:grid; grid-template-columns:repeat(2,1fr); gap:2rem; }
+        .case-study { background:#FFF; border:1px solid rgba(0,0,0,0.05); border-radius:2px; overflow:hidden; transition:all 0.3s ease; text-decoration:none; color:inherit; display:flex; flex-direction:column; }
+        .case-study:hover { transform:translateY(-4px); box-shadow:0 10px 20px rgba(0,0,0,0.08); }
+        .case-study-header { padding:1.5rem; display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,0,0,0.05); flex-wrap:wrap; gap:1rem; }
+        .consultation-type { font-size:0.9rem; color:#666; background:#E2DFD7; padding:0.5rem 1rem; border-radius:2px; max-width:100%; }
+        .industry-type { font-size:0.9rem; color:#666; text-align:right; flex-shrink:1; }
+        .case-study-image { width:100%; height:220px; object-fit:cover; }
+        .case-study-content { padding:2rem; flex-grow:1; display:flex; flex-direction:column; }
+        .case-study-title { font-family:'Cormorant Garamond', serif; font-size:1.8rem; margin-bottom:1rem; color:#333; }
+        .case-study-synopsis { color:#666; margin-bottom:2rem; flex-grow:1; }
+        .case-study-highlight { padding-top:1.5rem; border-top:1px solid rgba(0,0,0,0.05); color:#333; font-weight:500; }
+        .case-study-enter { margin-top:1.5rem; text-align:right; color:#666; font-size:0.9rem; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            color: #333;
-            line-height: 1.6;
-            background-color: #FAFAFA;
-        }
-
-        .header {
-            padding: 2rem 0;
-            text-align: center;
-            border-bottom: 1px solid #E5E5E5;
-        }
-
-        .brand {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.5rem;
-            font-weight: 500;
-            letter-spacing: 2px;
-            color: #333;
-            text-decoration: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .brand:hover {
-            opacity: 0.85;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 4rem auto;
-            padding: 0 2rem;
-        }
-
-        .page-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .case-studies {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-        }
-
-        .case-study {
-            background: #FFFFFF;
-            border: 1px solid rgba(0,0,0,0.05);
-            border-radius: 2px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .case-study:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-        }
-
-        .case-study-header {
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .consultation-type {
-            font-size: 0.9rem;
-            color: #666;
-            background: #E2DFD7;
-            padding: 0.5rem 1rem;
-            border-radius: 2px;
-            max-width: 100%; 
-        }
-
-        .industry-type {
-            font-size: 0.9rem;
-            color: #666;
-            text-align: right; 
-            flex-shrink: 1; 
-        }
-
-        .case-study-image {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-        }
-
-        .case-study-content {
-            padding: 2rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .case-study-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: #333;
-        }
-
-        .case-study-synopsis {
-            color: #666;
-            margin-bottom: 2rem;
-            flex-grow: 1;
-        }
-
-        .case-study-highlight {
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(0,0,0,0.05);
-            color: #333;
-            font-weight: 500;
-        }
-
-        .case-study-enter {
-            margin-top: 1.5rem;
-            text-align: right;
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 1024px) {
-            .case-studies {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1.5rem;
-            }
-            .case-study-image {
-                height: 200px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .case-studies {
-                grid-template-columns: 1fr;
-            }
-            .container {
-                margin: 2rem auto;
-            }
-            .case-study-image {
-                height: 200px;
-            }
-            .case-study-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.75rem;
-            }
-            .consultation-type {
-                width: auto;
-                display: inline-block;
-            }
-            .industry-type {
-                text-align: left;
-                width: 100%;
-            }
+        @media (max-width:1024px) { .case-studies { grid-template-columns:repeat(2,1fr); gap:1.5rem; } .case-study-image { height:200px; } }
+        @media (max-width:768px) {
+            .case-studies { grid-template-columns:1fr; }
+            .container { margin:2rem auto; }
+            .case-study-image { height:200px; }
+            .case-study-header { flex-direction:column; align-items:flex-start; gap:0.75rem; }
+            .consultation-type { width:auto; display:inline-block; }
+            .industry-type { text-align:left; width:100%; }
         }
     </style>
 </head>
@@ -186,6 +47,7 @@
         <h1 class="page-title">Electronics & Semiconductors Case Studies</h1>
         
         <div class="case-studies">
+
             <a href="nanyang.html" class="case-study">
                 <div class="case-study-header">
                     <span class="consultation-type">Technical Consultation / Guest Lecturer</span>
@@ -195,10 +57,10 @@
                 <div class="case-study-content">
                     <h2 class="case-study-title">Guest Lecturer at Nanyang Technological University</h2>
                     <p class="case-study-synopsis">
-                        Delivered a seminar at Nanyang Technological University (NTU), connecting academic theory in electronics with real-world industrial applications. The session highlighted use cases across manufacturing, telecommunications, and semiconductors, helping students and faculty bridge knowledge gaps.
+                        Delivered a seminar at NTU, connecting academic theory in electronics with real-world industrial applications. Highlighted use cases across manufacturing, telecommunications, and semiconductors.
                     </p>
                     <div class="case-study-highlight">
-                        Strengthened alignment between NTU’s academic curriculum and industry needs through practical knowledge transfer.
+                        Strengthened alignment between NTU’s curriculum and industry needs through practical knowledge transfer.
                     </div>
                     <div class="case-study-enter">View Case Study →</div>
                 </div>
@@ -213,7 +75,7 @@
                 <div class="case-study-content">
                     <h2 class="case-study-title">LCR Measurement</h2>
                     <p class="case-study-synopsis">
-                        AOBA Technology faced recurring failures with their bias current source during inductor testing, causing unreliable LCR measurements and workflow disruptions. Through root cause analysis, current management, and fixture compatibility engineering, we delivered long-term solutions that stabilized testing and improved reliability.
+                        AOBA Technology faced recurring failures with their bias current source during inductor testing, causing unreliable LCR measurements and workflow disruptions.
                     </p>
                     <div class="case-study-highlight">
                         Eliminated recurring fuse failures and restored consistent LCR measurement reliability, reducing downtime and servicing costs.
@@ -227,11 +89,11 @@
                     <span class="consultation-type">Technical Consultation</span>
                     <span class="industry-type">Electronics</span>
                 </div>
-                <img src="asianndk-cs.png" alt="Intermittent Failures in Data Acquisition Unit" class="case-study-image">
+                <img src="asianndk-cs.png" alt="Intermittent Failures in DAQ Unit" class="case-study-image">
                 <div class="case-study-content">
                     <h2 class="case-study-title">Intermittent Failures in Data Acquisition Unit</h2>
                     <p class="case-study-synopsis">
-                        Asian NDK faced recurring “OVLD” errors in a Data Acquisition Unit that standard service checks classified as “No Trouble Found.” Through controlled onsite experiments, I isolated the issue to the DAQ mainframe’s communication fault, ruling out external modules and fixtures.
+                        Asian NDK faced recurring “OVLD” errors in a DAQ Unit that standard service checks classified as “No Trouble Found.” Controlled experiments isolated the DAQ mainframe’s communication fault.
                     </p>
                     <div class="case-study-highlight">
                         Identified the faulty DAQ mainframe as the true root cause, preventing further NTF cycles and restoring production reliability.
@@ -240,9 +102,169 @@
                 </div>
             </a>
 
-            <!-- Additional case studies continue here following the same structure -->
+            <a href="carsem.html" class="case-study">
+                <div class="case-study-header">
+                    <span class="consultation-type">Technical Consultation</span>
+                    <span class="industry-type">Electronics</span>
+                </div>
+                <img src="carsem-cs.png" alt="Manufacturing Test Automation" class="case-study-image">
+                <div class="case-study-content">
+                    <h2 class="case-study-title">Manufacturing Test Automation</h2>
+                    <p class="case-study-synopsis">
+                        Led a multi-million-dollar system integration for Carsem to automate complex testing for Skyworks’ iPhone components, improving speed and accuracy under on-site conditions.
+                    </p>
+                    <div class="case-study-highlight">
+                        Implemented a fully automated test system that improved accuracy, reduced cycle times, and secured Carsem’s position as a key Skyworks partner.
+                    </div>
+                    <div class="case-study-enter">View Case Study →</div>
+                </div>
+            </a>
+
+            <a href="minicircuit.html" class="case-study">
+                <div class="case-study-header">
+                    <span class="consultation-type">Technical Consultation</span>
+                    <span class="industry-type">Electronics / RF & Mixed-Signal Validation</span>
+                </div>
+                <img src="minicircuit-cs.png" alt="Active Differential Probing Architecture" class="case-study-image">
+                <div class="case-study-content">
+                    <h2 class="case-study-title">Active Differential Probing Architecture</h2>
+                    <p class="case-study-synopsis">
+                        Mini-Circuits needed a unified probing strategy to validate wideband RF and mixed-signal circuits. Implemented active differential probes, calibrated fixtures, and de-embedding methods.
+                    </p>
+                    <div class="case-study-highlight">
+                        Improved measurement fidelity, accelerated validation workflows, and established scalable design-for-test practices across product lines.
+                    </div>
+                    <div class="case-study-enter">View Case Study →</div>
+                </div>
+            </a>
+
+            <a href="murata.html" class="case-study">
+                <div class="case-study-header">
+                    <span class="consultation-type">Technical Consultation</span>
+                    <span class="industry-type">Electronics / RF Components</span>
+                </div>
+                <img src="murata-cs.png" alt="Automating RF Testing for Murata" class="case-study-image">
+                <div class="case-study-content">
+                    <h2 class="case-study-title">Automating RF Testing for Murata</h2>
+                    <p class="case-study-synopsis">
+                        Built a fully automated RF testing system for Murata, integrating instrumentation, control software, and data workflows for impedance, VSWR, TOI, and uncertainty analysis.
+                    </p>
+                    <div class="case-study-highlight">
+                        The automation cut testing time, improved measurement accuracy, and created a scalable framework for high-volume production.
+                    </div>
+                    <div class="case-study-enter">View Case Study →</div>
+                </div>
+            </a>
+
+            <a href="ns.html" class="case-study">
+                <div class="case-study-header">
+                    <span class="consultation-type">Technical Consultation</span>
+                    <span class="industry-type">Semiconductors / Electronics</span>
+                </div>
+                <img src="ns-cs.png" alt="Unlocking Engineering Creativity" class="case-study-image">
+                <div class="case-study-content">
+                    <h2 class="case-study-title">Unlocking Engineering Creativity</h2>
+                    <p class="case-study-synopsis">
+                        Mentored engineers at National Semiconductor to adopt first-principles thinking and adaptive problem-solving, enabling creative approaches to measurement challenges.
+                    </p>
+                    <div class="case-study-highlight">
+                        Sparked a cultural shift where engineers balanced process discipline with creativity, improving technical capability and confidence.
+                    </div>
+                    <div class="case-study-enter">View Case Study →</div>
+                </div>
+            </a>
+
+            <a href="NXP-NFA.html" class="case-study">
+                <div class="case-study-header">
+                    <span class="consultation-type">Technical Consultation</span>
+                    <span class="industry-type">Semiconductors / Electronics</span>
+                </div>
+                <img src="NXP-NFA-cs.png" alt="QC Lab Noise Figure Overhaul" class="case-study-image">
+                <div class="case-study-content">
+                    <h2 class="case-study-title">QC Lab Noise Figure Overhaul</h2>
+                    <p class="case-study-synopsis">
+                        Led a team at NXP’s QA lab to replace an unreliable noise figure measurement system with a fully automated, modernized setup ensuring accuracy and repeatability.
+                    </p>
+                    <div class="case-study-highlight">
+                        Cut test cycle time by 40% while enabling validation of next-generation RF devices with higher confidence.
+                    </div>
+                    <div class="case-study-enter">View Case Study →</div>
+                </div>
+            </a>
+
+            <a href="NXP-training.html" class="case-study">
+                <div class="case-study-header">
+                    <span class="consultation-type">Technical Consultation</span>
+                    <span class="industry-type">Semiconductors / Electronics</span>
+                </div>
+                <img src="NXP-training-cs.png" alt="Corporate Training on RF Competence" class="case-study-image">
+                <div class="case-study-content">
+                    <h2 class="case-study-title">Corporate Training on RF Competence</h2>
+                    <p class="case-study-synopsis">
+                        Delivered a three-day PNA-X Noise Figure Measurement training program at NXP, equipping engineers and technicians with theoretical grounding and practical skills.
+                    </p>
+                    <div class="case-study-highlight">
+                        Standardized RF noise figure measurement practices across teams, reducing errors and reliance on external support.
+                    </div>
+                    <div class="case-study-enter">View Case Study →</div>
+                </div>
+            </a>
+
+            <a href="panasonic.html" class="case-study">
+                <div class="case-study-header">
+                    <span class="consultation-type">Technical Consultation</span>
+                    <span class="industry-type">Electronics / Semiconductors</span>
+                </div>
+                <img src="panasonic-cs.png" alt="RCA on Production Failure at Panasonic" class="case-study-image">
+                <div class="case-study-content">
+                    <h2 class="case-study-title">RCA on Production Failure at Panasonic</h2>
+                    <p class="case-study-synopsis">
+                        Systematically eliminated suspected equipment faults and traced a shutdown to a faulty cable in Panasonic’s capacitance measurement setup, restoring production.
+                    </p>
+                    <div class="case-study-highlight">
+                        Production was restored within days, saving millions and establishing a repeatable troubleshooting framework for future crises.
+                    </div>
+                    <div class="case-study-enter">View Case Study →</div>
+                </div>
+            </a>
+
+            <a href="unisem.html" class="case-study">
+                <div class="case-study-header">
+                    <span class="consultation-type">Technical Consultation</span>
+                    <span class="industry-type">Semiconductor</span>
+                </div>
+                <img src="unisem-cs.png" alt="High-Frequency Demo for Unisem Engineers" class="case-study-image">
+                <div class="case-study-content">
+                    <h2 class="case-study-title">High-Frequency Demo for Unisem Engineers</h2>
+                    <p class="case-study-synopsis">
+                        Conducted a one-day hands-on demonstration of high-frequency test and measurement equipment for Unisem engineers, addressing RF and mixed-signal challenges.
+                    </p>
+                    <div class="case-study-highlight">
+                        Enhanced Unisem’s engineering team’s ability to tackle complex high-frequency test issues and reinforced facility reputation for excellence.
+                    </div>
+                    <div class="case-study-enter">View Case Study →</div>
+                </div>
+            </a>
+
+            <a href="toyosharp.html" class="case-study">
+                <div class="case-study-header">
+                    <span class="consultation-type">Technical Consultation</span>
+                    <span class="industry-type">Electronics / EMC Compliance</span>
+                </div>
+                <img src="toyosharp-cs.png" alt="EMI Measurement Training for Toyo Sharp" class="case-study-image">
+                <div class="case-study-content">
+                    <h2 class="case-study-title">EMI Measurement Training for Toyo Sharp</h2>
+                    <p class="case-study-synopsis">
+                        Conducted a one-day EMI measurement training for Toyo Sharp engineers focused on practical PCB and subsystem-level techniques to identify and mitigate EMI issues early in design.
+                    </p>
+                    <div class="case-study-highlight">
+                        Strengthened internal EMI testing practices and reduced risk of costly late-stage redesigns.
+                    </div>
+                    <div class="case-study-enter">View Case Study →</div>
+                </div>
+            </a>
+
         </div>
     </div>
 </body>
 </html>
-
