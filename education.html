@@ -7,150 +7,187 @@
     <link rel="icon" type="image/png" href="underdog.png" />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            background-color: #fff;
-            color: #111;
+            box-sizing: border-box;
         }
-        header {
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: #FAFAFA;
+        }
+
+        .header {
+            padding: 2rem 0;
             text-align: center;
-            padding: 3rem 1rem 1rem;
+            border-bottom: 1px solid #E5E5E5;
         }
-        header h1 {
+
+        .brand {
             font-family: 'Playfair Display', serif;
             font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: #333;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
         }
-        header p {
-            font-size: 1rem;
-            color: #555;
+
+        .brand:hover {
+            opacity: 0.85;
         }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            padding: 2rem;
+
+        .container {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 4rem auto;
+            padding: 0 2rem;
         }
-        .case-card {
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .case-studies {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .case-study {
+            background: #FFFFFF;
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 2px;
+            overflow: hidden;
+            transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
-            background-color: #fff;
         }
-        .case-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+
+        .case-study:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
         }
-        .case-card img {
+
+        .case-study-header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .consultation-type {
+            font-size: 0.9rem;
+            color: #666;
+            background: #E2DFD7;
+            padding: 0.5rem 1rem;
+            border-radius: 2px;
+            max-width: 100%;
+        }
+
+        .industry-type {
+            font-size: 0.9rem;
+            color: #666;
+            text-align: right;
+            flex-shrink: 1;
+        }
+
+        .case-study-image {
             width: 100%;
-            height: auto;
+            height: 220px;
             object-fit: cover;
         }
-        .case-content {
-            padding: 1.5rem;
-            flex: 1;
+
+        .case-study-content {
+            padding: 2rem;
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
-        .case-title {
+
+        .case-study-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #333;
         }
-        .case-highlight {
-            font-weight: 600;
-            color: #222;
-            margin-bottom: 0.5rem;
+
+        .case-study-synopsis {
+            color: #666;
+            margin-bottom: 2rem;
+            flex-grow: 1;
         }
-        .case-synopsis {
-            flex: 1;
-            font-size: 0.95rem;
-            color: #555;
+
+        .case-study-highlight {
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            color: #333;
+            font-weight: 500;
         }
-        footer {
-            text-align: center;
-            padding: 2rem 1rem;
+
+        .case-study-enter {
+            margin-top: 1.5rem;
+            text-align: right;
+            color: #666;
             font-size: 0.9rem;
-            color: #777;
+        }
+
+        @media (max-width: 1024px) {
+            .case-studies {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+            .case-study-image {
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .case-studies {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                margin: 2rem auto;
+            }
+            .case-study-image {
+                height: 200px;
+            }
+            .case-study-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+            .consultation-type {
+                width: auto;
+                display: inline-block;
+            }
+            .industry-type {
+                text-align: left;
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
+    <header class="header">
+        <a href="https://christinepamela.com" class="brand">Pam's Corner</a>
+    </header>
 
-<header>
-    <h1>Education Case Studies</h1>
-    <p>Bridging academic theory with industry practice</p>
-</header>
+    <div class="container">
+        <h1 class="page-title">Education Case Studies</h1>
 
-<div class="grid-container">
-    <a href="UKM.html" class="case-card">
-        <img src="UKM-cs.png" alt="Guest Lecture at UKM">
-        <div class="case-content">
-            <div class="case-title">Guest Lecture at UKM</div>
-            <div class="case-highlight">Bridged the gap between academic theory and industry practice for future engineers.</div>
-            <div class="case-synopsis">I delivered a guest lecture on electronics testing at Universiti Kebangsaan Malaysia (UKM), blending theory with case studies and practical demonstrations. The session gave students direct exposure to industry-standard tools and real-world problem-solving methods.</div>
-        </div>
-    </a>
-
-    <a href="USM.html" class="case-card">
-        <img src="USM-cs.png" alt="Guest Lecture & Consultation at USM">
-        <div class="case-content">
-            <div class="case-title">Guest Lecture & Consultation at USM</div>
-            <div class="case-highlight">Significantly improved students’ practical testing skills and faculty’s confidence in applying real-world methods.</div>
-            <div class="case-synopsis">Delivered a guest lecture and hands-on demonstrations of modern electronics test equipment, bridging academic theory with industry practices. Provided faculty consultancy on instrument selection, calibration, and teaching integration.</div>
-        </div>
-    </a>
-
-    <a href="nanyang.html" class="case-card">
-        <img src="nanyang-cs.png" alt="Guest Lecturer at Nanyang Technological University">
-        <div class="case-content">
-            <div class="case-title">Guest Lecturer at Nanyang Technological University</div>
-            <div class="case-highlight">Strengthened alignment between NTU’s academic curriculum and industry needs through practical knowledge transfer.</div>
-            <div class="case-synopsis">Delivered a seminar at Nanyang Technological University (NTU), connecting academic theory in electronics with real-world industrial applications. The session highlighted use cases across manufacturing, telecommunications, and semiconductors, helping students and faculty bridge knowledge gaps.</div>
-        </div>
-    </a>
-
-    <a href="angkasa.html" class="case-card">
-        <img src="angkasa-cs.png" alt="Internal Capacity for Satellite Labs">
-        <div class="case-content">
-            <div class="case-title">Internal Capacity for Satellite Labs</div>
-            <div class="case-highlight">Enabled Angkasa engineers to begin sustaining and troubleshooting satellite labs in-house, reducing reliance on costly external contractors.</div>
-            <div class="case-synopsis">I consulted with Angkasa to build internal capacity for managing its multi-million-dollar satellite labs, combining technical training with hands-on troubleshooting. The engagement equipped engineers with foundational skills and highlighted the need to balance technology investment with workforce development.</div>
-        </div>
-    </a>
-
-    <a href="tp.html" class="case-card">
-        <img src="tp-cs.png" alt="Seminar on Industrial Electronics Testing">
-        <div class="case-content">
-            <div class="case-title">Seminar on Industrial Electronics Testing</div>
-            <div class="case-highlight">Equipped over 1,000 future engineers with practical testing knowledge and career perspectives.</div>
-            <div class="case-synopsis">At Temasek Polytechnic, I delivered a full-day seminar to over 1,000 students on the evolution of electronic industrial testing, bridging theory with practice. The session combined live demonstrations, equipment insights, and Q&A to connect classroom learning with real-world engineering challenges.</div>
-        </div>
-    </a>
-
-    <a href="vietnam.html" class="case-card">
-        <img src="vietnam-cs.png" alt="Satellite Transmission Course – Ho Chi Minh UT">
-        <div class="case-content">
-            <div class="case-title">Satellite Transmission Course – Ho Chi Minh UT</div>
-            <div class="case-highlight">Achieved a 70% pass rate with strong feedback from students and faculty on clarity and practical relevance.</div>
-            <div class="case-synopsis">Delivered a satellite transmission course to nearly 100 students, lecturers, and department heads, balancing theory with practical applications. Adjusted teaching methods and worked with a translator to overcome English language barriers and simplify complex concepts.</div>
-        </div>
-    </a>
-</div>
-
-<footer>
-    15 years experience in technology and business consultation, across South East Asia, US, Europe, and Australia.
-</footer>
-
-</body>
-</html>
+        <div class="case-studies">
+            <a href="UKM.html" class="case-study">
+                <div class="case-study-header">
+                    <span class="consultation-type">Guest Lecture</span>
+                    <span class="industry-type">Education / Electronics</span>
+                </div>
+                <img src="UKM-cs.png" alt="
