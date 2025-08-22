@@ -1,1 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFID Characterization Case Study - Pam's Corner</title>
+    <link rel="icon" type="image/png" href="underdog.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: #FAFAFA;
+        }
+
+        .header {
+            padding: 2rem 0;
+            text-align: center;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: #333;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .brand:hover {
+            opacity: 0.85;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .project-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .project-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .meta-item {
+            font-size: 0.9rem;
+            color: #666;
+            background: #E2DFD7;
+            padding: 0.5rem 1rem;
+            border-radius: 2px;
+        }
+
+        .content-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .section-content {
+            color: #666;
+        }
+
+        .bullet-list {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .bullet-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .bullet-list li:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0.7rem;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #E2DFD7;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 2rem auto;
+            }
+            .project-meta {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            .meta-item {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="https://christinepamela.com" class="brand">Pam's Corner</a>
+    </header>
+
+    <div class="container">
+        <div class="project-header">
+            <h1 class="page-title">Non-Contact S-Parameter Method to Rapidly Characterize 13.56 MHz RFID Tags</h1>
+            <div class="project-meta">
+                <span class="meta-item">RFID / Electronics Manufacturing</span>
+                <span class="meta-item">Non-Contact S-Parameter RFID Characterization</span>
+                <span class="meta-item">Consultant / Measurement Engineer</span>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">Synopsis</h2>
+            <p class="section-content">
+                A manufacturer needed a fast, repeatable, and non-contact way to tune and verify 13.56 MHz HF RFID tags during R&D and pilot production of national ID. We designed a measurement setup using a network analyzer with a small magnetic coupling loop to extract the tag’s resonant frequency, Q-factor, and impedance without soldering leads. By leveraging S11 (reflection) and S21 (transmission) sweeps around 13.56 MHz, the team could locate resonance, quantify detuning from packaging/metal proximity, and iterate matching quickly, cutting debug time and improving yield.
+            </p>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">The Challenge</h2>
+            <ul class="bullet-list">
+                <li>Contacting fragile HF tag antennas for impedance measurement damaged samples and altered results.</li>
+                <li>Tags showed detuning once laminated, near metal, or in final packaging.</li>
+                <li>Need to measure resonance (~13.56 MHz), Q, and effective impedance repeatably, without physical contact.</li>
+                <li>Must be simple enough to hand to production/PE teams for fast go/no-go and tuning.</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">The Solution</h2>
+            <ul class="bullet-list">
+                <li><strong>Measurement Principle (Non-Contact):</strong> Treat the RFID tag as a parallel LCR resonator. Around resonance, a loosely coupled loop senses strong changes in the tag’s input impedance. Reflection (S11) and/or transmission (S21) sweeps locate resonance and Q.</li>
+                <li><strong>S11 Setup (Reflection):</strong> Single-port, small loop coupled to tag. Sweep ~10–20 MHz around 13.56 MHz, observe |S11| dip/phase swing.</li>
+                <li><strong>S21 Setup (Transmission):</strong> Two-port, Tx/Rx loops with tag centered. Sweep around 13.56 MHz to see |S21| peak. Useful for weak coupling or noisy environments.</li>
+                <li><strong>Stability & Repeatability:</strong> Control geometry, weak coupling, calibration, environmental shielding, and de-embedding curve for consistent results.</li>
+                <li><strong>Data Reduction:</strong> Extract f₀ from dips/peaks, calculate Q-factor, evaluate relative impedance, and map packaging/metal effects.</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">The Results</h2>
+            <ul class="bullet-list">
+                <li>True non-contact characterization: no solder pads, no probe-induced detuning.</li>
+                <li>Fast resonance find & tuning: engineers located f₀ and adjusted designs in minutes, not hours.</li>
+                <li>Quantified detuning from real use cases: packaging, user grip, and metal proximity tested reproducibly.</li>
+                <li>Improved yield & fewer lab retries: pre-production lots screened quickly; only outliers went to deep-dive.</li>
+                <li>Hand-off to production: standardized fixture + SOP enabled operators to run go/no-go and basic diagnostics.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
 
