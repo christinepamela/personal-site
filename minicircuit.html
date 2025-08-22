@@ -1,1 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini-Circuits Case Study - Pam's Corner</title>
+    <link rel="icon" type="image/png" href="underdog.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: #FAFAFA;
+        }
+
+        .header {
+            padding: 2rem 0;
+            text-align: center;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+        .brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: #333;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .brand:hover {
+            opacity: 0.85;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .project-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .project-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .meta-item {
+            font-size: 0.9rem;
+            color: #666;
+            background: #E2DFD7;
+            padding: 0.5rem 1rem;
+            border-radius: 2px;
+        }
+
+        .content-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .section-content {
+            color: #666;
+        }
+
+        .bullet-list {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .bullet-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .bullet-list li:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0.7rem;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #E2DFD7;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 2rem auto;
+            }
+            .project-meta {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            .meta-item {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="https://christinepamela.com" class="brand">Pam's Corner</a>
+    </header>
+
+    <div class="container">
+        <div class="project-header">
+            <h1 class="page-title">Probing Architecture for Time and Frequency Domain Validation using Active Differential Probes</h1>
+            <div class="project-meta">
+                <span class="meta-item">Electronics / RF & Mixed-Signal Validation</span>
+                <span class="meta-item">Probing Architecture for Time & Frequency Domain Validation</span>
+                <span class="meta-item">Lead Consultant / Test Solutions Architect</span>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">Synopsis</h2>
+            <p class="section-content">
+                Mini-Circuits needed a reliable probing strategy to validate wideband RF and mixed-signal circuits in both time and frequency domains. Engineers struggled with signal corruption from probe loading, poor common-mode rejection, inconsistent fixture techniques, and gaps between oscilloscope and VNA workflows. I scoped and proposed a unified probing solution that standardizes tips, fixtures, calibration, and de-embedding. The plan improves measurement fidelity, repeatability, and turnaround time across R&D and production support.
+            </p>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">The Challenge</h2>
+            <ul class="bullet-list">
+                <li><strong>Time-domain validation issues</strong></li>
+                <li>High-speed nodes degraded by probe capacitance and ground inductance.</li>
+                <li>Poor deskew between voltage and current probes caused timing errors.</li>
+                <li>Inconsistent probing on tiny packages and differential lines led to repeatability problems.</li>
+                <li><strong>Frequency-domain validation issues</strong></li>
+                <li>Fixture resonances and launch transitions masked true S-parameters.</li>
+                <li>Lack of robust de-embedding from probe tips or coupons to device reference planes.</li>
+                <li>Common-mode energy on differential lines leaked into measurements.</li>
+                <li><strong>Process gaps</strong></li>
+                <li>Separate teams used different tools and methods for time vs frequency.</li>
+                <li>Limited design-for-test features on PCB layouts reduced probe access and correlation.</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">The Solution</h2>
+            <ul class="bullet-list">
+                <li><strong>Active differential probing for time-domain work</strong></li>
+                <li>Standardize on high-impedance, low-capacitance active differential probes for gigahertz-class bandwidth.</li>
+                <li>Provide three tip styles: solder-in for best fidelity, browser tips for fast bring-up, and coax pigtails for semi-permanent stations.</li>
+                <li>Create deskew and compensation SOPs using fast edges and the oscilloscope’s deskew utilities.</li>
+                <li>Add current probe stations where power stages switch fast, with coordinated trigger and power-rail probes for power-integrity views.</li>
+
+                <li><strong>Frequency-domain probing and de-embedding</strong></li>
+                <li>Use differential probe heads or 2-port coax launches tied to a VNA for S-parameter sweeps.</li>
+                <li>Adopt board-side TRL or short-open-load-through coupons next to the DUT for de-embedding to the device pads.</li>
+                <li>Provide fixture design rules: controlled-impedance CPW or microstrip, short ground returns, damping of resonances, and repeatable strain-relief.</li>
+                <li>For emissions or spurs, hand off to a spectrum analyzer path with the same probe fixture to keep reference planes aligned.</li>
+
+                <li><strong>Correlated workflow across domains</strong></li>
+                <li>Define a single fixture that supports both the active probe and coax launches so the same DUT can be measured on scope, VNA, and spectrum analyzer without rework.</li>
+                <li>Build a results template: TDR for interconnect, eye/step response and overshoot on scope, S-parameters and group delay on VNA, and spur tables on SA.</li>
+                <li>Automate report capture with instrument SCPI scripts so engineers log data and plots with consistent markers.</li>
+
+                <li><strong>Design-for-test guidelines</strong></li>
+                <li>Add differential probe pads with keep-outs and alignment keys near critical nodes.</li>
+                <li>Place calibration coupons and reference resistors on every validation PCB.</li>
+                <li>Mark probe current paths and local grounds to minimize loop area during probing.</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">The Results</h2>
+            <ul class="bullet-list">
+                <li>Higher measurement fidelity: reduced loading, better CMRR, and stable reference planes.</li>
+                <li>Faster bring-up: standardized fixtures and tips cut setup time and re-probing cycles.</li>
+                <li>Cross-domain correlation: time and frequency results aligned, improving root-cause analysis.</li>
+                <li>Better yield feedback: production and QA teams received clear, automated reports from the same fixtures used in R&D.</li>
+                <li>Scalable practice: design-for-test rules and SOPs became reusable across new product lines.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
 
