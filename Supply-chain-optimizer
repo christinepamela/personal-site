@@ -1,1 +1,449 @@
+"""
+Supply Chain Optimization Tool
+Handles facility-to-customer assignment optimization with multiple constraints
+and cost metrics.
+"""
+
+from pulp import *
+from typing import List, Dict, Tuple, Optional
+import pandas as pd
+from enum import Enum
+import numpy as np
+
+class SolverType(Enum):
+    LINEAR = "LINEAR"
+    INTEGER = "INTEGER"
+    MIXED_INTEGER = "MIXED_INTEGER"
+
+class CostMetric(Enum):
+    MONEY = "MONEY"
+    DISTANCE = "DISTANCE"
+    EMISSIONS = "EMISSIONS"
+
+class Currency(Enum):
+    USD = "USD"
+    EUR = "EUR"
+    GBP = "GBP"
+    JPY = "JPY"
+    BTC = "BTC"
+    ETH = "ETH"
+
+class SupplyChainOptimizer:
+    def __init__(
+        self,
+        facilities: List[str],
+        customers: List[str],
+        capacity: Dict[str, float],
+        demand: Dict[str, float],
+        cost_matrix: Dict[Tuple[str, str], float],
+        solver_type: SolverType = SolverType.MIXED_INTEGER,
+        cost_metric: CostMetric = CostMetric.MONEY,
+        currency: Currency = Currency.USD
+    ):
+        """
+        Initialize the Supply Chain Optimizer.
+        
+        Args:
+            facilities: List of facility names/IDs
+            customers: List of customer names/IDs
+            capacity: Dictionary of facility capacities {facility: capacity}
+            demand: Dictionary of customer demands {customer: demand}
+            cost_matrix: Dictionary of costs {(facility, customer): cost}
+            solver_type: Type of solver to use
+            cost_metric: Type of cost metric being used
+            currency: Currency for monetary calculations
+        """
+        self.facilities = facilities
+        self.customers = customers
+        self.capacity = capacity
+        self.demand = demand
+        self.cost_matrix = cost_matrix
+        self.solver_type = solver_type
+        self.cost_metric = cost_metric
+        self.currency = currency
+        
+        # Validate inputs
+        self._validate_inputs()
+        
+        # Initialize optimization model
+        self.model = None
+        self.variables = None
+        self.status = None
+        self.optimal_cost = None
+        self.assignment = None
+        
+    def _validate_inputs(self):
+        """Validate input data for consistency and completeness."""
+        # Check if all facilities have capacity
+        missing_capacity = set(self.facilities) - set(self.capacity.keys())
+        if missing_capacity:
+            raise ValueError(f"Missing capacity for facilities: {missing_capacity}")
+            
+        # Check if all customers have demand
+        missing_demand = set(self.customers) - set(self.demand.keys())
+        if missing_demand:
+            raise ValueError(f"Missing demand for customers: {missing_demand}")
+            
+        # Check cost matrix completeness
+        for f in self.facilities:
+            for c in self.customers:
+                if (f, c) not in self.cost_matrix:
+                    raise ValueError(f"Missing cost for facility {f} to customer {c}")
+
+    def optimize(self) -> bool:
+        """
+        Run the optimization model.
+        
+        Returns:
+            bool: True if optimization was successful
+        """
+        # Create the model
+        self.model = LpProblem("SupplyChainOptimization", LpMinimize)
+        
+        # Create decision variables based on solver type
+        self.variables = {}
+        for f in self.facilities:
+            for c in self.customers:
+                if self.solver_type in [SolverType.INTEGER, SolverType.MIXED_INTEGER]:
+                    self.variables[f, c] = LpVariable(f"ship_{f}_{c}", 0, None, LpInteger)
+                else:
+                    self.variables[f, c] = LpVariable(f"ship_{f}_{c}", 0, None)
+                    
+        # Objective function
+        self.model += lpSum(
+            self.cost_matrix[f, c] * self.variables[f, c]
+            for f in self.facilities
+            for c in self.customers
+        )
+        
+        # Capacity constraints
+        for f in self.facilities:
+            self.model += lpSum(
+                self.variables[f, c] for c in self.customers
+            ) <= self.capacity[f], f"Capacity_{f}"
+            
+        # Demand constraints
+        for c in self.customers:
+            self.model += lpSum(
+                self.variables[f, c] for f in self.facilities
+            ) == self.demand[c], f"Demand_{c}"
+            
+        # Solve the model
+        self.status = self.model.solve()
+        
+        # Extract results if optimal
+        if self.status == 1:  # Optimal solution found
+            self.optimal_cost = value(self.model.objective)
+            self.assignment = self._extract_assignment()
+            return True
+        return False
+    
+    def _extract_assignment(self) -> Dict:
+        """Extract the optimal assignment and costs."""
+        assignment = {
+            "assignments": [],
+            "costs": [],
+            "total_cost": self.optimal_cost,
+            "currency": self.currency.value,
+            "cost_metric": self.cost_metric.value
+        }
+        
+        for f in self.facilities:
+            for c in self.customers:
+                qty = value(self.variables[f, c])
+                if qty > 0:
+                    assignment["assignments"].append({
+                        "facility": f,
+                        "customer": c,
+                        "quantity": qty,
+                        "cost": self.cost_matrix[f, c] * qty
+                    })
+                    
+        # Calculate cost breakdown
+        facility_costs = {}
+        customer_costs = {}
+        
+        for assgn in assignment["assignments"]:
+            f = assgn["facility"]
+            c = assgn["customer"]
+            cost = assgn["cost"]
+            
+            facility_costs[f] = facility_costs.get(f, 0) + cost
+            customer_costs[c] = customer_costs.get(c, 0) + cost
+            
+        assignment["cost_breakdown"] = {
+            "by_facility": facility_costs,
+            "by_customer": customer_costs
+        }
+        
+        return assignment
+    
+    def get_results_summary(self) -> Dict:
+        """
+        Get a summary of optimization results.
+        
+        Returns:
+            Dict containing optimization results and statistics
+        """
+        if not self.assignment:
+            return {"status": "No optimization results available"}
+            
+        return {
+            "status": "optimal",
+            "total_cost": self.optimal_cost,
+            "currency": self.currency.value,
+            "cost_metric": self.cost_metric.value,
+            "num_facilities_used": len(self.assignment["cost_breakdown"]["by_facility"]),
+            "num_customers_served": len(self.assignment["cost_breakdown"]["by_customer"]),
+            "assignment_details": self.assignment,
+            "solver_type": self.solver_type.value
+        }
+
+
+"""
+Utility functions for handling different cost metrics and currency conversions
+in supply chain optimization.
+"""
+
+from typing import Dict, Union, Optional
+import requests
+from datetime import datetime
+import logging
+
+class CostConverter:
+    def __init__(self):
+        self._exchange_rates = {}
+        self._last_update = None
+        self._update_interval = 3600  # Update rates every hour
+        
+    def _update_exchange_rates(self):
+        """Update exchange rates from external API."""
+        try:
+            # Example using CoinGecko API for crypto and fiat rates
+            # In production, you would want to use a paid API service for reliable data
+            response = requests.get(
+                "https://api.coingecko.com/api/v3/simple/price",
+                params={
+                    "ids": "bitcoin,ethereum",
+                    "vs_currencies": "usd,eur,gbp,jpy"
+                }
+            )
+            crypto_data = response.json()
+            
+            # Basic exchange rates (you should use a proper forex API in production)
+            self._exchange_rates = {
+                "USD": 1.0,
+                "EUR": 0.85,  # Example fixed rate
+                "GBP": 0.73,  # Example fixed rate
+                "JPY": 110.0,  # Example fixed rate
+                "BTC": 1 / crypto_data["bitcoin"]["usd"],
+                "ETH": 1 / crypto_data["ethereum"]["usd"]
+            }
+            
+            self._last_update = datetime.now()
+            
+        except Exception as e:
+            logging.error(f"Failed to update exchange rates: {e}")
+            # Use last known rates or default rates
+            if not self._exchange_rates:
+                self._exchange_rates = {
+                    "USD": 1.0,
+                    "EUR": 0.85,
+                    "GBP": 0.73,
+                    "JPY": 110.0,
+                    "BTC": 1/50000,  # Fallback rate
+                    "ETH": 1/3000    # Fallback rate
+                }
+
+    def convert_currency(
+        self,
+        amount: float,
+        from_currency: str,
+        to_currency: str
+    ) -> float:
+        """
+        Convert amount between currencies.
+        
+        Args:
+            amount: Amount to convert
+            from_currency: Source currency code
+            to_currency: Target currency code
+            
+        Returns:
+            Converted amount
+        """
+        # Check if rates need updating
+        if (
+            not self._last_update or
+            (datetime.now() - self._last_update).seconds > self._update_interval
+        ):
+            self._update_exchange_rates()
+            
+        # Convert through USD as base currency
+        usd_amount = amount / self._exchange_rates[from_currency]
+        return usd_amount * self._exchange_rates[to_currency]
+
+class CostMetricConverter:
+    """Handle conversion between different cost metrics."""
+    
+    @staticmethod
+    def distance_to_cost(
+        distance: float,
+        cost_per_km: float,
+        currency: str = "USD"
+    ) -> float:
+        """Convert distance to monetary cost."""
+        return distance * cost_per_km
+        
+    @staticmethod
+    def emissions_to_cost(
+        emissions: float,
+        carbon_price: float,
+        currency: str = "USD"
+    ) -> float:
+        """Convert CO2 emissions (in tons) to monetary cost."""
+        return emissions * carbon_price
+        
+    @staticmethod
+    def normalize_cost_matrix(
+        cost_matrix: Dict,
+        input_metric: str,
+        output_metric: str,
+        conversion_params: Dict
+    ) -> Dict:
+        """
+        Convert cost matrix between different metrics.
+        
+        Args:
+            cost_matrix: Original cost matrix
+            input_metric: Original metric type
+            output_metric: Desired metric type
+            conversion_params: Parameters needed for conversion
+            
+        Returns:
+            Converted cost matrix
+        """
+        converted_matrix = {}
+        
+        for key, value in cost_matrix.items():
+            if input_metric == "DISTANCE" and output_metric == "MONEY":
+                converted_matrix[key] = CostMetricConverter.distance_to_cost(
+                    value,
+                    conversion_params["cost_per_km"],
+                    conversion_params.get("currency", "USD")
+                )
+            elif input_metric == "EMISSIONS" and output_metric == "MONEY":
+                converted_matrix[key] = CostMetricConverter.emissions_to_cost(
+                    value,
+                    conversion_params["carbon_price"],
+                    conversion_params.get("currency", "USD")
+                )
+            else:
+                converted_matrix[key] = value  # No conversion needed
+                
+        return converted_matrix
+
+"""
+Example usage of the Supply Chain Optimization tool.
+"""
+
+from supply_chain_optimizer import (
+    SupplyChainOptimizer,
+    SolverType,
+    CostMetric,
+    Currency
+)
+from cost_utils import CostConverter, CostMetricConverter
+
+def main():
+    # Example data
+    facilities = ["DC1", "DC2", "DC3"]
+    customers = ["Store1", "Store2", "Store3", "Store4"]
+    
+    # Facility capacities (units)
+    capacity = {
+        "DC1": 1000,
+        "DC2": 1500,
+        "DC3": 2000
+    }
+    
+    # Customer demands (units)
+    demand = {
+        "Store1": 500,
+        "Store2": 800,
+        "Store3": 1000,
+        "Store4": 700
+    }
+    
+    # Distance-based cost matrix (in km)
+    distance_matrix = {
+        ("DC1", "Store1"): 100,
+        ("DC1", "Store2"): 150,
+        ("DC1", "Store3"): 200,
+        ("DC1", "Store4"): 250,
+        ("DC2", "Store1"): 200,
+        ("DC2", "Store2"): 100,
+        ("DC2", "Store3"): 150,
+        ("DC2", "Store4"): 200,
+        ("DC3", "Store1"): 300,
+        ("DC3", "Store2"): 250,
+        ("DC3", "Store3"): 100,
+        ("DC3", "Store4"): 150
+    }
+    
+    # Convert distance to cost
+    conversion_params = {
+        "cost_per_km": 2.5,  # Cost per km in USD
+        "currency": "USD"
+    }
+    
+    cost_matrix = CostMetricConverter.normalize_cost_matrix(
+        distance_matrix,
+        "DISTANCE",
+        "MONEY",
+        conversion_params
+    )
+    
+    # Initialize optimizer
+    optimizer = SupplyChainOptimizer(
+        facilities=facilities,
+        customers=customers,
+        capacity=capacity,
+        demand=demand,
+        cost_matrix=cost_matrix,
+        solver_type=SolverType.MIXED_INTEGER,
+        cost_metric=CostMetric.MONEY,
+        currency=Currency.USD
+    )
+    
+    # Run optimization
+    success = optimizer.optimize()
+    
+    if success:
+        # Get and print results
+        results = optimizer.get_results_summary()
+        print("\nOptimization Results:")
+        print("====================")
+        print(f"Total Cost: {results['total_cost']:.2f} {results['currency']}")
+        print(f"Cost Metric: {results['cost_metric']}")
+        print(f"Solver Type: {results['solver_type']}")
+        print("\nAssignments:")
+        for assignment in results['assignment_details']['assignments']:
+            print(
+                f"Facility {assignment['facility']} -> Customer {assignment['customer']}: "
+                f"{assignment['quantity']} units (Cost: {assignment['cost']:.2f} {results['currency']})"
+            )
+            
+        print("\nCost Breakdown by Facility:")
+        for facility, cost in results['assignment_details']['cost_breakdown']['by_facility'].items():
+            print(f"{facility}: {cost:.2f} {results['currency']}")
+            
+        print("\nCost Breakdown by Customer:")
+        for customer, cost in results['assignment_details']['cost_breakdown']['by_customer'].items():
+            print(f"{customer}: {cost:.2f} {results['currency']}")
+    else:
+        print("Failed to find optimal solution")
+
+if __name__ == "__main__":
+    main()
 
