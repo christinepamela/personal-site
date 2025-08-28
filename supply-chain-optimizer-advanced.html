@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Supply Chain Optimization Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .calculator-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .sub-section {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="number"],
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            display: none;
+        }
+        .node-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .node-item {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+        }
+        .matrix-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .error {
+            color: red;
+            margin-top: 5px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #666;
+        }
+        .tab.active {
+            border-bottom: 2px solid #4CAF50;
+            color: #4CAF50;
+            margin-bottom: -2px;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .inventory-params {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .chart-container {
+            margin: 20px 0;
+            height: 300px;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+    <!-- Include Chart.js for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Include Leaflet.js for mapping -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<body>
+    <div class="calculator-container">
+        <h1>Advanced Supply Chain Optimization Calculator</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('basic')">Basic Settings</button>
+            <button class="tab" onclick="showTab('network')">Network Design</button>
+            <button class="tab" onclick="showTab('inventory')">Inventory Management</button>
+            <button class="tab" onclick="showTab('routing')">Route Optimization</button>
+            <button class="tab" onclick="showTab('simulation')">Simulation</button>
+        </div>
+
+        <!-- Basic Settings Tab -->
+        <div id="basic" class="tab-content active">
+            <div class="section">
+                <h2>General Settings</h2>
+                <div class="input-group">
+                    <label for="costMetric">Cost Metric:</label>
+                    <select id="costMetric">
+                        <option value="MONEY">Money</option>
+                        <option value="DISTANCE">Distance</option>
+                        <option value="EMISSIONS">Emissions</option>
+                        <option value="TIME">Time</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="currency">Currency:</label>
+                    <select id="currency">
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                        <option value="JPY">JPY</option>
+                        <option value="BTC">Bitcoin (BTC)</option>
+                        <option value="ETH">Ethereum (ETH)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="optimizationType">Optimization Type:</label>
+                    <select id="optimizationType">
+                        <option value="COST">Minimize Cost</option>
+                        <option value="TIME">Minimize Time</option>
+                        <option value="EMISSIONS">Minimize Emissions</option>
+                        <option value="MULTI">Multi-Objective</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Network Design Tab -->
+        <div id="network" class="tab-content">
+            <div class="section">
+                <h2>Multi-Echelon Network</h2>
+                
+                <!-- Factories -->
+                <div class="sub-section">
+                    <h3>Factories</h3>
+                    <div class="input-group">
+                        <label for="factoryName">Add Factory:</label>
+                        <input type="text" id="factoryName" placeholder="Factory name">
+                        <label for="factoryCapacity">Production Capacity:</label>
+                        <input type="number" id="factoryCapacity" placeholder="Units per day">
+                        <label for="factoryLocation">Location:</label>
+                        <input type="text" id="factoryLocation" placeholder="Latitude, Longitude">
+                        <button onclick="addNode('factory')">Add Factory</button>
+                    </div>
+                    <div id="factoryList" class="node-list"></div>
+                </div>
+
+                <!-- Warehouses -->
+                <div class="sub-section">
+                    <h3>Warehouses</h3>
+                    <div class="input-group">
+                        <label for="warehouseName">Add Warehouse:</label>
+                        <input type="text" id="warehouseName" placeholder="Warehouse name">
+                        <label for="warehouseCapacity">Storage Capacity:</label>
+                        <input type="number" id="warehouseCapacity" placeholder="Units">
+                        <label for="warehouseLocation">Location:</label>
+                        <input type="text" id="warehouseLocation" placeholder="Latitude, Longitude">
+                        <button onclick="addNode('warehouse')">Add Warehouse</button>
+                    </div>
+                    <div id="warehouseList" class="node-list"></div>
+                </div>
+
+                <!-- Retailers -->
+                <div class="sub-section">
+                    <h3>Retailers</h3>
+                    <div class="input-group">
+                        <label for="retailerName">Add Retailer:</label>
+                        <input type="text" id="retailerName" placeholder="Retailer name">
+                        <label for="retailerDemand">Average Demand:</label>
+                        <input type="number" id="retailerDemand" placeholder="Units per day">
+                        <label for="retailerLocation">Location:</label>
+                        <input type="text" id="retailerLocation" placeholder="Latitude, Longitude">
+                        <button onclick="addNode('retailer')">Add Retailer</button>
+                    </div>
+                    <div id="retailerList" class="node-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Management Tab -->
+        <div id="inventory" class="tab-content">
+            <div class="section">
+                <h2>Inventory Parameters</h2>
+                
+                <div class="inventory-params">
+                    <div class="input-group">
+                        <label for="holdingCost">Holding Cost (per unit per day):</label>
+                        <input type="number" id="holdingCost" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="orderCost">Order Cost (per order):</label>
+                        <input type="number" id="orderCost" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label for="leadTime">Lead Time (days):</label>
+                        <input type="number" id="leadTime" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="serviceLevel">Service Level (%):</label>
+                        <input type="number" id="serviceLevel" min="0" max="100" value="95">
+                    </div>
+                </div>
+
+                <div class="sub-section">
+                    <h3>Demand Uncertainty</h3>
+                    <div class="input-group">
+                        <label for="demandPattern">Demand Pattern:</label>
+                        <select id="demandPattern">
+                            <option value="NORMAL">Normal Distribution</option>
+                            <option value="POISSON">Poisson Distribution</option>
+                            <option value="SEASONAL">Seasonal</option>
+                        </select>
+                    </div>
+                    <div id="demandParameters"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Route Optimization Tab -->
+        <div id="routing" class="tab-content">
+            <div class="section">
+                <h2>Route Configuration</h2>
+                
+                <div class="input-group">
+                    <label for="vehicleType">Vehicle Type:</label>
+                    <select id="vehicleType">
+                        <option value="TRUCK">Truck</option>
+                        <option value="VAN">Van</option>
+                        <option value="CARGO_BIKE">Cargo Bike</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="routeConstraints">Route Constraints:</label>
+                    <div>
+                        <input type="checkbox" id="timeWindows"> Time Windows
+                        <input type="checkbox" id="capacityConstraints"> Capacity Constraints
+                        <input type="checkbox" id="multipleTrips"> Multiple Trips Allowed
+                    </div>
+                </div>
+
+                <div id="map"></div>
+            </div>
+        </div>
+
+        <!-- Simulation Tab -->
+        <div id="simulation" class="tab-content">
+            <div class="section">
+                <h2>Simulation Settings</h2>
+                
+                <div class="input-group">
+                    <label for="simulationPeriod">Simulation Period (days):</label>
+                    <input type="number" id="simulationPeriod" value="30">
+                </div>
+
+                <div class="input-group">
+                    <label for="simulationRuns">Number of Simulation Runs:</label>
+                    <input type="number" id="simulationRuns" value="100">
+                </div>
+
+                <button onclick="runSimulation()">Run Simulation</button>
+                
+                <div class="chart-container">
+                    <canvas id="simulationChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="section">
+            <button onclick="calculateOptimization()">Calculate Optimal Solution</button>
+            <div class="results" id="results">
+                <h2>Results</h2>
+                <div id="resultsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let nodes = {
+            factories: [],
+            warehouses: [],
+            retailers: []
+        };
+        let map;
+        let markers = [];
+        let simulationChart;
+
+        // Initialize the map
+        function initializeMap() {
+            map = L.map('map').setView([0, 0], 2);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+        }
+
+        // Tab functionality
+        function showTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+            
+            // Add active class to selected tab
+            event.target.classList.add('active');
+
+            // Initialize map if routing tab is selected
+            if (tabId === 'routing' && !map) {
+                initializeMap();
+            }
+        }
+
+        // Node management
+        function addNode(type) {
+            const name = document.getElementById(`${type}Name`).value;
+            const location = document.getElementById(`${type}Location`).value;
+            let capacity = 0;
+            let demand = 0;
+
+            if (type === 'factory' || type === 'warehouse') {
+                capacity = parseFloat(document.getElementById(`${type}Capacity`).value);
+            } else {
+                demand = parseFloat(document.getElementById(`${type}Demand`).value);
+            }
+
+            if (!name || !location || (type !== 'retailer' && !capacity) || (type === 'retailer' && !demand)) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const [lat, lng] = location.split(',').map(coord => parseFloat(coord.trim()));
+            if (isNaN(lat) || isNaN(lng)) {
+                alert('Please enter valid coordinates (latitude, longitude)');
+                return;
+            }
+
+            const node = {
+                name,
+                location: { lat, lng },
+                capacity: capacity || 0,
+                demand: demand || 0
+            };
+
+            nodes[`${type}s`].push(node);
+            updateNodeList(type);
+            addMarkerToMap(node, type);
+            clearNodeInputs(type);
+        }
+
+        function updateNodeList(type) {
+            const container = document.getElementById(`${type}List`);
+            container.innerHTML = nodes[`${type}s`].map((node, index) => `
+                <div class="node-item">
+                    <strong>${node.name}</strong>
+                    ${type !== 'retailer' ? 
+                        `<span>Capacity: ${node.capacity}</span>` : 
+                        `<span>Demand: ${node.demand}</span>`
+                    }
+                    <span>Location: ${node.location.lat}, ${node.location.lng}</span>
+                    <button onclick="removeNode('${type}', ${index})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function removeNode(type, index) {
+            nodes[`${type}s`].splice(index, 1);
+            updateNodeList(type);
+            updateMap();
+        }
+
+        function clearNodeInputs(type) {
+            document.getElementById(`${type}Name`).value = '';
+            document.getElementById(`${type}Location`).value = '';
+            if (type !== 'retailer') {
+                document.getElementById(`${type}Capacity`).value = '';
+            } else {
+                document.getElementById(`${type}Demand`).value = '';
+            }
+        }
+
+        // Map functionality
+        function addMarkerToMap(node, type) {
+            if (!map) return;
+
+            const colors = {
+                factory: 'red',
+                warehouse: 'blue',
+                retailer: 'green'
+            };
+
+            const marker = L.marker([node.location.lat, node.location.lng])
+                .bindPopup(`
+                    <b>${node.name}</b><br>
+                    Type: ${type}<br>
+                    ${type !== 'retailer' ? 
+                        `Capacity: ${node.capacity}` : 
+                        `Demand: ${node.demand}`
+                    }
+                `)
+                .addTo(map);
+
+            markers.push(marker);
+
+            // Adjust map bounds to show all markers
+            const bounds = L.latLngBounds(markers.map(m => m.getLatLng()));
+            map.fitBounds(bounds, { padding: [50, 50] });
+        }
+
+        function updateMap() {
+            if (!map) return;
+
+            // Clear existing markers
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+
+            // Add markers for all nodes
+            Object.keys(nodes).forEach(type => {
+                nodes[type].forEach(node => {
+                    addMarkerToMap(node, type.slice(0, -1)); // Remove 's' from type
+                });
+            });
+        }
+
+        // Simulation functionality
+        function runSimulation() {
+            const period = parseInt(document.getElementById('simulationPeriod').value);
+            const runs = parseInt(document.getElementById('simulationRuns').value);
+
+            // Generate sample simulation data
+            const data = simulateSupplyChain(period, runs);
+            
+            // Update chart
+            updateSimulationChart(data);
+        }
+
+        function simulateSupplyChain(period, runs) {
+            // This is a simplified simulation - replace with your actual simulation logic
+            const data = {
+                labels: Array.from({length: period}, (_, i) => `Day ${i+1}`),
+                datasets: [
+                    {
+                        label: 'Total Cost',
+                        data: Array.from({length: period}, () => Math.random() * 1000 + 500),
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Inventory Level',
+                        data: Array.from({length: period}, () => Math.random() * 100 + 50),
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1
+                    }
+                ]
+            };
+            return data;
+        }
+
+        function updateSimulationChart(data) {
+            const ctx = document.getElementById('simulationChart').getContext('2d');
+            
+            if (simulationChart) {
+                simulationChart.destroy();
+            }
+
+            simulationChart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Optimization calculation
+        function calculateOptimization() {
+            if (!validateInputs()) {
+                return;
+            }
+
+            // Perform complex optimization calculations here
+            const results = performOptimization();
+            displayResults(results);
+        }
+
+        function validateInputs() {
+            if (nodes.factories.length === 0) {
+                alert('Please add at least one factory');
+                return false;
+            }
+            if (nodes.warehouses.length === 0) {
+                alert('Please add at least one warehouse');
+                return false;
+            }
+            if (nodes.retailers.length === 0) {
+                alert('Please add at least one retailer');
+                return false;
+            }
+            return true;
+        }
+
+        function performOptimization() {
+            // This is where you would implement your optimization algorithm
+            // For now, we'll return sample results
+            return {
+                totalCost: 125000,
+                routingCost: 45000,
+                inventoryCost: 35000,
+                transportationCost: 45000,
+                routes: [
+                    {
+                        vehicle: "Truck 1",
+                        route: ["Factory A", "Warehouse B", "Retailer C"],
+                        distance: 450,
+                        cost: 15000
+                    }
+                ],
+                inventoryLevels: {
+                    "Warehouse A": {
+                        current: 500,
+                        reorderPoint: 200,
+                        orderQuantity: 1000
+                    }
+                },
+                serviceLevel: 95.5,
+                co2Emissions: 2500
+            };
+        }
+
+        function displayResults(results) {
+            const costMetric = document.getElementById('costMetric').value;
+            const currency = document.getElementById('currency').value;
+            const unitLabel = costMetric === 'MONEY' ? currency : 
+                            costMetric === 'DISTANCE' ? 'km' : 
+                            costMetric === 'EMISSIONS' ? 'CO2e' : 'hrs';
+
+            let html = `
+                <h3>Overall Results</h3>
+                <table>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td>Total Cost</td>
+                        <td>${results.totalCost.toLocaleString()} ${unitLabel}</td>
+                    </tr>
+                    <tr>
+                        <td>Service Level</td>
+                        <td>${results.serviceLevel}%</td>
+                    </tr>
+                    <tr>
+                        <td>CO2 Emissions</td>
+                        <td>${results.co2Emissions} kg</td>
+                    </tr>
+                </table>
+
+                <h3>Cost Breakdown</h3>
+                <table>
+                    <tr>
+                        <th>Category</th>
+                        <th>Cost (${unitLabel})</th>
+                    </tr>
+                    <tr>
+                        <td>Routing</td>
+                        <td>${results.routingCost.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td>Inventory</td>
+                        <td>${results.inventoryCost.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td>Transportation</td>
+                        <td>${results.transportationCost.toLocaleString()}</td>
+                    </tr>
+                </table>
+
+                <h3>Route Details</h3>
+                <table>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>Route</th>
+                        <th>Distance (km)</th>
+                        <th>Cost (${unitLabel})</th>
+                    </tr>
+            `;
+
+            results.routes.forEach(route => {
+                html += `
+                    <tr>
+                        <td>${route.vehicle}</td>
+                        <td>${route.route.join(" → ")}</td>
+                        <td>${route.distance}</td>
+                        <td>${route.cost.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+
+            html += `</table>
+                    <h3>Inventory Management</h3>
+                    <table>
+                        <tr>
+                            <th>Location</th>
+                            <th>Current Level</th>
+                            <th>Reorder Point</th>
+                            <th>Order Quantity</th>
+                        </tr>
+            `;
+
+            for (const [location, data] of Object.entries(results.inventoryLevels)) {
+                html += `
+                    <tr>
+                        <td>${location}</td>
+                        <td>${data.current}</td>
+                        <td>${data.reorderPoint}</td>
+                        <td>${data.orderQuantity}</td>
+                    </tr>
+                `;
+            }
+
+            html += '</table>';
+
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('resultsContent').innerHTML = html;
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize demand pattern parameters
+            document.getElementById('demandPattern').addEventListener('change', updateDemandParameters);
+            updateDemandParameters();
+        });
+
+        function updateDemandParameters() {
+            const pattern = document.getElementById('demandPattern').value;
+            const container = document.getElementById('demandParameters');
+            
+            let html = '';
+            switch (pattern) {
+                case 'NORMAL':
+                    html = `
+                        <div class="input-group">
+                            <label for="meanDemand">Mean Demand:</label>
+                            <input type="number" id="meanDemand" step="0.01">
+                            <label for="stdDemand">Standard Deviation:</label>
+                            <input type="number" id="stdDemand" step="0.01">
+                        </div>
+                    `;
+                    break;
+                case 'POISSON':
+                    html = `
+                        <div class="input-group">
+                            <label for="lambda">Lambda (average rate):</label>
+                            <input type="number" id="lambda" step="0.01">
+                        </div>
+                    `;
+                    break;
+                case 'SEASONAL':
+                    html = `
+                        <div class="input-group">
+                            <label for="baseDemand">Base Demand:</label>
+                            <input type="number" id="baseDemand" step="0.01">
+                            <label for="seasonality">Seasonality Factor (%):</label>
+                            <input type="number" id="seasonality" min="0" max="100" value="20">
+                            <label for="seasonLength">Season Length (days):</label>
+                            <input type="number" id="seasonLength" min="1" value="90">
+                        </div>
+                    `;
+                    break;
+            }
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
