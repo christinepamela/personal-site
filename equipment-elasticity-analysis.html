@@ -305,26 +305,26 @@
                     try {
                         console.log('Processing data:', data);
                         this.rawData = data;
-
+                
                         // Validate required columns
                         const requiredColumns = [
                             'Asset ID', 'Make/Model', 'Customer',
                             'Prior Year Price', 'Renewal Price',
                             '% Price Change', 'Renewal Outcome'
                         ];
-
+                
                         const headers = Object.keys(data[0]);
                         console.log('Headers found:', headers);
-
+                
                         const missingColumns = requiredColumns.filter(
                             col => !headers.includes(col)
                         );
-
+                
                         if (missingColumns.length > 0) {
                             this.error = `Missing required columns: ${missingColumns.join(', ')}`;
                             return;
                         }
-
+                
                         // Calculate summary statistics
                         const summary = this.calculateSummary(data);
                         
@@ -333,21 +333,26 @@
                         
                         // Process segments if available
                         const segments = this.analyzeSegments(data);
-
+                
+                        // Set results first
                         this.results = {
                             summary,
                             priceBands,
                             segments
                         };
-
-                        this.updateChart();
+                
+                        // Wait for the next tick before updating the chart
+                        this.$nextTick(() => {
+                            this.updateChart();
+                        });
+                        
                         this.error = null;
-
+                
                     } catch (err) {
                         console.error('Error in processData:', err);
                         this.error = `Error processing data: ${err.message}`;
                     }
-                },
+                }
 
                 calculateSummary(data) {
                     const totalAssets = data.length;
@@ -441,52 +446,70 @@
                 },
 
                 updateChart() {
-                    if (this.chart) {
-                        this.chart.destroy();
-                    }
+                // Wait for the DOM to update and the canvas element to be available
+                this.$nextTick(() => {
+                    try {
+                        const canvas = document.getElementById('elasticityChart');
+                        if (!canvas) {
+                            console.error('Canvas element not found');
+                            return;
+                        }
 
-                    const ctx = document.getElementById('elasticityChart').getContext('2d');
-                    this.chart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: this.results.priceBands.map(band => band.range),
-                            datasets: [{
-                                label: 'Renewal Rate',
-                                data: this.results.priceBands.map(band => band.renewalRate * 100),
-                                borderColor: 'rgb(75, 192, 192)',
-                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                tension: 0.1,
-                                fill: true
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    title: {
-                                        display: true,
-                                        text: 'Renewal Rate (%)'
-                                    }
-                                },
-                                x: {
-                                    title: {
-                                        display: true,
-                                        text: 'Price Change Band'
-                                    }
-                                }
+                       if (this.chart) {
+                            this.chart.destroy();
+                        }
+
+                       const ctx = canvas.getContext('2d');
+                       if (!ctx) {
+                        console.error('Could not get canvas context');
+                        return;
+                        }
+
+                this.chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: this.results.priceBands.map(band => band.range),
+                        datasets: [{
+                            label: 'Renewal Rate',
+                            data: this.results.priceBands.map(band => band.renewalRate * 100),
+                            borderColor: 'rgb(75, 192, 192)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            tension: 0.1,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Renewal Rate (%)'
+                            }
                             },
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: 'Price Elasticity Curve'
-                                }
+                            x: {
+                            title: {
+                                display: true,
+                                text: 'Price Change Band'
+                            }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Price Elasticity Curve'
                             }
                         }
-                    });
-                },
-
+                    }
+                });
+            } catch (err) {
+                console.error('Error creating chart:', err);
+                this.error = 'Error creating chart: ' + err.message;
+            }
+        });
+    },
                 downloadResults() {
                     const summaryData = [
                         ['Summary Statistics'],
