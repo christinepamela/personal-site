@@ -10,13 +10,17 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Papa Parse for CSV parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <!-- Bootstrap for styling -->
+    <!-- SheetJS for Excel parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Bootstrap for styling -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .container { margin-top: 30px; }
         .results-section { margin-top: 20px; }
         .error { color: red; }
+        .chart-container { height: 400px; }
+        .data-table { max-height: 400px; overflow-y: auto; }
+        .summary-stats { font-size: 1.1em; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -31,9 +35,23 @@
                     <input type="file" 
                            class="form-control" 
                            @change="handleFileUpload" 
-                           accept=".csv,.xlsx">
+                           accept=".csv,.xlsx,.xls">
                     <small class="text-muted">Upload CSV or Excel file</small>
                 </div>
+            </div>
+        </div>
+
+        <!-- Sample Template Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Sample Template</h5>
+                <p>Download a sample template to see the required format:</p>
+                <button class="btn btn-secondary" @click="downloadTemplate">
+                    Download Template
+                </button>
+                <button class="btn btn-info ms-2" @click="loadSampleData">
+                    Load Sample Data
+                </button>
             </div>
         </div>
 
@@ -57,27 +75,61 @@
 
         <!-- Results Section -->
         <div v-if="results" class="results-section">
+            <!-- Summary Statistics -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Summary Statistics</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="summary-stats">
+                                Total Assets: {{ results.summary.totalAssets }}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="summary-stats">
+                                Overall Renewal Rate: {{ (results.summary.overallRenewalRate * 100).toFixed(1) }}%
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="summary-stats">
+                                Avg Price Change: {{ results.summary.avgPriceChange.toFixed(1) }}%
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="summary-stats">
+                                Price Elasticity: {{ results.summary.priceElasticity.toFixed(2) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price Band Analysis -->
             <div class="card mb-4">
                 <div class="card-body">
                     <h5 class="card-title">Price Band Analysis</h5>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Price Band</th>
-                                <th>Count</th>
-                                <th>Renewal Rate</th>
-                                <th>Avg Price Change</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(band, index) in results.priceBands" :key="index">
-                                <td>{{ band.range }}</td>
-                                <td>{{ band.count }}</td>
-                                <td>{{ (band.renewalRate * 100).toFixed(1) }}%</td>
-                                <td>{{ band.avgPriceChange.toFixed(1) }}%</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="data-table">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Price Band</th>
+                                    <th>Count</th>
+                                    <th>Renewal Rate</th>
+                                    <th>Avg Price Change</th>
+                                    <th>Revenue Impact</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(band, index) in results.priceBands" :key="index">
+                                    <td>{{ band.range }}</td>
+                                    <td>{{ band.count }}</td>
+                                    <td>{{ (band.renewalRate * 100).toFixed(1) }}%</td>
+                                    <td>{{ band.avgPriceChange.toFixed(1) }}%</td>
+                                    <td>{{ formatCurrency(band.revenueImpact) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -85,7 +137,51 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <h5 class="card-title">Elasticity Curve</h5>
-                    <canvas id="elasticityChart"></canvas>
+                    <div class="chart-container">
+                        <canvas id="elasticityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segment Analysis -->
+            <div v-if="results.segments" class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Segment Analysis</h5>
+                    <div class="accordion" id="segmentAccordion">
+                        <div class="accordion-item" v-for="(segment, key) in results.segments" :key="key">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" 
+                                        :data-bs-target="'#segment' + key.replace(/\s+/g, '')"
+                                        data-bs-toggle="collapse">
+                                    {{ key }}
+                                </button>
+                            </h2>
+                            <div :id="'segment' + key.replace(/\s+/g, '')" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Segment Value</th>
+                                                <th>Count</th>
+                                                <th>Renewal Rate</th>
+                                                <th>Avg Price Change</th>
+                                                <th>Elasticity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(data, value) in segment" :key="value">
+                                                <td>{{ value }}</td>
+                                                <td>{{ data.count }}</td>
+                                                <td>{{ (data.renewalRate * 100).toFixed(1) }}%</td>
+                                                <td>{{ data.avgPriceChange.toFixed(1) }}%</td>
+                                                <td>{{ data.elasticity.toFixed(2) }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -95,6 +191,9 @@
                     <h5 class="card-title">Download Results</h5>
                     <button class="btn btn-primary" @click="downloadResults">
                         Download Analysis Results
+                    </button>
+                    <button class="btn btn-secondary ms-2" @click="downloadCleanedData">
+                        Download Cleaned Dataset
                     </button>
                 </div>
             </div>
@@ -106,36 +205,53 @@
         </div>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         new Vue({
             el: '#app',
             data: {
                 results: null,
                 error: null,
-                chart: null
+                chart: null,
+                rawData: null,
+                sampleData: [
+                    {
+                        'Asset ID': 'A001',
+                        'Make/Model': 'Server X1',
+                        'Customer': 'Enterprise Co',
+                        'Prior Year Price': 10000,
+                        'Renewal Price': 11000,
+                        '% Price Change': 10,
+                        'Renewal Outcome': 'Renewed',
+                        'Reason Code': 'Standard',
+                        'Environment': 'Production',
+                        'Equipment Type': 'Server',
+                        'Customer Segment': 'Enterprise'
+                    },
+                    // ... more sample data will be added
+                ]
             },
             methods: {
                 handleFileUpload(event) {
-                const file = event.target.files[0];
-                if (!file) return;
+                    const file = event.target.files[0];
+                    if (!file) return;
 
-                // Add support for both CSV and Excel
-                if (file.type === 'text/csv' || file.type === 'application/vnd.ms-excel' || 
-                file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-        
-                if (file.type === 'text/csv') {
-                this.parseCSV(file);
-                } else {
-            this.parseExcel(file);
-            }
-            } else {
-            this.error = 'Please upload a CSV or Excel file';
-            }
-            },
+                    if (file.type === 'text/csv') {
+                        this.parseCSV(file);
+                    } else if (file.type === 'application/vnd.ms-excel' || 
+                             file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                        this.parseExcel(file);
+                    } else {
+                        this.error = 'Please upload a CSV or Excel file';
+                    }
+                },
 
                 parseCSV(file) {
                     Papa.parse(file, {
                         complete: (results) => {
+                            console.log('CSV Parse Results:', results);
                             this.processData(results.data);
                         },
                         header: true,
@@ -143,8 +259,28 @@
                     });
                 },
 
+                parseExcel(file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const data = e.target.result;
+                            const workbook = XLSX.read(data, { type: 'binary' });
+                            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                            const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                            console.log('Excel Parse Results:', jsonData);
+                            this.processData(jsonData);
+                        } catch (error) {
+                            this.error = 'Error processing Excel file: ' + error.message;
+                        }
+                    };
+                    reader.readAsBinaryString(file);
+                },
+
                 processData(data) {
                     try {
+                        console.log('Processing data:', data);
+                        this.rawData = data;
+
                         // Validate required columns
                         const requiredColumns = [
                             'Asset ID', 'Make/Model', 'Customer',
@@ -153,6 +289,8 @@
                         ];
 
                         const headers = Object.keys(data[0]);
+                        console.log('Headers found:', headers);
+
                         const missingColumns = requiredColumns.filter(
                             col => !headers.includes(col)
                         );
@@ -162,23 +300,48 @@
                             return;
                         }
 
+                        // Calculate summary statistics
+                        const summary = this.calculateSummary(data);
+                        
                         // Process price bands
                         const priceBands = this.analyzePriceBands(data);
                         
-                        // Calculate elasticity
-                        const elasticity = this.calculateElasticity(data);
+                        // Process segments if available
+                        const segments = this.analyzeSegments(data);
 
                         this.results = {
+                            summary,
                             priceBands,
-                            elasticity
+                            segments
                         };
 
                         this.updateChart();
                         this.error = null;
 
                     } catch (err) {
+                        console.error('Error in processData:', err);
                         this.error = `Error processing data: ${err.message}`;
                     }
+                },
+
+                calculateSummary(data) {
+                    const totalAssets = data.length;
+                    const renewed = data.filter(row => 
+                        String(row['Renewal Outcome']).toLowerCase() === 'renewed'
+                    ).length;
+                    const overallRenewalRate = renewed / totalAssets;
+                    const avgPriceChange = data.reduce((acc, row) => 
+                        acc + parseFloat(row['% Price Change']), 0) / totalAssets;
+                    
+                    // Calculate price elasticity
+                    const priceElasticity = (1 - overallRenewalRate) / (avgPriceChange / 100);
+
+                    return {
+                        totalAssets,
+                        overallRenewalRate,
+                        avgPriceChange,
+                        priceElasticity
+                    };
                 },
 
                 analyzePriceBands(data) {
@@ -196,33 +359,60 @@
                         });
 
                         const renewed = filtered.filter(
-                            row => row['Renewal Outcome'].toLowerCase() === 'renewed'
+                            row => String(row['Renewal Outcome']).toLowerCase() === 'renewed'
                         ).length;
+
+                        const revenueImpact = filtered.reduce((acc, row) => {
+                            const priceChange = parseFloat(row['Renewal Price']) - 
+                                             parseFloat(row['Prior Year Price']);
+                            return acc + (String(row['Renewal Outcome']).toLowerCase() === 'renewed' ? 
+                                   priceChange : -parseFloat(row['Prior Year Price']));
+                        }, 0);
 
                         return {
                             range: `${band.min}%-${band.max === Infinity ? '∞' : band.max}%`,
                             count: filtered.length,
                             renewalRate: filtered.length ? renewed / filtered.length : 0,
                             avgPriceChange: filtered.length ? 
-                                filtered.reduce((acc, row) => acc + parseFloat(row['% Price Change']), 0) / filtered.length : 0
+                                filtered.reduce((acc, row) => acc + parseFloat(row['% Price Change']), 0) / filtered.length : 0,
+                            revenueImpact
                         };
                     });
                 },
 
-                calculateElasticity(data) {
-                    // Simple elasticity calculation
-                    const priceChanges = data.map(row => parseFloat(row['% Price Change']));
-                    const renewalRates = data.map(row => row['Renewal Outcome'].toLowerCase() === 'renewed' ? 1 : 0);
+                analyzeSegments(data) {
+                    const segmentColumns = ['Environment', 'Equipment Type', 'Customer Segment']
+                        .filter(col => Object.keys(data[0]).includes(col));
 
-                    // Calculate average effect
-                    const avgPriceChange = priceChanges.reduce((a, b) => a + b, 0) / priceChanges.length;
-                    const avgRenewalRate = renewalRates.reduce((a, b) => a + b, 0) / renewalRates.length;
+                    if (segmentColumns.length === 0) return null;
 
-                    return {
-                        avgPriceChange,
-                        avgRenewalRate,
-                        pointElasticity: (avgRenewalRate / avgPriceChange)
-                    };
+                    const segments = {};
+                    
+                    segmentColumns.forEach(segmentCol => {
+                        segments[segmentCol] = {};
+                        
+                        // Get unique segment values
+                        const segmentValues = [...new Set(data.map(row => row[segmentCol]))];
+                        
+                        segmentValues.forEach(value => {
+                            const segmentData = data.filter(row => row[segmentCol] === value);
+                            const renewed = segmentData.filter(
+                                row => String(row['Renewal Outcome']).toLowerCase() === 'renewed'
+                            ).length;
+                            
+                            segments[segmentCol][value] = {
+                                count: segmentData.length,
+                                renewalRate: renewed / segmentData.length,
+                                avgPriceChange: segmentData.reduce((acc, row) => 
+                                    acc + parseFloat(row['% Price Change']), 0) / segmentData.length,
+                                elasticity: (1 - (renewed / segmentData.length)) / 
+                                    (segmentData.reduce((acc, row) => 
+                                        acc + parseFloat(row['% Price Change']), 0) / segmentData.length / 100)
+                            };
+                        });
+                    });
+
+                    return segments;
                 },
 
                 updateChart() {
@@ -239,11 +429,14 @@
                                 label: 'Renewal Rate',
                                 data: this.results.priceBands.map(band => band.renewalRate * 100),
                                 borderColor: 'rgb(75, 192, 192)',
-                                tension: 0.1
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                tension: 0.1,
+                                fill: true
                             }]
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
                             scales: {
                                 y: {
                                     beginAtZero: true,
@@ -251,6 +444,18 @@
                                         display: true,
                                         text: 'Renewal Rate (%)'
                                     }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Price Change Band'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Price Elasticity Curve'
                                 }
                             }
                         }
@@ -258,8 +463,52 @@
                 },
 
                 downloadResults() {
-                    const csvContent = this.generateCSV();
-                    const blob = new Blob([csvContent], { type: 'text/csv' });
+                    // Create summary section
+                    const summaryData = [
+                        ['Summary Statistics'],
+                        ['Total Assets', this.results.summary.totalAssets],
+                        ['Overall Renewal Rate', (this.results.summary.overallRenewalRate * 100).toFixed(1) + '%'],
+                        ['Average Price Change', this.results.summary.avgPriceChange.toFixed(1) + '%'],
+                        ['Price Elasticity', this.results.summary.priceElasticity.toFixed(2)],
+                        [],
+                        ['Price Band Analysis'],
+                        ['Band', 'Count', 'Renewal Rate', 'Avg Price Change', 'Revenue Impact']
+                    ];
+
+                    // Add price band data
+                    this.results.priceBands.forEach(band => {
+                        summaryData.push([
+                            band.range,
+                            band.count,
+                            (band.renewalRate * 100).toFixed(1) + '%',
+                            band.avgPriceChange.toFixed(1) + '%',
+                            this.formatCurrency(band.revenueImpact)
+                        ]);
+                    });
+
+                    // Add segment analysis if available
+                    if (this.results.segments) {
+                        Object.entries(this.results.segments).forEach(([segmentType, segmentData]) => {
+                            summaryData.push(
+                                [],
+                                [`${segmentType} Analysis`],
+                                ['Segment', 'Count', 'Renewal Rate', 'Avg Price Change', 'Elasticity']
+                            );
+
+                            Object.entries(segmentData).forEach(([value, data]) => {
+                                summaryData.push([
+                                    value,
+                                    data.count,
+                                    (data.renewalRate * 100).toFixed(1) + '%',
+                                    data.avgPriceChange.toFixed(1) + '%',
+                                    data.elasticity.toFixed(2)
+                                ]);
+                            });
+                        });
+                    }
+
+                    const csv = Papa.unparse(summaryData);
+                    const blob = new Blob([csv], { type: 'text/csv' });
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.setAttribute('hidden', '');
@@ -270,19 +519,59 @@
                     document.body.removeChild(a);
                 },
 
-                generateCSV() {
-                    const headers = ['Price Band', 'Count', 'Renewal Rate', 'Avg Price Change'];
-                    const rows = this.results.priceBands.map(band => [
-                        band.range,
-                        band.count,
-                        (band.renewalRate * 100).toFixed(1) + '%',
-                        band.avgPriceChange.toFixed(1) + '%'
-                    ]);
+                downloadCleanedData() {
+                    if (!this.rawData) return;
+                    
+                    const csv = Papa.unparse(this.rawData);
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.setAttribute('hidden', '');
+                    a.setAttribute('href', url);
+                    a.setAttribute('download', 'cleaned_data.csv');
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                },
 
-                    return [
-                        headers.join(','),
-                        ...rows.map(row => row.join(','))
-                    ].join('\n');
+                downloadTemplate() {
+                    const templateData = [
+                        {
+                            'Asset ID': 'A001',
+                            'Make/Model': 'Sample Equipment',
+                            'Customer': 'Customer 1',
+                            'Prior Year Price': 1000,
+                            'Renewal Price': 1100,
+                            '% Price Change': 10,
+                            'Renewal Outcome': 'Renewed',
+                            'Reason Code': 'Standard',
+                            'Environment': 'Production',
+                            'Equipment Type': 'Type A',
+                            'Customer Segment': 'Enterprise'
+                        }
+                    ];
+                    
+                    const csv = Papa.unparse(templateData);
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.setAttribute('hidden', '');
+                    a.setAttribute('href', url);
+                    a.setAttribute('download', 'equipment_elasticity_template.csv');
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                },
+
+                loadSampleData() {
+                    this.processData(this.sampleData);
+                },
+
+                formatCurrency(value) {
+                    return new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD'
+                    }).format(value);
                 }
             }
         });
