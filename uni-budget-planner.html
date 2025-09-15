@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>University Budget Planner - Plan Your Educational Future</title>
+    <title>University Budget Planner - Multi-Year Degree Planning</title>
     <style>
         * {
             box-sizing: border-box;
@@ -36,6 +36,7 @@
             padding: 10px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
         }
 
         .tab-button {
@@ -47,6 +48,7 @@
             color: #666;
             border-radius: 5px;
             transition: all 0.3s ease;
+            margin: 5px;
         }
 
         .tab-button.active {
@@ -76,15 +78,7 @@
             color: #333;
         }
 
-        input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-
-        select {
+        input, select {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
@@ -112,7 +106,7 @@
             padding: 15px;
             background-color: #e8f0fe;
             border-radius: 4px;
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .currency-grid {
@@ -121,9 +115,69 @@
             gap: 20px;
         }
 
+        .year-summary {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #1a73e8;
+        }
+
+        .total-summary {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border-radius: 4px;
+            font-weight: bold;
+            border-left: 4px solid #1a73e8;
+        }
+
+        .info-text {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .yearly-increase {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
         @media (max-width: 768px) {
             .currency-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab-button {
+                width: 100%;
+                margin: 2px 0;
+            }
+
+            th, td {
+                padding: 8px;
+                font-size: 14px;
             }
         }
     </style>
@@ -133,13 +187,33 @@
         <h1>University Budget Planner</h1>
         
         <div class="tabs">
-            <button class="tab-button active" onclick="openTab('expenses')">Expenses Calculator</button>
+            <button class="tab-button active" onclick="openTab('degree')">Degree Settings</button>
+            <button class="tab-button" onclick="openTab('expenses')">Expenses Calculator</button>
             <button class="tab-button" onclick="openTab('currency')">Currency Converter</button>
             <button class="tab-button" onclick="openTab('projection')">Future Projection</button>
         </div>
 
+        <!-- Degree Settings Tab -->
+        <div id="degree" class="tab-content active">
+            <div class="input-group">
+                <label>Degree Duration (years)</label>
+                <select id="degree-duration" onchange="updateYearlyIncrease()">
+                    <option value="3">3 years</option>
+                    <option value="4" selected>4 years</option>
+                    <option value="5">5 years</option>
+                    <option value="6">6 years</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Expected yearly cost increase (%)</label>
+                <input type="number" id="yearly-increase" value="3" min="0" max="20">
+                <p class="info-text">This represents how much costs might increase each year of study</p>
+            </div>
+            <button onclick="updateAllCalculations()">Apply Settings</button>
+        </div>
+
         <!-- Expenses Calculator Tab -->
-        <div id="expenses" class="tab-content active">
+        <div id="expenses" class="tab-content">
             <div class="input-group">
                 <label>Tuition Fees (per year)</label>
                 <input type="number" id="tuition" value="0">
@@ -164,7 +238,7 @@
                 <label>Personal Expenses (per month)</label>
                 <input type="number" id="personal" value="0">
             </div>
-            <button onclick="calculateExpenses()">Calculate Total</button>
+            <button onclick="calculateMultiYearExpenses()">Calculate Total</button>
             <div id="expenses-result" class="result"></div>
         </div>
 
@@ -199,7 +273,7 @@
         <!-- Future Projection Tab -->
         <div id="projection" class="tab-content">
             <div class="input-group">
-                <label>Years until university</label>
+                <label>Years until starting university</label>
                 <input type="number" id="years" value="5">
             </div>
             <div class="input-group">
@@ -220,25 +294,21 @@
         };
 
         function openTab(tabName) {
-            // Hide all tab content
             const tabContents = document.getElementsByClassName('tab-content');
             for (let content of tabContents) {
                 content.classList.remove('active');
             }
 
-            // Remove active class from all buttons
             const tabButtons = document.getElementsByClassName('tab-button');
             for (let button of tabButtons) {
                 button.classList.remove('active');
             }
 
-            // Show the selected tab content
             document.getElementById(tabName).classList.add('active');
-            // Add active class to clicked button
             event.currentTarget.classList.add('active');
         }
 
-        function calculateExpenses() {
+        function calculateYearlyExpenses() {
             const tuition = parseFloat(document.getElementById('tuition').value) || 0;
             const books = parseFloat(document.getElementById('books').value) || 0;
             const housing = parseFloat(document.getElementById('housing').value) || 0;
@@ -249,11 +319,41 @@
             const yearlyExpenses = tuition + books;
             const monthlyExpenses = housing + food + transportation + personal;
             const totalYearly = yearlyExpenses + (monthlyExpenses * 12);
-
-            document.getElementById('expenses-result').innerHTML = 
-                `Total yearly expenses: $${totalYearly.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             
             return totalYearly;
+        }
+
+        function calculateMultiYearExpenses() {
+            const baseYearTotal = calculateYearlyExpenses();
+            const duration = parseInt(document.getElementById('degree-duration').value);
+            const yearlyIncrease = parseFloat(document.getElementById('yearly-increase').value) / 100;
+            
+            let resultHTML = '<h3>Cost Breakdown by Year</h3><table>';
+            resultHTML += '<tr><th>Year</th><th>Annual Cost</th><th>Cumulative Cost</th></tr>';
+            
+            let cumulativeTotal = 0;
+            for (let year = 1; year <= duration; year++) {
+                const yearCost = baseYearTotal * Math.pow(1 + yearlyIncrease, year - 1);
+                cumulativeTotal += yearCost;
+                
+                resultHTML += `
+                    <tr>
+                        <td>Year ${year}</td>
+                        <td>$${yearCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td>$${cumulativeTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    </tr>
+                `;
+            }
+            
+            resultHTML += '</table>';
+            resultHTML += `
+                <div class="total-summary">
+                    Total cost for ${duration} years: $${cumulativeTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                </div>
+            `;
+            
+            document.getElementById('expenses-result').innerHTML = resultHTML;
+            return cumulativeTotal;
         }
 
         function convertCurrency() {
@@ -261,7 +361,6 @@
             const fromCurrency = document.getElementById('from-currency').value;
             const toCurrency = document.getElementById('to-currency').value;
 
-            // Convert to USD first, then to target currency
             const usdAmount = amount / exchangeRates[fromCurrency];
             const convertedAmount = usdAmount * exchangeRates[toCurrency];
 
@@ -270,17 +369,40 @@
         }
 
         function calculateProjection() {
-            const years = parseFloat(document.getElementById('years').value) || 0;
+            const yearsUntilStart = parseFloat(document.getElementById('years').value) || 0;
             const inflation = parseFloat(document.getElementById('inflation').value) || 0;
-            const currentTotal = calculateExpenses();
+            const totalCost = calculateMultiYearExpenses();
+            const duration = parseInt(document.getElementById('degree-duration').value);
 
-            const futureTotal = currentTotal * Math.pow(1 + (inflation / 100), years);
-            const monthlySavings = futureTotal / (years * 12);
+            const futureTotal = totalCost * Math.pow(1 + (inflation / 100), yearsUntilStart);
+            const monthlySavings = futureTotal / (yearsUntilStart * 12);
 
-            document.getElementById('projection-result').innerHTML = 
-                `Projected total cost in ${years} years: $${futureTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}<br>` +
-                `Recommended monthly savings: $${monthlySavings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            const resultHTML = `
+                <div class="year-summary">
+                    <strong>Time until university:</strong> ${yearsUntilStart} years<br>
+                    <strong>Degree duration:</strong> ${duration} years
+                </div>
+                <div class="year-summary">
+                    <strong>Current total cost:</strong> $${totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}<br>
+                    <strong>Projected total cost in ${yearsUntilStart} years:</strong> $${futureTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                </div>
+                <div class="total-summary">
+                    Recommended monthly savings: $${monthlySavings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                </div>
+            `;
+
+            document.getElementById('projection-result').innerHTML = resultHTML;
         }
+
+        function updateAllCalculations() {
+            calculateMultiYearExpenses();
+            calculateProjection();
+        }
+
+        // Initialize calculations when the page loads
+        window.onload = function() {
+            updateAllCalculations();
+        };
     </script>
 </body>
 </html>
