@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Todo Tracker</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f5f5;
+            --text-color: #333;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .goals-section, .todo-section, .analytics-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            gap: 10px;
+        }
+
+        .todo-item.completed {
+            background-color: #f8f9fa;
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .analytics-card {
+            background: var(--secondary-color);
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        .date-header {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 20px 0 10px;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Smart Todo Tracker</h1>
+            <p>Track your tasks, time, and progress efficiently</p>
+        </div>
+
+        <div class="goals-section">
+            <h2>Big Picture Goals</h2>
+            <div id="goals-list"></div>
+            <input type="text" id="goal-input" placeholder="Enter a new goal">
+            <button onclick="addGoal()">Add Goal</button>
+        </div>
+
+        <div class="todo-section">
+            <h2>Today's Tasks</h2>
+            <div id="current-date"></div>
+            <div>
+                <input type="text" id="task-input" placeholder="Enter task">
+                <input type="number" id="estimated-time" placeholder="Estimated minutes">
+                <button onclick="addTask()">Add Task</button>
+            </div>
+            <div id="todo-list"></div>
+            <button onclick="endDay()">End Day</button>
+            <button onclick="showPendingTasks()">Show Pending Tasks</button>
+        </div>
+
+        <div class="analytics-section">
+            <h2>Analytics</h2>
+            <div id="analytics"></div>
+            <div class="chart-container" id="efficiency-chart"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Data structure
+        let state = {
+            goals: [],
+            tasks: [],
+            history: [],
+            currentDate: new Date()
+        };
+
+        // Initialize
+        function init() {
+            loadData();
+            updateCurrentDate();
+            renderGoals();
+            renderTasks();
+            renderAnalytics();
+        }
+
+        // Load data from localStorage
+        function loadData() {
+            const savedState = localStorage.getItem('todoTrackerState');
+            if (savedState) {
+                state = JSON.parse(savedState);
+                state.currentDate = new Date(state.currentDate);
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('todoTrackerState', JSON.stringify(state));
+        }
+
+        // Update current date display
+        function updateCurrentDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').textContent = state.currentDate.toLocaleDateString('en-US', options);
+        }
+
+        // Goals management
+        function addGoal() {
+            const goalInput = document.getElementById('goal-input');
+            const goalText = goalInput.value.trim();
+            
+            if (goalText) {
+                state.goals.push({
+                    id: Date.now(),
+                    text: goalText,
+                    created: new Date().toISOString()
+                });
+                
+                saveData();
+                renderGoals();
+                goalInput.value = '';
+            }
+        }
+
+        function renderGoals() {
+            const goalsContainer = document.getElementById('goals-list');
+            goalsContainer.innerHTML = state.goals.map(goal => `
+                <div class="todo-item">
+                    <span>${goal.text}</span>
+                    <button onclick="deleteGoal(${goal.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteGoal(goalId) {
+            state.goals = state.goals.filter(goal => goal.id !== goalId);
+            saveData();
+            renderGoals();
+        }
+
+        // Tasks management
+        function addTask() {
+            const taskInput = document.getElementById('task-input');
+            const estimatedTimeInput = document.getElementById('estimated-time');
+            const taskText = taskInput.value.trim();
+            const estimatedTime = parseInt(estimatedTimeInput.value);
+
+            if (taskText && estimatedTime) {
+                state.tasks.push({
+                    id: Date.now(),
+                    text: taskText,
+                    estimatedTime,
+                    completed: false,
+                    actualTime: null,
+                    date: state.currentDate.toISOString().split('T')[0]
+                });
+
+                saveData();
+                renderTasks();
+                taskInput.value = '';
+                estimatedTimeInput.value = '';
+            }
+        }
+
+        function renderTasks() {
+            const todoList = document.getElementById('todo-list');
+            const currentDateStr = state.currentDate.toISOString().split('T')[0];
+            
+            const todaysTasks = state.tasks.filter(task => task.date === currentDateStr);
+            
+            todoList.innerHTML = todaysTasks.map(task => `
+                <div class="todo-item ${task.completed ? 'completed' : ''}">
+                    <input type="checkbox" 
+                           ${task.completed ? 'checked' : ''} 
+                           onchange="toggleTask(${task.id})">
+                    <span>${task.text}</span>
+                    <span>Est: ${task.estimatedTime}min</span>
+                    ${task.completed ? 
+                        `<span>Actual: ${task.actualTime}min</span>` :
+                        `<input type="number" id="actual-${task.id}" placeholder="Actual time">
+                         <button onclick="completeTask(${task.id})">Complete</button>`
+                    }
+                </div>
+            `).join('');
+        }
+
+        function toggleTask(taskId) {
+            const task = state.tasks.find(t => t.id === taskId);
+            if (task) {
+                task.completed = !task.completed;
+                saveData();
+                renderTasks();
+            }
+        }
+
+        function completeTask(taskId) {
+            const task = state.tasks.find(t => t.id === taskId);
+            const actualTimeInput = document.getElementById(`actual-${taskId}`);
+            
+            if (task && actualTimeInput) {
+                const actualTime = parseInt(actualTimeInput.value);
+                if (actualTime) {
+                    task.completed = true;
+                    task.actualTime = actualTime;
+                    saveData();
+                    renderTasks();
+                    renderAnalytics();
+                }
+            }
+        }
+
+        // End day functionality
+        function endDay() {
+            const currentDateStr = state.currentDate.toISOString().split('T')[0];
+            const todaysTasks = state.tasks.filter(task => task.date === currentDateStr);
+            
+            // Calculate day's statistics
+            const completed = todaysTasks.filter(task => task.completed);
+            const stats = {
+                date: currentDateStr,
+                totalTasks: todaysTasks.length,
+                completedTasks: completed.length,
+                timeEfficiency: calculateTimeEfficiency(completed),
+                completionRate: (completed.length / todaysTasks.length) * 100
+            };
+
+            state.history.push(stats);
+            
+            // Move to next day
+            state.currentDate = new Date(state.currentDate.getTime() + 24 * 60 * 60 * 1000);
+            
+            // Handle incomplete tasks
+            const incomplete = todaysTasks.filter(task => !task.completed);
+            if (incomplete.length > 0) {
+                if (confirm('You have incomplete tasks. Would you like to move them to tomorrow?')) {
+                    incomplete.forEach(task => {
+                        task.date = state.currentDate.toISOString().split('T')[0];
+                        task.completed = false;
+                        task.actualTime = null;
+                    });
+                }
+            }
+
+            saveData();
+            updateCurrentDate();
+            renderTasks();
+            renderAnalytics();
+        }
+
+        function calculateTimeEfficiency(completedTasks) {
+            if (completedTasks.length === 0) return 100;
+            
+            const totalEstimated = completedTasks.reduce((sum, task) => sum + task.estimatedTime, 0);
+            const totalActual = completedTasks.reduce((sum, task) => sum + task.actualTime, 0);
+            
+            return (totalEstimated / totalActual) * 100;
+        }
+
+        // Analytics
+        function renderAnalytics() {
+            const analytics = document.getElementById('analytics');
+            
+            if (state.history.length === 0) {
+                analytics.innerHTML = '<p>No data available yet. Complete some tasks to see analytics.</p>';
+                return;
+            }
+
+            const lastWeek = state.history.slice(-7);
+            const avgCompletionRate = lastWeek.reduce((sum, day) => sum + day.completionRate, 0) / lastWeek.length;
+            const avgEfficiency = lastWeek.reduce((sum, day) => sum + day.timeEfficiency, 0) / lastWeek.length;
+
+            analytics.innerHTML = `
+                <div class="analytics-card">
+                    <h3>Last 7 Days</h3>
+                    <p>Average Completion Rate: ${avgCompletionRate.toFixed(1)}%</p>
+                    <p>Average Time Efficiency: ${avgEfficiency.toFixed(1)}%</p>
+                </div>
+            `;
+
+            renderChart();
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('efficiency-chart').getContext('2d');
+            const lastWeek = state.history.slice(-7);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: lastWeek.map(day => new Date(day.date).toLocaleDateString()),
+                    datasets: [{
+                        label: 'Completion Rate (%)',
+                        data: lastWeek.map(day => day.completionRate),
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }, {
+                        label: 'Time Efficiency (%)',
+                        data: lastWeek.map(day => day.timeEfficiency),
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // Show pending tasks
+        function showPendingTasks() {
+            const currentDateStr = state.currentDate.toISOString().split('T')[0];
+            const pendingTasks = state.tasks.filter(task => 
+                task.date === currentDateStr && !task.completed
+            );
+
+            alert(
+                pendingTasks.length === 0 
+                    ? 'No pending tasks!' 
+                    : 'Pending Tasks:\n\n' + pendingTasks.map(task => 
+                        `• ${task.text} (Est: ${task.estimatedTime}min)`
+                    ).join('\n')
+            );
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
