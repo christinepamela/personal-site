@@ -15,7 +15,7 @@
             --soft-sage: #CED4CA;
             --muted-terra: #A67F78;
             --light-sand: #E8E6E1;
-
+            
             /* Functional colors */
             --text-primary: #2C3639;
             --text-secondary: #5C6670;
@@ -80,7 +80,7 @@
             align-items: center;
         }
 
-        input[type="text"],
+        input[type="text"], 
         input[type="number"],
         select {
             padding: 12px;
@@ -218,7 +218,7 @@
             border-radius: 4px;
             transition: width 0.3s ease;
         }
-
+        
         .delete-btn {
             background: none;
             border: none;
@@ -240,7 +240,7 @@
             .input-group {
                 flex-direction: column;
             }
-
+            
             input[type="text"],
             input[type="number"],
             select,
@@ -323,9 +323,9 @@
             loadData();
             updateCurrentDate();
             renderGoals();
-            updateGoalSelect(); // Moved here to ensure goals are rendered after updating the select
             renderTasks();
             renderAnalytics();
+            updateGoalSelect();
         }
 
         // Load data from localStorage
@@ -361,7 +361,7 @@
         function addGoal() {
             const goalInput = document.getElementById('goal-input');
             const goalText = goalInput.value.trim();
-
+            
             if (goalText) {
                 state.goals.push({
                     id: Date.now(),
@@ -370,7 +370,7 @@
                     completedTasks: 0,
                     totalTasks: 0
                 });
-
+                
                 saveData();
                 renderGoals();
                 updateGoalSelect();
@@ -381,9 +381,9 @@
         function renderGoals() {
             const goalsContainer = document.getElementById('goals-list');
             goalsContainer.innerHTML = state.goals.map(goal => {
-                const progress = goal.totalTasks === 0 ? 0 :
+                const progress = goal.totalTasks === 0 ? 0 : 
                     (goal.completedTasks / goal.totalTasks) * 100;
-
+                
                 return `
                     <div class="todo-item">
                         <div class="todo-content">
@@ -411,13 +411,13 @@
             updateGoalSelect();
         }
 
-
+       
         // Tasks management
         function addTask() {
             const taskInput = document.getElementById('task-input');
             const estimatedTimeInput = document.getElementById('estimated-time');
             const goalSelect = document.getElementById('task-goal');
-
+            
             const taskText = taskInput.value.trim();
             const estimatedTime = parseInt(estimatedTimeInput.value);
             const goalId = goalSelect.value ? parseInt(goalSelect.value) : null;
@@ -445,7 +445,7 @@
                 saveData();
                 renderTasks();
                 renderGoals();
-
+                
                 taskInput.value = '';
                 estimatedTimeInput.value = '';
                 goalSelect.value = '';
@@ -465,10 +465,10 @@
                         }
                     }
                 }
-
+                
                 // Remove the task from state
                 state.tasks = state.tasks.filter(t => t.id !== taskId);
-
+                
                 // Update everything
                 saveData();
                 renderTasks();
@@ -481,17 +481,17 @@
         function renderTasks() {
             const todoList = document.getElementById('todo-list');
             const currentDateStr = state.currentDate.toISOString().split('T')[0];
-
+            
             const todaysTasks = state.tasks.filter(task => task.date === currentDateStr);
-
+            
             todoList.innerHTML = todaysTasks.map(task => {
-                const goalTag = task.goalId ?
+                const goalTag = task.goalId ? 
                     `<span class="todo-goal-tag">${state.goals.find(g => g.id === task.goalId)?.text || 'Unknown Goal'}</span>` : '';
-
+                
                 return `
                     <div class="todo-item ${task.completed ? 'completed' : ''}">
-                        <input type="checkbox"
-                               ${task.completed ? 'checked' : ''}
+                        <input type="checkbox" 
+                               ${task.completed ? 'checked' : ''} 
                                onchange="toggleTask(${task.id})">
                         <div class="todo-content">
                             <span>${task.text}${goalTag}</span>
@@ -499,7 +499,7 @@
                                 Estimated: ${task.estimatedTime}min
                             </div>
                         </div>
-                        ${task.completed ?
+                        ${task.completed ? 
                             `<span>Actual: ${task.actualTime}min</span>` :
                             `<input type="number" id="actual-${task.id}" placeholder="Actual time" style="width: 100px;">
                              <button onclick="completeTask(${task.id})">Complete</button>`
@@ -509,19 +509,19 @@
                 `;
             }).join('');
         }
-
+            
         function toggleTask(taskId) {
             const task = state.tasks.find(t => t.id === taskId);
             if (task) {
                 task.completed = !task.completed;
-
+                
                 if (task.goalId) {
                     const goal = state.goals.find(g => g.id === task.goalId);
                     if (goal) {
                         goal.completedTasks += task.completed ? 1 : -1;
                     }
                 }
-
+                
                 saveData();
                 renderTasks();
                 renderGoals();
@@ -532,20 +532,20 @@
         function completeTask(taskId) {
             const task = state.tasks.find(t => t.id === taskId);
             const actualTimeInput = document.getElementById(`actual-${taskId}`);
-
+            
             if (task && actualTimeInput) {
                 const actualTime = parseInt(actualTimeInput.value);
                 if (actualTime) {
                     task.completed = true;
                     task.actualTime = actualTime;
-
+                    
                     if (task.goalId) {
                         const goal = state.goals.find(g => g.id === task.goalId);
                         if (goal) {
                             goal.completedTasks++;
                         }
                     }
-
+                    
                     saveData();
                     renderTasks();
                     renderGoals();
@@ -558,7 +558,7 @@
         function endDay() {
             const currentDateStr = state.currentDate.toISOString().split('T')[0];
             const todaysTasks = state.tasks.filter(task => task.date === currentDateStr);
-
+            
             // Calculate day's statistics
             const completed = todaysTasks.filter(task => task.completed);
             const stats = {
@@ -571,10 +571,10 @@
             };
 
             state.history.push(stats);
-
+            
             // Move to next day
             state.currentDate = new Date(state.currentDate.getTime() + 24 * 60 * 60 * 1000);
-
+            
             // Handle incomplete tasks
             const incomplete = todaysTasks.filter(task => !task.completed);
             if (incomplete.length > 0) {
@@ -595,20 +595,20 @@
 
         function calculateTimeEfficiency(completedTasks) {
             if (completedTasks.length === 0) return 100;
-
+            
             const totalEstimated = completedTasks.reduce((sum, task) => sum + task.estimatedTime, 0);
             const totalActual = completedTasks.reduce((sum, task) => sum + task.actualTime, 0);
-
+            
             return (totalEstimated / totalActual) * 100;
         }
 
         function calculateGoalProgress() {
             if (state.goals.length === 0) return 100;
-
+            
             const totalProgress = state.goals.reduce((sum, goal) => {
                 return sum + (goal.totalTasks === 0 ? 100 : (goal.completedTasks / goal.totalTasks) * 100);
             }, 0);
-
+            
             return totalProgress / state.goals.length;
         }
 
@@ -622,9 +622,9 @@
 
         function updateStatCards() {
             const lastWeek = state.history.slice(-7);
-            const avgCompletionRate = lastWeek.length ?
+            const avgCompletionRate = lastWeek.length ? 
                 lastWeek.reduce((sum, day) => sum + day.completionRate, 0) / lastWeek.length : 0;
-            const avgEfficiency = lastWeek.length ?
+            const avgEfficiency = lastWeek.length ? 
                 lastWeek.reduce((sum, day) => sum + day.timeEfficiency, 0) / lastWeek.length : 0;
             const avgGoalProgress = calculateGoalProgress();
 
@@ -635,7 +635,7 @@
 
         function renderMainAnalytics() {
             const analytics = document.getElementById('analytics');
-
+            
             if (state.history.length === 0) {
                 analytics.innerHTML = '<p>No data available yet. Complete some tasks to see analytics.</p>';
                 return;
@@ -659,12 +659,12 @@
             container.innerHTML = '<h3>Goal-Specific Progress</h3>';
 
             state.goals.forEach(goal => {
-                const completionRate = goal.totalTasks === 0 ? 0 :
+                const completionRate = goal.totalTasks === 0 ? 0 : 
                     (goal.completedTasks / goal.totalTasks) * 100;
-
+                
                 const goalTasks = state.tasks.filter(task => task.goalId === goal.id);
                 const completedTasks = goalTasks.filter(task => task.completed);
-
+                
                 const timeEfficiency = calculateTimeEfficiency(completedTasks);
 
                 container.innerHTML += `
@@ -726,20 +726,17 @@
         // Show pending tasks
         function showPendingTasks() {
             const currentDateStr = state.currentDate.toISOString().split('T')[0];
-            const pendingTasks = state.tasks.filter(task =>
+            const pendingTasks = state.tasks.filter(task => 
                 task.date === currentDateStr && !task.completed
             );
 
-            const message = pendingTasks.length === 0
-                ? 'No pending tasks!'
-                : 'Pending Tasks:
-
-' + pendingTasks.map(task => {
-                    const goalText = task.goalId ?
+            const message = pendingTasks.length === 0 
+                ? 'No pending tasks!' 
+                : 'Pending Tasks:\n\n' + pendingTasks.map(task => {
+                    const goalText = task.goalId ? 
                         ` (Goal: ${state.goals.find(g => g.id === task.goalId)?.text})` : '';
                     return `• ${task.text}${goalText} (Est: ${task.estimatedTime}min)`;
-                }).join('
-');
+                }).join('\n');
 
             alert(message);
         }
