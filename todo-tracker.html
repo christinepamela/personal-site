@@ -15,7 +15,7 @@
             --soft-sage: #CED4CA;
             --muted-terra: #A67F78;
             --light-sand: #E8E6E1;
-
+            
             /* Functional colors */
             --text-primary: #2C3639;
             --text-secondary: #5C6670;
@@ -80,7 +80,7 @@
             align-items: center;
         }
 
-        input[type="text"],
+        input[type="text"], 
         input[type="number"],
         select {
             padding: 12px;
@@ -141,7 +141,6 @@
         .todo-item.completed {
             background-color: var(--light-sand);
             color: var(--text-secondary);
-            text-decoration: line-through; /* Strike-through completed tasks */
         }
 
         .todo-content {
@@ -219,7 +218,7 @@
             border-radius: 4px;
             transition: width 0.3s ease;
         }
-
+        
         .delete-btn {
             background: none;
             border: none;
@@ -241,49 +240,13 @@
             .input-group {
                 flex-direction: column;
             }
-
+            
             input[type="text"],
             input[type="number"],
             select,
             button {
                 width: 100%;
             }
-        }
-
-        /* New styles for grid layout */
-        .goals-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 3 items per row */
-            gap: 20px;
-        }
-
-        .goal-item {
-            background: var(--light-sand);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid var(--soft-sage);
-        }
-
-        .goal-item h4 {
-            margin-bottom: 10px;
-            color: var(--deep-olive);
-        }
-
-        /* Style for progress bar in goal items */
-        .goal-item .goal-progress-bar {
-            height: 10px;
-            background: var(--soft-sage);
-            border-radius: 5px;
-            margin-top: 5px;
-            overflow: hidden; /* Ensure fill stays within bounds */
-        }
-
-        .goal-item .goal-progress-fill {
-            height: 100%;
-            background: var(--olive-green);
-            border-radius: 5px;
-            width: 0; /* Initial width */
-            transition: width 0.3s ease; /* Smooth transition */
         }
     </style>
 </head>
@@ -302,7 +265,7 @@
                 <input type="text" id="goal-input" placeholder="Enter a new goal" style="flex: 1;">
                 <button onclick="addGoal()">Add Goal</button>
             </div>
-            <div id="goals-list" class="goals-grid"></div>
+            <div id="goals-list"></div>
         </div>
 
         <div class="section">
@@ -341,10 +304,7 @@
             </div>
             <div id="analytics"></div>
             <div class="chart-container" id="efficiency-chart"></div>
-            <div id="goal-specific-analytics">
-             <h3>Goal-Specific Progress</h3>
-                <div id="goal-progress-list" class="goals-grid"></div>
-            </div>
+            <div id="goal-specific-analytics"></div>
         </div>
     </div>
 
@@ -366,7 +326,6 @@
             renderTasks();
             renderAnalytics();
             updateGoalSelect();
-            renderGoalProgress();
         }
 
         // Load data from localStorage
@@ -402,7 +361,7 @@
         function addGoal() {
             const goalInput = document.getElementById('goal-input');
             const goalText = goalInput.value.trim();
-
+            
             if (goalText) {
                 state.goals.push({
                     id: Date.now(),
@@ -411,11 +370,10 @@
                     completedTasks: 0,
                     totalTasks: 0
                 });
-
+                
                 saveData();
                 renderGoals();
                 updateGoalSelect();
-                renderGoalProgress(); // Re-render goal progress bars
                 goalInput.value = '';
             }
         }
@@ -423,18 +381,22 @@
         function renderGoals() {
             const goalsContainer = document.getElementById('goals-list');
             goalsContainer.innerHTML = state.goals.map(goal => {
-                const progress = goal.totalTasks === 0 ? 0 :
+                const progress = goal.totalTasks === 0 ? 0 : 
                     (goal.completedTasks / goal.totalTasks) * 100;
-
+                
                 return `
-                    <div class="goal-item">
-                        <h4>${goal.text}</h4>
-                        <div class="goal-progress-bar">
-                            <div class="goal-progress-fill" style="width: ${progress}%"></div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 0.8em; color: var(--text-secondary);">
-                            <span>${progress.toFixed(1)}%</span>
-                            <span>${goal.completedTasks}/${goal.totalTasks} tasks</span>
+                    <div class="todo-item">
+                        <div class="todo-content">
+                            <div>${goal.text}</div>
+                            <div class="goal-progress">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Progress: ${progress.toFixed(1)}%</span>
+                                    <span>${goal.completedTasks}/${goal.totalTasks} tasks</span>
+                                </div>
+                                <div class="goal-progress-bar">
+                                    <div class="goal-progress-fill" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
                         </div>
                         <button onclick="deleteGoal(${goal.id})" class="secondary">Delete</button>
                     </div>
@@ -442,22 +404,20 @@
             }).join('');
         }
 
-
         function deleteGoal(goalId) {
             state.goals = state.goals.filter(goal => goal.id !== goalId);
             saveData();
             renderGoals();
             updateGoalSelect();
-            renderGoalProgress(); // Re-render goal progress bars
         }
 
-
+       
         // Tasks management
         function addTask() {
             const taskInput = document.getElementById('task-input');
             const estimatedTimeInput = document.getElementById('estimated-time');
             const goalSelect = document.getElementById('task-goal');
-
+            
             const taskText = taskInput.value.trim();
             const estimatedTime = parseInt(estimatedTimeInput.value);
             const goalId = goalSelect.value ? parseInt(goalSelect.value) : null;
@@ -485,8 +445,7 @@
                 saveData();
                 renderTasks();
                 renderGoals();
-                renderGoalProgress(); // Re-render goal progress bars
-
+                
                 taskInput.value = '';
                 estimatedTimeInput.value = '';
                 goalSelect.value = '';
@@ -506,16 +465,15 @@
                         }
                     }
                 }
-
+                
                 // Remove the task from state
                 state.tasks = state.tasks.filter(t => t.id !== taskId);
-
+                
                 // Update everything
                 saveData();
                 renderTasks();
                 renderGoals();
                 renderAnalytics();
-                renderGoalProgress(); // Re-render goal progress bars
             }
         }
 
@@ -523,17 +481,17 @@
         function renderTasks() {
             const todoList = document.getElementById('todo-list');
             const currentDateStr = state.currentDate.toISOString().split('T')[0];
-
+            
             const todaysTasks = state.tasks.filter(task => task.date === currentDateStr);
-
+            
             todoList.innerHTML = todaysTasks.map(task => {
-                const goalTag = task.goalId ?
+                const goalTag = task.goalId ? 
                     `<span class="todo-goal-tag">${state.goals.find(g => g.id === task.goalId)?.text || 'Unknown Goal'}</span>` : '';
-
+                
                 return `
                     <div class="todo-item ${task.completed ? 'completed' : ''}">
-                        <input type="checkbox"
-                               ${task.completed ? 'checked' : ''}
+                        <input type="checkbox" 
+                               ${task.completed ? 'checked' : ''} 
                                onchange="toggleTask(${task.id})">
                         <div class="todo-content">
                             <span>${task.text}${goalTag}</span>
@@ -541,7 +499,7 @@
                                 Estimated: ${task.estimatedTime}min
                             </div>
                         </div>
-                        ${task.completed ?
+                        ${task.completed ? 
                             `<span>Actual: ${task.actualTime}min</span>` :
                             `<input type="number" id="actual-${task.id}" placeholder="Actual time" style="width: 100px;">
                              <button onclick="completeTask(${task.id})">Complete</button>`
@@ -551,49 +509,47 @@
                 `;
             }).join('');
         }
-
+            
         function toggleTask(taskId) {
             const task = state.tasks.find(t => t.id === taskId);
             if (task) {
                 task.completed = !task.completed;
-
+                
                 if (task.goalId) {
                     const goal = state.goals.find(g => g.id === task.goalId);
                     if (goal) {
                         goal.completedTasks += task.completed ? 1 : -1;
                     }
                 }
-
+                
                 saveData();
                 renderTasks();
                 renderGoals();
                 renderAnalytics();
-                renderGoalProgress(); // Re-render goal progress bars
             }
         }
 
         function completeTask(taskId) {
             const task = state.tasks.find(t => t.id === taskId);
             const actualTimeInput = document.getElementById(`actual-${taskId}`);
-
+            
             if (task && actualTimeInput) {
                 const actualTime = parseInt(actualTimeInput.value);
                 if (actualTime) {
                     task.completed = true;
                     task.actualTime = actualTime;
-
+                    
                     if (task.goalId) {
                         const goal = state.goals.find(g => g.id === task.goalId);
                         if (goal) {
                             goal.completedTasks++;
                         }
                     }
-
+                    
                     saveData();
                     renderTasks();
                     renderGoals();
                     renderAnalytics();
-                    renderGoalProgress(); // Re-render goal progress bars
                 }
             }
         }
@@ -602,7 +558,7 @@
         function endDay() {
             const currentDateStr = state.currentDate.toISOString().split('T')[0];
             const todaysTasks = state.tasks.filter(task => task.date === currentDateStr);
-
+            
             // Calculate day's statistics
             const completed = todaysTasks.filter(task => task.completed);
             const stats = {
@@ -615,10 +571,10 @@
             };
 
             state.history.push(stats);
-
+            
             // Move to next day
             state.currentDate = new Date(state.currentDate.getTime() + 24 * 60 * 60 * 1000);
-
+            
             // Handle incomplete tasks
             const incomplete = todaysTasks.filter(task => !task.completed);
             if (incomplete.length > 0) {
@@ -635,25 +591,24 @@
             updateCurrentDate();
             renderTasks();
             renderAnalytics();
-            renderGoalProgress(); // Re-render goal progress bars
         }
 
         function calculateTimeEfficiency(completedTasks) {
             if (completedTasks.length === 0) return 100;
-
+            
             const totalEstimated = completedTasks.reduce((sum, task) => sum + task.estimatedTime, 0);
             const totalActual = completedTasks.reduce((sum, task) => sum + task.actualTime, 0);
-
+            
             return (totalEstimated / totalActual) * 100;
         }
 
         function calculateGoalProgress() {
             if (state.goals.length === 0) return 100;
-
+            
             const totalProgress = state.goals.reduce((sum, goal) => {
                 return sum + (goal.totalTasks === 0 ? 100 : (goal.completedTasks / goal.totalTasks) * 100);
             }, 0);
-
+            
             return totalProgress / state.goals.length;
         }
 
@@ -667,9 +622,9 @@
 
         function updateStatCards() {
             const lastWeek = state.history.slice(-7);
-            const avgCompletionRate = lastWeek.length ?
+            const avgCompletionRate = lastWeek.length ? 
                 lastWeek.reduce((sum, day) => sum + day.completionRate, 0) / lastWeek.length : 0;
-            const avgEfficiency = lastWeek.length ?
+            const avgEfficiency = lastWeek.length ? 
                 lastWeek.reduce((sum, day) => sum + day.timeEfficiency, 0) / lastWeek.length : 0;
             const avgGoalProgress = calculateGoalProgress();
 
@@ -680,7 +635,7 @@
 
         function renderMainAnalytics() {
             const analytics = document.getElementById('analytics');
-
+            
             if (state.history.length === 0) {
                 analytics.innerHTML = '<p>No data available yet. Complete some tasks to see analytics.</p>';
                 return;
@@ -704,12 +659,12 @@
             container.innerHTML = '<h3>Goal-Specific Progress</h3>';
 
             state.goals.forEach(goal => {
-                const completionRate = goal.totalTasks === 0 ? 0 :
+                const completionRate = goal.totalTasks === 0 ? 0 : 
                     (goal.completedTasks / goal.totalTasks) * 100;
-
+                
                 const goalTasks = state.tasks.filter(task => task.goalId === goal.id);
                 const completedTasks = goalTasks.filter(task => task.completed);
-
+                
                 const timeEfficiency = calculateTimeEfficiency(completedTasks);
 
                 container.innerHTML += `
@@ -768,48 +723,20 @@
             });
         }
 
-        // New function to render goal-specific progress bars
-        function renderGoalProgress() {
-            const goalProgressList = document.getElementById('goal-progress-list');
-            goalProgressList.innerHTML = '';
-
-            state.goals.forEach(goal => {
-                const progress = goal.totalTasks === 0 ? 0 : (goal.completedTasks / goal.totalTasks) * 100;
-
-                const goalItem = document.createElement('div');
-                goalItem.classList.add('goal-item');
-                goalItem.innerHTML = `
-                    <h4>${goal.text}</h4>
-                    <div class="goal-progress-bar">
-                        <div class="goal-progress-fill" style="width: ${progress}%"></div>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.8em; color: var(--text-secondary);">
-                        <span>${progress.toFixed(1)}%</span>
-                        <span>${goal.completedTasks}/${goal.totalTasks} tasks</span>
-                    </div>
-                `;
-                goalProgressList.appendChild(goalItem);
-            });
-        }
-
-
         // Show pending tasks
         function showPendingTasks() {
             const currentDateStr = state.currentDate.toISOString().split('T')[0];
-            const pendingTasks = state.tasks.filter(task =>
+            const pendingTasks = state.tasks.filter(task => 
                 task.date === currentDateStr && !task.completed
             );
 
-            const message = pendingTasks.length === 0
-                ? 'No pending tasks!'
-                : 'Pending Tasks:
-
-' + pendingTasks.map(task => {
-                    const goalText = task.goalId ?
+            const message = pendingTasks.length === 0 
+                ? 'No pending tasks!' 
+                : 'Pending Tasks:\n\n' + pendingTasks.map(task => {
+                    const goalText = task.goalId ? 
                         ` (Goal: ${state.goals.find(g => g.id === task.goalId)?.text})` : '';
                     return `• ${task.text}${goalText} (Est: ${task.estimatedTime}min)`;
-                }).join('
-');
+                }).join('\n');
 
             alert(message);
         }
@@ -819,4 +746,5 @@
     </script>
 </body>
 </html>
+
 
