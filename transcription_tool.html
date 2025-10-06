@@ -1,114 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Audio Transcription Tool</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        #transcription {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            min-height: 100px;
-        }
-    </style>
+    <title>Speech Recognition Test</title>
 </head>
 <body>
-    <h1>Audio Transcription Tool</h1>
-    <button id="recordButton">Start Recording</button>
-    <div id="transcription"></div>
-    <button id="downloadButton" disabled>Download Transcription</button>
+    <h1>Speech Recognition Test</h1>
+    <div id="message"></div>
 
     <script>
-        const recordButton = document.getElementById('recordButton');
-        const transcriptionDiv = document.getElementById('transcription');
-        const downloadButton = document.getElementById('downloadButton');
-        let recognition;
-
-        // Check for SpeechRecognition API
+        const messageDiv = document.getElementById('message');
         if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            console.log('Speech recognition API initialized'); // Debugging statement
+            messageDiv.textContent = 'Speech Recognition API is supported!';
         } else {
-            transcriptionDiv.textContent = 'Speech Recognition API is not supported in this browser.';
-            recordButton.disabled = true;
-            downloadButton.disabled = true;
-            console.log('Speech recognition API not supported'); // Debugging statement
-        }
-
-        if (recognition) {
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.lang = 'en-US';
-
-            recognition.onstart = () => {
-                console.log('Speech recognition started'); // Debugging statement
-                recordButton.textContent = 'Stop Recording';
-                downloadButton.disabled = true;
-            };
-
-            recognition.onresult = (event) => {
-                let interimTranscript = '';
-                let finalTranscript = '';
-
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    if (event.results[i].isFinal) {
-                        finalTranscript += event.results[i][0].transcript;
-                    } else {
-                        interimTranscript += event.results[i][0].transcript;
-                    }
-                }
-
-                transcriptionDiv.textContent = finalTranscript + interimTranscript;
-            };
-
-            recognition.onerror = (event) => {
-                console.error('Speech recognition error:', event.error); // Debugging statement
-                transcriptionDiv.textContent = 'Error during speech recognition.';
-                recordButton.textContent = 'Start Recording';
-                downloadButton.disabled = true;
-            };
-
-            recognition.onend = () => {
-                console.log('Speech recognition ended'); // Debugging statement
-                recordButton.textContent = 'Start Recording';
-                downloadButton.disabled = false;
-            };
-
-            recordButton.addEventListener('click', () => {
-                console.log('Record button clicked'); // Debugging statement
-                if (recordButton.textContent === 'Start Recording') {
-                    transcriptionDiv.textContent = ''; // Clear previous transcription
-                    recognition.start();
-                    console.log('Recognition started'); // Debugging statement
-                } else {
-                    recognition.stop();
-                    console.log('Recognition stopped'); // Debugging statement
-                }
-            });
-
-            downloadButton.addEventListener('click', () => {
-                const transcriptionText = transcriptionDiv.textContent;
-                const filename = `transcription_${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}.txt`;
-                const blob = new Blob([transcriptionText], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            });
+            messageDiv.textContent = 'Speech Recognition API is NOT supported.';
         }
     </script>
 </body>
