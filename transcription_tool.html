@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audio Transcription Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #transcription {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Audio Transcription Tool</h1>
+    <button id="recordButton">Start Recording</button>
+    <div id="transcription"></div>
+
+    <script>
+        const recordButton = document.getElementById('recordButton');
+        const transcriptionDiv = document.getElementById('transcription');
+        let mediaRecorder;
+        let audioChunks = [];
+        let recognition;
+
+        // Check if SpeechRecognition is supported
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+        } else if ('SpeechRecognition' in window) {
+            recognition = new SpeechRecognition();
+        } else {
+            transcriptionDiv.textContent = 'Speech Recognition API is not supported in this browser.';
+            recordButton.disabled = true;
+        }
+		
+        if (recognition) {
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onstart = () => {
+                console.log('Speech recognition started');
+            };
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+
+                transcriptionDiv.textContent = finalTranscript + interimTranscript;
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                transcriptionDiv.textContent = 'Error during speech recognition.';
+                recordButton.textContent = 'Start Recording';
+            };
+
+            recognition.onend = () => {
+                console.log('Speech recognition ended');
+                recordButton.textContent = 'Start Recording';
+            };
+        }
+
+        recordButton.addEventListener('click', () => {
+            if (recordButton.textContent === 'Start Recording') {
+                if (recognition) {
+                    recognition.start();
+                    recordButton.textContent = 'Stop Recording';
+                    transcriptionDiv.textContent = ''; // Clear previous transcription
+                }
+            } else {
+                if (recognition) {
+                    recognition.stop();
+                    recordButton.textContent = 'Start Recording';
+                    //saveTranscription(); //Implement saveTranscription() function
+                }
+            }
+        });
+		
+		async function saveTranscription() {
+			const transcriptionText = transcriptionDiv.textContent;
+			const filename = `transcription_${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}.txt`;
+			const filepath = `C:/Users/chris/OneDrive/Documents/Transcribe/${filename}`;
+
+			// Use the developer tool to write the file
+			try {
+				const result = await default_api.developer__text_editor(path=filepath, command='write', file_text=transcriptionText);
+				console.log('File saved:', result);
+				alert('Transcription saved to ' + filepath);
+			} catch (error) {
+				console.error('Error saving file:', error);
+				alert('Error saving transcription. Check console for details.');
+			}
+		}
+    </script>
+</body>
+</html>
