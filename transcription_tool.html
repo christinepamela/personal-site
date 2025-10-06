@@ -12,7 +12,6 @@
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
-            margin-right: 10px;
         }
         #transcription {
             margin-top: 20px;
@@ -30,22 +29,20 @@
 <body>
     <h1>Audio Transcription Tool</h1>
     <button id="recordButton">Start Recording</button>
-    <button id="startOverButton">Start Over</button>
     <div id="transcription"></div>
     <button id="downloadButton" disabled>Download Transcription</button>
 
     <div id="note">
-        Note: Your transcription is not saved automatically. It exists only in your browser's memory.
-        Remember to download it before closing or refreshing this page.
+        Note: Your transcription isn’t saved automatically, and I don’t have access to your thoughts or data.
+        It exists only in your browser’s memory. Remember to download it before closing.
+        If you don’t need it, simply refresh the page.
     </div>
 
     <script>
         const recordButton = document.getElementById('recordButton');
-        const startOverButton = document.getElementById('startOverButton');
         const transcriptionDiv = document.getElementById('transcription');
         const downloadButton = document.getElementById('downloadButton');
         let recognition;
-        let isRecording = false;
 
         // Check for SpeechRecognition API
         if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
@@ -53,7 +50,6 @@
         } else {
             transcriptionDiv.textContent = 'Speech Recognition API is not supported in this browser.';
             recordButton.disabled = true;
-            startOverButton.disabled = true;
             downloadButton.disabled = true;
         }
 
@@ -66,7 +62,6 @@
                 console.log('Speech recognition started');
                 recordButton.textContent = 'Stop Recording';
                 downloadButton.disabled = true;
-                isRecording = true;
             };
 
             recognition.onresult = (event) => {
@@ -81,7 +76,7 @@
                     }
                 }
 
-                transcriptionDiv.textContent += finalTranscript + interimTranscript; // Append to existing content
+                transcriptionDiv.textContent = finalTranscript + interimTranscript;
             };
 
             recognition.onerror = (event) => {
@@ -89,35 +84,22 @@
                 transcriptionDiv.textContent = 'Error during speech recognition.';
                 recordButton.textContent = 'Start Recording';
                 downloadButton.disabled = true;
-                isRecording = false;
             };
 
             recognition.onend = () => {
                 console.log('Speech recognition ended');
                 recordButton.textContent = 'Start Recording';
                 downloadButton.disabled = false;
-                isRecording = false;
             };
 
             recordButton.addEventListener('click', () => {
                 if (recordButton.textContent === 'Start Recording') {
-                    //transcriptionDiv.textContent = ''; // Remove this line
+                    transcriptionDiv.textContent = ''; // Clear previous transcription
                     recognition.start();
                 } else {
                     recognition.stop();
                 }
             });
-
-            startOverButton.addEventListener('click', () => {
-                if (isRecording) {
-                    recognition.stop();
-                    isRecording = false;
-                    recordButton.textContent = 'Start Recording';
-                }
-                transcriptionDiv.textContent = '';
-                downloadButton.disabled = true;
-            });
-
 
             downloadButton.addEventListener('click', () => {
                 const transcriptionText = transcriptionDiv.textContent;
