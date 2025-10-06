@@ -39,83 +39,85 @@
     </div>
 
     <script>
-        const recordButton = document.getElementById('recordButton');
-        const transcriptionDiv = document.getElementById('transcription');
-        const downloadButton = document.getElementById('downloadButton');
-        let recognition;
+    const recordButton = document.getElementById('recordButton');
+    const transcriptionDiv = document.getElementById('transcription');
+    const downloadButton = document.getElementById('downloadButton');
+    let recognition;
+    let finalTranscript = ''; // ← store all confirmed text here
 
-        // Check for SpeechRecognition API
-        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        } else {
-            transcriptionDiv.textContent = 'Speech Recognition API is not supported in this browser.';
-            recordButton.disabled = true;
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    } else {
+        transcriptionDiv.textContent = 'Speech Recognition API is not supported in this browser.';
+        recordButton.disabled = true;
+        downloadButton.disabled = true;
+    }
+
+    if (recognition) {
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = () => {
+            console.log('Speech recognition started');
+            recordButton.textContent = 'Stop Recording';
             downloadButton.disabled = true;
-        }
+        };
 
-        if (recognition) {
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.lang = 'en-US';
+        recognition.onresult = (event) => {
+            let interimTranscript = '';
 
-            recognition.onstart = () => {
-                console.log('Speech recognition started');
-                recordButton.textContent = 'Stop Recording';
-                downloadButton.disabled = true;
-            };
-
-            recognition.onresult = (event) => {
-                let interimTranscript = '';
-                let finalTranscript = '';
-
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    if (event.results[i].isFinal) {
-                        finalTranscript += event.results[i][0].transcript;
-                    } else {
-                        interimTranscript += event.results[i][0].transcript;
-                    }
-                }
-
-                transcriptionDiv.textContent = finalTranscript + interimTranscript;
-            };
-
-            recognition.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
-                transcriptionDiv.textContent = 'Error during speech recognition.';
-                recordButton.textContent = 'Start Recording';
-                downloadButton.disabled = true;
-            };
-
-            recognition.onend = () => {
-                console.log('Speech recognition ended');
-                recordButton.textContent = 'Start Recording';
-                downloadButton.disabled = false;
-            };
-
-            recordButton.addEventListener('click', () => {
-                if (recordButton.textContent === 'Start Recording') {
-                    transcriptionDiv.textContent = ''; // Only clear if starting a new session
-                    recognition.start();
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    finalTranscript += transcript + ' '; // append confirmed text
                 } else {
-                    recognition.stop();
+                    interimTranscript += transcript;
                 }
-            });
+            }
 
-            downloadButton.addEventListener('click', () => {
-                const transcriptionText = transcriptionDiv.textContent;
-                const filename = `transcription_${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}.txt`;
-                const blob = new Blob([transcriptionText], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
+            transcriptionDiv.textContent = finalTranscript + interimTranscript;
+        };
 
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            });
-        }
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            transcriptionDiv.textContent = 'Error during speech recognition.';
+            recordButton.textContent = 'Start Recording';
+            downloadButton.disabled = true;
+        };
+
+        recognition.onend = () => {
+            console.log('Speech recognition ended');
+            recordButton.textContent = 'Start Recording';
+            downloadButton.disabled = false;
+        };
+
+        recordButton.addEventListener('click', () => {
+            if (recordButton.textContent === 'Start Recording') {
+                // Only clear if starting fresh, not resuming
+                if (!finalTranscript) transcriptionDiv.textContent = '';
+                recognition.start();
+            } else {
+                recognition.stop();
+            }
+        });
+
+        downloadButton.addEventListener('click', () => {
+            const transcriptionText = transcriptionDiv.textContent;
+            const filename = `transcription_${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}.txt`;
+            const blob = new Blob([transcriptionText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+    }
     </script>
+
 </body>
 </html>
