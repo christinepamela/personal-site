@@ -12,13 +12,18 @@
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
-            margin-right: 10px; /* Add some spacing between buttons */
+            margin-right: 10px;
         }
         #transcription {
             margin-top: 20px;
             padding: 10px;
             border: 1px solid #ccc;
             min-height: 100px;
+        }
+        #note {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #777;
         }
     </style>
 </head>
@@ -29,13 +34,18 @@
     <div id="transcription"></div>
     <button id="downloadButton" disabled>Download Transcription</button>
 
+    <div id="note">
+        Note: Your transcription is not saved automatically. It exists only in your browser's memory.
+        Remember to download it before closing or refreshing this page.
+    </div>
+
     <script>
         const recordButton = document.getElementById('recordButton');
         const startOverButton = document.getElementById('startOverButton');
         const transcriptionDiv = document.getElementById('transcription');
         const downloadButton = document.getElementById('downloadButton');
         let recognition;
-        let isRecording = false; // Track recording state
+        let isRecording = false;
 
         // Check for SpeechRecognition API
         if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
@@ -91,7 +101,7 @@
 
             recordButton.addEventListener('click', () => {
                 if (recordButton.textContent === 'Start Recording') {
-                    transcriptionDiv.textContent = ''; // Clear previous transcription
+                    transcriptionDiv.textContent = '';
                     recognition.start();
                 } else {
                     recognition.stop();
@@ -99,14 +109,13 @@
             });
 
             startOverButton.addEventListener('click', () => {
-                // Stop recording if it's in progress
                 if (isRecording) {
                     recognition.stop();
                     isRecording = false;
                     recordButton.textContent = 'Start Recording';
                 }
-                transcriptionDiv.textContent = ''; // Clear the transcription
-                downloadButton.disabled = true; // Disable the download button
+                transcriptionDiv.textContent = '';
+                downloadButton.disabled = true;
             });
 
 
