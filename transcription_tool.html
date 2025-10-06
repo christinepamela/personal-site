@@ -19,6 +19,11 @@
             border: 1px solid #ccc;
             min-height: 100px;
         }
+        #note {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #777;
+        }
     </style>
 </head>
 <body>
@@ -26,6 +31,12 @@
     <button id="recordButton">Start Recording</button>
     <div id="transcription"></div>
     <button id="downloadButton" disabled>Download Transcription</button>
+
+    <div id="note">
+        Note: Your transcription isn’t saved automatically, and I don’t have access to your thoughts or data.
+        It exists only in your browser’s memory. Remember to download it before closing.
+        If you don’t need it, simply refresh the page.
+    </div>
 
     <script>
         const recordButton = document.getElementById('recordButton');
@@ -83,7 +94,7 @@
 
             recordButton.addEventListener('click', () => {
                 if (recordButton.textContent === 'Start Recording') {
-                    transcriptionDiv.textContent = ''; // Clear previous transcription
+                    transcriptionDiv.textContent = ''; // Only clear if starting a new session
                     recognition.start();
                 } else {
                     recognition.stop();
