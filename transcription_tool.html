@@ -12,6 +12,7 @@
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
+            margin-right: 10px; /* Add some spacing between buttons */
         }
         #transcription {
             margin-top: 20px;
@@ -24,14 +25,17 @@
 <body>
     <h1>Audio Transcription Tool</h1>
     <button id="recordButton">Start Recording</button>
+    <button id="startOverButton">Start Over</button>
     <div id="transcription"></div>
     <button id="downloadButton" disabled>Download Transcription</button>
 
     <script>
         const recordButton = document.getElementById('recordButton');
+        const startOverButton = document.getElementById('startOverButton');
         const transcriptionDiv = document.getElementById('transcription');
         const downloadButton = document.getElementById('downloadButton');
         let recognition;
+        let isRecording = false; // Track recording state
 
         // Check for SpeechRecognition API
         if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
@@ -39,6 +43,7 @@
         } else {
             transcriptionDiv.textContent = 'Speech Recognition API is not supported in this browser.';
             recordButton.disabled = true;
+            startOverButton.disabled = true;
             downloadButton.disabled = true;
         }
 
@@ -51,6 +56,7 @@
                 console.log('Speech recognition started');
                 recordButton.textContent = 'Stop Recording';
                 downloadButton.disabled = true;
+                isRecording = true;
             };
 
             recognition.onresult = (event) => {
@@ -73,12 +79,14 @@
                 transcriptionDiv.textContent = 'Error during speech recognition.';
                 recordButton.textContent = 'Start Recording';
                 downloadButton.disabled = true;
+                isRecording = false;
             };
 
             recognition.onend = () => {
                 console.log('Speech recognition ended');
                 recordButton.textContent = 'Start Recording';
                 downloadButton.disabled = false;
+                isRecording = false;
             };
 
             recordButton.addEventListener('click', () => {
@@ -89,6 +97,18 @@
                     recognition.stop();
                 }
             });
+
+            startOverButton.addEventListener('click', () => {
+                // Stop recording if it's in progress
+                if (isRecording) {
+                    recognition.stop();
+                    isRecording = false;
+                    recordButton.textContent = 'Start Recording';
+                }
+                transcriptionDiv.textContent = ''; // Clear the transcription
+                downloadButton.disabled = true; // Disable the download button
+            });
+
 
             downloadButton.addEventListener('click', () => {
                 const transcriptionText = transcriptionDiv.textContent;
