@@ -36,10 +36,12 @@
         // Check for SpeechRecognition API
         if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
             recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            console.log('Speech recognition API initialized'); // Debugging statement
         } else {
             transcriptionDiv.textContent = 'Speech Recognition API is not supported in this browser.';
             recordButton.disabled = true;
             downloadButton.disabled = true;
+            console.log('Speech recognition API not supported'); // Debugging statement
         }
 
         if (recognition) {
@@ -48,7 +50,7 @@
             recognition.lang = 'en-US';
 
             recognition.onstart = () => {
-                console.log('Speech recognition started');
+                console.log('Speech recognition started'); // Debugging statement
                 recordButton.textContent = 'Stop Recording';
                 downloadButton.disabled = true;
             };
@@ -69,24 +71,27 @@
             };
 
             recognition.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
+                console.error('Speech recognition error:', event.error); // Debugging statement
                 transcriptionDiv.textContent = 'Error during speech recognition.';
                 recordButton.textContent = 'Start Recording';
                 downloadButton.disabled = true;
             };
 
             recognition.onend = () => {
-                console.log('Speech recognition ended');
+                console.log('Speech recognition ended'); // Debugging statement
                 recordButton.textContent = 'Start Recording';
                 downloadButton.disabled = false;
             };
 
             recordButton.addEventListener('click', () => {
+                console.log('Record button clicked'); // Debugging statement
                 if (recordButton.textContent === 'Start Recording') {
                     transcriptionDiv.textContent = ''; // Clear previous transcription
                     recognition.start();
+                    console.log('Recognition started'); // Debugging statement
                 } else {
                     recognition.stop();
+                    console.log('Recognition stopped'); // Debugging statement
                 }
             });
 
