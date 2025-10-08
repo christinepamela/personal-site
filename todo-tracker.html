@@ -61,7 +61,6 @@
             font-size: 0.95em;
         }
 
-        /* Today's Progress - Hero Section */
         .progress-hero {
             background: var(--card-bg);
             border-radius: 20px;
@@ -76,14 +75,6 @@
             height: 200px;
             margin: 20px auto;
             position: relative;
-        }
-
-        .progress-ring {
-            transform: rotate(-90deg);
-        }
-
-        .progress-ring-circle {
-            transition: stroke-dashoffset 0.5s ease;
         }
 
         .progress-text {
@@ -112,7 +103,6 @@
             margin-top: 15px;
         }
 
-        /* Main Layout */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 350px;
@@ -120,7 +110,6 @@
             margin-bottom: 30px;
         }
 
-        /* Cards */
         .card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -134,7 +123,6 @@
             color: var(--text);
         }
 
-        /* Tasks Section */
         .date-display {
             color: var(--text-light);
             font-size: 0.95em;
@@ -154,6 +142,7 @@
             border-radius: 10px;
             font-size: 0.95em;
             transition: all 0.3s ease;
+            font-family: inherit;
         }
 
         .task-input-group input:focus,
@@ -182,6 +171,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 0.95em;
+            font-family: inherit;
         }
 
         .btn-primary {
@@ -204,7 +194,6 @@
             color: white;
         }
 
-        /* Task Items */
         .task-list {
             display: flex;
             flex-direction: column;
@@ -267,12 +256,6 @@
             font-size: 0.8em;
         }
 
-        .time-badge {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
         .delete-btn {
             background: none;
             border: none;
@@ -281,6 +264,7 @@
             cursor: pointer;
             opacity: 0;
             transition: all 0.3s ease;
+            padding: 0 8px;
         }
 
         .task-item:hover .delete-btn {
@@ -298,7 +282,6 @@
             margin-top: 20px;
         }
 
-        /* Goals Sidebar */
         .goals-card {
             height: fit-content;
         }
@@ -314,6 +297,7 @@
             padding: 12px 16px;
             border: 2px solid var(--border);
             border-radius: 10px;
+            font-family: inherit;
         }
 
         .goal-input-group input:focus {
@@ -363,7 +347,6 @@
             transition: width 0.5s ease;
         }
 
-        /* Analytics Cards */
         .analytics-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -399,7 +382,6 @@
             margin-top: 5px;
         }
 
-        /* Chart */
         .chart-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -412,7 +394,6 @@
             margin-top: 20px;
         }
 
-        /* Confetti Animation */
         @keyframes confetti-fall {
             to {
                 transform: translateY(100vh) rotate(360deg);
@@ -429,7 +410,6 @@
             pointer-events: none;
         }
 
-        /* Responsive */
         @media (max-width: 1024px) {
             .main-grid {
                 grid-template-columns: 1fr;
@@ -460,13 +440,12 @@
             <p>Your personal productivity companion</p>
         </div>
 
-        <!-- Progress Hero -->
         <div class="progress-hero">
             <h2>Today's Progress</h2>
             <div class="progress-circle">
                 <svg width="200" height="200">
                     <circle cx="100" cy="100" r="90" fill="none" stroke="#E2E8F0" stroke-width="12"/>
-                    <circle id="progress-ring" class="progress-ring-circle" cx="100" cy="100" r="90" 
+                    <circle id="progress-ring" cx="100" cy="100" r="90" 
                             fill="none" stroke="url(#gradient)" stroke-width="12" 
                             stroke-dasharray="565.48" stroke-dashoffset="565.48"
                             transform="rotate(-90 100 100)"/>
@@ -483,9 +462,7 @@
             <div class="streak-badge" id="streak-badge">🔥 0 day streak</div>
         </div>
 
-        <!-- Main Content -->
         <div class="main-grid">
-            <!-- Tasks -->
             <div class="card">
                 <h2>Today's Mission</h2>
                 <div class="date-display" id="current-date"></div>
@@ -496,24 +473,23 @@
                     <select id="task-goal">
                         <option value="">No goal</option>
                     </select>
-                    <button class="btn btn-primary" onclick="addTask()">Add</button>
+                    <button class="btn btn-primary" id="add-task-btn">Add</button>
                 </div>
 
                 <div class="task-list" id="task-list"></div>
 
                 <div class="actions">
-                    <button class="btn btn-primary" onclick="endDay()">Complete Day 🎉</button>
-                    <button class="btn btn-secondary" onclick="showPendingTasks()">Pending Tasks</button>
+                    <button class="btn btn-primary" id="end-day-btn">Complete Day 🎉</button>
+                    <button class="btn btn-secondary" id="pending-tasks-btn">Pending Tasks</button>
                 </div>
             </div>
 
-            <!-- Goals Sidebar -->
             <div class="card goals-card">
                 <h2>Big Picture Goals</h2>
                 
                 <div class="goal-input-group">
                     <input type="text" id="goal-input" placeholder="New goal...">
-                    <button class="btn btn-primary" onclick="addGoal()">+</button>
+                    <button class="btn btn-primary" id="add-goal-btn">+</button>
                 </div>
 
                 <div class="goals-chart">
@@ -524,7 +500,6 @@
             </div>
         </div>
 
-        <!-- Analytics -->
         <div class="analytics-grid">
             <div class="stat-card">
                 <div class="stat-icon">✅</div>
@@ -543,7 +518,6 @@
             </div>
         </div>
 
-        <!-- Trends Chart -->
         <div class="chart-card">
             <h2>Your Progress This Week</h2>
             <div class="chart-container">
@@ -571,6 +545,22 @@
             updateGoalSelect();
             renderEverything();
             calculateStreak();
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('add-goal-btn').addEventListener('click', addGoal);
+            document.getElementById('add-task-btn').addEventListener('click', addTask);
+            document.getElementById('end-day-btn').addEventListener('click', endDay);
+            document.getElementById('pending-tasks-btn').addEventListener('click', showPendingTasks);
+            
+            document.getElementById('goal-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addGoal();
+            });
+            
+            document.getElementById('task-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addTask();
+            });
         }
 
         function loadData() {
@@ -613,6 +603,7 @@
                 });
                 
                 saveData();
+                updateGoalSelect();
                 renderEverything();
                 input.value = '';
             }
@@ -627,6 +618,7 @@
             if (confirm('Delete this goal? Associated tasks will remain but lose their goal link.')) {
                 state.goals = state.goals.filter(g => g.id !== goalId);
                 saveData();
+                updateGoalSelect();
                 renderEverything();
             }
         }
@@ -754,6 +746,7 @@
             
             saveData();
             calculateStreak();
+            updateCurrentDate();
             renderEverything();
             
             if (stats.completionRate === 100) {
@@ -786,8 +779,6 @@
             }
 
             let streak = 0;
-            const today = new Date().toISOString().split('T')[0];
-            
             for (let i = state.history.length - 1; i >= 0; i--) {
                 const day = state.history[i];
                 if (day.completedTasks > 0) {
@@ -869,7 +860,7 @@
                         <div class="task-content">
                             <div class="task-text">${task.text}</div>
                             <div class="task-meta">
-                                <span class="time-badge">⏱️ ${task.estimatedTime}min</span>
+                                <span>⏱️ ${task.estimatedTime}min</span>
                                 ${goalTag}
                             </div>
                         </div>
@@ -931,6 +922,92 @@
                             position: 'bottom',
                             labels: {
                                 padding: 10,
-                                font: { size: 11
+                                font: { size: 11 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderAnalytics() {
+            const lastWeek = state.history.slice(-7);
+            
+            if (lastWeek.length === 0) {
+                document.getElementById('completion-rate').textContent = '0%';
+                document.getElementById('time-efficiency').textContent = '0%';
+                document.getElementById('goals-progress').textContent = '0%';
+                return;
+            }
+
+            const avgCompletion = lastWeek.reduce((sum, d) => sum + d.completionRate, 0) / lastWeek.length;
+            const avgEfficiency = lastWeek.reduce((sum, d) => sum + d.timeEfficiency, 0) / lastWeek.length;
+            const avgGoalProgress = calculateGoalProgress();
+
+            document.getElementById('completion-rate').textContent = Math.round(avgCompletion) + '%';
+            document.getElementById('time-efficiency').textContent = Math.round(avgEfficiency) + '%';
+            document.getElementById('goals-progress').textContent = Math.round(avgGoalProgress) + '%';
+        }
+
+        function renderTrendsChart() {
+            const ctx = document.getElementById('trends-chart');
+            
+            if (trendsChart) {
+                trendsChart.destroy();
+            }
+
+            const lastWeek = state.history.slice(-7);
+
+            if (lastWeek.length === 0) {
+                return;
+            }
+
+            trendsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: lastWeek.map(d => new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+                    datasets: [{
+                        label: 'Completion Rate',
+                        data: lastWeek.map(d => d.completionRate),
+                        borderColor: '#4F46E5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Time Efficiency',
+                        data: lastWeek.map(d => d.timeEfficiency),
+                        borderColor: '#06B6D4',
+                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
 
 
