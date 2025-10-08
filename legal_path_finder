@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legal Path Finder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      color: #333;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    select, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      font-size: 1em;
+    }
+    button {
+      background-color: #003366;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #0055a5;
+    }
+    .result-box {
+      background: white;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .result-box h3 {
+      margin-top: 0;
+    }
+    ul {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Legal Path Finder</h1>
+
+  <label for="category">Select a Topic:</label>
+  <select id="category">
+    <option value="">-- Please select --</option>
+    <option value="tenancy">Tenancy & Property</option>
+    <option value="employment">Employment & Salary</option>
+    <option value="consumer">Consumer & Product Issues</option>
+    <option value="noise">Noise & Nuisance</option>
+    <option value="family">Family & Domestic Matters</option>
+  </select>
+
+  <label for="issue">Describe Your Issue:</label>
+  <textarea id="issue" rows="4" placeholder="Write your situation here..."></textarea>
+
+  <button onclick="findLegalPath()">Find Related Laws</button>
+
+  <div id="result" class="result-box" style="display: none;"></div>
+
+  <script>
+    const legalDatabase = {
+      "tenancy": [
+        {
+          keywords: ["deposit", "landlord", "rental"],
+          laws: ["Contract Act 1950", "National Land Code 1965"],
+          actions: [
+            "Send a formal demand letter to landlord",
+            "File a claim at Tribunal for Housing and Strata Management",
+            "File in Magistrate’s Court if amount is large"
+          ],
+          agencies: [
+            "KPKT Tribunal",
+            "Magistrate Court",
+            "Legal Aid Centre"
+          ]
+        }
+      ],
+      "employment": [
+        {
+          keywords: ["salary", "employer", "wage", "overtime"],
+          laws: ["Employment Act 1955"],
+          actions: [
+            "File salary claim with JTK",
+            "Keep proof of employment",
+            "Seek mediation if disputed"
+          ],
+          agencies: [
+            "Department of Labour (JTK)",
+            "Legal Aid Centre"
+          ]
+        }
+      ],
+      "consumer": [
+        {
+          keywords: ["refund", "product", "scam", "delivery"],
+          laws: ["Consumer Protection Act 1999"],
+          actions: [
+            "Contact the seller to resolve",
+            "File complaint with Tribunal for Consumer Claims (TTPM)",
+            "Keep all receipts and messages"
+          ],
+          agencies: [
+            "Tribunal for Consumer Claims (TTPM)",
+            "KPDN",
+            "Consumer associations"
+          ]
+        }
+      ],
+      "noise": [
+        {
+          keywords: ["noise", "neighbor", "loud", "disturbance"],
+          laws: ["Penal Code s.268 (Public Nuisance)", "Local Government Act 1976"],
+          actions: [
+            "Lodge complaint with local council (PBT)",
+            "Make a police report if it continues",
+            "Record evidence of disturbance"
+          ],
+          agencies: [
+            "Local Municipal Council (PBT)",
+            "Police Station"
+          ]
+        }
+      ],
+      "family": [
+        {
+          keywords: ["divorce", "child", "custody", "violence", "maintenance"],
+          laws: ["Law Reform (Marriage and Divorce) Act 1976", "Domestic Violence Act 1994"],
+          actions: [
+            "Seek legal advice or legal aid",
+            "File a police report if violence is involved",
+            "Go to family court for custody or divorce matters"
+          ],
+          agencies: [
+            "Family Court",
+            "Legal Aid Centre",
+            "Police Station"
+          ]
+        }
+      ]
+    };
+
+    function findLegalPath() {
+      const category = document.getElementById('category').value;
+      const issue = document.getElementById('issue').value.toLowerCase();
+      const resultBox = document.getElementById('result');
+      resultBox.innerHTML = '';
+
+      if (!category || !issue.trim()) {
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = `<p>Please select a topic and describe your issue.</p>`;
+        return;
+      }
+
+      const scenarios = legalDatabase[category] || [];
+      let matched = null;
+
+      for (const s of scenarios) {
+        if (s.keywords.some(k => issue.includes(k))) {
+          matched = s;
+          break;
+        }
+      }
+
+      if (matched) {
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = `
+          <h3>Relevant Laws</h3>
+          <ul>${matched.laws.map(l => `<li>${l}</li>`).join('')}</ul>
+          <h3>What You Can Do</h3>
+          <ul>${matched.actions.map(a => `<li>${a}</li>`).join('')}</ul>
+          <h3>Where to Go</h3>
+          <ul>${matched.agencies.map(a => `<li>${a}</li>`).join('')}</ul>
+        `;
+      } else {
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = `<p>No direct match found. You may need to seek legal advice or check related agencies for your issue.</p>`;
+      }
+    }
+  </script>
+
+</body>
+</html>
