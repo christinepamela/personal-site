@@ -224,6 +224,148 @@
             color: var(--text-light);
         }
 
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .modal-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .modal-subtitle {
+            color: var(--text-light);
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+
+        .modal-task-name {
+            background: var(--bg);
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .modal-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .modal-input-group label {
+            font-weight: 600;
+            color: var(--text);
+            display: block;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        .modal-input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-family: inherit;
+        }
+
+        .modal-input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+            font-family: inherit;
+        }
+
+        .modal-buttons .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .modal-buttons .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .modal-buttons .btn-secondary {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .modal-buttons .btn-secondary:hover {
+            background: var(--text-light);
+            color: white;
+        }
+
+        .efficiency-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .efficiency-excellent {
+            background: #10B981;
+            color: white;
+        }
+
+        .efficiency-good {
+            background: #06B6D4;
+            color: white;
+        }
+
+        .efficiency-ok {
+            background: #F59E0B;
+            color: white;
+        }
+
+        .efficiency-slow {
+            background: #8B5CF6;
+            color: white;
+        }
+
         .task-checkbox {
             width: 24px;
             height: 24px;
@@ -478,6 +620,23 @@
 
                 <div class="task-list" id="task-list"></div>
 
+                <!-- Time Tracking Modal -->
+                <div class="modal" id="time-modal">
+                    <div class="modal-content">
+                        <div class="modal-title">How long did it take?</div>
+                        <div class="modal-subtitle">Record actual time to track efficiency</div>
+                        <div class="modal-task-name" id="modal-task-name"></div>
+                        <div class="modal-input-group">
+                            <label for="actual-time-input">Actual time (minutes):</label>
+                            <input type="number" id="actual-time-input" placeholder="e.g., 25" min="1">
+                        </div>
+                        <div class="modal-buttons">
+                            <button class="btn-secondary" onclick="closeTimeModal()">Cancel</button>
+                            <button class="btn-primary" onclick="submitActualTime()">Done</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="actions">
                     <button class="btn btn-primary" id="end-day-btn">Complete Day 🎉</button>
                     <button class="btn btn-secondary" id="pending-tasks-btn">Pending Tasks</button>
@@ -538,6 +697,7 @@
 
         let goalsChart = null;
         let trendsChart = null;
+        let pendingTaskId = null;
 
         function init() {
             loadData();
@@ -662,21 +822,63 @@
         function toggleTask(taskId) {
             const task = state.tasks.find(t => t.id === taskId);
             if (task) {
-                task.completed = !task.completed;
+                if (!task.completed) {
+                    // Open modal to ask for actual time
+                    pendingTaskId = taskId;
+                    openTimeModal(task);
+                } else {
+                    // If unchecking, just uncheck without asking
+                    task.completed = false;
+                    
+                    if (task.goalId) {
+                        const goal = state.goals.find(g => g.id === task.goalId);
+                        if (goal) {
+                            goal.completedTasks -= 1;
+                        }
+                    }
+                    
+                    saveData();
+                    renderEverything();
+                }
+            }
+        }
+
+        function openTimeModal(task) {
+            document.getElementById('modal-task-name').textContent = task.text;
+            document.getElementById('actual-time-input').value = '';
+            document.getElementById('actual-time-input').focus();
+            document.getElementById('time-modal').classList.add('active');
+        }
+
+        function closeTimeModal() {
+            document.getElementById('time-modal').classList.remove('active');
+            pendingTaskId = null;
+        }
+
+        function submitActualTime() {
+            const actualTime = parseInt(document.getElementById('actual-time-input').value);
+            
+            if (!actualTime || actualTime < 1) {
+                alert('Please enter a valid time in minutes (at least 1)');
+                return;
+            }
+
+            const task = state.tasks.find(t => t.id === pendingTaskId);
+            if (task) {
+                task.completed = true;
+                task.actualTime = actualTime;
                 
                 if (task.goalId) {
                     const goal = state.goals.find(g => g.id === task.goalId);
                     if (goal) {
-                        goal.completedTasks += task.completed ? 1 : -1;
+                        goal.completedTasks += 1;
                     }
                 }
                 
-                if (task.completed) {
-                    celebrate();
-                }
-                
+                celebrate();
                 saveData();
                 renderEverything();
+                closeTimeModal();
             }
         }
 
@@ -852,15 +1054,39 @@
                 const goal = task.goalId ? state.goals.find(g => g.id === task.goalId) : null;
                 const goalTag = goal ? `<span class="goal-tag">${goal.text}</span>` : '';
                 
+                let efficiencyBadge = '';
+                if (task.completed && task.actualTime) {
+                    const efficiency = (task.estimatedTime / task.actualTime) * 100;
+                    let efficiencyClass = 'efficiency-slow';
+                    let efficiencyText = '';
+                    
+                    if (efficiency >= 100) {
+                        efficiencyClass = 'efficiency-excellent';
+                        efficiencyText = '⚡ ' + Math.round(efficiency) + '%';
+                    } else if (efficiency >= 90) {
+                        efficiencyClass = 'efficiency-good';
+                        efficiencyText = '👍 ' + Math.round(efficiency) + '%';
+                    } else if (efficiency >= 75) {
+                        efficiencyClass = 'efficiency-ok';
+                        efficiencyText = '⏱️ ' + Math.round(efficiency) + '%';
+                    } else {
+                        efficiencyClass = 'efficiency-slow';
+                        efficiencyText = '🐢 ' + Math.round(efficiency) + '%';
+                    }
+                    
+                    efficiencyBadge = `<span class="efficiency-badge ${efficiencyClass}">${efficiencyText}</span>`;
+                }
+                
                 return `
                     <div class="task-item ${task.completed ? 'completed' : ''}">
                         <input type="checkbox" class="task-checkbox" 
                                ${task.completed ? 'checked' : ''} 
                                onchange="toggleTask(${task.id})">
                         <div class="task-content">
-                            <div class="task-text">${task.text}</div>
+                            <div class="task-text">${task.text}${efficiencyBadge}</div>
                             <div class="task-meta">
                                 <span>⏱️ ${task.estimatedTime}min</span>
+                                ${task.completed ? `<span>(Actual: ${task.actualTime}min)</span>` : ''}
                                 ${goalTag}
                             </div>
                         </div>
