@@ -469,6 +469,131 @@
         .goal-name {
             font-weight: 600;
             font-size: 0.95em;
+            flex: 1;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .goal-name:hover {
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        .goal-edit-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+            padding: 4px 8px;
+            font-size: 1em;
+        }
+
+        .goal-edit-btn:hover {
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        .goal-delete-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.3em;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            padding: 0 4px;
+        }
+
+        .goal-item:hover .goal-delete-btn {
+            opacity: 1;
+        }
+
+        .goal-delete-btn:hover {
+            color: var(--coral);
+        }
+
+        /* History Tab */
+        .history-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .history-tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .history-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .history-section {
+            display: none;
+        }
+
+        .history-section.active {
+            display: block;
+        }
+
+        .history-item {
+            padding: 12px 16px;
+            background: var(--bg);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .history-item-date {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .history-item-stats {
+            font-size: 0.9em;
+            color: var(--text-light);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .history-completed-tasks {
+            padding: 16px;
+            background: var(--bg);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .completed-task {
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--success);
+            font-size: 0.95em;
+        }
+
+        .completed-task-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .completed-task-meta {
+            font-size: 0.85em;
+            color: var(--text-light);
         }
 
         .goal-stats {
@@ -659,6 +784,26 @@
             </div>
         </div>
 
+        <!-- History Section -->
+        <div class="card">
+            <h2>History & Insights</h2>
+            
+            <div class="history-tabs">
+                <button class="history-tab active" onclick="switchHistoryTab('stats')">📊 Stats</button>
+                <button class="history-tab" onclick="switchHistoryTab('completed')">✅ Completed Tasks</button>
+            </div>
+
+            <!-- Stats Tab -->
+            <div class="history-section active" id="stats-section">
+                <div id="history-stats"></div>
+            </div>
+
+            <!-- Completed Tasks Tab -->
+            <div class="history-section" id="completed-section">
+                <div id="completed-tasks-list"></div>
+            </div>
+        </div>
+
         <div class="analytics-grid">
             <div class="stat-card">
                 <div class="stat-icon">✅</div>
@@ -770,7 +915,12 @@
         }
 
         function getRandomColor() {
-            const colors = ['#4F46E5', '#06B6D4', '#F59E0B', '#10B981', '#8B5CF6', '#EC4899'];
+            const colors = ['#4F46E5', '#06B6D4', '#F59E0B', '#10B981', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316', '#6366F1', '#0EA5E9'];
+            const usedColors = state.goals.map(g => g.color);
+            const availableColors = colors.filter(c => !usedColors.includes(c));
+            if (availableColors.length > 0) {
+                return availableColors[Math.floor(Math.random() * availableColors.length)];
+            }
             return colors[Math.floor(Math.random() * colors.length)];
         }
 
@@ -1105,8 +1255,9 @@
                 return `
                     <div class="goal-item">
                         <div class="goal-header">
-                            <span class="goal-name">${goal.text}</span>
-                            <button class="delete-btn" onclick="deleteGoal(${goal.id})" style="opacity:1;">×</button>
+                            <span class="goal-name" onclick="editGoal(${goal.id}, '${goal.text.replace(/'/g, "\\'")}', this)">${goal.text}</span>
+                            <button class="goal-edit-btn" onclick="editGoal(${goal.id}, '${goal.text.replace(/'/g, "\\'")}', this)" title="Edit goal">✏️</button>
+                            <button class="goal-delete-btn" onclick="deleteGoal(${goal.id})">×</button>
                         </div>
                         <div class="goal-stats">${goal.completedTasks}/${goal.totalTasks} tasks</div>
                         <div class="goal-progress-bar">
@@ -1117,6 +1268,19 @@
             }).join('');
             
             document.getElementById('goals-list').innerHTML = html || '<p style="text-align:center;color:var(--text-light);padding:20px;">Add your first goal! 🎯</p>';
+        }
+
+        function editGoal(goalId, currentText, element) {
+            const newText = prompt('Edit your goal:', currentText);
+            if (newText && newText.trim()) {
+                const goal = state.goals.find(g => g.id === goalId);
+                if (goal) {
+                    goal.text = newText.trim();
+                    saveData();
+                    updateGoalSelect();
+                    renderEverything();
+                }
+            }
         }
 
         function renderGoalsChart() {
@@ -1231,9 +1395,112 @@
             });
         }
 
+        function switchHistoryTab(tab) {
+            // Hide all sections
+            document.getElementById('stats-section').classList.remove('active');
+            document.getElementById('completed-section').classList.remove('active');
+            
+            // Remove active from all tabs
+            document.querySelectorAll('.history-tab').forEach(t => t.classList.remove('active'));
+            
+            // Show selected section and tab
+            if (tab === 'stats') {
+                document.getElementById('stats-section').classList.add('active');
+                event.target.classList.add('active');
+                renderHistoryStats();
+            } else {
+                document.getElementById('completed-section').classList.add('active');
+                event.target.classList.add('active');
+                renderCompletedTasks();
+            }
+        }
+
+        function renderHistoryStats() {
+            const container = document.getElementById('history-stats');
+            
+            if (state.history.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:20px;">No history yet. Complete a day to see your stats!</p>';
+                return;
+            }
+
+            const html = state.history.slice().reverse().map(day => {
+                const date = new Date(day.date);
+                const dateStr = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                
+                return `
+                    <div class="history-item">
+                        <div class="history-item-date">${dateStr}</div>
+                        <div class="history-item-stats">
+                            <div>✅ ${day.completedTasks}/${day.totalTasks} tasks (${Math.round(day.completionRate)}%)</div>
+                            <div>⚡ Efficiency: ${Math.round(day.timeEfficiency)}%</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = html;
+        }
+
+        function renderCompletedTasks() {
+            const container = document.getElementById('completed-tasks-list');
+            
+            // Get all completed tasks grouped by date
+            const completedByDate = {};
+            state.tasks.forEach(task => {
+                if (task.completed) {
+                    if (!completedByDate[task.date]) {
+                        completedByDate[task.date] = [];
+                    }
+                    completedByDate[task.date].push(task);
+                }
+            });
+
+            if (Object.keys(completedByDate).length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:20px;">No completed tasks yet. Start checking off your tasks!</p>';
+                return;
+            }
+
+            // Sort dates in reverse
+            const sortedDates = Object.keys(completedByDate).sort().reverse();
+
+            const html = sortedDates.map(date => {
+                const dateObj = new Date(date);
+                const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                const tasks = completedByDate[date];
+
+                const tasksHtml = tasks.map(task => {
+                    const goal = task.goalId ? state.goals.find(g => g.id === task.goalId) : null;
+                    const goalTag = goal ? `<span class="goal-tag">${goal.text}</span>` : '';
+                    
+                    let efficiency = '';
+                    if (task.actualTime) {
+                        const eff = (task.estimatedTime / task.actualTime) * 100;
+                        efficiency = ` - ${Math.round(eff)}%`;
+                    }
+
+                    return `
+                        <div class="completed-task">
+                            <div class="completed-task-name">${task.text}</div>
+                            <div class="completed-task-meta">
+                                ⏱️ ${task.estimatedTime}min → ${task.actualTime}min${efficiency} ${goalTag}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="history-completed-tasks">
+                        <div style="font-weight: 700; color: var(--primary); margin-bottom: 12px;">${dateStr} (${tasks.length} completed)</div>
+                        ${tasksHtml}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
         init();
     </script>
 </body>
 </html>
-
 
