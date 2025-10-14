@@ -552,11 +552,39 @@
             display: block;
         }
 
+        .calendars-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .calendar-month {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .calendar-month-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 0.95em;
+        }
+
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-            margin-top: 20px;
+            gap: 4px;
+        }
+
+        .calendar-weekday {
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.7em;
+            color: var(--text-light);
+            padding: 4px 0;
         }
 
         .calendar-day {
@@ -565,28 +593,29 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
-            font-size: 0.85em;
+            border-radius: 6px;
+            font-size: 0.65em;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 2px solid var(--border);
+            border: 1px solid var(--border);
             background: white;
+            padding: 2px;
         }
 
         .calendar-day:hover {
-            transform: scale(1.05);
+            transform: scale(1.1);
             border-color: var(--primary);
         }
 
         .calendar-day-num {
             font-weight: 700;
-            font-size: 0.9em;
+            font-size: 0.75em;
         }
 
         .calendar-day-eff {
-            font-size: 0.75em;
+            font-size: 0.6em;
             color: var(--text-light);
-            margin-top: 2px;
+            margin-top: 1px;
         }
 
         .calendar-day.excellent {
@@ -888,6 +917,31 @@
             <h2>Your Progress This Week</h2>
             <div class="chart-container">
                 <canvas id="trends-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Calendar View -->
+        <div class="chart-card">
+            <h2>Productivity Calendar</h2>
+            <p style="color: var(--text-light); margin-bottom: 16px; font-size: 0.9em;">30-day view - hover to see efficiency %</p>
+            <div class="calendars-container" id="calendars-container"></div>
+            <div class="calendar-legend" style="margin-top: 16px;">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.3)); border-color: #10B981;"></div>
+                    <span>100%+</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.3)); border-color: #06B6D4;"></div>
+                    <span>90-99%</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.3)); border-color: #F59E0B;"></div>
+                    <span>75-89%</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--bg); border-color: var(--border);"></div>
+                    <span>No data</span>
+                </div>
             </div>
         </div>
     </div>
@@ -1478,17 +1532,12 @@
         }
 
         function renderHistoryStats() {
-            const container = document.getElementById('history-stats');
+            const container = document.getElementById('calendars-container');
             
             if (state.history.length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:20px;">No history yet. Complete a day to see your stats!</p>';
+                container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:20px;grid-column: 1/-1;">No history yet. Complete a day to see your stats!</p>';
                 return;
             }
-
-            // Get last 30 days
-            const today = new Date(state.currentDate);
-            const thirtyDaysAgo = new Date(today);
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
             // Create a map of dates to stats
             const statsMap = {};
@@ -1496,74 +1545,98 @@
                 statsMap[day.date] = day;
             });
 
-            // Build calendar
-            const calendar = [];
-            const current = new Date(thirtyDaysAgo);
-            
-            while (current <= today) {
-                const dateStr = current.toISOString().split('T')[0];
-                calendar.push({
-                    date: dateStr,
-                    day: current.getDate(),
-                    stats: statsMap[dateStr] || null
-                });
-                current.setDate(current.getDate() + 1);
-            }
+            // Get current date and build 3 months (current + next 2)
+            const months = [];
+            const startDate = new Date(state.currentDate);
+            startDate.setDate(1); // Start of current month
 
-            // Create calendar grid
-            const calendarHtml = calendar.map(item => {
-                let className = 'calendar-day';
-                let efficiencyText = '';
+            for (let m = 0; m < 3; m++) {
+                const monthDate = new Date(startDate);
+                monthDate.setMonth(monthDate.getMonth() + m);
+                
+                const year = monthDate.getFullYear();
+                const month = monthDate.getMonth();
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                const daysInMonth = lastDay.getDate();
+                const startingDayOfWeek = firstDay.getDay();
 
-                if (item.stats) {
-                    const eff = Math.round(item.stats.timeEfficiency);
-                    efficiencyText = `<div class="calendar-day-eff">${eff}%</div>`;
-                    
-                    if (eff >= 100) {
-                        className += ' excellent';
-                    } else if (eff >= 90) {
-                        className += ' good';
-                    } else if (eff >= 75) {
-                        className += ' ok';
-                    }
-                } else {
-                    className += ' incomplete';
+                const monthData = {
+                    name: monthDate.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
+                    days: []
+                };
+
+                // Add empty cells for days before month starts
+                for (let i = 0; i < startingDayOfWeek; i++) {
+                    monthData.days.push(null);
                 }
 
-                const tooltip = item.stats 
-                    ? `${item.stats.completedTasks}/${item.stats.totalTasks} tasks - ${Math.round(item.stats.timeEfficiency)}% efficiency`
-                    : 'No data';
+                // Add all days of month
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dateStr = new Date(year, month, day).toISOString().split('T')[0];
+                    monthData.days.push({
+                        date: dateStr,
+                        day: day,
+                        stats: statsMap[dateStr] || null
+                    });
+                }
+
+                months.push(monthData);
+            }
+
+            // Build HTML for all months
+            const calendarHtml = months.map(monthData => {
+                const daysHtml = monthData.days.map(dayData => {
+                    if (!dayData) {
+                        return '<div style="border: none; background: transparent;"></div>';
+                    }
+
+                    let className = 'calendar-day';
+                    let efficiencyText = '';
+
+                    if (dayData.stats) {
+                        const eff = Math.round(dayData.stats.timeEfficiency);
+                        efficiencyText = `<div class="calendar-day-eff">${eff}%</div>`;
+                        
+                        if (eff >= 100) {
+                            className += ' excellent';
+                        } else if (eff >= 90) {
+                            className += ' good';
+                        } else if (eff >= 75) {
+                            className += ' ok';
+                        }
+                    } else {
+                        className += ' incomplete';
+                    }
+
+                    const tooltip = dayData.stats 
+                        ? `${dayData.stats.completedTasks}/${dayData.stats.totalTasks} tasks - ${Math.round(dayData.stats.timeEfficiency)}% efficiency`
+                        : 'No data';
+
+                    return `
+                        <div class="${className}" title="${tooltip}">
+                            <div class="calendar-day-num">${dayData.day}</div>
+                            ${efficiencyText}
+                        </div>
+                    `;
+                }).join('');
+
+                const weekdaysHtml = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+                    .map(day => `<div class="calendar-weekday">${day}</div>`)
+                    .join('');
 
                 return `
-                    <div class="${className}" title="${tooltip}">
-                        <div class="calendar-day-num">${item.day}</div>
-                        ${efficiencyText}
+                    <div class="calendar-month">
+                        <div class="calendar-month-title">${monthData.name}</div>
+                        <div class="calendar-grid">
+                            ${weekdaysHtml}
+                            ${daysHtml}
+                        </div>
                     </div>
                 `;
             }).join('');
 
-            const legendHtml = `
-                <div class="calendar-legend">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.3)); border-color: #10B981;"></div>
-                        <span>100%+ (Excellent)</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.3)); border-color: #06B6D4;"></div>
-                        <span>90-99% (Good)</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.3)); border-color: #F59E0B;"></div>
-                        <span>75-89% (Okay)</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: var(--bg); border-color: var(--border);"></div>
-                        <span>No data</span>
-                    </div>
-                </div>
-            `;
-
-            container.innerHTML = `<div class="calendar-grid">${calendarHtml}</div>${legendHtml}`;
+            container.innerHTML = calendarHtml;
         }
 
         function renderCompletedTasks() {
