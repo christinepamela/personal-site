@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+<!-- Stats Tab -->
+            <div class="history-section active" id="stats-section">
+                <p style="color: var(--text-light); margin-bottom: 20px;">Your productivity calendar - hover to see details</p>
+                <div id="history-stats"></div>
+            </div><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -548,26 +552,84 @@
             display: block;
         }
 
-        .history-item {
-            padding: 12px 16px;
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+            background: white;
+        }
+
+        .calendar-day:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+
+        .calendar-day-num {
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+
+        .calendar-day-eff {
+            font-size: 0.75em;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        .calendar-day.excellent {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.3));
+            border-color: #10B981;
+        }
+
+        .calendar-day.good {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.3));
+            border-color: #06B6D4;
+        }
+
+        .calendar-day.ok {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.3));
+            border-color: #F59E0B;
+        }
+
+        .calendar-day.incomplete {
+            background: var(--bg);
+            border-color: var(--border);
+        }
+
+        .calendar-legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            padding: 16px;
             background: var(--bg);
             border-radius: 10px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--primary);
-        }
-
-        .history-item-date {
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-
-        .history-item-stats {
             font-size: 0.9em;
-            color: var(--text-light);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
             gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid;
         }
 
         .history-completed-tasks {
@@ -1423,22 +1485,85 @@
                 return;
             }
 
-            const html = state.history.slice().reverse().map(day => {
-                const date = new Date(day.date);
-                const dateStr = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-                
+            // Get last 30 days
+            const today = new Date(state.currentDate);
+            const thirtyDaysAgo = new Date(today);
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+            // Create a map of dates to stats
+            const statsMap = {};
+            state.history.forEach(day => {
+                statsMap[day.date] = day;
+            });
+
+            // Build calendar
+            const calendar = [];
+            const current = new Date(thirtyDaysAgo);
+            
+            while (current <= today) {
+                const dateStr = current.toISOString().split('T')[0];
+                calendar.push({
+                    date: dateStr,
+                    day: current.getDate(),
+                    stats: statsMap[dateStr] || null
+                });
+                current.setDate(current.getDate() + 1);
+            }
+
+            // Create calendar grid
+            const calendarHtml = calendar.map(item => {
+                let className = 'calendar-day';
+                let efficiencyText = '';
+
+                if (item.stats) {
+                    const eff = Math.round(item.stats.timeEfficiency);
+                    efficiencyText = `<div class="calendar-day-eff">${eff}%</div>`;
+                    
+                    if (eff >= 100) {
+                        className += ' excellent';
+                    } else if (eff >= 90) {
+                        className += ' good';
+                    } else if (eff >= 75) {
+                        className += ' ok';
+                    }
+                } else {
+                    className += ' incomplete';
+                }
+
+                const tooltip = item.stats 
+                    ? `${item.stats.completedTasks}/${item.stats.totalTasks} tasks - ${Math.round(item.stats.timeEfficiency)}% efficiency`
+                    : 'No data';
+
                 return `
-                    <div class="history-item">
-                        <div class="history-item-date">${dateStr}</div>
-                        <div class="history-item-stats">
-                            <div>✅ ${day.completedTasks}/${day.totalTasks} tasks (${Math.round(day.completionRate)}%)</div>
-                            <div>⚡ Efficiency: ${Math.round(day.timeEfficiency)}%</div>
-                        </div>
+                    <div class="${className}" title="${tooltip}">
+                        <div class="calendar-day-num">${item.day}</div>
+                        ${efficiencyText}
                     </div>
                 `;
             }).join('');
-            
-            container.innerHTML = html;
+
+            const legendHtml = `
+                <div class="calendar-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.3)); border-color: #10B981;"></div>
+                        <span>100%+ (Excellent)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(6, 182, 212, 0.3)); border-color: #06B6D4;"></div>
+                        <span>90-99% (Good)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.3)); border-color: #F59E0B;"></div>
+                        <span>75-89% (Okay)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: var(--bg); border-color: var(--border);"></div>
+                        <span>No data</span>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = `<div class="calendar-grid">${calendarHtml}</div>${legendHtml}`;
         }
 
         function renderCompletedTasks() {
