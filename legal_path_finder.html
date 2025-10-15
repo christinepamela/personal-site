@@ -3,196 +3,746 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Legal Path Finder</title>
+  <title>Legal Path Finder - Malaysia</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f7f7f7;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: #333;
       padding: 20px;
-      max-width: 600px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 700px;
       margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
     h1 {
       text-align: center;
-      font-size: 1.8em;
-      margin-bottom: 20px;
+      font-size: 2em;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+    .subtitle {
+      text-align: center;
+      color: #7f8c8d;
+      margin-bottom: 30px;
+      font-size: 0.95em;
     }
     label {
       display: block;
-      margin-top: 15px;
-      font-weight: bold;
+      margin-top: 20px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 8px;
     }
     select, textarea, button {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
+      padding: 12px;
       box-sizing: border-box;
       font-size: 1em;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      transition: border-color 0.3s;
+    }
+    select:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    textarea {
+      font-family: inherit;
+      resize: vertical;
     }
     button {
-      background-color: #003366;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;
       cursor: pointer;
       margin-top: 20px;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
     button:hover {
-      background-color: #0055a5;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
     }
     .result-box {
-      background: white;
-      padding: 15px;
-      margin-top: 20px;
+      background: #f8f9fa;
+      padding: 20px;
+      margin-top: 25px;
       border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-left: 4px solid #667eea;
     }
     .result-box h3 {
       margin-top: 0;
+      color: #2c3e50;
+      font-size: 1.2em;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
     }
     ul {
-      margin-top: 5px;
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+    li {
+      margin: 8px 0;
+      line-height: 1.6;
+    }
+    .no-match {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      border-radius: 6px;
+    }
+    .tip {
+      background: #e7f3ff;
+      border-left: 4px solid #2196F3;
+      padding: 12px;
+      margin-top: 15px;
+      border-radius: 6px;
+      font-size: 0.9em;
+    }
+    #subtopic {
+      margin-bottom: 15px;
+    }
+    .optional-label {
+      color: #95a5a6;
+      font-size: 0.85em;
+      font-weight: normal;
     }
   </style>
 </head>
 <body>
 
-  <h1>Legal Path Finder</h1>
+  <div class="container">
+    <h1>🏛️ Legal Path Finder</h1>
+    <p class="subtitle">Find relevant Malaysian laws and legal remedies for your situation</p>
 
-  <label for="category">Select a Topic:</label>
-  <select id="category">
-    <option value="">-- Please select --</option>
-    <option value="tenancy">Tenancy & Property</option>
-    <option value="employment">Employment & Salary</option>
-    <option value="consumer">Consumer & Product Issues</option>
-    <option value="noise">Noise & Nuisance</option>
-    <option value="family">Family & Domestic Matters</option>
-  </select>
+    <label for="category">Step 1: Select a Topic</label>
+    <select id="category" onchange="updateSubtopics()">
+      <option value="">-- Please select a category --</option>
+      <option value="tenancy">🏠 Tenancy & Property</option>
+      <option value="employment">💼 Employment & Workplace</option>
+      <option value="consumer">🛒 Consumer & Product Issues</option>
+      <option value="noise">🔊 Noise & Nuisance</option>
+      <option value="family">👨‍👩‍👧 Family & Domestic Matters</option>
+      <option value="debt">💳 Debt & Money Lending</option>
+      <option value="traffic">🚗 Traffic & Vehicle Issues</option>
+      <option value="business">🏢 Business & Company</option>
+    </select>
 
-  <label for="issue">Describe Your Issue:</label>
-  <textarea id="issue" rows="4" placeholder="Write your situation here..."></textarea>
+    <div id="subtopic-section" style="display: none;">
+      <label for="subtopic">Step 2: Select Your Specific Issue</label>
+      <select id="subtopic">
+        <option value="">-- Choose your issue --</option>
+      </select>
+    </div>
 
-  <button onclick="findLegalPath()">Find Related Laws</button>
+    <label for="issue">
+      Step 3: Add More Details <span class="optional-label">(Optional - helps us give better advice)</span>
+    </label>
+    <textarea id="issue" rows="4" placeholder="You can add more context here, but it's optional if you've selected a specific issue above..."></textarea>
 
-  <div id="result" class="result-box" style="display: none;"></div>
+    <button onclick="findLegalPath()">Get Legal Guidance</button>
+
+    <div id="result" style="display: none;"></div>
+  </div>
 
   <script>
     const legalDatabase = {
       "tenancy": [
         {
-          keywords: ["deposit", "landlord", "rental"],
-          laws: ["Contract Act 1950", "National Land Code 1965"],
+          name: "Rental Deposit Not Returned",
+          keywords: ["deposit", "landlord", "rental", "security deposit", "tenancy deposit"],
+          laws: [
+            "Contract Act 1950 - Governs rental agreements",
+            "National Land Code 1965 - Property and land matters",
+            "Specific Relief Act 1950 - For enforcement of contracts"
+          ],
           actions: [
-            "Send a formal demand letter to landlord",
-            "File a claim at Tribunal for Housing and Strata Management",
-            "File in Magistrate’s Court if amount is large"
+            "Send a formal demand letter to landlord via registered post",
+            "File a claim at Tribunal for Housing and Strata Management (for claims up to RM250,000)",
+            "File in Magistrate's Court if tribunal doesn't apply",
+            "Keep all evidence: tenancy agreement, payment receipts, photos, correspondence"
           ],
           agencies: [
-            "KPKT Tribunal",
+            "Tribunal for Housing and Strata Management (Tribunal Perumahan)",
             "Magistrate Court",
-            "Legal Aid Centre"
+            "Legal Aid Centre (Pejabat Bantuan Guaman)",
+            "National House Buyers Association (HBA)"
+          ]
+        },
+        {
+          name: "Unfair Eviction / Being Forced Out",
+          keywords: ["eviction", "evict", "kick out", "force out", "vacate"],
+          laws: [
+            "Specific Relief Act 1950 - Protection against unlawful eviction",
+            "Distress Act 1951 - Landlord's rights and tenant protection",
+            "Civil Law Act 1956 - General legal remedies"
+          ],
+          actions: [
+            "Check your tenancy agreement for termination clauses",
+            "Landlord must give proper notice (usually 2-3 months)",
+            "If eviction is unlawful, file for injunction",
+            "Do not leave voluntarily if eviction is improper",
+            "Seek immediate legal advice"
+          ],
+          agencies: [
+            "Legal Aid Centre",
+            "Tribunal for Housing and Strata Management",
+            "Magistrate Court"
+          ]
+        },
+        {
+          name: "Landlord Won't Do Repairs",
+          keywords: ["repair", "maintenance", "leak", "damage", "broken", "fix"],
+          laws: [
+            "Contract Act 1950 - Landlord's obligations under tenancy agreement",
+            "National Land Code 1965"
+          ],
+          actions: [
+            "Notify landlord in writing about the issue",
+            "Give reasonable time for repairs (14-30 days)",
+            "If urgent (safety issue), repair and deduct from rent with proper documentation",
+            "Keep all receipts and correspondence",
+            "File tribunal claim if landlord refuses"
+          ],
+          agencies: [
+            "Tribunal for Housing and Strata Management",
+            "National House Buyers Association (HBA)"
           ]
         }
       ],
+      
       "employment": [
         {
-          keywords: ["salary", "employer", "wage", "overtime"],
-          laws: ["Employment Act 1955"],
+          name: "Unpaid Salary / Wages",
+          keywords: ["salary", "wage", "pay", "gaji", "payment", "unpaid", "tidak dibayar"],
+          laws: [
+            "Employment Act 1955 - Protection for employees earning RM4,000 and below",
+            "Industrial Relations Act 1967 - For disputes and wrongful dismissal",
+            "Sabah Labour Ordinance (for Sabah)",
+            "Sarawak Labour Ordinance (for Sarawak)"
+          ],
           actions: [
-            "File salary claim with JTK",
-            "Keep proof of employment",
-            "Seek mediation if disputed"
+            "Keep proof: employment contract, payslips, bank statements, timesheets",
+            "Send formal demand letter to employer",
+            "File salary claim with Department of Labour (JTK) within 60 days",
+            "Claim can include unpaid wages, overtime, and statutory payments"
           ],
           agencies: [
+            "Department of Labour (Jabatan Tenaga Kerja - JTK)",
+            "Industrial Relations Department",
+            "Legal Aid Centre",
+            "Human Resources Development Corporation (HRD Corp)"
+          ]
+        },
+        {
+          name: "Wrongful Dismissal / Fired Unfairly",
+          keywords: ["fired", "dismiss", "termination", "sack", "unfair dismissal", "wrongful"],
+          laws: [
+            "Employment Act 1955 - Termination procedures",
+            "Industrial Relations Act 1967 - Protection against unfair dismissal"
+          ],
+          actions: [
+            "Check if dismissal follows proper procedure (domestic inquiry, notice period)",
+            "File complaint with Industrial Relations Department within 60 days",
+            "Gather evidence: termination letter, work records, witness statements",
+            "You may be entitled to reinstatement or compensation"
+          ],
+          agencies: [
+            "Industrial Relations Department",
             "Department of Labour (JTK)",
             "Legal Aid Centre"
           ]
+        },
+        {
+          name: "Overtime Not Paid",
+          keywords: ["overtime", "ot", "extra hours", "work hours", "overwork"],
+          laws: [
+            "Employment Act 1955 - Overtime rates and maximum working hours",
+            "Section 60A - Overtime payment at 1.5x regular rate"
+          ],
+          actions: [
+            "Normal working hours: 8 hours/day, 48 hours/week maximum",
+            "Overtime rate: 1.5x for normal days, 2x for rest days, 3x for public holidays",
+            "Keep detailed records of hours worked",
+            "File claim with JTK if employer refuses payment"
+          ],
+          agencies: [
+            "Department of Labour (JTK)",
+            "Labour Court"
+          ]
+        },
+        {
+          name: "Workplace Harassment / Discrimination",
+          keywords: ["harassment", "sexual harassment", "bully", "hostile", "abuse", "discrimination"],
+          laws: [
+            "Employment Act 1955 (Amendment 2022) - Sexual harassment provisions",
+            "Penal Code - Criminal offences for severe cases",
+            "Industrial Relations Act 1967"
+          ],
+          actions: [
+            "Document all incidents with dates, times, witnesses",
+            "Report to company HR or management",
+            "File complaint with Department of Labour",
+            "Make police report if criminal in nature",
+            "Seek counseling and legal advice"
+          ],
+          agencies: [
+            "Department of Labour (JTK)",
+            "Police Station (for criminal matters)",
+            "Women's Aid Organisation (WAO)",
+            "All Women's Action Society (AWAM)"
+          ]
         }
       ],
+      
       "consumer": [
         {
-          keywords: ["refund", "product", "scam", "delivery"],
-          laws: ["Consumer Protection Act 1999"],
+          name: "Defective Product / Want Refund",
+          keywords: ["refund", "return", "defect", "faulty", "broken product", "not working"],
+          laws: [
+            "Consumer Protection Act 1999 - Rights against defective goods",
+            "Sale of Goods Act 1957 - Implied terms of quality and fitness",
+            "Contracts Act 1950"
+          ],
           actions: [
-            "Contact the seller to resolve",
-            "File complaint with Tribunal for Consumer Claims (TTPM)",
-            "Keep all receipts and messages"
+            "Contact seller immediately with proof of purchase",
+            "Request repair, replacement, or refund",
+            "If refused, file complaint with Tribunal for Consumer Claims (TTPM) within 3 years",
+            "Keep all receipts, warranty cards, photos, and correspondence"
+          ],
+          agencies: [
+            "Tribunal for Consumer Claims Malaysia (TTPM)",
+            "Ministry of Domestic Trade and Cost of Living (KPDN)",
+            "Federation of Malaysian Consumers Associations (FOMCA)"
+          ]
+        },
+        {
+          name: "Online Scam / Fraud",
+          keywords: ["scam", "fraud", "cheat", "fake", "penipuan", "online scam"],
+          laws: [
+            "Penal Code - Sections 415-420 (Cheating)",
+            "Communications and Multimedia Act 1998",
+            "Consumer Protection Act 1999"
+          ],
+          actions: [
+            "Make police report immediately",
+            "Report to Bank Negara if payment/banking involved",
+            "File complaint with KPDN",
+            "Report to Malaysian Communications and Multimedia Commission (MCMC) if online",
+            "Freeze/report transactions to your bank"
+          ],
+          agencies: [
+            "Police Station (Commercial Crime Investigation Department)",
+            "Bank Negara Malaysia",
+            "KPDN",
+            "Malaysian Communications and Multimedia Commission (MCMC)",
+            "National Scam Response Centre (NSRC) - 997"
+          ]
+        },
+        {
+          name: "Delivery Issues / Lost Package",
+          keywords: ["delivery", "parcel", "shipping", "courier", "lost package", "damaged delivery"],
+          laws: [
+            "Consumer Protection Act 1999",
+            "Contracts Act 1950"
+          ],
+          actions: [
+            "Contact courier company with tracking number",
+            "File complaint with seller/platform",
+            "Keep proof: receipts, photos, tracking info, communication records",
+            "File TTPM claim if value is significant and unresolved"
           ],
           agencies: [
             "Tribunal for Consumer Claims (TTPM)",
             "KPDN",
-            "Consumer associations"
+            "E-commerce platform support"
           ]
         }
       ],
+      
       "noise": [
         {
-          keywords: ["noise", "neighbor", "loud", "disturbance"],
-          laws: ["Penal Code s.268 (Public Nuisance)", "Local Government Act 1976"],
+          name: "Noisy Neighbor / Disturbance",
+          keywords: ["noise", "loud", "neighbor", "neighbour", "disturbance", "bising"],
+          laws: [
+            "Penal Code Section 268 - Public Nuisance",
+            "Street, Drainage and Building Act 1974",
+            "Local Government Act 1976",
+            "Environmental Quality Act 1974"
+          ],
           actions: [
-            "Lodge complaint with local council (PBT)",
-            "Make a police report if it continues",
-            "Record evidence of disturbance"
+            "Try to resolve amicably with neighbor first",
+            "Lodge complaint with local council (PBT/DBKL/MBPJ etc.)",
+            "Make police report if severe or threatening",
+            "Record evidence: videos, audio recordings, dates and times",
+            "Get statements from other affected neighbors"
           ],
           agencies: [
-            "Local Municipal Council (PBT)",
-            "Police Station"
+            "Local Municipal Council (Majlis Perbandaran/Dewan Bandaraya)",
+            "Police Station",
+            "Department of Environment (for construction noise)",
+            "Management Corporation (for condos/apartments)"
+          ]
+        },
+        {
+          name: "Construction / Renovation Noise",
+          keywords: ["construction", "renovation", "building", "drilling", "pembinaan"],
+          laws: [
+            "Street, Drainage and Building Act 1974",
+            "Environmental Quality (Control of Noise) Regulations 2019",
+            "Local council by-laws"
+          ],
+          actions: [
+            "Check if proper permits were obtained",
+            "Verify working hours compliance (usually 7am-7pm weekdays)",
+            "Lodge complaint with local council",
+            "Contact Department of Environment if exceeds noise limits",
+            "Keep log of dates, times, and noise levels"
+          ],
+          agencies: [
+            "Local Municipal Council",
+            "Department of Environment (DOE)",
+            "Construction Industry Development Board (CIDB)"
           ]
         }
       ],
+      
       "family": [
         {
-          keywords: ["divorce", "child", "custody", "violence", "maintenance"],
-          laws: ["Law Reform (Marriage and Divorce) Act 1976", "Domestic Violence Act 1994"],
+          name: "Divorce / Separation",
+          keywords: ["divorce", "cerai", "separation", "marriage breakdown"],
+          laws: [
+            "Law Reform (Marriage and Divorce) Act 1976 - For non-Muslims",
+            "Islamic Family Law - For Muslims (varies by state)",
+            "Married Women Act 1957"
+          ],
           actions: [
-            "Seek legal advice or legal aid",
-            "File a police report if violence is involved",
-            "Go to family court for custody or divorce matters"
+            "Seek legal advice on grounds for divorce",
+            "Prepare documents: marriage certificate, financial records",
+            "File petition in Family Court (Syariah Court for Muslims)",
+            "Consider mediation for amicable settlement",
+            "Address custody, maintenance, and property division"
+          ],
+          agencies: [
+            "Family Court (Mahkamah Keluarga)",
+            "Syariah Court (for Muslims)",
+            "Legal Aid Centre",
+            "Divorce mediation centers"
+          ]
+        },
+        {
+          name: "Child Custody Issues",
+          keywords: ["custody", "child custody", "hak penjagaan", "children", "visitation"],
+          laws: [
+            "Law Reform (Marriage and Divorce) Act 1976 - Child custody provisions",
+            "Guardianship of Infants Act 1961",
+            "Child Act 2001"
+          ],
+          actions: [
+            "Best interests of child is primary consideration",
+            "File application in Family Court",
+            "Prepare welfare report and evidence of care capability",
+            "Consider child's preference if over 7 years old",
+            "Mediation often required before court hearing"
           ],
           agencies: [
             "Family Court",
+            "Department of Social Welfare (JKM)",
+            "Legal Aid Centre"
+          ]
+        },
+        {
+          name: "Domestic Violence / Abuse",
+          keywords: ["domestic violence", "abuse", "beating", "assault", "dvr", "keganasan rumah tangga"],
+          laws: [
+            "Domestic Violence Act 1994",
+            "Penal Code - Assault and criminal intimidation",
+            "Child Act 2001 - For child abuse"
+          ],
+          actions: [
+            "IMMEDIATE: Go to safe location",
+            "Make police report immediately",
+            "Seek medical attention and keep records",
+            "Apply for Emergency Protection Order (EPO) or Interim Protection Order (IPO)",
+            "Contact women's shelters or crisis centers"
+          ],
+          agencies: [
+            "Police Station (urgent)",
+            "Hospital/Clinic (medical evidence)",
+            "Women's Aid Organisation (WAO) - 03-7956 3488",
+            "Talian Kasih 15999 (24-hour helpline)",
+            "Magistrate Court (for protection orders)",
+            "Legal Aid Centre"
+          ]
+        },
+        {
+          name: "Child Support / Alimony",
+          keywords: ["maintenance", "alimony", "child support", "nafkah", "financial support"],
+          laws: [
+            "Law Reform (Marriage and Divorce) Act 1976 - Maintenance provisions",
+            "Islamic Family Law - For Muslims",
+            "Married Women Act 1957"
+          ],
+          actions: [
+            "File application in Family Court",
+            "Provide evidence of income and expenses",
+            "Consider child's needs and standard of living",
+            "Court can order deduction from salary",
+            "Can apply for variation if circumstances change"
+          ],
+          agencies: [
+            "Family Court",
+            "Syariah Court (for Muslims)",
             "Legal Aid Centre",
-            "Police Station"
+            "Department of Social Welfare (JKM)"
+          ]
+        }
+      ],
+      
+      "debt": [
+        {
+          name: "Cannot Pay Debt / Loan",
+          keywords: ["debt", "loan", "cannot pay", "hutang", "credit card", "personal loan"],
+          laws: [
+            "Contracts Act 1950",
+            "Limitation Act 1953 - Time limits for debt claims",
+            "Bankruptcy Act 1967"
+          ],
+          actions: [
+            "Contact lender to negotiate repayment plan",
+            "Seek advice from Credit Counselling and Debt Management Agency (AKPK)",
+            "Consider debt restructuring or consolidation",
+            "Understand your rights - avoid harassment",
+            "Keep all payment records and correspondence"
+          ],
+          agencies: [
+            "AKPK (Agensi Kaunseling dan Pengurusan Kredit) - 1-800-88-2575",
+            "Bank Negara Malaysia",
+            "Legal Aid Centre"
+          ]
+        },
+        {
+          name: "Illegal Moneylender (Ah Long) Harassment",
+          keywords: ["ah long", "illegal moneylender", "loan shark", "harassment", "threat"],
+          laws: [
+            "Moneylenders Act 1951",
+            "Penal Code - Criminal intimidation and harassment"
+          ],
+          actions: [
+            "NEVER borrow from illegal moneylenders",
+            "Make police report immediately if harassed",
+            "Report to Bank Negara Malaysia",
+            "Do not engage or pay - it's a crime to borrow from Ah Long",
+            "Seek help from AKPK for legal borrowing alternatives"
+          ],
+          agencies: [
+            "Police Station (Commercial Crime)",
+            "Bank Negara Malaysia",
+            "AKPK"
+          ]
+        }
+      ],
+      
+      "traffic": [
+        {
+          name: "Road Accident / Collision",
+          keywords: ["accident", "collision", "crash", "kemalangan", "car accident"],
+          laws: [
+            "Road Transport Act 1987",
+            "Motor Vehicles (Third Party Risks and Compensation) Act 1961",
+            "Penal Code - For negligence causing injury/death"
+          ],
+          actions: [
+            "Stop immediately and check for injuries",
+            "Call emergency services if needed (999)",
+            "Make police report within 24 hours (mandatory)",
+            "Exchange information with other party",
+            "Take photos of damage and scene",
+            "Notify insurance company immediately",
+            "Do not admit fault at scene"
+          ],
+          agencies: [
+            "Police Station (Traffic Police)",
+            "Insurance company",
+            "Road Transport Department (JPJ)",
+            "Hospital (if injuries)"
+          ]
+        },
+        {
+          name: "Traffic Summons / Fines",
+          keywords: ["summons", "saman", "traffic fine", "compound", "speeding ticket"],
+          laws: [
+            "Road Transport Act 1987",
+            "Road Transport Rules and Regulations"
+          ],
+          actions: [
+            "Check summons details on MyEG or JPJ portal",
+            "Pay within 14 days for 50% discount (for compounds)",
+            "Can appeal to JPJ if you believe it's wrong",
+            "Pay at post office, JPJ counter, or online",
+            "Unpaid summons can lead to court action or license blacklist"
+          ],
+          agencies: [
+            "Road Transport Department (JPJ)",
+            "Police Traffic Department",
+            "MyEG (online payment)",
+            "Post Office"
+          ]
+        }
+      ],
+      
+      "business": [
+        {
+          name: "Register a New Business",
+          keywords: ["register company", "ssm", "business registration", "start business"],
+          laws: [
+            "Companies Act 2016",
+            "Registration of Businesses Act 1956",
+            "Limited Liability Partnerships Act 2012"
+          ],
+          actions: [
+            "Decide on business structure (sole proprietor, partnership, Sdn Bhd, LLP)",
+            "Register with SSM (Companies Commission of Malaysia)",
+            "Obtain business licenses from local council",
+            "Register for income tax with LHDN",
+            "Open business bank account"
+          ],
+          agencies: [
+            "Companies Commission of Malaysia (SSM)",
+            "Inland Revenue Board (LHDN)",
+            "Local Municipal Council",
+            "Bank Negara Malaysia"
+          ]
+        },
+        {
+          name: "Contract Dispute / Breach",
+          keywords: ["contract dispute", "breach of contract", "supplier", "client not paying"],
+          laws: [
+            "Contracts Act 1950",
+            "Specific Relief Act 1950",
+            "Sale of Goods Act 1957"
+          ],
+          actions: [
+            "Review contract terms carefully",
+            "Send letter of demand",
+            "Attempt negotiation or mediation",
+            "File civil suit if amount is substantial",
+            "Consider Small Claims Court for amounts under RM5,000",
+            "Keep all documentation: contracts, invoices, correspondence"
+          ],
+          agencies: [
+            "Sessions Court or High Court (depending on amount)",
+            "Small Claims Court (under RM5,000)",
+            "Mediation centers",
+            "Legal Aid Centre"
           ]
         }
       ]
     };
 
+    function updateSubtopics() {
+      const category = document.getElementById('category').value;
+      const subtopicSection = document.getElementById('subtopic-section');
+      const subtopicSelect = document.getElementById('subtopic');
+      
+      subtopicSelect.innerHTML = '<option value="">-- Choose your issue --</option>';
+      
+      if (!category) {
+        subtopicSection.style.display = 'none';
+        return;
+      }
+      
+      const scenarios = legalDatabase[category] || [];
+      scenarios.forEach((scenario, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = scenario.name;
+        subtopicSelect.appendChild(option);
+      });
+      
+      subtopicSection.style.display = 'block';
+    }
+
     function findLegalPath() {
       const category = document.getElementById('category').value;
+      const subtopicIndex = document.getElementById('subtopic').value;
       const issue = document.getElementById('issue').value.toLowerCase();
       const resultBox = document.getElementById('result');
       resultBox.innerHTML = '';
 
-      if (!category || !issue.trim()) {
+      if (!category) {
         resultBox.style.display = 'block';
-        resultBox.innerHTML = `<p>Please select a topic and describe your issue.</p>`;
+        resultBox.innerHTML = `<div class="no-match"><p><strong>⚠️ Please select a category first.</strong></p></div>`;
         return;
       }
 
       const scenarios = legalDatabase[category] || [];
       let matched = null;
 
-      for (const s of scenarios) {
-        if (s.keywords.some(k => issue.includes(k))) {
-          matched = s;
-          break;
+      // First priority: Check if user selected a subtopic
+      if (subtopicIndex !== "") {
+        matched = scenarios[parseInt(subtopicIndex)];
+      }
+      // Second priority: Keyword matching in the text description
+      else if (issue.trim()) {
+        for (const s of scenarios) {
+          if (s.keywords.some(k => issue.includes(k))) {
+            matched = s;
+            break;
+          }
         }
       }
 
       if (matched) {
         resultBox.style.display = 'block';
         resultBox.innerHTML = `
-          <h3>Relevant Laws</h3>
-          <ul>${matched.laws.map(l => `<li>${l}</li>`).join('')}</ul>
-          <h3>What You Can Do</h3>
-          <ul>${matched.actions.map(a => `<li>${a}</li>`).join('')}</ul>
-          <h3>Where to Go</h3>
-          <ul>${matched.agencies.map(a => `<li>${a}</li>`).join('')}</ul>
+          <div class="result-box">
+            <h3>📋 Relevant Laws</h3>
+            <ul>${matched.laws.map(l => `<li>${l}</li>`).join('')}</ul>
+            
+            <h3>✅ Recommended Actions</h3>
+            <ul>${matched.actions.map(a => `<li>${a}</li>`).join('')}</ul>
+            
+            <h3>🏢 Where to Get Help</h3>
+            <ul>${matched.agencies.map(a => `<li>${a}</li>`).join('')}</ul>
+            
+            <div class="tip">
+              <strong>💡 Important:</strong> Always keep detailed records, receipts, and written communication. This will strengthen your case if you need to file a complaint or go to court.
+            </div>
+          </div>
         `;
       } else {
         resultBox.style.display = 'block';
-        resultBox.innerHTML = `<p>No direct match found. You may need to seek legal advice or check related agencies for your issue.</p>`;
+        resultBox.innerHTML = `
+          <div class="no-match">
+            <p><strong>⚠️ Please select a specific issue from the dropdown above.</strong></p>
+            <p>If your issue isn't listed, you may need specific legal advice for your situation.</p>
+          </div>
+          <div class="result-box">
+            <h3>🤝 General Resources</h3>
+            <ul>
+              <li><strong>Legal Aid Centre</strong> - Free legal consultation for those who qualify: 03-4024 5678</li>
+              <li><strong>Bar Council Malaysia</strong> - Lawyer referral service: 03-2050 2050</li>
+              <li><strong>Malaysian Legal Network</strong> - https://www.mln.com.my</li>
+              <li>Consider consulting a lawyer who specializes in this area</li>
+            </ul>
+          </div>
+        `;
       }
     }
   </script>
