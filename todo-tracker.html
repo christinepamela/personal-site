@@ -882,6 +882,7 @@
             <div class="history-tabs">
                 <button class="history-tab active" onclick="switchHistoryTab('stats')">📊 Stats</button>
                 <button class="history-tab" onclick="switchHistoryTab('completed')">✅ Completed Tasks</button>
+                <button class="history-tab" onclick="switchHistoryTab('incomplete')">⏳ Incomplete Tasks</button>
             </div>
 
             <!-- Stats Tab -->
@@ -892,6 +893,11 @@
             <!-- Completed Tasks Tab -->
             <div class="history-section" id="completed-section">
                 <div id="completed-tasks-list"></div>
+            </div>
+
+            <!-- Incomplete Tasks Tab -->
+            <div class="history-section" id="incomplete-section">
+                <div id="incomplete-tasks-list"></div>
             </div>
         </div>
 
@@ -1277,6 +1283,7 @@
             renderGoalsChart();
             renderAnalytics();
             renderTrendsChart();
+            renderHistoryStats();
         }
 
         function renderProgress() {
@@ -1515,6 +1522,7 @@
             // Hide all sections
             document.getElementById('stats-section').classList.remove('active');
             document.getElementById('completed-section').classList.remove('active');
+            document.getElementById('incomplete-section').classList.remove('active');  // ADD THIS LINE
             
             // Remove active from all tabs
             document.querySelectorAll('.history-tab').forEach(t => t.classList.remove('active'));
@@ -1524,10 +1532,14 @@
                 document.getElementById('stats-section').classList.add('active');
                 event.target.classList.add('active');
                 renderHistoryStats();
-            } else {
+            } else if (tab === 'completed') {  // CHANGE "else" TO "else if"
                 document.getElementById('completed-section').classList.add('active');
                 event.target.classList.add('active');
                 renderCompletedTasks();
+            } else if (tab === 'incomplete') {  // ADD THIS ENTIRE BLOCK
+                document.getElementById('incomplete-section').classList.add('active');
+                event.target.classList.add('active');
+                renderIncompleteTasks();
             }
         }
 
@@ -1697,8 +1709,88 @@
             container.innerHTML = html;
         }
 
+        function renderIncompleteTasks() {
+    const container = document.getElementById('incomplete-tasks-list');
+    const currentDateStr = state.currentDate.toISOString().split('T')[0];
+    
+    const incompleteByDate = {};
+    state.tasks.forEach(task => {
+        if (!task.completed && task.date < currentDateStr) {
+            if (!incompleteByDate[task.date]) {
+                incompleteByDate[task.date] = [];
+            }
+            incompleteByDate[task.date].push(task);
+        }
+    });
+
+    if (Object.keys(incompleteByDate).length === 0) {
+        container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:20px;">No incomplete tasks from previous days. Great job staying on top of things! 🎉</p>';
+        return;
+    }
+
+    const sortedDates = Object.keys(incompleteByDate).sort().reverse();
+
+    const html = sortedDates.map(date => {
+        const dateObj = new Date(date);
+        const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        const tasks = incompleteByDate[date];
+
+        const tasksHtml = tasks.map(task => {
+            const goal = task.goalId ? state.goals.find(g => g.id === task.goalId) : null;
+            const goalTag = goal ? `<span class="goal-tag">${goal.text}</span>` : '';
+
+            return `
+                <div class="completed-task" style="border-left-color: var(--coral);">
+                    <div class="completed-task-name">${task.text}</div>
+                    <div class="completed-task-meta">
+                        ⏱️ ${task.estimatedTime}min ${goalTag}
+                        <button onclick="rescheduleTask(${task.id})" style="margin-left: 10px; padding: 4px 12px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em;">Reschedule</button>
+                        <button onclick="deleteTask(${task.id})" style="margin-left: 6px; padding: 4px 12px; background: var(--coral); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em;">Delete</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="history-completed-tasks">
+                <div style="font-weight: 700; color: var(--coral); margin-bottom: 12px;">${dateStr} (${tasks.length} incomplete)</div>
+                ${tasksHtml}
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = html;
+}
+
+    function rescheduleTask(taskId) {
+        const task = state.tasks.find(t => t.id === taskId);
+        if (task) {
+            const newDate = prompt('Reschedule to which date? (YYYY-MM-DD format)\n\nExamples:\n- Today: ' + state.currentDate.toISOString().split('T')[0] + '\n- Tomorrow: ' + new Date(state.currentDate.getTime() + 24*60*60*1000).toISOString().split('T')[0]);
+            
+            if (newDate) {
+                const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                if (!dateRegex.test(newDate)) {
+                    alert('❌ Invalid date format. Please use YYYY-MM-DD format (e.g., 2025-10-26)');
+                    return;
+                }
+                
+                const selectedDate = new Date(newDate);
+                if (isNaN(selectedDate.getTime())) {
+                    alert('❌ Invalid date. Please check the date and try again.');
+                    return;
+                }
+                
+                task.date = newDate;
+                saveData();
+                renderEverything();
+                alert('✅ Task rescheduled to ' + selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }));
+            }
+        }
+    }
+
         init();
     </script>
 </body>
 </html>
+
 
