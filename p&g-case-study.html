@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why P&G Is Heavy Core & Losing Innovation Advantage | Case Study</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: #FFFFFF;
+            color: #1B3A52;
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        /* Progress Indicator */
+        .progress-nav {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 1rem 0.5rem;
+            border-radius: 30px;
+            box-shadow: 0 2px 20px rgba(27, 58, 82, 0.08);
+            border: 1px solid rgba(166, 151, 140, 0.2);
+        }
+        
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #E8E4E0;
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .progress-dot:hover {
+            background: #23777B;
+            transform: scale(1.4);
+        }
+        
+        .progress-dot.active {
+            background: #1B3A52;
+            box-shadow: 0 0 0 3px rgba(27, 58, 82, 0.15);
+        }
+        
+        .progress-label {
+            position: absolute;
+            right: 1.5rem;
+            white-space: nowrap;
+            font-size: 0.8rem;
+            color: #1B3A52;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .progress-dot:hover .progress-label {
+            opacity: 1;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1B3A52 0%, #2A4A5E 100%);
+            position: relative;
+        }
+        
+        .hero-content {
+            text-align: center;
+            color: #FFFFFF;
+            padding: 4rem 2rem;
+        }
+        
+        .hero-title {
+            font-size: clamp(2.2rem, 5vw, 4rem);
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            font-weight: 300;
+            color: #A6978C;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+        
+        .hero-author {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 3rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 400;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        /* Section Styling */
+        .section {
+            padding: 6rem 2rem;
+        }
+        
+        .section-alt {
+            background: #FAFAF8;
+        }
+        
+        .section-header {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 400;
+            margin-bottom: 2.5rem;
+            color: #1B3A52;
+            letter-spacing: -0.5px;
+        }
+        
+        .section-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .stat-card {
+            background: #FFFFFF;
+            border: 1px solid #E8E4E0;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: #23777B;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(35, 119, 123, 0.08);
+        }
+        
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: 300;
+            color: #23777B;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.95rem;
+            color: #5A6C7D;
+            font-weight: 400;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        /* Insight Bubble - Classy */
+        .insight-bubble {
+            background: linear-gradient(135deg, #F8F6F4 0%, #FAFAF8 100%);
+            padding: 2.5rem 3rem;
+            border-left: 4px solid #23777B;
+            margin: 3rem 0;
+            font-size: 1.25rem;
+            line-height: 1.8;
+            color: #1B3A52;
+            font-style: italic;
+            position: relative;
+        }
+        
+        .insight-bubble strong {
+            color: #23777B;
+            font-weight: 600;
+            font-style: normal;
+        }
+        
+        .insight-bubble.emphasis {
+            border-left-width: 6px;
+            font-size: 1.35rem;
+            background: linear-gradient(135deg, #1B3A52 0%, #2A4A5E 100%);
+            color: #FFFFFF;
+        }
+        
+        .insight-bubble.emphasis strong {
+            color: #A6978C;
+        }
+        
+        /* Key Points */
+        .key-points {
+            list-style: none;
+            margin: 2rem 0;
+        }
+        
+        .key-points li {
+            padding: 1rem 0;
+            border-bottom: 1px solid #E8E4E0;
+            font-size: 1.1rem;
+            position: relative;
+            padding-left: 2rem;
+            color: #2C3E50;
+        }
+        
+        .key-points li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: #23777B;
+            font-weight: 600;
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+            margin: 3rem 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #1B3A52 0%, #23777B 100%);
+            transform: translateX(-50%);
+        }
+        
+        .timeline-item {
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .timeline-content {
+            width: calc(50% - 3rem);
+            padding: 2rem;
+            background: #FFFFFF;
+            border: 1px solid #E8E4E0;
+        }
+        
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-left: auto;
+        }
+        
+        .timeline-year {
+            font-size: 1.3rem;
+            color: #23777B;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .timeline-text {
+            color: #2C3E50;
+            font-size: 1.05rem;
+        }
+        
+        /* Alert Boxes - Refined */
+        .alert-box {
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid;
+            background: #FFFFFF;
+        }
+        
+        .alert-success {
+            border-color: #6B8E6F;
+            border-left-width: 4px;
+        }
+        
+        .alert-danger {
+            border-color: #9B5D5D;
+            border-left-width: 4px;
+        }
+        
+        .alert-box h4 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .alert-box p {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+        
+        /* Then/Now Comparison */
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #E8E4E0;
+        }
+        
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+        
+        .then-col {
+            text-align: right;
+            color: #5A6C7D;
+            font-size: 1.05rem;
+        }
+        
+        .arrow-col {
+            color: #23777B;
+            font-size: 1.5rem;
+            font-weight: 300;
+        }
+        
+        .now-col {
+            text-align: left;
+            color: #1B3A52;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+        
+        /* Theta Framework Hero */
+        .theta-hero {
+            background: linear-gradient(135deg, #1B3A52 0%, #2A4A5E 100%);
+            color: #FFFFFF;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+        
+        .theta-badge {
+            display: inline-block;
+            background: rgba(35, 119, 123, 0.3);
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(35, 119, 123, 0.5);
+        }
+        
+        .theta-badge span {
+            color: #A6978C;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .theta-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 300;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+        
+        .theta-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .theta-summary {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2.5rem;
+            margin: 3rem auto;
+            max-width: 800px;
+            text-align: left;
+        }
+        
+        .theta-summary p {
+            font-size: 1.15rem;
+            line-height: 1.8;
+        }
+        
+        /* Allocation Comparison */
+        .allocation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin: 4rem 0;
+        }
+        
+        .allocation-card {
+            background: #FFFFFF;
+            border: 2px solid;
+            padding: 2.5rem;
+        }
+        
+        .allocation-card.current {
+            border-color: #9B5D5D;
+        }
+        
+        .allocation-card.ideal {
+            border-color: #6B8E6F;
+        }
+        
+        .allocation-title {
+            font-size: 1.6rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .allocation-bar {
+            padding: 1.2rem;
+            margin: 1rem 0;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .bar-core {
+            background: rgba(107, 142, 111, 0.15);
+            border-left: 4px solid #6B8E6F;
+        }
+        
+        .bar-edge {
+            background: rgba(35, 119, 123, 0.15);
+            border-left: 4px solid #23777B;
+        }
+        
+        .bar-beyond {
+            background: rgba(166, 151, 140, 0.15);
+            border-left: 4px solid #A6978C;
+        }
+        
+        /* Innovation Decline - Visual */
+        .decline-container {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 3rem;
+            margin: 3rem 0;
+            align-items: start;
+        }
+        
+        .decline-arrow {
+            font-size: 6rem;
+            color: #9B5D5D;
+            text-align: center;
+            line-height: 1;
+        }
+        
+        .decline-points {
+            list-style: none;
+        }
+        
+        .decline-points li {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #E8E4E0;
+        }
+        
+        .decline-headline {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1B3A52;
+            margin-bottom: 0.5rem;
+        }
+        
+        .decline-detail {
+            font-size: 1rem;
+            color: #5A6C7D;
+            line-height: 1.6;
+        }
+        
+        /* Icon Grid - Gen Z */
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2.5rem;
+            margin: 3rem 0;
+        }
+        
+        .icon-item {
+            text-align: center;
+        }
+        
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #F8F6F4 0%, #FFFFFF 100%);
+            border: 2px solid #23777B;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        
+        .icon-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1B3A52;
+            margin-bottom: 0.5rem;
+        }
+        
+        .icon-meaning {
+            font-size: 0.9rem;
+            color: #5A6C7D;
+            margin-bottom: 0.3rem;
+        }
+        
+        .icon-leader {
+            font-size: 0.85rem;
+            color: #23777B;
+            font-weight: 600;
+        }
+        
+        /* Outcomes */
+        .outcomes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .outcome-card {
+            background: #FFFFFF;
+            padding: 2.5rem;
+            border: 2px solid #23777B;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .outcome-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(35, 119, 123, 0.12);
+        }
+        
+        .outcome-number {
+            font-size: 3rem;
+            font-weight: 300;
+            color: #1B3A52;
+            margin-bottom: 0.5rem;
+        }
+        
+        .outcome-label {
+            font-size: 1.1rem;
+            color: #2C3E50;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+        
+        /* Key Lessons */
+        .lesson-item {
+            padding: 2rem;
+            border-left: 4px solid;
+            margin: 2rem 0;
+            background: #FAFAF8;
+        }
+        
+        .lesson-item.lesson-1 { border-left-color: #6B8E6F; }
+        .lesson-item.lesson-2 { border-left-color: #23777B; }
+        .lesson-item.lesson-3 { border-left-color: #9B5D5D; }
+        .lesson-item.lesson-4 { border-left-color: #A6978C; }
+        
+        .lesson-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1B3A52;
+            margin-bottom: 0.75rem;
+        }
+        
+        .lesson-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #2C3E50;
+        }
+        
+        /* Role Section */
+        .role-section {
+            background: linear-gradient(135deg, #1B3A52 0%, #2A4A5E 100%);
+            padding: 6rem 2rem;
+            color: #FFFFFF;
+        }
+        
+        .role-header {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: 400;
+        }
+        
+        .role-subtitle {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #A6978C;
+            font-style: italic;
+        }
+        
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .role-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .role-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #A6978C;
+            font-weight: 600;
+        }
+        
+        .role-card p {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* Strategic Risk Section */
+        .risk-section {
+            background: #1B3A52;
+            padding: 4rem 2rem;
+            color: #FFFFFF;
+            text-align: center;
+        }
+        
+        .risk-title {
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            color: #A6978C;
+        }
+        
+        .risk-text {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        /* Table */
+        .comparison-table {
+            margin: 3rem 0;
+            background: #FFFFFF;
+            border: 1px solid #E8E4E0;
+            overflow: hidden;
+        }
+        
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .comparison-table th {
+            background: #1B3A52;
+            color: #FFFFFF;
+            padding: 1.2rem;
+            text-align: left;
+            font-weight: 600;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .comparison-table td {
+            padding: 1.2rem;
+            border-bottom: 1px solid #E8E4E0;
+            color: #2C3E50;
+        }
+        
+        .comparison-table tr:hover {
+            background: #FAFAF8;
+        }
+        
+        /* Final Section */
+        .final-section {
+            background: #FAFAF8;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+        
+        .final-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+            color: #1B3A52;
+        }
+        
+        .final-text {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #2C3E50;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .progress-nav {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .section {
+                padding: 4rem 1rem;
+            }
+            
+            .timeline::before {
+                left: 0;
+            }
+            
+            .timeline-content {
+                width: calc(100% - 2rem);
+                margin-left: 2rem !important;
+            }
+            
+            .decline-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .decline-arrow {
+                font-size: 4rem;
+            }
+            
+            .comparison-row {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .then-col, .now-col {
+                text-align: center;
+            }
+            
+            .arrow-col {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Navigation -->
+    <div class="progress-nav">
+        <a href="#problem"><div class="progress-dot"><span class="progress-label">Problem</span></div></a>
+        <a href="#evidence"><div class="progress-dot"><span class="progress-label">Evidence</span></div></a>
+        <a href="#theta-framework"><div class="progress-dot"><span class="progress-label">Solution</span></div></a>
+        <a href="#outcomes"><div class="progress-dot"><span class="progress-label">Outcomes</span></div></a>
+        <a href="#execution"><div class="progress-dot"><span class="progress-label">Execution</span></div></a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Why P&G Is Heavy Core &<br>Losing Innovation Advantage</h1>
+            <p class="hero-subtitle">A Case Study for Procter & Gamble</p>
+            <p class="hero-author">By Christine Pamela</p>
+        </div>
+    </section>
+
+    <!-- Legacy Section -->
+    <section id="problem" class="section">
+        <div class="container section-content">
+            <h2 class="section-header">Legacy Built on Scale, Not Speed</h2>
+            
+            <p style="font-size: 1.15rem; margin-bottom: 2rem;">Founded in 1837, P&G became one of the world's most powerful consumer companies by mastering mass production, brand marketing, and retail distribution.</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">180+</div>
+                    <div class="stat-label">Years Old</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">$82B</div>
+                    <div class="stat-label">FY2023 Revenue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">~65</div>
+                    <div class="stat-label">Major Brands</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">10</div>
+                    <div class="stat-label">Core Categories</div>
+                </div>
+            </div>
+
+            <div class="insight-bubble">
+                <strong>The business remains robust, but there is a huge problem brewing waiting to erupt.</strong> Its growth engine is showing fatigue. The innovation architecture is messy.
+            </div>
+        </div>
+    </section>
+
+    <!-- Hidden Cost Section -->
+    <section class="section section-alt">
+        <div class="container section-content">
+            <h2 class="section-header">The Hidden Cost of Scale</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 3rem 0;">
+                <div class="alert-box alert-success">
+                    <h4>What's Working</h4>
+                    <ul class="key-points" style="margin-top: 1rem;">
+                        <li>Global supply chain dominance</li>
+                        <li>Brand trust and habitual consumer usage</li>
+                        <li>Advertising scale across decades</li>
+                    </ul>
+                </div>
+                
+                <div class="alert-box alert-danger">
+                    <h4>What's Breaking</h4>
+                    <ul class="key-points" style="margin-top: 1rem;">
+                        <li>Innovation velocity slowing despite record R&D spend</li>
+                        <li>Competitors catching up faster in performance claims</li>
+                        <li>Consumers trading down to value alternatives</li>
+                        <li>Growth increasingly reliant on internal restructuring</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="insight-bubble" style="text-align: center;">
+                Innovation becomes expensive boringness. Lots of cost, not enough lift.
+            </div>
+        </div>
+    </section>
+
+    <!-- Innovation History -->
+    <section id="evidence" class="section">
+        <div class="container section-content">
+            <h2 class="section-header">Innovation Used to Be Their Advantage</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">1990s–2000s</div>
+                        <p class="timeline-text">Swiffer. Crest Whitestrips. Febreze. Gillette premiumization. These were new systems, not just better products.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2020s</div>
+                        <p class="timeline-text">Tide evo, PowerMop, waterless SKUs, packaging advances... are format tweaks, not new consumer behaviors.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="insight-bubble">
+                <strong>The last major P&G-created disruption was likely Swiffer in 1999.</strong>
+            </div>
+        </div>
+    </section>
+
+    <!-- Where P&G Still Dominates -->
+    <section class="section section-alt" style="padding: 4rem 2rem;">
+        <div class="container section-content">
+            <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+                <h3 style="font-size: 1.8rem; color: #1B3A52; margin-bottom: 1.5rem; font-weight: 600;">But First: Where P&G Still Dominates</h3>
+                <p style="font-size: 1.15rem; line-height: 1.8; color: #2C3E50;">
+                    Let's be clear: P&G hasn't lost. They still have <strong>unmatched supply chain infrastructure</strong>, 
+                    <strong>trusted brands across categories</strong>, and <strong>$82B in financial firepower</strong>. 
+                    The question isn't capability — it's <em>allocation</em>. Where they place their bets determines whether 
+                    scale becomes an advantage or an anchor.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Innovation Effectiveness Declining -->
+    <section class="section">
+        <div class="container section-content">
+            <h2 class="section-header">Innovation Effectiveness Is Declining</h2>
+            
+            <div class="decline-container">
+                <div class="decline-arrow">↓</div>
+                <div class="decline-points">
+                    <div>
+                        <div class="decline-headline">Innovation Spend ≠ Innovation Impact</div>
+                        <div class="decline-detail">Heavy reinvestment goes into incremental updates (new scents, formats, packaging) rather than new systems or categories.</div>
+                    </div>
+                    <div style="padding: 1.5rem 0; border-bottom: 1px solid #E8E4E0;">
+                        <div class="decline-headline">Market Share Pressure</div>
+                        <div class="decline-detail">P&G is losing share in key categories.</div>
+                    </div>
+                    <div style="padding: 1.5rem 0; border-bottom: 1px solid #E8E4E0;">
+                        <div class="decline-headline">Optimization Over Exploration</div>
+                        <div class="decline-detail">Operational fixes (supply chain, portfolio streamlining) dominate leadership focus but it is not true consumer-led innovation.</div>
+                    </div>
+                    <div style="padding: 1.5rem 0; border-bottom: 1px solid #E8E4E0;">
+                        <div class="decline-headline">Consumer Behavior Shift</div>
+                        <div class="decline-detail">Private labels and small brands attract price-sensitive and sustainability-driven buyers.</div>
+                    </div>
+                    <div style="padding: 1.5rem 0;">
+                        <div class="decline-headline">Competitors Are Running Faster</div>
+                        <div class="decline-detail">Colgate leads in science-led oral care; Unilever in purpose-led sustainability; Church & Dwight in value-driven niches.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategic Diagnosis -->
+    <section class="section section-alt">
+        <div class="container section-content">
+            <h2 class="section-header">Strategic Diagnosis</h2>
+            
+            <div class="insight-bubble" style="text-align: center; font-size: 1.4rem;">
+                P&G's innovation playbook worked when scale created separation.<br>Today, scale creates inertia.
+            </div>
+            
+            <div style="margin: 4rem 0;">
+                <div class="comparison-row">
+                    <div class="then-col">Global TV reach built brands</div>
+                    <div class="arrow-col">→</div>
+                    <div class="now-col">Digital discovery fragments attention</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="then-col">Retail dominance ensured distribution</div>
+                    <div class="arrow-col">→</div>
+                    <div class="now-col">Retailers launch own private labels</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="then-col">Incremental R&D built superiority</div>
+                    <div class="arrow-col">→</div>
+                    <div class="now-col">Consumers no longer perceive "superiority"</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="then-col">Brand extensions meant growth</div>
+                    <div class="arrow-col">→</div>
+                    <div class="now-col">True category creation missing since Swiffer</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Theta Framework Hero -->
+    <section id="theta-framework" class="theta-hero">
+        <div class="container">
+            <div class="theta-badge">
+                <span>THE SOLUTION</span>
+            </div>
+            <h2 class="theta-title">The Theta Framework</h2>
+            <p class="theta-subtitle">
+                A strategic innovation map that rebalances portfolios so growth comes from <strong>new revenue systems</strong> — not just new SKUs.
+            </p>
+
+            <div class="theta-summary">
+                <p>
+                    <strong style="color: #A6978C;">The Core Problem:</strong> P&G overrotates on Core and waits too long to move into Edge and Beyond.
+                </p>
+                <p style="margin-top: 1rem;">
+                    <strong style="color: #A6978C;">The Theta Fix:</strong> Rebalance the portfolio so innovation builds <em>new consumer behaviors and business models</em> — not endless product variations.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Allocation Comparison -->
+    <section class="section">
+        <div class="container section-content">
+            <h2 class="section-header" style="text-align: center;">P&G Today vs. Ideal Balance</h2>
+            
+            <div class="allocation-grid">
+                <div class="allocation-card current">
+                    <h3 class="allocation-title" style="color: #9B5D5D;">P&G Today</h3>
+                    <div class="allocation-bar bar-core">🟩 Core: ~85%</div>
+                    <div class="allocation-bar bar-edge">🟨 Edge: ~13%</div>
+                    <div class="allocation-bar bar-beyond">🟥 Beyond: ~2%</div>
+                    <p style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #E8E4E0; font-size: 1.05rem; color: #5A6C7D; text-align: center;">
+                        Innovation = incremental. New SKUs, not new systems. Competitors catching up. Growth stalling.
+                    </p>
+                </div>
+
+                <div class="allocation-card ideal">
+                    <h3 class="allocation-title" style="color: #6B8E6F;">Ideal Allocation</h3>
+                    <div class="allocation-bar bar-core">🟩 Core: 50-70%</div>
+                    <div class="allocation-bar bar-edge">🟨 Edge: 20-35%</div>
+                    <div class="allocation-bar bar-beyond">🟥 Beyond: 10-15%</div>
+                    <p style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #E8E4E0; font-size: 1.05rem; color: #5A6C7D; text-align: center;">
+                        Innovation = transformation. New platforms, business models, and consumer behaviors. Future-ready portfolio.
+                    </p>
+                </div>
+            </div>
+
+            <div class="insight-bubble emphasis" style="margin-top: 3rem; text-align: center;">
+                <strong>P&G is not just Core-dominant. P&G is Core-addicted!</strong>
+                <div style="margin-top: 1rem; font-size: 1.1rem;">When 85% of resources go to defending what exists, there's no oxygen left to build what's next.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategic Risk Section -->
+    <section class="risk-section">
+        <div class="container">
+            <h2 class="risk-title">Strategic Risk</h2>
+            <p class="risk-text">
+                If Core superiority stops being visible to consumers (and it already is): P&G becomes a premium-priced commodity company. 
+                Competitors don't need to beat P&G — they only need to be "good enough" at a better price.
+            </p>
+        </div>
+    </section>
+
+    <!-- Competitive Landscape -->
+    <section class="section section-alt">
+        <div class="container section-content">
+            <div style="max-width: 750px; margin: 0 auto 4rem; text-align: center; padding: 2rem; background: linear-gradient(135deg, #F8F6F4 0%, #FAFAF8 100%); border: 1px solid #E8E4E0;">
+                <p style="font-size: 1.15rem; line-height: 1.8; color: #2C3E50;">
+                    <strong style="color: #1B3A52;">Context matters:</strong> P&G isn't losing to one competitor. 
+                    They're being outmaneuvered across <em>multiple fronts</em> by companies that specialized 
+                    where P&G stayed generalized.
+                </p>
+            </div>
+            
+            <h2 class="section-header">Comparative Landscape</h2>
+            
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Innovation Focus</th>
+                            <th>Distinctive Strength</th>
+                            <th>P&G's Vulnerability</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Unilever</strong></td>
+                            <td>Purpose-driven brand ecosystems</td>
+                            <td>Sustainability + cultural relevance</td>
+                            <td>Loses Gen-Z engagement</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Colgate-Palmolive</strong></td>
+                            <td>Science-based premiumization</td>
+                            <td>Clinical authority in oral care</td>
+                            <td>Cedes tech/science narrative</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Church & Dwight</strong></td>
+                            <td>Fast, efficient niche scaling</td>
+                            <td>Value-driven execution</td>
+                            <td>Outpaced in affordability and speed</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DTC Startups</strong></td>
+                            <td>Consumer co-creation, rapid testing</td>
+                            <td>Speed, authenticity</td>
+                            <td>Bureaucratic slowness</td>
+                        </tr>
+                        <tr>
+                            <td><strong>L'Oréal</strong></td>
+                            <td>AI & biotech R&D</td>
+                            <td>Beauty-tech leadership</td>
+                            <td>Behind on personalization and bio-materials</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Three Obvious Gaps -->
+    <section class="section">
+        <div class="container section-content">
+            <h2 class="section-header">Three Obvious Gaps</h2>
+            
+            <div class="lesson-item lesson-1">
+                <h3 class="lesson-title">1. Sustainability + Organic Segments</h3>
+                <p class="lesson-text">P&G sells sustainability, but doesn't live sustainability. Packaging tweaks ≠ Circular system.</p>
+            </div>
+
+            <div class="lesson-item lesson-2">
+                <h3 class="lesson-title">2. Marketing & Cultural Relevance</h3>
+                <p class="lesson-text"><strong>They excel in:</strong> Sentimental storytelling (Always Like a Girl), Olympic hero narratives, broad audience messaging.</p>
+                <p class="lesson-text" style="margin-top: 0.75rem;"><strong>They struggle in:</strong> Gen-Z identity & authenticity, creator-driven brand building, subculture fluency (beauty, wellness, gender, gaming), social-first product discovery.</p>
+                <p class="lesson-text" style="margin-top: 0.75rem; font-style: italic;">Their marketing wins hearts but rarely builds tribes.</p>
+            </div>
+
+            <div class="lesson-item lesson-3">
+                <h3 class="lesson-title">3. Customer Loyalty Architecture</h3>
+                <p class="lesson-text">P&G thrives on habit, shelf dominance, and brand familiarity. But where they're weak: Direct data, digital memberships, personalization, everyday consumer interaction.</p>
+                <p class="lesson-text" style="margin-top: 0.75rem;"><strong>P&G's loyalty is default loyalty — not engaged loyalty.</strong></p>
+                <p class="lesson-text" style="margin-top: 0.75rem; font-style: italic;">If Amazon removed their search + shelf presence tomorrow? Many brands lose the relationship entirely.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gen-Z Demands -->
+    <section class="section section-alt">
+        <div class="container section-content">
+            <h2 class="section-header">What the "20% Edge Consumer" & Gen-Z Demand</h2>
+            
+            <div class="icon-grid">
+                <div class="icon-item">
+                    <div class="icon-circle">🎯</div>
+                    <div class="icon-title">Purpose</div>
+                    <div class="icon-meaning">Why should I care?</div>
+                    <div class="icon-leader">→ Unilever</div>
+                </div>
+                
+                <div class="icon-item">
+                    <div class="icon-circle">✨</div>
+                    <div class="icon-title">Personalization</div>
+                    <div class="icon-meaning">Fit my exact needs</div>
+                    <div class="icon-leader">→ L'Oréal Tech</div>
+                </div>
+                
+                <div class="icon-item">
+                    <div class="icon-circle">🌱</div>
+                    <div class="icon-title">Sustainability</div>
+                    <div class="icon-meaning">Without paying more</div>
+                    <div class="icon-leader">→ Indie brands</div>
+                </div>
+                
+                <div class="icon-item">
+                    <div class="icon-circle">🔬</div>
+                    <div class="icon-title">Clean Science</div>
+                    <div class="icon-meaning">Transparent formulations</div>
+                    <div class="icon-leader">→ The Ordinary</div>
+                </div>
+                
+                <div class="icon-item">
+                    <div class="icon-circle">💫</div>
+                    <div class="icon-title">Identity</div>
+                    <div class="icon-meaning">Brand = me</div>
+                    <div class="icon-leader">→ Glossier, Ritual</div>
+                </div>
+                
+                <div class="icon-item">
+                    <div class="icon-circle">⚡</div>
+                    <div class="icon-title">Speed & Novelty</div>
+                    <div class="icon-meaning">Constant iteration</div>
+                    <div class="icon-leader">→ DTC challengers</div>
+                </div>
+            </div>
+
+            <div class="insight-bubble" style="margin-top: 3rem;">
+                These consumers don't want one-size-for-everyone, legacy authority, or plastic-heavy, water-heavy systems. They want products that evolve with them, experiences not commodities, and brands that stand for something real.
+            </div>
+
+            <div class="insight-bubble emphasis" style="margin-top: 2rem; text-align: center;">
+                <strong>The future consumer does not come to P&G. P&G must go to them.</strong>
+            </div>
+        </div>
+    </section>
+
+    <!-- Beyond Innovation Capability -->
+    <section class="section">
+        <div class="container section-content">
+            <h2 class="section-header">Is P&G Capable of True Beyond Innovation?</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 3rem; margin: 3rem 0;">
+                <div style="padding: 2.5rem; border: 2px solid #6B8E6F; background: #FFFFFF;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: #6B8E6F; font-weight: 600;">Financially → YES</h3>
+                    <p style="font-size: 1.1rem; line-height: 1.7; color: #2C3E50;">$82B revenue and strong cash generation = plenty of innovation oxygen.</p>
+                </div>
+                
+                <div style="padding: 2.5rem; border: 2px solid #9B5D5D; background: #FFFFFF;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: #9B5D5D; font-weight: 600;">Organizationally → NOT YET</h3>
+                    <p style="font-size: 1rem; margin-bottom: 1rem; color: #2C3E50; font-weight: 600;">Barriers:</p>
+                    <ul class="key-points">
+                        <li>Risk is throttled by Core governance</li>
+                        <li>R&D = product science, not platform design</li>
+                        <li>Beyond projects lack commercialization pathways</li>
+                        <li>Innovation politics: Core always wins funding</li>
+                        <li>P&G values certainty > velocity</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="insight-bubble" style="text-align: center;">
+                <strong>Their superpower (scale) is also the bottleneck.</strong> They can afford it. They don't know how to systematize it.
+            </div>
+        </div>
+    </section>
+
+    <!-- Where P&G Could Win -->
+    <section class="section section-alt">
+        <div class="container section-content">
+            <h2 class="section-header">Where P&G Could Actually Win in Edge + Beyond</h2>
+            
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Future Zone</th>
+                            <th>Why They Can Win</th>
+                            <th>What They Must Build</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Smart Home Replenishment</strong></td>
+                            <td>Household dominance + Alexa/IoT potential</td>
+                            <td>Convert Tide & Swiffer into services</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Precision Oral & Skin Health</strong></td>
+                            <td>Oral-B + Olay = latent diagnostic data</td>
+                            <td>Medical-grade partnerships + AI</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Circular Packaging Ecosystems</strong></td>
+                            <td>Unmatched distribution scale</td>
+                            <td>Refill + reuse infrastructure w/ retailers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Micro-Brand Accelerator</strong></td>
+                            <td>Money + supply chain</td>
+                            <td>Startup acquisition model with speed, autonomy</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Waterless & Waste-Reduced Platforms</strong></td>
+                            <td>Tide evo early proof</td>
+                            <td>Treat waterless as a full category shift</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Identity-driven Brands</strong></td>
+                            <td>Zero cultural founders today</td>
+                            <td>Creator-led innovation pipeline</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Transformation Challenge -->
+    <section id="outcomes" class="section">
+        <div class="container section-content">
+            <div style="text-align: center; max-width: 800px; margin: 0 auto 4rem;">
+                <h2 class="section-header" style="text-align: center;">The Transformation Imperative</h2>
+                <p style="font-size: 1.3rem; line-height: 1.8; color: #2C3E50;">
+                    To sustain leadership, P&G must rebalance its innovation architecture.
+                </p>
+            </div>
+            
+            <h3 style="font-size: 1.6rem; color: #1B3A52; margin-bottom: 1.5rem; text-align: center; font-weight: 600;">Rebalancing Outcomes (24–36 months)</h3>
+            
+            <div class="outcomes-grid">
+                <div class="outcome-card">
+                    <div class="outcome-number">+15–20%</div>
+                    <div class="outcome-label">Topline Growth Acceleration</div>
+                </div>
+                <div class="outcome-card">
+                    <div class="outcome-number">+30–40%</div>
+                    <div class="outcome-label">Edge Experimentation Speed</div>
+                </div>
+                <div class="outcome-card">
+                    <div class="outcome-number">2–3</div>
+                    <div class="outcome-label">Beyond Initiatives Commercialized</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Lessons -->
+    <section class="section section-alt">
+        <div class="container section-content">
+            <h2 class="section-header">What This Teaches Us</h2>
+            
+            <div class="lesson-item lesson-1">
+                <h3 class="lesson-title">1. Balance the Portfolio</h3>
+                <p class="lesson-text">Optimize what works, but fund the future.</p>
+            </div>
+
+            <div class="lesson-item lesson-2">
+                <h3 class="lesson-title">2. Unlock Edge Velocity</h3>
+                <p class="lesson-text">Dedicated Edge teams can move 3–5x faster without Core friction.</p>
+            </div>
+
+            <div class="lesson-item lesson-3">
+                <h3 class="lesson-title">3. Build Translation Pathways</h3>
+                <p class="lesson-text">Turn lab research into consumer experiences, not white papers.</p>
+            </div>
+
+            <div class="lesson-item lesson-4">
+                <h3 class="lesson-title">4. Reuse Strength Intelligently</h3>
+                <p class="lesson-text">Supply chain + brand trust = perfect base for circularity and smart-home ecosystems.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Where I Come In -->
+    <section id="execution" class="role-section">
+        <div class="container">
+            <h2 class="role-header">Enabling Execution Capability</h2>
+            <p class="role-subtitle">Typically this is where I come in</p>
+            
+            <div class="role-grid">
+                <div class="role-card">
+                    <h4>Map Portfolio to Theta</h4>
+                    <p>Audit innovation distribution and friction points across all brands and categories.</p>
+                </div>
+                <div class="role-card">
+                    <h4>Design Edge Fast-Lanes</h4>
+                    <p>Empower teams to test, learn, and scale outside Core governance structures.</p>
+                </div>
+                <div class="role-card">
+                    <h4>Translate Beyond → Edge</h4>
+                    <p>Bring R&D, data labs, and AI pilots into commercial execution pathways.</p>
+                </div>
+                <div class="role-card">
+                    <h4>Build Consumer Co-Creation</h4>
+                    <p>Establish direct consumer feedback loops and rapid prototyping mechanisms.</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 3rem; text-align: center; padding: 2.5rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15);">
+                <p style="font-size: 1.25rem; line-height: 1.8;">
+                    My goal is to focus on identifying what matters, testing fast, learning fast, and scaling what works, without the burden of endless meetings or shelfware decks.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final Section -->
+    <section class="final-section">
+        <div class="container">
+            <h2 class="final-title">Reimagining Everyday Innovation</h2>
+            <p class="final-text">
+                The future of consumer goods will be built not on bigger ads or cheaper refills — but on faster systems of learning, consumer empathy, and scalable experimentation.
+            </p>
+            
+            <div class="insight-bubble" style="margin: 3rem auto; max-width: 700px;">
+                <strong>P&G hasn't launched the next Swiffer in 25 years, and the world is no longer waiting.</strong>
+            </div>
+
+            <div class="insight-bubble emphasis" style="margin: 3rem auto; max-width: 800px; font-size: 1.4rem;">
+                P&G mastered the last century's playbook.<br>The next century will belong to those who can turn trust into transformation.
+            </div>
+
+            <div style="margin-top: 4rem;">
+                <p style="font-size: 1.2rem; font-weight: 600; color: #1B3A52;">Christine Pamela</p>
+                <p style="font-size: 1rem; margin-top: 0.5rem; color: #5A6C7D;">Innovation Strategist | Author of <em>The Innovation Underdog</em></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: #1B3A52; color: rgba(255, 255, 255, 0.6); padding: 3rem 2rem; text-align: center;">
+        <p style="font-size: 0.9rem; letter-spacing: 1px; font-family: 'Segoe UI', sans-serif;">&copy; 2025 Christine Pamela. All rights reserved.</p>
+        <p style="font-size: 0.85rem; margin-top: 1rem; opacity: 0.7;">This case study is intended for strategic consultation and educational purposes.</p>
+    </footer>
+</body>
+</html>
