@@ -13,396 +13,343 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            background: #f5f5f5;
-            overflow-x: hidden;
+            background: #fafafa;
+            overflow: hidden;
             line-height: 1.6;
+            color: #2a2a2a;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
+        .book-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 40px 20px;
-            position: relative;
-        }
-
-        .book-wrapper {
-            background: white;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            position: relative;
-            min-height: 600px;
-            border-radius: 2px;
+            overflow-y: auto;
         }
 
         .page {
-            padding: 60px 80px;
-            min-height: 600px;
+            max-width: 680px;
+            width: 100%;
             display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            animation: fadeIn 0.4s ease;
         }
 
         .page.active {
             display: block;
-            animation: fadeIn 0.5s ease forwards;
         }
 
         @keyframes fadeIn {
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Typography */
         .page h1 {
-            font-size: 3em;
-            font-weight: 700;
-            margin-bottom: 20px;
+            font-size: 2.5em;
+            font-weight: 600;
+            margin-bottom: 0.5em;
             line-height: 1.2;
             color: #1a1a1a;
         }
 
         .page h2 {
-            font-size: 2em;
+            font-size: 1.8em;
             font-weight: 600;
-            margin-bottom: 30px;
-            color: #2c3e50;
+            margin-bottom: 1.2em;
+            color: #1a1a1a;
         }
 
         .page h3 {
-            font-size: 1.4em;
+            font-size: 1.2em;
             font-weight: 600;
-            margin: 30px 0 15px 0;
-            color: #34495e;
-        }
-
-        .subtitle {
-            font-size: 1.3em;
-            color: #555;
-            margin-bottom: 40px;
-            font-weight: 300;
-            font-style: italic;
-        }
-
-        .role {
-            font-size: 1.1em;
-            color: #2c3e50;
-            font-weight: 500;
-            margin-top: 60px;
+            margin: 1.5em 0 0.5em 0;
+            color: #2a2a2a;
         }
 
         .page p {
-            margin-bottom: 20px;
-            color: #333;
+            margin-bottom: 1em;
             font-size: 1.05em;
+            line-height: 1.7;
         }
 
-        .provocation {
-            font-size: 1.3em;
-            line-height: 1.8;
-            color: #2c3e50;
+        .subtitle {
+            font-size: 1.2em;
+            color: #666;
             font-weight: 400;
-            margin: 40px 0;
+            margin-bottom: 2em;
         }
 
-        .archetype {
-            margin: 30px 0;
-            padding-left: 20px;
-            border-left: 3px solid #3498db;
+        .label {
+            font-size: 0.85em;
+            color: #999;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 1em;
         }
 
-        .archetype h3 {
-            margin-top: 0;
-            color: #2c3e50;
+        /* Components */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2em;
+            margin: 2em 0;
         }
 
-        .archetype p {
-            color: #555;
+        .company-column h3 {
+            font-size: 1em;
+            margin-bottom: 0.8em;
+            font-weight: 500;
+        }
+
+        .company-column.faded h3 {
+            opacity: 0.5;
+        }
+        
+        .company-column.faded ul {
+            opacity: 0.4;
+        }
+
+        .company-column ul {
+            list-style: none;
+        }
+
+        .company-column li {
+            margin: 0.4em 0;
             font-size: 1em;
         }
 
-        .move {
-            margin: 35px 0;
+        .case-block {
+            margin: 1.8em 0;
+            padding: 1.5em;
+            background: #f8f8f8;
+            border-radius: 3px;
         }
 
-        .move h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-
-        .mini-story {
-            background: #f8f9fa;
-            padding: 20px;
-            margin-top: 15px;
-            border-radius: 4px;
-            font-style: italic;
-            color: #555;
-        }
-
-        .case-study {
-            margin: 30px 0;
-            padding: 25px;
-            background: #f8f9fa;
-            border-radius: 4px;
-        }
-
-        .case-study h3 {
+        .case-block h3 {
             margin-top: 0;
-            color: #2c3e50;
+            font-size: 1.05em;
         }
 
-        .cost-item {
-            margin: 25px 0;
+        .case-block p {
+            margin-bottom: 0;
+            font-size: 0.95em;
         }
 
-        .cost-item h3 {
-            color: #e74c3c;
-            margin-bottom: 10px;
+        .archetype-block {
+            margin: 1.5em 0;
+            padding-left: 1.2em;
+            border-left: 2px solid #ddd;
         }
 
-        .pullquote {
-            font-size: 1.2em;
-            font-style: italic;
+        .archetype-block h3 {
+            margin-top: 0;
+            font-size: 1.1em;
+        }
+
+        .archetype-block p {
+            font-size: 0.95em;
             color: #555;
-            margin: 25px 0;
-            padding-left: 30px;
-            border-left: 4px solid #3498db;
         }
 
-        .not-for-box {
-            background: #34495e;
-            color: white;
-            padding: 40px;
-            border-radius: 4px;
-            margin: 30px 0;
-        }
-
-        .not-for-box h3 {
-            color: white;
-            margin-bottom: 20px;
-        }
-
-        .not-for-box ul {
-            list-style: none;
-            margin: 20px 0;
-        }
-
-        .not-for-box li {
-            margin: 12px 0;
-            padding-left: 25px;
-            position: relative;
-        }
-
-        .not-for-box li:before {
-            content: "×";
-            position: absolute;
-            left: 0;
-            font-size: 1.5em;
-            color: #e74c3c;
-        }
-
-        .is-for {
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .is-for h3 {
-            color: #5dade2;
-        }
-
-        .is-for p {
-            color: #ecf0f1;
-            font-size: 1.1em;
-        }
-
-        .cta-box {
-            background: #3498db;
-            color: white;
-            padding: 50px;
+        .emphasis-box {
+            background: #ebebeb;
+            padding: 2em;
+            margin: 2em 0;
+            border-radius: 3px;
             text-align: center;
-            border-radius: 4px;
-            margin: 40px 0;
         }
 
-        .cta-box h2 {
-            color: white;
-            margin-bottom: 20px;
-        }
-
-        .cta-box p {
-            color: white;
+        .emphasis-box p {
+            margin-bottom: 0;
             font-size: 1.1em;
-            margin-bottom: 30px;
+        }
+
+        .highlight-text {
+            font-size: 1.15em;
+            color: #2a2a2a;
+            font-weight: 500;
+            margin: 1.5em 0;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 3em 0;
+        }
+
+        .cta-section h2 {
+            margin-bottom: 0.5em;
+        }
+
+        .cta-section .subtitle {
+            margin-bottom: 2em;
         }
 
         .cta-button {
             display: inline-block;
-            background: white;
-            color: #3498db;
-            padding: 15px 40px;
+            padding: 0.9em 2em;
+            background: #2a2a2a;
+            color: white;
             text-decoration: none;
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 1.1em;
-            transition: transform 0.2s;
+            border-radius: 3px;
+            font-weight: 500;
+            transition: opacity 0.2s;
         }
 
         .cta-button:hover {
-            transform: scale(1.05);
+            opacity: 0.85;
         }
 
-        .navigation {
+        .warning-box {
+            background: #2a2a2a;
+            color: white;
+            padding: 2em;
+            margin: 2em 0;
+            border-radius: 3px;
+        }
+
+        .warning-box h3 {
+            color: white;
+            margin-bottom: 1em;
+        }
+
+        .warning-box ul {
+            list-style: none;
+            margin: 1em 0;
+        }
+
+        .warning-box li {
+            margin: 0.7em 0;
+            padding-left: 1.2em;
+            position: relative;
+        }
+
+        .warning-box li:before {
+            content: "×";
+            position: absolute;
+            left: 0;
+            color: #ff6b6b;
+            font-size: 1.3em;
+        }
+
+        .divider-section {
+            border-top: 1px solid #e0e0e0;
+            padding-top: 1.5em;
+            margin-top: 1.5em;
+        }
+
+        /* Navigation */
+        .nav-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 20px 40px;
-            background: #f8f9fa;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid #e8e8e8;
+            background: white;
         }
 
         .nav-button {
-            background: #2c3e50;
-            color: white;
-            border: none;
-            padding: 12px 30px;
+            background: none;
+            border: 1px solid #ddd;
+            padding: 0.6em 1.5em;
             cursor: pointer;
-            border-radius: 4px;
-            font-size: 1em;
-            transition: background 0.3s;
+            border-radius: 3px;
+            font-size: 0.95em;
+            color: #2a2a2a;
+            transition: all 0.2s;
         }
 
         .nav-button:hover:not(:disabled) {
-            background: #34495e;
+            background: #f5f5f5;
+            border-color: #bbb;
         }
 
         .nav-button:disabled {
-            background: #ccc;
+            opacity: 0.3;
             cursor: not-allowed;
         }
 
         .page-indicator {
-            color: #666;
-            font-size: 0.95em;
-        }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            padding: 20px 40px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .pdf-button {
-            background: #2c3e50;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 0.95em;
-            transition: background 0.3s;
-        }
-
-        .pdf-button:hover {
-            background: #34495e;
-        }
-
-        .company-comparison {
-            display: flex;
-            gap: 60px;
-            margin: 40px 0;
-            justify-content: center;
-        }
-
-        .company-list {
-            flex: 1;
-            max-width: 200px;
-        }
-
-        .company-list h3 {
-            margin-bottom: 15px;
-            font-size: 1.2em;
-        }
-
-        .company-list.didnt-adapt {
             color: #999;
+            font-size: 0.9em;
         }
 
-        .company-list.didnt-adapt h3 {
+        .export-hint {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 0.85em;
             color: #999;
+            background: white;
+            padding: 0.6em 1em;
+            border-radius: 3px;
+            border: 1px solid #e8e8e8;
         }
 
-        .company-list.reinvent h3 {
-            color: #2c3e50;
+        /* Cover page specific */
+        .cover-page {
+            text-align: center;
+            padding: 4em 2em;
         }
 
-        .company-list ul {
-            list-style: none;
-            padding: 0;
+        .cover-page .label {
+            margin-bottom: 3em;
         }
 
-        .company-list ul li {
-            margin: 8px 0;
+        .cover-page h1 {
+            margin-bottom: 0.4em;
+        }
+
+        .cover-page .author {
+            margin-top: 4em;
             font-size: 1.05em;
+            color: #666;
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
-            .page {
-                padding: 40px 30px;
-                min-height: 500px;
+            .page h1 { font-size: 2em; }
+            .page h2 { font-size: 1.5em; }
+            .comparison-grid { 
+                grid-template-columns: 1fr; 
+                gap: 2em; 
             }
-
-            .page h1 {
-                font-size: 2em;
-            }
-
-            .page h2 {
-                font-size: 1.5em;
-            }
-
-            .navigation, .controls {
-                padding: 15px 20px;
-            }
-
-            .nav-button {
-                padding: 10px 20px;
-                font-size: 0.9em;
-            }
+            .export-hint { display: none; }
         }
 
         @media print {
-            .navigation, .controls {
-                display: none;
-            }
-            .page {
-                display: block !important;
-                opacity: 1 !important;
-                page-break-after: always;
-            }
+            .nav-bar, .export-hint { display: none; }
+            .page { display: block !important; page-break-after: always; }
+            .book-container { overflow: visible; height: auto; }
+            .page-wrapper { overflow: visible; height: auto; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="book-wrapper">
-            <div class="controls">
-                <button class="pdf-button" onclick="window.print()">📄 Export as PDF</button>
-                <span style="color: #666; font-size: 0.9em;">Use keyboard: ← → or swipe on mobile</span>
+    <div class="book-container">
+        <div class="export-hint">Press Ctrl/Cmd+P to save as PDF</div>
+        
+        <div class="page-wrapper">
+            <!-- Page 1: Cover -->
+            <div class="page active cover-page">
+                <p class="label">Large Company Series</p>
+                <h1>The Innovation<br>Underdog's Playbook</h1>
+                <p class="subtitle">Building breakthrough innovations without<br>disrupting your core business</p>
+                <p class="author">Christine Pamela</p>
             </div>
 
-            <!-- Page 1: Title -->
-            <div class="page active" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); text-align: center; padding-top: 120px;">
-                <p style="font-size: 0.9em; color: #7f8c8d; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px;">Large Company Series</p>
-                <h1>The Innovation Underdog's Playbook</h1>
-                <p class="subtitle">Building and scaling breakthrough innovations without disrupting core business.</p>
-                <p class="role" style="margin-top: 200px;">Christine Pamela</p>
-            </div>
-
-            <!-- Page 2: What This Is Really About -->
+            <!-- Page 2: What This Is About -->
             <div class="page">
                 <h2>The Innovation We're Talking About</h2>
                 
-                <div class="company-comparison">
-                    <div class="company-list didnt-adapt">
+                <div class="comparison-grid">
+                    <div class="company-column faded">
                         <h3>Didn't Adapt:</h3>
                         <ul>
                             <li>Kodak</li>
@@ -412,7 +359,7 @@
                         </ul>
                     </div>
                     
-                    <div class="company-list reinvent">
+                    <div class="company-column">
                         <h3>Continually Reinvent:</h3>
                         <ul>
                             <li>Fujifilm</li>
@@ -423,228 +370,168 @@
                     </div>
                 </div>
 
-                <p>We're not talking about innovation labs, hackathons, or the incremental programs every division already runs. And this isn't about fixing your entire company.</p>
+                <p>We're not talking about innovation labs, hackathons, or incremental programs. This isn't about fixing your entire company.</p>
 
-                <p><strong>Innovation on the Edge and Beyond focuses on a small, protected part of the company, about 5%, that grows until it can stand alongside the core.</strong></p>
+                <p class="highlight-text">Innovation on the Edge and Beyond focuses on a small, protected part of the company, about 5%, that grows until it can stand alongside the core.</p>
 
-                <div style="background: #f8f9fa; padding: 25px; border-radius: 4px; margin: 25px 0;">
-                    <p>Kodak invented digital photography but was too afraid to embrace it. Nokia, BlackBerry, and Palm clung to what worked, and today they are case studies.</p>
+                <p>Kodak invented digital photography but was too afraid to embrace it. Nokia, BlackBerry, and Palm clung to what worked. Apple was willing to cannibalize the iPad with the iPhone. Fujifilm pivoted from film to healthcare.</p>
 
-                    <p>Apple was willing to cannibalize the iPad with the iPhone. Fujifilm pivoted from film to healthcare. Alphabet and Tesla aren't just "using AI" but exploring breakthrough ideas that redefine their future.</p>
-                </div>
-
-                <p><strong>The difference between these groups? The willingness to embrace change.</strong></p>
-
-                <p><em>That's the innovation this playbook is about.</em></p>
-
+                <p class="highlight-text">The difference? The willingness to embrace change.</p>
             </div>
 
-            <!-- Page 3: The Reality Check -->
+            <!-- Page 3: Reality Check -->
             <div class="page">
                 <h2>The Reality Check</h2>
                 
-                <div class="case-study">
-                    <h3>Example 1 — Manufacturing Conglomerate (Composite)</h3>
-                    <p>A large manufacturing group spent 3 years funding "innovation theater" with 18 projects and no clear market path. We mapped the portfolio, killed 60% of stalled efforts, and redirected capital into 2 high-complexity bets aligned with next-era demand shifts.</p>
+                <div class="case-block">
+                    <h3>Manufacturing Conglomerate</h3>
+                    <p>3 years funding "innovation theater" with 18 projects and no clear market path. We mapped the portfolio, killed 60% of stalled efforts, redirected capital into 2 high-complexity bets aligned with next-era demand shifts.</p>
                 </div>
 
-                <div class="case-study">
-                    <h3>Example 2 — Telco Giant (Composite)</h3>
-                    <p>A $2B telco spent 18 months building an innovation lab. It produced 47 pilots, three awards, and zero revenue. We focused only on the 10% that sat on the edge and had a real path to market.</p>
+                <div class="case-block">
+                    <h3>Telco Giant</h3>
+                    <p>$2B company spent 18 months building an innovation lab. It produced 47 pilots, three awards, and zero revenue. We focused only on the 10% that had a real path to market.</p>
                 </div>
 
-                <div class="case-study">
-                    <h3>Example 3 — Regional Bank (Composite)</h3>
-                    <p>A $1B regional bank had a 40-page innovation strategy, seven committees, and zero working pilots. I separated what was core from what was meant to be breakthrough. They had parked anything that sounded big or complex under the innovation banner and managed it like regular R&D or core operations. I cleaned up the management process and set KPIs that made sense. The first pilot went live in twelve weeks without extra people or budget.</p>
+                <div class="case-block">
+                    <h3>Regional Bank</h3>
+                    <p>$1B bank had a 40-page innovation strategy, seven committees, and zero working pilots. I separated core from breakthrough, cleaned up the management process, set proper KPIs. The first pilot went live in twelve weeks.</p>
                 </div>
 
-
-                <p style="margin-top: 40px; font-size: 1.1em; color: #555;">This is the pattern I see everywhere. Innovation theater that looks impressive on stage but dies in practice.</p>
+                <p class="highlight-text">This is the pattern everywhere: Innovation theater that looks impressive on stage but dies in practice.</p>
             </div>
 
-            <!-- Page 4: The Provocation -->
+            <!-- Page 4: The Big Truth -->
             <div class="page">
                 <h2>The Big Truth</h2>
-                <div class="provocation">
-                    <p><strong>📛 Innovation in large companies is broken.</strong></p>
-                    <p style="margin-top: 30px;">Not because people are lazy or incapable. It breaks because the system rewards caution and short-term wins.</p>
-                    <p style="margin-top: 30px;">Labs don't ship. Pilots don't scale. Strategies die in boardrooms.</p>
+                
+                <p class="highlight-text" style="font-size: 1.3em; margin: 2em 0;">Innovation in large companies is broken.</p>
+
+                <p>Not because people are lazy or incapable. It breaks because the system rewards caution and short-term wins.</p>
+
+                <p>Labs don't ship. Pilots don't scale. Strategies die in boardrooms.</p>
+
+                <div class="emphasis-box">
+                    <p>This field guide is for leaders who want to break that cycle intelligently, without blowing up their core business or indulging in theater.</p>
                 </div>
-                <p style="margin-top: 50px;">This field guide is for leaders who want to break that cycle intelligently, without blowing up their core business or indulging in theater.</p>
             </div>
 
-            <!-- Page 4-5: The 5 Archetypes -->
+            <!-- Page 5: Archetypes Part 1 -->
             <div class="page">
                 <h2>Patterns I Keep Seeing</h2>
-                <p style="margin-bottom: 30px;">These are the recurring archetypes I meet in boardrooms around the world:</p>
                 
-                <div class="archetype">
+                <div class="archetype-block">
                     <h3>The Enthusiastic Learners</h3>
                     <p>"We want to innovate, but we don't know where to start."</p>
-                    <p>Eager but uncertain, these leaders lack frameworks, tools, and the confidence to commit without a clear ROI.</p>
                 </div>
 
-                <div class="archetype">
+                <div class="archetype-block">
                     <h3>The Braggers</h3>
                     <p>"We've invested millions in startups. That's enough innovation, right?"</p>
-                    <p>They conflate funding and M&A with transformation, often ignoring cultural misalignments and low success rates.</p>
                 </div>
 
-                <div class="archetype">
+                <div class="archetype-block">
                     <h3>The Dissuaded & Frustrated</h3>
                     <p>"Finance blocks every initiative."</p>
-                    <p>They understand innovation's importance but are stuck in bureaucratic loops and short-term revenue pressure.</p>
                 </div>
-            </div>
 
-            <div class="page">
-                <h2>Patterns I Keep Seeing (cont.)</h2>
-                
-                <div class="archetype">
+                <div class="archetype-block">
                     <h3>The Financial Skeptics</h3>
                     <p>"Why not just improve what already works?"</p>
-                    <p>They prioritize short-term stability, forgetting that today's edge rarely survives tomorrow's shifts.</p>
                 </div>
 
-                <div class="archetype">
+                <div class="archetype-block">
                     <h3>The Innovators Fighting the Good Fight</h3>
                     <p>"We've tried labs and hackathons. Ideas go nowhere."</p>
-                    <p>These brave insiders push against inertia but lack air cover, power, and clear pathways to scale.</p>
                 </div>
-
-                <p style="margin-top: 40px; font-weight: 500;">Across all of them, the same patterns surface: weak executive conviction, blurred lines between core, adjacent, and breakthrough innovations, poor grasp of timelines, unrealistic growth targets, and structural bottlenecks that silently kill good ideas.</p>
             </div>
 
-            <!-- Page 6: Why This Keeps Happening -->
+            <!-- Page 6: Why This Happens -->
             <div class="page">
                 <h2>Why This Keeps Happening</h2>
+                
                 <p>Innovation doesn't fail because of bad ideas. It fails because:</p>
-                <ul style="margin: 30px 0; padding-left: 30px;">
-                    <li style="margin: 15px 0;">The system is designed to protect the present, not build the future</li>
-                    <li style="margin: 15px 0;">Governance structures that work for core business strangle innovation</li>
-                    <li style="margin: 15px 0;">Metrics that matter to CFOs don't match metrics that guide builders</li>
-                    <li style="margin: 15px 0;">Political capital runs out before momentum builds</li>
-                </ul>
-                <p style="margin-top: 40px; font-size: 1.1em; color: #2c3e50;"><strong>The problem isn't innovation. It's the structure, incentives, and politics that surround it.</strong></p>
-            </div>
 
-            <!-- Page 8: The Theta Framework -->
-            <div class="page">
-                <h2>The Theta Framework: A Map for Innovation</h2>
-                
-                <p style="margin-bottom: 30px;">Most companies don't lack good ideas. They struggle to step back, see the big picture, then zoom in to turn those ideas into reality.</p>
-                
-                <p><strong>The Theta Framework</strong> gives you that map. It's a framework I developed to help large companies see where they're innovating, and where they're not.</p>
-                
-                <p style="margin-top: 30px; margin-bottom: 20px;">It breaks innovation into three zones:</p>
+                <p>The system is designed to protect the present, not build the future. Governance structures that work for core business strangle innovation. Metrics that matter to CFOs don't match metrics that guide builders. Political capital runs out before momentum builds.</p>
 
-                <div class="theta-zones">
-                    <div class="theta-zone">
-                        <div class="zone-bar core">🟩 Core</div>
-                        <div class="zone-description">Optimize what works (90% of your business)</div>
-                    </div>
-                    
-                    <div class="theta-zone">
-                        <div class="zone-bar edge">🟨 Edge</div>
-                        <div class="zone-description">Build the next S-curve (disruptive bets)</div>
-                    </div>
-                    
-                    <div class="theta-zone">
-                        <div class="zone-bar beyond">🟥 Beyond</div>
-                        <div class="zone-description">Plant seeds for the future (moonshots)</div>
-                    </div>
-                </div>
-
-                <p style="margin-top: 40px;">Companies die when they only live in Core. They burn out when they only chase Beyond. The best companies balance all three.</p>
-                
-                <p style="margin-top: 30px; font-size: 1.1em; font-weight: 500; color: #2c3e50;">The question isn't whether you innovate. It's where you're innovating, and whether you're building your next curve before the current one flattens.</p>
-            </div>
-
-            <!-- Pages 9-12: The 4 Moves -->
-            <div class="page">
-                <h2>The 4 Moves That Actually Work</h2>
-                <p style="margin-bottom: 35px; color: #555; font-style: italic;">These are the four systemic shifts I commonly use to turn things around from mess to real potentials.</p>
-                <div class="move">
-                    <h3>Move 1: The Deep Audit</h3>
-                    <p>Before building anything new, you have to see the mess for what it is.</p>
-                    <p>I look at three things: innovation complexity, tech maturity, and timeline risk and trace the blockers. These could be decision loops, incentives, org chart, labs that build prototypes no one funds and metrics that make no sense for frontier transformation.</p>
-                    <p>The goal isn't to blame. It's for leaders to differentiate between signals and noise, to see what's holding them back.</p>
+                <div class="emphasis-box" style="margin-top: 2.5em;">
+                    <p>The problem isn't innovation. It's the structure, incentives, and politics that surround it.</p>
                 </div>
             </div>
 
+            <!-- Page 7: Theta Framework -->
+            <div class="page">
+                <h2>The Theta Framework</h2>
+                
+                <p>Most companies don't lack good ideas. They struggle to step back, see the big picture, then zoom in to turn those ideas into reality.</p>
+
+                <p class="highlight-text">The Theta Framework gives you that map.</p>
+
+                <p>It breaks innovation into three zones:</p>
+
+                <div style="margin: 2em 0;">
+                    <p><strong>🟩 Core</strong> Optimize what works (90% of your business)</p>
+                    <p><strong>🟨 Edge</strong> Build the next S-curve (disruptive bets)</p>
+                    <p><strong>🟥 Beyond</strong> Plant seeds for the future (moonshots)</p>
+                </div>
+
+                <p>Companies die when they only live in Core. They burn out when they only chase Beyond. The best companies balance all three.</p>
+
+                <p class="highlight-text">The question isn't whether you innovate. It's <strong>where</strong> you're innovating, and whether you're building your next curve before the current one flattens.</p>
+            </div>
+
+            <!-- Page 8: Move 1 -->
             <div class="page">
                 <h2>The 4 Moves That Actually Work</h2>
-                <div class="move">
+                
+                <h3>Move 1: The Deep Audit</h3>
+                <p>Before building anything new, you have to see the mess for what it is.</p>
+                <p>I look at innovation complexity, tech maturity, and timeline risk. I trace the blockers—decision loops, incentives, org charts, labs that build prototypes no one funds, metrics that make no sense.</p>
+                <p>The goal isn't to blame. It's to help leaders differentiate between signals and noise, to see what's holding them back.</p>
+
+                <div class="divider-section">
                     <h3>Move 2: Rewire the System</h3>
-                    <p>Breakthrough innovation can't grow inside the same structures built to protect the core.</p>
-                    <p>We create a protected lane with its own governance and funding. We hardwire a faster decision loop that gives projects oxygen. When innovation stops fighting the core business, everything moves faster.</p>
+                    <p>Breakthrough innovation can't grow inside structures built to protect the core.</p>
+                    <p>We create a protected lane with its own governance and funding. We hardwire a faster decision loop. When innovation stops fighting the core business, everything moves faster.</p>
                 </div>
             </div>
 
+            <!-- Page 9: Moves 3 & 4 -->
             <div class="page">
                 <h2>The 4 Moves That Actually Work</h2>
-                <div class="move">
-                    <h3>Move 3: Measure What Matters</h3>
-                    <p>Most pilots die because they're judged by the wrong scorecard.</p>
-                    <p>You don't measure an infant by the same standards as a full-grown business. We reset what success looks like at each stage: infant, child, teen, adult. That shift alone saves years of wasted effort.</p>
-                </div>
-            </div>
+                
+                <h3>Move 3: Measure What Matters</h3>
+                <p>Most pilots die because they're judged by the wrong scorecard.</p>
+                <p>You don't measure an infant by the same standards as a full-grown business. We reset what success looks like at each stage: infant, child, teen, adult. That shift alone saves years of wasted effort.</p>
 
-            <div class="page">
-                <h2>The 4 Moves That Actually Work</h2>
-                <div class="move">
+                <div class="divider-section">
                     <h3>Move 4: Builders Over Storytellers</h3>
                     <p>Good stories inspire. But innovation needs builders.</p>
                     <p>We work with teams who ship, test, and grow new futures instead of waiting for permission.</p>
                 </div>
             </div>
 
-            <!-- Pages 13-14: Cost of Doing Nothing -->
+            <!-- Page 10: Cost of Doing Nothing -->
             <div class="page">
                 <h2>The Cost of Doing Nothing</h2>
-                <p style="margin-bottom: 30px;">Innovation theater is a silent killer that erodes everything that makes a company resilient, from morale to market power.</p>
+                
+                <p>Innovation theater is a silent killer that erodes everything that makes a company resilient.</p>
 
-                <div class="cost-item">
-                    <h3>1. It Rots the Inside First (Morale)</h3>
-                    <p>When smart people spend years in "innovation labs" that never ship, they stop believing. The builders leave. The storytellers stay. What's left is a stage, not a team.</p>
-                    <p><strong>Result:</strong> Your best internal talent becomes cynical or walks away. The rest learn to play safe.</p>
-                    <div class="pullquote">"Nothing kills ambition faster than watching ideas die in PowerPoint."</div>
-                </div>
+                <h3>It rots the inside first</h3>
+                <p>When smart people spend years in labs that never ship, they stop believing. The builders leave. The storytellers stay.</p>
 
-                <div class="cost-item">
-                    <h3>2. It Makes Shareholders Blind</h3>
-                    <p>Quarter after quarter, the numbers look fine—until they don't. Innovation theater hides the lack of future bets under the carpet of core revenue. By the time the board notices, the next wave has already passed.</p>
-                    <p><strong>Result:</strong> Market cap erosion disguised as "cost control."</p>
-                </div>
+                <h3>It makes shareholders blind</h3>
+                <p>Quarter after quarter, the numbers look fine—until they don't. Innovation theater hides the lack of future bets under core revenue.</p>
+
+                <h3>Customers drift, quietly</h3>
+                <p>Customers don't leave in one big wave. They leak away in silence. While you perfect pilot decks, smaller players ship real things.</p>
+
+                <p class="highlight-text" style="margin-top: 2em;">Pain delayed is not pain avoided. It's pain with interest.</p>
             </div>
 
+            <!-- Page 11: Not For You -->
             <div class="page">
-                <h2>The Cost of Doing Nothing (cont.)</h2>
-
-                <div class="cost-item">
-                    <h3>3. Customers Drift, Quietly</h3>
-                    <p>Customers don't leave in one big wave. They leak away in silence. While the company is busy perfecting pilot decks, smaller players ship real things. New entrants redefine the category.</p>
-                    <p><strong>Result:</strong> Relevance fades, loyalty drops, and customers move on before you even launch.</p>
-                </div>
-
-                <div class="cost-item">
-                    <h3>4. Leadership Loses Its Nerve</h3>
-                    <p>When nothing moves, leadership gets defensive. Meetings become about protecting the past instead of building the future. Decision-making slows. Risk aversion grows.</p>
-                    <p><strong>Result:</strong> Culture hardens into cement, making future pivots 10x harder.</p>
-                </div>
-
-                <div class="cost-item">
-                    <h3>5. The Cost Curve Bends the Wrong Way</h3>
-                    <p>Inaction looks cheap, but it's the most expensive path. The cost compounds: opportunity loss, talent loss, cultural rot, market drift. The bill doesn't come now. It comes all at once.</p>
-                    <p><strong>Result:</strong> A once-great company finds itself catching up instead of leading.</p>
-                </div>
-
-                <div class="pullquote" style="margin-top: 40px;">Pain delayed is not pain avoided. It's pain with interest.</div>
-            </div>
-
-            <!-- Page 15: Who This Is NOT For -->
-            <div class="page">
-                <div class="not-for-box">
+                <div class="warning-box">
                     <h3>This Is Not For You If:</h3>
                     <ul>
                         <li>You want a 200-page strategy deck</li>
@@ -653,53 +540,50 @@
                         <li>You're not ready to kill sacred cows</li>
                         <li>5% feels like too much to bet on the future</li>
                     </ul>
-                    
-                    <div class="is-for">
-                        <h3>This IS for you if:</h3>
-                        <p>You're tired of the theater. You want the pipes fixed. You're ready to ship.</p>
-                    </div>
                 </div>
+
+                <p class="highlight-text" style="margin-top: 2.5em;">This IS for you if you're tired of the theater, want the pipes fixed, and you're ready to ship.</p>
             </div>
 
-            <!-- Page 14: The Offer -->
+            <!-- Page 12: The Offer -->
             <div class="page">
-                <div class="cta-box">
+                <div class="cta-section">
                     <h2>Limited Offer</h2>
-                    <p style="font-size: 1.4em; margin-bottom: 25px;"><strong>Free Innovation Audit</strong><br>For the First 5 Companies</p>
-                    <p style="font-size: 1.1em;">Deep-dive mapping + clarity report.<br>First come, first served basis.</p>
-                    <a href="https://christinepamela.com" class="cta-button" target="_blank" style="margin-top: 40px; display: inline-block;">christinepamela.com</a>
+                    <p class="subtitle">Free Innovation Audit<br>For the First 5 Companies</p>
+                    <p>Deep-dive mapping + clarity report.<br>First come, first served basis.</p>
+                    <a href="https://christinepamela.com" class="cta-button" target="_blank">christinepamela.com</a>
                 </div>
             </div>
 
-            <!-- Page 17: About & Contact -->
+            <!-- Page 13: About -->
             <div class="page">
                 <h2>About Christine Pamela</h2>
-                <p style="font-size: 1.1em; margin: 30px 0;">I work behind the scenes with leadership teams and entrepreneurs to help large companies build real breakthrough innovation again.</p>
+                
+                <p>I work behind the scenes with leadership teams and entrepreneurs to help large companies build real breakthrough innovation again.</p>
                 
                 <p>My background spans industries from mobility to healthtech to manufacturing across Asia, Europe, and the US. I've spent years in the trenches of innovation as both a founder and a fixer.</p>
                 
                 <p>I'm not big on the hype. I prefer building and fixing the systems that let the next generation build what matters.</p>
 
-                <div style="margin-top: 60px; padding-top: 30px; border-top: 2px solid #e0e0e0;">
-                    <p style="font-size: 1.2em; font-weight: 500;">📍 <a href="https://christinepamela.com" target="_blank" style="color: #3498db; text-decoration: none;">christinepamela.com</a></p>
+                <div class="divider-section">
+                    <p><a href="https://christinepamela.com" target="_blank" style="color: #2a2a2a; text-decoration: none;">christinepamela.com →</a></p>
                 </div>
             </div>
+        </div>
 
-            <div class="navigation">
-                <button class="nav-button" id="prevBtn" onclick="changePage(-1)">← Previous</button>
-                <span class="page-indicator">Page <span id="currentPage">1</span> of <span id="totalPages">17</span></span>
-                <button class="nav-button" id="nextBtn" onclick="changePage(1)">Next →</button>
-            </div>
+        <div class="nav-bar">
+            <button class="nav-button" id="prevBtn" onclick="changePage(-1)">← Previous</button>
+            <span class="page-indicator">
+                <span id="currentPage">1</span> / <span id="totalPages">13</span>
+            </span>
+            <button class="nav-button" id="nextBtn" onclick="changePage(1)">Next →</button>
         </div>
     </div>
 
-    <audio id="pageFlipSound" preload="auto">
-        <source src="data:audio/mp3;base64,SUQzAwAAAAAAJlRQRTEAAAAcAAAAU291bmRKYXkuY29tIFNvdW5kIEVmZmVjdHMA//uQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhQCurq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6u////////////////////////////////////////////////////////////AAAAAExhdmM1OC4xMzQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAOFTaRYigAAAAD/+5DEAAPgAAGkAAAAIAAANIAAAARMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV" type="audio/mp3">
-    </audio>
-
     <script>
         let currentPage = 1;
-        const totalPages = document.querySelectorAll('.page').length;
+        const pages = document.querySelectorAll('.page');
+        const totalPages = pages.length;
         
         document.getElementById('totalPages').textContent = totalPages;
 
@@ -710,7 +594,6 @@
         }
 
         function changePage(direction) {
-            const pages = document.querySelectorAll('.page');
             const newPage = currentPage + direction;
             
             if (newPage >= 1 && newPage <= totalPages) {
@@ -718,17 +601,10 @@
                 currentPage = newPage;
                 pages[currentPage - 1].classList.add('active');
                 updateNavigation();
-                playPageFlipSound();
                 
-                // Smooth scroll to top on page change
-                document.querySelector('.book-wrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Scroll to top of page wrapper
+                document.querySelector('.page-wrapper').scrollTop = 0;
             }
-        }
-
-        function playPageFlipSound() {
-            const sound = document.getElementById('pageFlipSound');
-            sound.currentTime = 0;
-            sound.play().catch(e => console.log('Sound play failed:', e));
         }
 
         // Keyboard navigation
@@ -737,23 +613,21 @@
             if (e.key === 'ArrowRight') changePage(1);
         });
 
-        // Touch/swipe support for mobile
+        // Touch/swipe support
         let touchStartX = 0;
         let touchEndX = 0;
 
-        document.querySelector('.book-wrapper').addEventListener('touchstart', (e) => {
+        document.querySelector('.page-wrapper').addEventListener('touchstart', (e) => {
             touchStartX = e.changedTouches[0].screenX;
         });
 
-        document.querySelector('.book-wrapper').addEventListener('touchend', (e) => {
+        document.querySelector('.page-wrapper').addEventListener('touchend', (e) => {
             touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
+            const swipeThreshold = 75;
+            
+            if (touchEndX < touchStartX - swipeThreshold) changePage(1);
+            if (touchEndX > touchStartX + swipeThreshold) changePage(-1);
         });
-
-        function handleSwipe() {
-            if (touchEndX < touchStartX - 50) changePage(1);  // Swipe left
-            if (touchEndX > touchStartX + 50) changePage(-1); // Swipe right
-        }
 
         updateNavigation();
     </script>
