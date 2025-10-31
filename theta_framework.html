@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Theta Framework | Innovation Strategy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.8;
+            color: #2c2c2c;
+            background: #fafafa;
+        }
+
+        .header {
+            background: #2c2c2c;
+            color: #fafafa;
+            padding: 100px 20px 80px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            font-weight: 400;
+            margin-bottom: 20px;
+            letter-spacing: 0.02em;
+        }
+
+        .header .subtitle {
+            font-size: 18px;
+            opacity: 0.95;
+            font-weight: 300;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+            color: #e8e8e8;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .section {
+            padding: 80px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 32px;
+            font-weight: 400;
+            margin-bottom: 32px;
+            color: #2c2c2c;
+            line-height: 1.4;
+        }
+
+        h3 {
+            font-size: 22px;
+            font-weight: 400;
+            margin-bottom: 20px;
+            color: #2c2c2c;
+            margin-top: 48px;
+        }
+
+        p {
+            font-size: 17px;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 24px;
+        }
+
+        .highlight-box {
+            background: #f5f5f5;
+            border-left: 2px solid #2c2c2c;
+            padding: 32px 40px;
+            margin: 48px 0;
+        }
+
+        .highlight-box p {
+            font-size: 19px;
+            color: #2c2c2c;
+            margin-bottom: 0;
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        .zones-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin: 48px 0;
+        }
+
+        .zone-card {
+            background: #ffffff;
+            border: 1px solid #d0d0d0;
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .zone-card:hover {
+            border-color: #2c2c2c;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .zone-header {
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .zone-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .zone-card h4 {
+            font-size: 20px;
+            font-weight: 400;
+            color: #2c2c2c;
+            margin-bottom: 8px;
+        }
+
+        .zone-card .timeframe {
+            font-size: 13px;
+            color: #888;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+        }
+
+        .zone-card p {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .zone-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .zone-card li {
+            font-size: 14px;
+            color: #777;
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .zone-card li:before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: #2c2c2c;
+        }
+
+        .framework-visual {
+            background: #ffffff;
+            border: 1px solid #d0d0d0;
+            padding: 60px;
+            margin: 48px 0;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            min-width: 600px;
+            aspect-ratio: 1.4;
+            border-left: 2px solid #2c2c2c;
+            border-bottom: 2px solid #2c2c2c;
+            margin: 40px 20px 40px 100px;
+        }
+
+        .y-axis-label {
+            position: absolute;
+            left: -85px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            font-size: 12px;
+            color: #666;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .x-axis-label {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #666;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .y-labels {
+            position: absolute;
+            left: -75px;
+            top: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .y-label {
+            font-size: 11px;
+            color: #888;
+            text-align: right;
+            line-height: 1.3;
+        }
+
+        .x-labels {
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .x-label {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .point {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border: 2px solid;
+            background: #fafafa;
+            transform: translate(-50%, 50%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .point:hover {
+            transform: translate(-50%, 50%) scale(1.4);
+            background: #2c2c2c;
+            z-index: 20;
+        }
+
+        .point.core { border-color: #2c2c2c; }
+        .point.adjacent { border-color: #4a4a4a; }
+        .point.architectural { border-color: #666; }
+        .point.transformative { border-color: #888; }
+        .point.disruptive { border-color: #555; }
+        .point.frontier { border-color: #2c2c2c; }
+
+        .label {
+            position: absolute;
+            font-size: 11px;
+            font-weight: 400;
+            white-space: nowrap;
+            pointer-events: none;
+            color: #2c2c2c;
+        }
+
+        .label .type {
+            display: block;
+            font-size: 10px;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        .grid-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .grid-line {
+            position: absolute;
+            background: #e8e8e8;
+        }
+
+        .grid-line.horizontal {
+            width: 100%;
+            height: 1px;
+            left: 0;
+        }
+
+        .grid-line.vertical {
+            height: 100%;
+            width: 1px;
+            top: 0;
+        }
+
+        .timeline-container {
+            background: #f8f8f8;
+            padding: 48px 40px;
+            margin: 48px 0;
+            border: 1px solid #e0e0e0;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 32px;
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .timeline-marker {
+            min-width: 90px;
+            background: #2c2c2c;
+            color: #fafafa;
+            padding: 8px 16px;
+            font-weight: 300;
+            text-align: center;
+            font-size: 13px;
+            letter-spacing: 0.05em;
+        }
+
+        .timeline-content h5 {
+            font-size: 16px;
+            font-weight: 400;
+            color: #2c2c2c;
+            margin-bottom: 8px;
+        }
+
+        .timeline-content p {
+            font-size: 15px;
+            margin-bottom: 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin: 48px 0;
+        }
+
+        .stat-card {
+            background: #2c2c2c;
+            color: #fafafa;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 42px;
+            font-weight: 300;
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.85;
+            line-height: 1.5;
+        }
+
+        .allocation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 48px 0;
+            background: white;
+            border: 1px solid #d0d0d0;
+        }
+
+        .allocation-table thead {
+            background: #2c2c2c;
+            color: #fafafa;
+        }
+
+        .allocation-table th,
+        .allocation-table td {
+            padding: 16px 24px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .allocation-table th {
+            font-weight: 400;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+        }
+
+        .allocation-table tbody tr {
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .allocation-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .allocation-table tbody tr:hover {
+            background: #f8f8f8;
+        }
+
+        .company-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin: 48px 0;
+        }
+
+        .company-card {
+            background: white;
+            border: 1px solid #d0d0d0;
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .company-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .company-header {
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .company-name {
+            font-size: 22px;
+            font-weight: 400;
+            color: #2c2c2c;
+            margin-bottom: 8px;
+        }
+
+        .company-tagline {
+            font-size: 13px;
+            color: #888;
+            font-style: italic;
+        }
+
+        .company-zones {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .zone-badge {
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            border: 1px solid;
+        }
+
+        .zone-badge.core { background: #f5f5f5; color: #2c2c2c; border-color: #2c2c2c; }
+        .zone-badge.edge { background: #f5f5f5; color: #555; border-color: #555; }
+        .zone-badge.beyond { background: #f5f5f5; color: #666; border-color: #666; }
+        .zone-badge.weak { background: #fafafa; color: #aaa; border-color: #ddd; }
+
+        .company-verdict {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.7;
+        }
+
+        .footer {
+            background: #2c2c2c;
+            color: #fafafa;
+            padding: 60px 20px;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 40px;
+            text-align: center;
+        }
+
+        .footer h3 {
+            font-size: 28px;
+            font-weight: 400;
+            margin-bottom: 32px;
+            color: #fafafa;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 40px;
+        }
+
+        .footer-link {
+            display: inline-block;
+            color: #fafafa;
+            text-decoration: none;
+            font-size: 15px;
+            transition: opacity 0.3s ease;
+            letter-spacing: 0.05em;
+        }
+
+        .footer-link:hover {
+            opacity: 0.7;
+        }
+
+        .footer-divider {
+            width: 60px;
+            height: 1px;
+            background: #888;
+            margin: 32px auto;
+        }
+
+        @media (max-width: 968px) {
+            .zones-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .company-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                min-width: 500px;
+                margin-left: 80px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            .header h1 {
+                font-size: 36px;
+            }
+
+            .header .subtitle {
+                font-size: 16px;
+            }
+
+            h2 {
+                font-size: 26px;
+            }
+
+            h3 {
+                font-size: 20px;
+            }
+
+            .section {
+                padding: 60px 0;
+            }
+
+            .zone-card {
+                padding: 32px;
+            }
+
+            .framework-visual {
+                padding: 40px 20px;
+                overflow-x: auto;
+            }
+
+            .allocation-table {
+                font-size: 12px;
+            }
+
+            .allocation-table th,
+            .allocation-table td {
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>The Theta Framework</h1>
+        <p class="subtitle">A strategic innovation architecture for navigating uncertainty and building what doesn't exist yet</p>
+    </div>
+
+    <div class="container">
+        <!-- Problem Section -->
+        <section class="section">
+            <div class="section-title">The Problem</div>
+            <h2>Most Companies Don't Die from Lack of Innovation—They Die from Innovating Only in the Core</h2>
+            
+            <p>Large organizations face a paradox: they have talent, capital, and ideas, yet struggle to innovate strategically. They optimize what exists while missing what's inevitable.</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">52%</div>
+                    <div class="stat-label">of Fortune 500 companies from 2000 no longer exist</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">75%</div>
+                    <div class="stat-label">of acquisitions fail to deliver full value due to cultural misalignment</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">20 years</div>
+                    <div class="stat-label">Average S&P 500 company lifespan today (down from 60 years in the 1950s)</div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <p>Playing it safe is the most dangerous move you can make. If you only build what's obvious, you'll miss what's inevitable.</p>
+            </div>
+
+            <p>Companies either cling too tightly to their core business, hoping efficiency stretches forever, or they chase trends without cultural alignment. Real strategic innovation, the kind that creates new value streams, business models, and markets, requires structure without suffocation.</p>
+        </section>
+
+        <!-- Framework Section -->
+        <section class="section">
+            <div class="section-title">The Framework</div>
+            <h2>Three Zones of Innovation</h2>
+            
+            <p>The Theta framework breaks innovation into three distinct zones based on two dimensions: technological complexity and market reach. Each zone requires different teams, timelines, and capital allocation strategies.</p>
+
+            <div class="zones-grid">
+                <div class="zone-card">
+                    <div class="zone-header">
+                        <div class="zone-icon">🟩</div>
+                        <h4>Core Zone</h4>
+                        <div class="timeframe">0–5 YEARS</div>
+                    </div>
+                    <p>Strengthen and scale what works. This is where 90% of revenue lives: predictable, measured, proven.</p>
+                    <ul>
+                        <li>Core Innovation: Incremental improvements</li>
+                        <li>Adjacent Innovation: Apply expertise to nearby markets</li>
+                    </ul>
+                </div>
+
+                <div class="zone-card">
+                    <div class="zone-header">
+                        <div class="zone-icon">🟨</div>
+                        <h4>Edge Zone</h4>
+                        <div class="timeframe">3–10 YEARS</div>
+                    </div>
+                    <p>High risk, high reward. The next S-curve. This is where game-changers and failures both start.</p>
+                    <ul>
+                        <li>Architectural Innovation: Reconfigure existing components</li>
+                        <li>Disruptive Innovation: Rewrite the rules, displace incumbents</li>
+                    </ul>
+                </div>
+
+                <div class="zone-card">
+                    <div class="zone-header">
+                        <div class="zone-icon">🟥</div>
+                        <h4>Beyond Zone</h4>
+                        <div class="timeframe">7–15+ YEARS</div>
+                    </div>
+                    <p>Moonshots and future bets. Speculative R&D that can rewrite entire markets and create new ecosystems.</p>
+                    <ul>
+                        <li>Transformational Innovation: Industry-shifting breakthroughs</li>
+                        <li>Frontier Research: Pure speculative R&D</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="framework-visual">
+                <div class="chart-container">
+                    <!-- Grid lines -->
+                    <div class="grid-lines">
+                        <div class="grid-line horizontal" style="bottom: 80%;"></div>
+                        <div class="grid-line horizontal" style="bottom: 60%;"></div>
+                        <div class="grid-line horizontal" style="bottom: 40%;"></div>
+                        <div class="grid-line horizontal" style="bottom: 20%;"></div>
+                        <div class="grid-line vertical" style="left: 25%;"></div>
+                        <div class="grid-line vertical" style="left: 50%;"></div>
+                        <div class="grid-line vertical" style="left: 75%;"></div>
+                    </div>
+
+                    <!-- Axis labels -->
+                    <div class="y-axis-label">Technological Change</div>
+                    <div class="x-axis-label">Market Reach</div>
+
+                    <!-- Y-axis labels -->
+                    <div class="y-labels">
+                        <div class="y-label">Extreme</div>
+                        <div class="y-label">Radical</div>
+                        <div class="y-label">High</div>
+                        <div class="y-label">Moderate</div>
+                        <div class="y-label">Low</div>
+                    </div>
+
+                    <!-- X-axis labels -->
+                    <div class="x-labels">
+                        <div class="x-label">Existing</div>
+                        <div class="x-label">New</div>
+                        <div class="x-label">Emerging</div>
+                        <div class="x-label">Speculative</div>
+                    </div>
+
+                    <!-- Data points -->
+                    <div class="point core" style="left: 10%; bottom: 10%;"></div>
+                    <div class="label" style="left: 10%; bottom: 15%; transform: translateX(-50%);">
+                        Core
+                        <span class="type">(Incremental)</span>
+                    </div>
+
+                    <div class="point adjacent" style="left: 25%; bottom: 10%;"></div>
+                    <div class="label" style="left: 25%; bottom: 15%; transform: translateX(-50%);">
+                        Adjacent
+                        <span class="type">(Modular)</span>
+                    </div>
+
+                    <div class="point architectural" style="left: 18%; bottom: 50%;"></div>
+                    <div class="label" style="left: 18%; bottom: 55%; transform: translateX(-50%);">
+                        Architectural
+                    </div>
+
+                    <div class="point transformative" style="left: 42%; bottom: 75%;"></div>
+                    <div class="label" style="left: 42%; bottom: 80%; transform: translateX(-50%);">
+                        Transformative
+                        <span class="type">(Revolutionary)</span>
+                    </div>
+
+                    <div class="point disruptive" style="left: 63%; bottom: 62%;"></div>
+                    <div class="label" style="left: 63%; bottom: 67%; transform: translateX(-50%);">
+                        Disruptive
+                    </div>
+
+                    <div class="point frontier" style="left: 88%; bottom: 92%;"></div>
+                    <div class="label" style="left: 88%; bottom: 97%; transform: translateX(-50%);">
+                        Frontier Research
+                        <span class="type">(Exploratory)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Relativity Principle Section -->
+        <section class="section">
+            <div class="section-title">The Relativity Principle</div>
+            <h2>Innovation is Context-Dependent</h2>
+            
+            <p>Innovation isn't universal. It's relative. What's disruptive for a legacy automaker might be incremental for Tesla. Context, market maturity, organizational capacity, and measurement philosophy all determine where an innovation truly sits.</p>
+
+            <p>The same technology can occupy different zones depending on who's building it and where they're starting from. This is why the Theta framework must be applied with nuance, understanding your organization's unique position in its industry and market.</p>
+        </section>
+
+        <!-- Timeline Section -->
+        <section class="section">
+            <div class="section-title">Innovation Timeline</div>
+            <h2>The Seeds You Plant Today Shape Tomorrow</h2>
+            
+            <p>Each zone follows its own trajectory based on the S-curve. Understanding this helps align resources, set expectations, and build without burning out.</p>
+
+            <div class="timeline-container">
+                <div class="timeline-item">
+                    <div class="timeline-marker">0–2 years</div>
+                    <div class="timeline-content">
+                        <h5>Core Innovation</h5>
+                        <p>Quick wins, operational improvements, product refinements</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker">2–5 years</div>
+                    <div class="timeline-content">
+                        <h5>Adjacent & Architectural</h5>
+                        <p>Market expansion, system reconfiguration, new use cases</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker">5–10 years</div>
+                    <div class="timeline-content">
+                        <h5>Disruptive Innovation</h5>
+                        <p>Market displacement, business model shifts, category creation</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker">7–15 years</div>
+                    <div class="timeline-content">
+                        <h5>Transformational Innovation</h5>
+                        <p>Industry redefinition, infrastructure change, cultural shifts</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker">10+ years</div>
+                    <div class="timeline-content">
+                        <h5>Frontier Research</h5>
+                        <p>Speculative R&D, quantum leaps, next-generation technologies</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <p>A well-structured roadmap signals to stakeholders: "We're delivering value now and future-proofing the company." It shows you can zoom in and zoom out simultaneously.</p>
+            </div>
+        </section>
+
+        <!-- S-Curve Section -->
+        <section class="section">
+            <div class="section-title">The S-Curve Lifecycle</div>
+            <h2>When to Jump: AI's 80-Year Journey from Beyond to Core</h2>
+            
+            <p>AI didn't become mainstream overnight. It took multiple lifecycles, from visionary chaos in the Beyond Zone, through quiet rebuilding in the Edge, to today's ubiquitous Core integration.</p>
+
+            <h3>Beyond Zone (1950s–1980s)</h3>
+            <p>Pioneers like John McCarthy, Marvin Minsky, and Claude Shannon coined "Artificial Intelligence" in 1956. Early machines played chess and solved equations, but couldn't handle real-world ambiguity. Funding dried up. AI entered its first winter. This was radical vision with little immediate payoff.</p>
+
+            <h3>Edge Zone (1990s–2010s)</h3>
+            <p>Quiet rebuilding. Researchers shifted from programming rules to pattern learning. Three breakthroughs changed everything: the internet, cloud computing, and GPUs. IBM's Deep Blue defeated Kasparov (1997). AlexNet crushed image recognition competitions (2012). Steve Jobs approved Siri just before his death (2011). AI moved from lab to embedded functionality.</p>
+
+            <h3>Core Zone (2020s–Present)</h3>
+            <p>Now AI is ambient, invisible, expected. Large language models generate text, code, images, video, and music. Microsoft embedded it across Office and Azure. Google infused it into Search and Docs. Meta uses it in smart glasses and translation. AI is no longer a tool. It's a platform.</p>
+
+            <p>Here's the irony: despite AI taking 80 years to mature, AI itself has now radically accelerated innovation cycles. What once took 8 months now ships in 8 weeks. Some products launch in 8 days. AI has compressed the S-curve, making the leap between zones faster than ever before.</p>
+
+            <div class="highlight-box">
+                <p>The only way to survive is to build your next S-curve before the current one collapses. That means using your Core to fund your Edge and Beyond.</p>
+            </div>
+        </section>
+
+        <!-- Funding Section -->
+        <section class="section">
+            <div class="section-title">Financing Innovation</div>
+            <h2>Who Pays for the Future?</h2>
+            
+            <p>Established companies use internal funding, setting aside revenue, profits, or reserves to support innovation. How they allocate that capital reflects their risk appetite and strategic vision.</p>
+
+            <table class="allocation-table">
+                <thead>
+                    <tr>
+                        <th>Zone</th>
+                        <th>Innovation Type</th>
+                        <th>Funding Source</th>
+                        <th>Typical Allocation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>🟩 Core</td>
+                        <td>Core Innovation</td>
+                        <td>Operating Budget (OPEX)</td>
+                        <td>5–10% of annual budget</td>
+                    </tr>
+                    <tr>
+                        <td>🟩 Core</td>
+                        <td>Adjacent Innovation</td>
+                        <td>Strategic Budget, Reinvested Margins</td>
+                        <td>10–15% of operating profit</td>
+                    </tr>
+                    <tr>
+                        <td>🟨 Edge</td>
+                        <td>Architectural Innovation</td>
+                        <td>Digital Transformation Budgets</td>
+                        <td>5–15% of annual revenue</td>
+                    </tr>
+                    <tr>
+                        <td>🟨 Edge</td>
+                        <td>Disruptive Innovation</td>
+                        <td>Corporate VC, Partnerships, Spinouts</td>
+                        <td>1–5% of annual revenue</td>
+                    </tr>
+                    <tr>
+                        <td>🟥 Beyond</td>
+                        <td>Transformational Innovation</td>
+                        <td>Long-Horizon R&D, Strategic Alliances</td>
+                        <td>5–10% of annual revenue</td>
+                    <tr>
+                        <td>🟥 Beyond</td>
+                        <td>Frontier Research</td>
+                        <td>Government Grants, Philanthropy</td>
+                        <td>5–10% of R&D budget</td>
+                    </tr>
+                </tbody>
+            </table>
+
+           
+
+            <p>Decision-making shifts with each zone. Core innovation is managed by operational leaders with CFO oversight. Edge innovation requires innovation boards and staged funding. Beyond innovation needs C-suite approval, long-term scenario planning, and often ethics boards for frontier research.</p>
+
+            <div class="highlight-box">
+                <p>Perhaps the question is not whether your company can afford to innovate. It's whether it can afford not to.</p>
+            </div>
+        </section>
+
+        <!-- Company Assessment Section -->
+        <section class="section">
+            <div class="section-title">Reading the Future</div>
+            <h2>Gauging Company Prospects Through Theta</h2>
+            
+            <p>The Theta framework reveals which companies are future-ready and which risk being left behind. Core tells you where they are. Edge shows what they're trying. Beyond reveals who they want to become.</p>
+
+            <div class="company-grid">
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">NVIDIA</div>
+                        <div class="company-tagline">The Coolest Brain in the Room</div>
+                    </div>
+                    <div class="company-zones">
+                        <span class="zone-badge core">Core ✓</span>
+                        <span class="zone-badge edge">Edge ✓</span>
+                        <span class="zone-badge beyond">Beyond ✓</span>
+                    </div>
+                    <p class="company-verdict"><strong>Verdict:</strong> Balanced, bold, building the AI century. Executing textbook S-curve strategy with strong positioning across all zones.</p>
+                </div>
+
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">Block Inc.</div>
+                        <div class="company-tagline">The Rebel for the People</div>
+                    </div>
+                    <div class="company-zones">
+                        <span class="zone-badge core">Core ✓</span>
+                        <span class="zone-badge edge">Edge ✓</span>
+                        <span class="zone-badge beyond">Beyond ✓</span>
+                    </div>
+                    <p class="company-verdict"><strong>Verdict:</strong> Rebel innovator shaping decentralized futures. Every decision reflects core principles: openness, access, and user empowerment.</p>
+                </div>
+
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">IBM</div>
+                        <div class="company-tagline">The Giant Who Forgot to Dance</div>
+                    </div>
+                    <div class="company-zones">
+                        <span class="zone-badge core">Core ✓</span>
+                        <span class="zone-badge weak">Edge ⚠</span>
+                        <span class="zone-badge weak">Beyond ✗</span>
+                    </div>
+                    <p class="company-verdict"><strong>Verdict:</strong> Legacy-rich, vision-poor. Excellent R&D but struggles to transform innovation into market-defining breakthroughs. Structure and storytelling are key limitations.</p>
+                </div>
+
+                <div class="company-card">
+                    <div class="company-header">
+                        <div class="company-name">Oracle</div>
+                        <div class="company-tagline">The Corporate Wallflower</div>
+                    </div>
+                    <div class="company-zones">
+                        <span class="zone-badge core">Core ✓</span>
+                        <span class="zone-badge weak">Edge ⚠</span>
+                        <span class="zone-badge weak">Beyond ✗</span>
+                    </div>
+                    <p class="company-verdict"><strong>Verdict:</strong> Profitable but stagnant. Edge is reactive, Beyond is empty. Running hard just to stay in place while losing cultural and technological relevance.</p>
+                </div>
+            </div>
+
+            <p>Use this lens to evaluate any company, whether you're building it, investing in it, or competing against it. Where is it today? Where is it heading? And how fast is time running out before relevance does?</p>
+        </section>
+    </div>
+
+    <div class="footer">
+        <div class="footer-content">
+            <h3>Learn More</h3>
+            <div class="footer-divider"></div>
+            <div class="footer-links">
+                <a href="https://christinepamela.com/writing.html" class="footer-link">Get the Book</a>
+                <a href="https://christinepamela.com/innovation-underdog-fieldguide.html" class="footer-link">Field Guide</a>
+                <a href="https://christinepamela.com/case-studies.html" class="footer-link">Case Studies</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> <p style="text-align: center; margin-top: 32px; font-size: 13px; color: #888;">© The Theta Framework. All rights reserved.</p>
+                     
