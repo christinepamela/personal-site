@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Johnson & Johnson: Balancing Core and Beyond</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.7;
+            color: #1a1a1a;
+            background: #fafafa;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 80px 40px;
+        }
+
+        header {
+            margin-bottom: 80px;
+            text-align: center;
+        }
+
+        .category {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #CC0000;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            color: #000;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #666;
+            font-weight: 400;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .author {
+            font-size: 14px;
+            color: #999;
+            margin-top: 32px;
+        }
+
+        section {
+            margin-bottom: 80px;
+        }
+
+        h2 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #000;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 40px 0 16px;
+            color: #1a1a1a;
+        }
+
+        p {
+            font-size: 17px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+            margin: 40px 0;
+            padding: 48px 0;
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #CC0000;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .theta-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 40px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .theta-table th {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+        }
+
+        .theta-table td {
+            padding: 24px 20px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 15px;
+        }
+
+        .zone-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .zone-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .zone-core { background: #4CAF50; }
+        .zone-edge { background: #FFC107; }
+        .zone-beyond { background: #F44336; }
+
+        .insights-box {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            margin: 40px 0;
+            border-left: 4px solid #CC0000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .insights-box h3 {
+            margin-top: 0;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 40px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 15px;
+        }
+
+        .comparison-table th {
+            background: #f5f5f5;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+            color: #666;
+        }
+
+        .comparison-table td {
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .comparison-table tr:hover {
+            background: #fafafa;
+        }
+
+        .key-message {
+            background: #f5f5f5;
+            padding: 24px 32px;
+            border-radius: 6px;
+            margin: 32px 0;
+            font-style: italic;
+            color: #555;
+            font-size: 16px;
+        }
+
+        .opportunities-list,
+        .risks-list {
+            list-style: none;
+            margin: 24px 0;
+        }
+
+        .opportunities-list li,
+        .risks-list li {
+            padding: 16px 0 16px 32px;
+            position: relative;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .opportunities-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .risks-list li:before {
+            content: "⚠";
+            position: absolute;
+            left: 0;
+            color: #F44336;
+            font-size: 18px;
+        }
+
+        .allocation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin: 40px 0;
+        }
+
+        .allocation-card {
+            background: white;
+            padding: 32px 24px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .allocation-card h4 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .allocation-percentage {
+            font-size: 48px;
+            font-weight: 700;
+            color: #CC0000;
+            margin-bottom: 8px;
+        }
+
+        .allocation-label {
+            font-size: 13px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .trend-indicator {
+            display: inline-block;
+            margin-left: 8px;
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 24px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .allocation-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .theta-table,
+            .comparison-table {
+                font-size: 14px;
+            }
+
+            .theta-table th,
+            .theta-table td,
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="category">Strategy Case Study</div>
+            <h1>From Sterile Plasters to Global Impact</h1>
+            <p class="subtitle">A Case Study on Johnson & Johnson Balancing Core and Beyond</p>
+            <p class="author">By Christine Pamela</p>
+        </header>
+
+        <section>
+            <h2>Passion for Innovation and Purpose</h2>
+            <p>Johnson & Johnson began with a simple use case. Robert Wood Johnson saw the need for safer medical care while working around surgeons during the Civil War. He learned that antiseptic techniques could prevent infections and believed sterile tools could transform patient outcomes. In 1886, he helped establish Johnson & Johnson with a clear mission to make healthcare safer and more accessible.</p>
+            
+            <p>Scientific discipline guided its early growth. Fred Kilmer, the company's first scientific director, set up aseptic production systems and wrote educational materials that spread public health knowledge. These efforts shaped a culture that valued both innovation and social responsibility.</p>
+
+            <div class="key-message">
+                J&J's DNA is innovation paired with a mission to improve human health—this thread runs consistently through its 130+ years.
+            </div>
+        </section>
+
+        <section>
+            <h2>Growth & Globalization</h2>
+            
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-value">$82.5B</div>
+                    <div class="stat-label">Revenue (2020)</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">136,000</div>
+                    <div class="stat-label">Employees</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">60+</div>
+                    <div class="stat-label">Countries</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">$14.7B</div>
+                    <div class="stat-label">Net Earnings</div>
+                </div>
+            </div>
+
+            <h3>Historical Timeline</h3>
+            <p>Early globalization began in Canada (1919) and the UK (1924), followed by expansion to Argentina, Brazil, Mexico, South Africa, and Southeast Asia. The decentralized model allowed local adaptation—a key strength in meeting diverse market needs.</p>
+
+            <p>Diversification into baby products, Band-Aids, maternity kits, and sanitary products created multiple revenue streams. Strategic acquisitions of McNeil (Tylenol), Janssen Pharma, Neutrogena, DePuy, and Crucell became growth levers that expanded capabilities and market reach.</p>
+
+            <p>Through crises like the Tylenol pricing strategy and Propulsid withdrawal, the company demonstrated its ability to balance risk, reputation, and market opportunity while protecting public confidence.</p>
+
+            <div class="key-message">
+                Growth came through product innovation, strategic acquisitions, international expansion, and adaptability.
+            </div>
+        </section>
+
+        <section>
+            <h2>Innovation Through the Theta Framework</h2>
+            <p>Johnson & Johnson's portfolio covers all three innovation zones, creating a balanced approach to sustaining current business while investing in future growth.</p>
+
+            <table class="theta-table">
+                <thead>
+                    <tr>
+                        <th>Theta Zone</th>
+                        <th>Example at J&J</th>
+                        <th>Comment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="zone-label">
+                                <span class="zone-dot zone-core"></span>
+                                Core
+                            </span>
+                        </td>
+                        <td>Band-Aids, Baby Shampoo, Tylenol line extensions</td>
+                        <td>Incremental improvement & efficiency in existing markets; sustaining revenue</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="zone-label">
+                                <span class="zone-dot zone-edge"></span>
+                                Edge
+                            </span>
+                        </td>
+                        <td>Minimally invasive surgery tech, Acuvue contact lenses, digital surgical platforms</td>
+                        <td>Architectural innovations extending into new channels & patient experiences</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="zone-label">
+                                <span class="zone-dot zone-beyond"></span>
+                                Beyond
+                            </span>
+                        </td>
+                        <td>Gene & cell therapies (Janssen), vaccine platforms (COVID-19), photochromic lenses</td>
+                        <td>Transformational research with potential to redefine healthcare delivery</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="allocation-grid">
+                <div class="allocation-card">
+                    <h4>Core</h4>
+                    <div class="allocation-percentage">~55%</div>
+                    <div class="allocation-label">of innovation spend</div>
+                    <div class="trend-indicator" title="Decreasing slowly">↘</div>
+                </div>
+                <div class="allocation-card">
+                    <h4>Edge</h4>
+                    <div class="allocation-percentage">~30%</div>
+                    <div class="allocation-label">of innovation spend</div>
+                    <div class="trend-indicator" title="Increasing fastest">↗</div>
+                </div>
+                <div class="allocation-card">
+                    <h4>Beyond</h4>
+                    <div class="allocation-percentage">~15%</div>
+                    <div class="allocation-label">of innovation spend</div>
+                    <div class="trend-indicator" title="Selectively increasing">↗</div>
+                </div>
+            </div>
+
+            <p style="text-align: center; color: #666; font-size: 14px; margin-top: 32px;">
+                Trend: gradually shifting from Core → Edge → Beyond to drive future growth
+            </p>
+
+            <div class="key-message">
+                J&J balances sustaining innovation with architectural and transformational bets, in line with Theta Framework principles.
+            </div>
+        </section>
+
+        <section>
+            <h2>In-Depth Diagnosis</h2>
+
+            <div class="insights-box">
+                <h3>What The Mapping Reveals</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Insight</th>
+                            <th>Meaning</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Weight is in Core + Edge</td>
+                            <td>Predictable revenue + incremental MedTech dominance</td>
+                        </tr>
+                        <tr>
+                            <td>Big bets in Beyond are selective</td>
+                            <td>Focused where J&J already has deep regulatory & clinical trust</td>
+                        </tr>
+                        <tr>
+                            <td>Consumer health spin-off reduced disruptive potential</td>
+                            <td>Without baby/OTC, fewer "everyday reinvention" stories</td>
+                        </tr>
+                        <tr>
+                            <td>MedTech becoming the tip of the spear</td>
+                            <td>Devices → data → algorithms → care delivery shifts</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 24px; font-weight: 600;">The profile looks like a stability engine with targeted moonshots, not broad tech disruption.</p>
+            </div>
+
+            <h3>Industry Benchmark Comparison</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Company Type</th>
+                        <th>Core</th>
+                        <th>Edge</th>
+                        <th>Beyond</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Traditional med-device (e.g., Medtronic)</td>
+                        <td>65%</td>
+                        <td>25%</td>
+                        <td>10%</td>
+                    </tr>
+                    <tr>
+                        <td>Pharma-heavy diversified (e.g., Pfizer)</td>
+                        <td>55%</td>
+                        <td>20%</td>
+                        <td>25%</td>
+                    </tr>
+                    <tr style="background: #fff8f8;">
+                        <td><strong>J&J Hybrid (current)</strong></td>
+                        <td><strong>~55%</strong></td>
+                        <td><strong>~30%</strong></td>
+                        <td><strong>~15%</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p style="margin-top: 24px; font-size: 15px;">
+                <strong>Key Takeaway:</strong> J&J is more Edge-weighted than most and is placing smarter bets on Beyond vs pure-pharma rivals.
+            </p>
+        </section>
+
+        <section>
+            <h2>Opportunities for Continued Growth</h2>
+            <ul class="opportunities-list">
+                <li>Digital and AI-powered healthcare that supports better decisions and outcomes</li>
+                <li>Expanding access in emerging markets through localized design and distribution</li>
+                <li>Frontier therapeutics including gene editing and personalized treatment</li>
+                <li>Platforms that combine data, devices, and pharmaceuticals for integrated care</li>
+                <li>Greater convergence between wellness, prevention, and medical guidance</li>
+            </ul>
+            <p>These areas align with the company's expertise and leverage trust that has been earned over decades.</p>
+        </section>
+
+        <section>
+            <h2>Key Risks and Constraints</h2>
+            <ul class="risks-list">
+                <li>Litigation and product safety controversies including talc and drug recalls</li>
+                <li>Regulatory complexity and pressure on pricing models</li>
+                <li>New competitive threats from biotech and technology-driven entrants</li>
+                <li>Vulnerability to global supply chain disruption</li>
+                <li>Cultural inertia that can slow high-risk innovation</li>
+            </ul>
+            <p>Growth remains achievable, but the path requires vigilance and operational agility.</p>
+        </section>
+
+        <section>
+            <h2>Strategic Takeaways</h2>
+            <p>Johnson & Johnson shows how innovation and purpose can reinforce each other. Core products protect the business and its customers. Edge innovations modernize the way care is delivered. Beyond research invests in what healthcare can become.</p>
+            
+            <p>Its global success did not come only from entering new markets. It succeeded by shaping products to real human needs in each region. The next chapter will depend on how well it manages risk, accelerates digital health transformation, and continues to invest in breakthroughs that build a healthier world.</p>
+
+            <div class="insights-box">
+                <h3>The Path Forward</h3>
+                <p>As J&J continues to evolve, three imperatives stand out:</p>
+                <p><strong>1. Accelerate Edge innovations</strong> to own the surgical and care delivery ecosystem</p>
+                <p><strong>2. Make selective Beyond bets</strong> in gene/cell therapy where regulatory trust provides moat</p>
+                <p><strong>3. Maintain Core excellence</strong> while managing the transition away from consumer health</p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
