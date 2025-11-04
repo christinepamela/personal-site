@@ -1171,6 +1171,63 @@
             }
         }
 
+            function editTask(taskId) {
+                const task = state.tasks.find(t => t.id === taskId);
+                if (!task) return;
+            
+                // Edit task name
+                const newText = prompt('Edit task name:', task.text);
+                if (newText === null) return; // User cancelled
+            
+                if (newText.trim()) {
+                    task.text = newText.trim();
+                }
+            
+                // Edit estimated time
+                const newTime = prompt('Edit estimated time (minutes):', task.estimatedTime);
+                if (newTime !== null && !isNaN(parseInt(newTime)) && parseInt(newTime) > 0) {
+                    task.estimatedTime = parseInt(newTime);
+                    if (!task.completed) {
+                        task.actualTime = parseInt(newTime);
+                    }
+                }
+            
+                // Edit goal
+                const goalOptions = ['No goal', ...state.goals.map(g => g.text)];
+                const currentGoalName = task.goalId ? state.goals.find(g => g.id === task.goalId)?.text || 'No goal' : 'No goal';
+                const goalPrompt = `Select goal:\n${goalOptions.map((g, i) => `${i}: ${g}`).join('\n')}\n\nCurrent: ${currentGoalName}`;
+                const goalChoice = prompt(goalPrompt, '0');
+                
+                if (goalChoice !== null) {
+                    const choiceNum = parseInt(goalChoice);
+                    if (!isNaN(choiceNum) && choiceNum >= 0 && choiceNum < goalOptions.length) {
+                        const oldGoalId = task.goalId;
+                        
+                        // Remove from old goal
+                        if (oldGoalId) {
+                            const oldGoal = state.goals.find(g => g.id === oldGoalId);
+                            if (oldGoal) {
+                                oldGoal.totalTasks--;
+                                if (task.completed) oldGoal.completedTasks--;
+                            }
+                        }
+                        
+                        // Add to new goal
+                        if (choiceNum === 0) {
+                            task.goalId = null;
+                        } else {
+                            const newGoal = state.goals[choiceNum - 1];
+                            task.goalId = newGoal.id;
+                            newGoal.totalTasks++;
+                            if (task.completed) newGoal.completedTasks++;
+                        }
+                    }
+                }
+            
+                saveData();
+                renderEverything();
+            }
+
         function celebrate() {
             for (let i = 0; i < 20; i++) {
                 setTimeout(() => {
@@ -1277,14 +1334,15 @@
         }
 
         function renderEverything() {
-            renderProgress();
-            renderTasks();
-            renderGoals();
-            renderGoalsChart();
-            renderAnalytics();
-            renderTrendsChart();
-            renderHistoryStats();
-        }
+                renderProgress();
+                renderTasks();
+                renderTimeSummary();  // ADD THIS LINE
+                renderGoals();
+                renderGoalsChart();
+                renderAnalytics();
+                renderTrendsChart();
+                renderHistoryStats();
+            }
 
         function renderProgress() {
             const currentDateStr = state.currentDate.toISOString().split('T')[0];
@@ -1363,6 +1421,7 @@
                                 ${goalTag}
                             </div>
                         </div>
+                        <button class="task-edit-btn" onclick="editTask(${task.id})" title="Edit task">✏️</button>
                         <button class="delete-btn" onclick="deleteTask(${task.id})">×</button>
                     </div>
                 `;
@@ -1370,6 +1429,37 @@
             
             document.getElementById('task-list').innerHTML = html || '<p style="text-align:center;color:var(--text-light);padding:20px;">No tasks yet. Add your first task above! 🚀</p>';
         }
+
+            function renderTimeSummary() {
+                const currentDateStr = state.currentDate.toISOString().split('T')[0];
+                const todaysTasks = state.tasks.filter(t => t.date === currentDateStr && !t.completed);
+                
+                const totalMinutes = todaysTasks.reduce((sum, t) => sum + t.estimatedTime, 0);
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = totalMinutes % 60;
+                
+                const summaryEl = document.getElementById('time-summary');
+                const textEl = document.getElementById('time-summary-text');
+                
+                summaryEl.classList.remove('light', 'ideal', 'heavy', 'overload');
+                
+                if (totalMinutes === 0) {
+                    textEl.textContent = 'No tasks planned';
+                    summaryEl.classList.add('light');
+                } else if (totalMinutes < 240) { // < 4 hours
+                    textEl.textContent = `${hours}h ${minutes}m - Light day ✨`;
+                    summaryEl.classList.add('light');
+                } else if (totalMinutes <= 480) { // 4-8 hours
+                    textEl.textContent = `${hours}h ${minutes}m - Perfect! 🎯`;
+                    summaryEl.classList.add('ideal');
+                } else if (totalMinutes <= 720) { // 8-12 hours
+                    textEl.textContent = `${hours}h ${minutes}m - Heavy day 💪`;
+                    summaryEl.classList.add('heavy');
+                } else { // > 12 hours
+                    textEl.textContent = `${hours}h ${minutes}m - Overloaded! ⚠️`;
+                    summaryEl.classList.add('overload');
+                }
+            }
 
         function renderGoals() {
             const html = state.goals.map(goal => {
