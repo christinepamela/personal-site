@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>When Adapting Innovation Is No Longer Enough | Astro Case Study</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --astro-orange: #FF6B35;
+            --astro-dark: #1a1a1a;
+            --text-primary: #2c2c2c;
+            --text-secondary: #666;
+            --bg-light: #fafafa;
+            --border-color: #e5e5e5;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, var(--astro-dark) 0%, #2d2d2d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: var(--astro-orange);
+            border-radius: 50%;
+            top: -200px;
+            right: -200px;
+            opacity: 0.1;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 1;
+            max-width: 900px;
+            padding: 2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 0.95rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--astro-orange);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 300;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            letter-spacing: -1px;
+        }
+
+        .hero-meta {
+            font-size: 1rem;
+            color: #999;
+            margin-top: 3rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Section */
+        section {
+            padding: 6rem 0;
+        }
+
+        section:nth-child(even) {
+            background: var(--bg-light);
+        }
+
+        .section-label {
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--astro-orange);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            line-height: 1.3;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin: 3rem 0 1.5rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 300;
+            color: var(--astro-orange);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Timeline */
+        .timeline {
+            margin: 3rem 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-year {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--astro-orange);
+            min-width: 80px;
+        }
+
+        .timeline-content h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .timeline-content p {
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+        }
+
+        /* Theta Framework */
+        .theta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .theta-card {
+            padding: 2rem;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .theta-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--astro-orange);
+        }
+
+        .theta-card.core {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+        }
+
+        .theta-card.edge {
+            background: linear-gradient(135deg, #fff9f5 0%, #ffffff 100%);
+        }
+
+        .theta-card.beyond {
+            background: linear-gradient(135deg, #f5f9ff 0%, #ffffff 100%);
+        }
+
+        .theta-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .theta-card.core .theta-label { color: #dc2626; }
+        .theta-card.edge .theta-label { color: #ea580c; }
+        .theta-card.beyond .theta-label { color: #2563eb; }
+
+        .theta-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .theta-card p {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .theta-percentage {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin: 1rem 0;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            margin: 2rem 0;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-light);
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        /* Callout */
+        .callout {
+            background: linear-gradient(135deg, var(--astro-dark) 0%, #2d2d2d 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 8px;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .callout h3 {
+            color: var(--astro-orange);
+            margin-top: 0;
+        }
+
+        .callout p {
+            color: #ccc;
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .theta-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-wrapper {
+                height: 300px;
+            }
+
+            section {
+                padding: 4rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-subtitle">Case Study</div>
+            <h1 class="hero-title">When Adapting Innovation Is No Longer Enough</h1>
+            <p style="font-size: 1.3rem; color: #ccc; margin-top: 1rem;">Can Astro Still Lead Malaysia's Entertainment Future?</p>
+            <div class="hero-meta">By Christine Pamela</div>
+        </div>
+        <div class="scroll-indicator">SCROLL ↓</div>
+    </div>
+
+    <!-- Origin Story -->
+    <section>
+        <div class="container">
+            <div class="section-label">Origin Story</div>
+            <h2>The First Satellite Window into Malaysia</h2>
+            <p>Founded in 1996, Astro became Malaysia's first mass-market satellite pay-TV service. When MegaTV collapsed, Astro emerged as the nationwide content gateway, building cultural dominance through a strategic multilingual approach spanning Malay, Chinese, and Tamil programming.</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">65%</div>
+                    <div class="stat-label">Peak Household Reach</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">1996</div>
+                    <div class="stat-label">Founded</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Language Markets</div>
+                </div>
+            </div>
+
+            <div class="callout">
+                <h3>Narrative Takeaway</h3>
+                <p>Astro built a monopoly by translating proven global tech into local context faster than anyone else.</p>
+            </div>
+
+            <p style="margin-top: 2rem;">The NJOI initiative extended reach to rural and low-income segments, achieving both social impact and market expansion. Astro's strength expanded into radio, sports, and content production, creating a massive moat through hardware control, billing infrastructure, exclusive content rights, and local production capabilities.</p>
+            
+            <p style="font-weight: 500; color: var(--astro-orange);">But it remained a hardware-anchored business. Execution excellence without innovation dependency.</p>
+        </div>
+    </section>
+
+    <!-- Market Shock -->
+    <section>
+        <div class="container">
+            <div class="section-label">Market Disruption</div>
+            <h2>Streaming Broke the Distribution Moat</h2>
+            <p>External forces fundamentally reshaped the competitive landscape. The arrival of ubiquitous broadband, mobile-first viewing habits, global streaming platforms, frictionless piracy, and creator-driven platforms like TikTok shifted the youth attention graph entirely.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>What Changed</th>
+                        <th>Why It Matters</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Broadband everywhere</td>
+                        <td>Satellite no longer unique</td>
+                    </tr>
+                    <tr>
+                        <td>Mobile viewing</td>
+                        <td>Content follows the phone</td>
+                    </tr>
+                    <tr>
+                        <td>Netflix/Disney+</td>
+                        <td>Global IP → Malaysian wallets</td>
+                    </tr>
+                    <tr>
+                        <td>Piracy</td>
+                        <td>Free + frictionless</td>
+                    </tr>
+                    <tr>
+                        <td>TikTok & creators</td>
+                        <td>Youth attention graph shifted</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout">
+                <h3>The Result</h3>
+                <p>Owning the living room is no longer owning the market.</p>
+            </div>
+
+            <h3>Revenue Decline Timeline</h3>
+            <div class="chart-container">
+                <div class="chart-title">Revenue Decline Over Time</div>
+                <div class="chart-wrapper">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.95rem;"><strong>Insight:</strong> ~27% drop in 3 years driven by pay-TV commoditization and subscriber churn</p>
+            </div>
+
+            <h3>The Disruption Timeline</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">2015</div>
+                    <div class="timeline-content">
+                        <h4>Netflix Malaysia Launch</h4>
+                        <p>On-demand era begins, challenging traditional TV scheduling</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2017</div>
+                    <div class="timeline-content">
+                        <h4>Broadband Penetration >80%</h4>
+                        <p>Satellite reliance drops as internet becomes ubiquitous</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2018</div>
+                    <div class="timeline-content">
+                        <h4>Mobile Surpasses TV</h4>
+                        <p>Mobile becomes top screen for youth demographics</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2020</div>
+                    <div class="timeline-content">
+                        <h4>MCO Acceleration</h4>
+                        <p>Streaming and TikTok usage explode during lockdowns</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2021</div>
+                    <div class="timeline-content">
+                        <h4>Disney+ Hotstar Malaysia</h4>
+                        <p>Another global player enters the local market</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2022</div>
+                    <div class="timeline-content">
+                        <h4>Amazon Prime Video Localized</h4>
+                        <p>Streaming competition intensifies with local content</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2024</div>
+                    <div class="timeline-content">
+                        <h4>TikTok & YouTube Domination</h4>
+                        <p>Creator platforms capture majority of daily attention share</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Subscriber Trends -->
+    <section>
+        <div class="container">
+            <div class="section-label">Data Analysis</div>
+            <h2>The Migration: Pay-TV to Streaming</h2>
+            
+            <div class="chart-container">
+                <div class="chart-title">Subscriber Trends: Pay-TV vs Streaming (sooka)</div>
+                <div class="chart-wrapper">
+                    <canvas id="subscriberChart"></canvas>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.95rem;"><strong>Insight:</strong> Astro is growing digital — but conversion only offsets ~20% of core churn</p>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title">Audience Shift by Age Group: Attention Migration to Streaming & Social</div>
+                <div class="chart-wrapper">
+                    <canvas id="audienceChart"></canvas>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.95rem;"><strong>Key Finding:</strong> Youth attention migrated almost completely. Middle-aged shift is now majority streaming. Older groups shifting slowly — but still eroding Astro's base.</p>
+            </div>
+
+            <div class="callout">
+                <h3>Critical Insight</h3>
+                <p>Attention is now mobile-first and creator-driven. Growth no longer sits in the living room — it sits in the feed. Astro loses relevance where future lifetime value lives.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Adaptation Era -->
+    <section>
+        <div class="container">
+            <div class="section-label">Strategic Response</div>
+            <h2>The Adaptation Era: Still Strong, Still Late</h2>
+            
+            <p>Astro has responded with multiple strategic adaptations across connectivity, pricing, platform aggregation, and content strategy.</p>
+
+            <h3>Key Adaptations</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Initiative</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Astro Fibre</td>
+                        <td>Connectivity push with growing broadband base</td>
+                        <td>Growing</td>
+                    </tr>
+                    <tr>
+                        <td>Freedom Packs</td>
+                        <td>Streamlined Pay-TV from RM49.99</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>Ultra Box</td>
+                        <td>App aggregation: Netflix, Disney+ integrated</td>
+                        <td>Live</td>
+                    </tr>
+                    <tr>
+                        <td>Local Content</td>
+                        <td>79% of total viewing time from local production</td>
+                        <td>Strong</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Recent Performance</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">3×</div>
+                    <div class="stat-label">FY25 Profit Increase</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size: 2rem;">Double-Digit</div>
+                    <div class="stat-label">Broadband + Digital Ads Growth</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">-13%</div>
+                    <div class="stat-label">Q1 FY26 Revenue YoY</div>
+                </div>
+            </div>
+
+            <p style="font-weight: 500; color: var(--astro-orange); margin-top: 2rem;">Astro is adapting — but gravity is stronger. Churn widening despite lower prices.</p>
+        </div>
+    </section>
+
+    <!-- Theta Framework -->
+    <section>
+        <div class="container">
+            <div class="section-label">Strategic Framework</div>
+            <h2>Astro Through the Theta Framework</h2>
+            <p>Understanding where innovation lives, where value is trapped, and where growth must be built.</p>
+
+            <div class="theta-grid">
+                <div class="theta-card core">
+                    <div class="theta-label">✅ Core</div>
+                    <div class="theta-percentage">70%</div>
+                    <h4>Satellite Pay-TV</h4>
+                    <p>NJOI, content rights, hardware upgrades</p>
+                    <p style="margin-top: 1rem; font-weight: 500; color: #dc2626;">High Risk: Melting iceberg — defend but do not over-invest</p>
+                </div>
+                <div class="theta-card edge">
+                    <div class="theta-label">🟨 Edge</div>
+                    <div class="theta-percentage">25%</div>
+                    <h4>Digital Transition</h4>
+                    <p>sooka OTT, app aggregation, data ads, Astro Fibre</p>
+                    <p style="margin-top: 1rem; font-weight: 500; color: #ea580c;">Medium Risk: Must accelerate conversion of churn into digital</p>
+                </div>
+                <div class="theta-card beyond">
+                    <div class="theta-label">🟥 Beyond</div>
+                    <div class="theta-percentage">5%</div>
+                    <h4>Future Engines</h4>
+                    <p>AI, sports tech, creator economy (very early)</p>
+                    <p style="margin-top: 1rem; font-weight: 500; color: #2563eb;">High Opportunity: Where new revenue engines must emerge</p>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title">Innovation Mix: Current Strategic Focus Distribution</div>
+                <div class="chart-wrapper">
+                    <canvas id="thetaChart"></canvas>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.95rem;"><strong>Assessment:</strong> Too much defence, too few future bets</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Opportunity -->
+    <section>
+        <div class="container">
+            <div class="section-label">The Missing Layer</div>
+            <h2>AI: The Missing Operating System of Astro's Reinvention</h2>
+            <p>Astro has scale, data, and reach, but not yet the engine to monetize attention through intelligence.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>AI Opportunity</th>
+                        <th>Impact</th>
+                        <th>Current Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Personalized content (Malay/Chinese/Tamil clusters)</td>
+                        <td>Reduce churn</td>
+                        <td>Behind peers</td>
+                    </tr>
+                    <tr>
+                        <td>Programmatic TV + streaming ads</td>
+                        <td>New margin pool</td>
+                        <td>Early stage</td>
+                    </tr>
+                    <tr>
+                        <td>AI dubbing & subtitling</td>
+                        <td>Library expansion at low cost</td>
+                        <td>Minimal</td>
+                    </tr>
+                    <tr>
+                        <td>Churn prediction</td>
+                        <td>Protect revenue</td>
+                        <td>Partial</td>
+                    </tr>
+                    <tr>
+                        <td>Creator economy + discovery AI</td>
+                        <td>Win youth market</td>
+                        <td>Absent</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout">
+                <h3>Key Argument</h3>
+                <p>Astro knows what Malaysians used to love. AI tells you what they will love next.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Future Strategy -->
+    <section>
+        <div class="container">
+            <div class="section-label">Strategic Recommendations</div>
+            <h2>Future Strategy</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Zone</th>
+                        <th>Recommendation</th>
+                        <th>"Why Now"</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>✅ Core</strong></td>
+                        <td>Harvest cash, simplify legacy, minimize hardware cost</td>
+                        <td>Buy time</td>
+                    </tr>
+                    <tr>
+                        <td><strong>🟨 Edge</strong></td>
+                        <td>Go app-first. Super-aggregator with single billing. Do not fight Netflix — host it</td>
+                        <td>Convert churn to retention</td>
+                    </tr>
+                    <tr>
+                        <td><strong>🟥 Beyond</strong></td>
+                        <td>Build second growth engine: AI-enabled content & creator ecosystem</td>
+                        <td>Own the attention graph</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Closing -->
+    <section style="background: linear-gradient(135deg, var(--astro-dark) 0%, #2d2d2d 100%); color: white;">
+        <div class="container">
+            <div class="section-label" style="color: var(--astro-orange);">Closing Insight</div>
+            <h2 style="color: white; font-size: 2.8rem;">Astro thrived by owning the window into Malaysian homes.</h2>
+            <p style="color: #ccc; font-size: 1.3rem; line-height: 1.8;">Its future depends on owning who Malaysians pay attention to.</p>
+            <p style="color: #999; font-size: 1.1rem; margin-top: 2rem;">Adapting innovation once made Astro a leader. But only creating new core value will keep it one.</p>
+        </div>
+    </section>
+
+    <script>
+        // Chart 1: Revenue Decline
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['FY22', 'FY23', 'FY24', 'FY25E'],
+                datasets: [{
+                    label: 'Revenue (RM Billion)',
+                    data: [4.21, 3.62, 3.34, 3.08],
+                    borderColor: '#FF6B35',
+                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#FF6B35',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 2.5,
+                        max: 4.5,
+                        ticks: {
+                            callback: function(value) {
+                                return 'RM' + value + 'B';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart 2: Subscriber Trends
+        const subscriberCtx = document.getElementById('subscriberChart').getContext('2d');
+        new Chart(subscriberCtx, {
+            type: 'line',
+            data: {
+                labels: ['FY22', 'FY23', 'FY24', 'FY25E'],
+                datasets: [{
+                    label: 'Pay-TV Subscribers (M)',
+                    data: [3.1, 2.7, 2.3, 2.0],
+                    borderColor: '#dc2626',
+                    backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    yAxisID: 'y'
+                }, {
+                    label: 'sooka Subscribers (k)',
+                    data: [200, 350, 500, 650],
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Pay-TV Subscribers (Millions)'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'sooka Subscribers (Thousands)'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart 3: Audience Shift
+        const audienceCtx = document.getElementById('audienceChart').getContext('2d');
+        new Chart(audienceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['13-17', '18-34', '35-54', '55+'],
+                datasets: [{
+                    label: '2018 Pay-TV',
+                    data: [20, 40, 65, 85],
+                    backgroundColor: 'rgba(220, 38, 38, 0.7)',
+                }, {
+                    label: '2024 Pay-TV',
+                    data: [8, 20, 40, 70],
+                    backgroundColor: 'rgba(220, 38, 38, 0.3)',
+                }, {
+                    label: '2018 Streaming + Social',
+                    data: [80, 60, 35, 15],
+                    backgroundColor: 'rgba(37, 99, 235, 0.3)',
+                }, {
+                    label: '2024 Streaming + Social',
+                    data: [92, 80, 60, 30],
+                    backgroundColor: 'rgba(37, 99, 235, 0.7)',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Age Groups'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: '% of Daily Video Attention'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart 4: Theta Framework
+        const thetaCtx = document.getElementById('thetaChart').getContext('2d');
+        new Chart(thetaCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Core (Satellite Pay-TV)', 'Edge (Digital Transition)', 'Beyond (Future Engines)'],
+                datasets: [{
+                    data: [70, 25, 5],
+                    backgroundColor: [
+                        'rgba(220, 38, 38, 0.8)',
+                        'rgba(234, 88, 12, 0.8)',
+                        'rgba(37, 99, 235, 0.8)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
