@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBS Bank: Against the Grain</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            color: #2a2a2a;
+            line-height: 1.7;
+            background: #fafafa;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #d71e28 0%, #8b1419 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="rgba(255,255,255,0.03)"/></svg>');
+            opacity: 0.5;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 1;
+            padding: 2rem;
+            max-width: 900px;
+        }
+
+        .hero-subtitle {
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 300;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            letter-spacing: -1px;
+        }
+
+        .hero-description {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            font-weight: 300;
+            margin-bottom: 3rem;
+        }
+
+        .hero-author {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            opacity: 0.7;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Content Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 6rem 2rem;
+        }
+
+        .section {
+            margin-bottom: 6rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 3rem;
+            color: #1a1a1a;
+            letter-spacing: -0.5px;
+        }
+
+        .section-subtitle {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin: 3rem 0 1.5rem;
+            color: #d71e28;
+        }
+
+        p {
+            font-size: 1.05rem;
+            margin-bottom: 1.5rem;
+            color: #3a3a3a;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+            padding: 3rem 0;
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #d71e28;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Innovation Framework */
+        .framework-grid {
+            display: grid;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .framework-item {
+            padding: 2rem;
+            border-left: 4px solid;
+            background: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .framework-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .framework-item.core {
+            border-color: #4CAF50;
+        }
+
+        .framework-item.edge {
+            border-color: #FFC107;
+        }
+
+        .framework-item.beyond {
+            border-color: #d71e28;
+        }
+
+        .framework-zone {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 600;
+        }
+
+        .framework-zone.core { color: #4CAF50; }
+        .framework-zone.edge { color: #d68f00; }
+        .framework-zone.beyond { color: #d71e28; }
+
+        .framework-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .framework-description {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* List Styling */
+        ul {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        ul li {
+            padding-left: 2rem;
+            position: relative;
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+            color: #3a3a3a;
+        }
+
+        ul li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #d71e28;
+            font-weight: bold;
+        }
+
+        /* Risk Table */
+        .risk-table {
+            margin: 3rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .risk-row {
+            display: grid;
+            grid-template-columns: 150px 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .risk-row:last-child {
+            border-bottom: none;
+        }
+
+        .risk-zone {
+            font-weight: 600;
+            font-size: 0.9rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .risk-content {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .risk-content strong {
+            color: #1a1a1a;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Conclusion */
+        .conclusion {
+            background: linear-gradient(135deg, #d71e28 0%, #8b1419 100%);
+            color: white;
+            padding: 5rem 2rem;
+            margin-top: 6rem;
+            text-align: center;
+        }
+
+        .conclusion-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .conclusion h2 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        .conclusion p {
+            font-size: 1.15rem;
+            color: rgba(255,255,255,0.95);
+            line-height: 1.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-description {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .risk-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .container {
+                padding: 4rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-subtitle">Case Study</div>
+            <h1 class="hero-title">Against the Grain</h1>
+            <p class="hero-description">How One Bank Reinvented Itself Through Digital Transformation</p>
+            <div class="hero-author">A DBS Bank Innovation Study by Christine Pamela</div>
+        </div>
+        <div class="scroll-indicator">Scroll to explore</div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Overview Section -->
+        <section class="section">
+            <h2 class="section-title">Overview</h2>
+            <p>Founded in 1968 as the Development Bank of Singapore, DBS has evolved from a government-backed industrial lender into one of Asia's leading financial institutions. Under the vision of becoming "a technology company doing banking," DBS has reimagined what it means to be a bank in the digital age.</p>
+            
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-value">SGD 22.3B</div>
+                    <div class="stat-label">Total Income (2024)</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">18.0%</div>
+                    <div class="stat-label">Return on Equity</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">~40%</div>
+                    <div class="stat-label">Cost-Income Ratio</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">11.4B</div>
+                    <div class="stat-label">Net Profit (SGD)</div>
+                </div>
+            </div>
+
+            <p>Headquartered in Singapore's Marina Bay Financial Centre, DBS operates across Southeast Asia, Greater China, and India. With Temasek Holdings as its major shareholder, the bank balances commercial ambitions with strategic national interests.</p>
+        </section>
+
+        <!-- Business Model -->
+        <section class="section">
+            <h2 class="section-title">Business Model & Core Lines</h2>
+            
+            <h3 class="section-subtitle">Commercial & Corporate Banking</h3>
+            <p>Providing lending, trade financing, transaction banking, and treasury services for corporates and institutions across Asia.</p>
+
+            <h3 class="section-subtitle">Consumer Banking & Wealth Management</h3>
+            <p>Retail deposits, mortgages, credit products, and wealth platforms serving individual customers and high-net-worth clients.</p>
+
+            <h3 class="section-subtitle">Institutional Markets</h3>
+            <p>Securities, custody, fixed income, foreign exchange, and market services for institutional investors.</p>
+
+            <h3 class="section-subtitle">Digital & Platform Services</h3>
+            <p>Cloud-based banking systems, API platforms for fintech partnerships, and digital-first customer experiences—positioning technology as a strategic competitive advantage.</p>
+        </section>
+
+        <!-- Innovation Framework -->
+        <section class="section">
+            <h2 class="section-title">Innovation Framework: The Theta Approach</h2>
+            <p>DBS's transformation strategy can be mapped across three innovation zones, each serving distinct strategic purposes:</p>
+
+            <div class="framework-grid">
+                <div class="framework-item core">
+                    <div class="framework-zone core">🟩 Core Innovation</div>
+                    <div class="framework-title">Optimize & Sustain (≈50%)</div>
+                    <div class="framework-description">
+                        Improving existing business operations through incremental enhancements. Examples include POSB integration, digital account management upgrades, and mobile app UX improvements that drive efficiency without disrupting core operations.
+                    </div>
+                </div>
+
+                <div class="framework-item edge">
+                    <div class="framework-zone edge">🟨 Edge Innovation</div>
+                    <div class="framework-title">Transform & Compete (≈35%)</div>
+                    <div class="framework-description">
+                        Reconfiguring delivery channels and customer experiences. Digibank (digital-first retail banking), cloud migration, fintech API platforms, and AI-powered wealth advisory represent architectural shifts that redefine how banking is delivered.
+                    </div>
+                </div>
+
+                <div class="framework-item beyond">
+                    <div class="framework-zone beyond">🟥 Beyond Innovation</div>
+                    <div class="framework-title">Explore & Pioneer (≈15%)</div>
+                    <div class="framework-description">
+                        Speculative bets on emerging technologies and business models. Blockchain experiments for trade finance, open banking ecosystems, and generative AI research position DBS for future industry shifts.
+                    </div>
+                </div>
+            </div>
+
+            <p>This balanced portfolio ensures DBS maintains operational excellence while building tomorrow's capabilities.</p>
+        </section>
+
+        <!-- Supporting Entrepreneurs -->
+        <section class="section">
+            <h2 class="section-title">Supporting Entrepreneurs & Startups</h2>
+            <p>DBS recognizes that innovation in the broader economy strengthens its own ecosystem. The bank's entrepreneurial support spans multiple dimensions:</p>
+            
+            <ul>
+                <li><strong>DBS BusinessClass:</strong> A dedicated platform offering tools, advisory, and networking for SMEs and startups across Southeast Asia.</li>
+                <li><strong>Fintech Partnerships:</strong> Open banking APIs enable startups to integrate financial services, fostering innovation and scalability.</li>
+                <li><strong>DBS Ventures:</strong> Strategic investments in fintech and enterprise solutions, providing capital and market access.</li>
+                <li><strong>Capacity Building:</strong> Workshops, webinars, and community events equipping entrepreneurs with insights on digital transformation and sustainable growth.</li>
+            </ul>
+
+            <p>By combining capital, technology, and advisory support, DBS nurtures startups that can thrive regionally while reinforcing its vision as a tech-enabled, ecosystem-focused bank.</p>
+        </section>
+
+        <!-- Risk Outlook -->
+        <section class="section">
+            <h2 class="section-title">Risk Outlook & Mitigations</h2>
+            
+            <div class="risk-table">
+                <div class="risk-row">
+                    <div class="risk-zone" style="color: #4CAF50;">CORE ZONE</div>
+                    <div class="risk-content">
+                        <strong>Operational & Compliance Risk</strong>
+                        AML failures and regulatory lapses can damage reputation and profitability given heavy reliance on core banking.
+                    </div>
+                    <div class="risk-content">
+                        <strong>Mitigation:</strong> Strengthen internal controls, continuous audits, enhanced staff training, and scenario stress-testing.
+                    </div>
+                </div>
+
+                <div class="risk-row">
+                    <div class="risk-zone" style="color: #d68f00;">EDGE ZONE</div>
+                    <div class="risk-content">
+                        <strong>Execution & Adoption Risk</strong>
+                        Digital transformation and cultural change may fail to deliver ROI if poorly implemented.
+                    </div>
+                    <div class="risk-content">
+                        <strong>Mitigation:</strong> Phased rollouts, pilot programs, robust change management, user-centered design, and continuous metrics tracking.
+                    </div>
+                </div>
+
+                <div class="risk-row">
+                    <div class="risk-zone" style="color: #d68f00;">EDGE ZONE</div>
+                    <div class="risk-content">
+                        <strong>Cybersecurity Risk</strong>
+                        Increased digitalization through APIs and platforms raises breach and outage risks.
+                    </div>
+                    <div class="risk-content">
+                        <strong>Mitigation:</strong> Multi-layer security, continuous monitoring, incident response drills, and disaster recovery planning.
+                    </div>
+                </div>
+
+                <div class="risk-row">
+                    <div class="risk-zone" style="color: #d71e28;">BEYOND ZONE</div>
+                    <div class="risk-content">
+                        <strong>Market & Strategic Risk</strong>
+                        Radical bets on emerging technologies may not materialize as expected.
+                    </div>
+                    <div class="risk-content">
+                        <strong>Mitigation:</strong> Maintain balanced innovation portfolio, use stage-gate funding, pilot broadly, and pivot quickly based on data.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Strengths & Challenges -->
+        <section class="section">
+            <h2 class="section-title">Strategic Position</h2>
+            
+            <h3 class="section-subtitle">Key Strengths</h3>
+            <ul>
+                <li>Strong brand recognition and deep market presence across Asia</li>
+                <li>Industry-leading digitalization delivering structural cost advantages</li>
+                <li>Robust capital base with solid governance and regional credibility</li>
+                <li>Strategic alignment with Singapore's policy ecosystem and Temasek backing</li>
+            </ul>
+
+            <h3 class="section-subtitle">Key Challenges</h3>
+            <ul>
+                <li>Historical AML lapses requiring ongoing remediation and regulatory scrutiny</li>
+                <li>Exposure to Asian macroeconomic, property, and credit cycles</li>
+                <li>Managing talent and culture through automation and AI transition</li>
+                <li>Intense competition and margin compression in retail banking</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- Conclusion -->
+    <section class="conclusion">
+        <div class="conclusion-content">
+            <h2>The Blueprint for Digital-Era Banking</h2>
+            <p>DBS illustrates how a traditional bank can sustain its core, compete on the edge, and experiment for the future. Through disciplined innovation mapping, regional scale, and alignment with technology and customer experience trends, DBS offers a compelling blueprint: not all innovation is the same, and understanding where value lies—and where risk lives—is the key to successful transformation.</p>
+        </div>
+    </section>
+</body>
+</html>
