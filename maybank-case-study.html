@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maybank Case Study | The Decade that Decides ASEAN Leadership</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --maybank-gold: #F4B223;
+            --maybank-navy: #003D5C;
+            --text-dark: #1a1a1a;
+            --text-medium: #4a4a4a;
+            --text-light: #7a7a7a;
+            --bg-light: #fafafa;
+            --border-color: #e5e5e5;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, var(--maybank-navy) 0%, #002840 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(244, 178, 35, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(244, 178, 35, 0.05) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            max-width: 900px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-label {
+            color: var(--maybank-gold);
+            font-size: 0.875rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .hero-title {
+            color: white;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 300;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .hero-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: clamp(1.125rem, 2vw, 1.5rem);
+            font-weight: 300;
+            margin-bottom: 3rem;
+        }
+
+        .hero-meta {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            letter-spacing: 1px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Section */
+        section {
+            padding: 6rem 0;
+        }
+
+        .section-number {
+            color: var(--maybank-gold);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 300;
+            margin-bottom: 2rem;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+
+        .section-intro {
+            font-size: 1.125rem;
+            color: var(--text-medium);
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            padding: 2rem;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--maybank-navy);
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            margin: 3rem 0;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: var(--bg-light);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-medium);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-medium);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--maybank-navy) 0%, #004060 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 4px;
+            margin: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(244, 178, 35, 0.1) 0%, transparent 70%);
+        }
+
+        .highlight-box h3 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .highlight-box p {
+            font-size: 1rem;
+            line-height: 1.8;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* List Styles */
+        .styled-list {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .styled-list li {
+            padding: 1rem 0;
+            padding-left: 2rem;
+            position: relative;
+            color: var(--text-medium);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .styled-list li:last-child {
+            border-bottom: none;
+        }
+
+        .styled-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 1.5rem;
+            width: 6px;
+            height: 6px;
+            background: var(--maybank-gold);
+            border-radius: 50%;
+        }
+
+        /* Chart Styles */
+        .chart-container {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bar-label {
+            min-width: 120px;
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            font-weight: 500;
+        }
+
+        .bar-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bar {
+            height: 32px;
+            background: linear-gradient(90deg, var(--maybank-gold) 0%, #F5C54D 100%);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .bar-percentage {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            min-width: 40px;
+        }
+
+        /* Comparison Grid */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .comparison-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .comparison-card.highlight {
+            border: 2px solid var(--maybank-gold);
+            background: linear-gradient(to bottom, rgba(244, 178, 35, 0.03), white);
+        }
+
+        .comparison-header {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--maybank-navy);
+        }
+
+        .comparison-values {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.5rem 0;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comparison-values:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .comparison-value {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Quote */
+        .quote {
+            font-size: 1.5rem;
+            font-weight: 300;
+            line-height: 1.6;
+            color: var(--text-dark);
+            padding: 3rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            margin: 3rem 0;
+        }
+
+        .quote-emphasis {
+            color: var(--maybank-navy);
+            font-weight: 400;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: var(--bg-light);
+            padding: 6rem 0;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .cta-text {
+            font-size: 1.125rem;
+            color: var(--text-medium);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--maybank-navy);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 3rem 0;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            section {
+                padding: 4rem 0;
+            }
+
+            .bar-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .bar-label {
+                min-width: auto;
+            }
+
+            .bar-wrapper {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-label">Strategic Case Study</div>
+            <h1 class="hero-title">From Bank to Ecosystem:<br>The Decade that Decides<br>ASEAN Leadership</h1>
+            <p class="hero-subtitle">Does Maybank have a shot at leading it?</p>
+            <div class="hero-meta">By Christine Pamela · 2025</div>
+        </div>
+        <div class="scroll-indicator">Scroll to explore</div>
+    </div>
+
+    <!-- Executive Summary -->
+    <section>
+        <div class="container">
+            <div class="section-number">01 · Executive Summary</div>
+            <h2 class="section-title">Malaysia's Most Trusted Financial Institution</h2>
+            <p class="section-intro">Maybank built the financial backbone of Malaysia. For 60 years the formula worked: Scale + Trust + Distribution. But banking is changing. Distribution is becoming digital. Trust is becoming programmable. The institution that wins ASEAN will not only be the most banked. It will be the most embedded.</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Market Position</div>
+                    <div class="stat-value">#1</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Years in Operation</div>
+                    <div class="stat-value">60</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">ASEAN Footprint</div>
+                    <div class="stat-value">Leading</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Islamic Banking</div>
+                    <div class="stat-value">#1</div>
+                </div>
+            </div>
+
+            <ul class="styled-list">
+                <li>Largest bank by assets and market cap</li>
+                <li>Biggest deposit franchise in Malaysia</li>
+                <li>Most extensive retail distribution footprint</li>
+                <li>Leading Islamic bank in ASEAN</li>
+                <li>Early digital mover with Maybank2u</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Industry Shift -->
+    <section style="background: var(--bg-light);">
+        <div class="container">
+            <div class="section-number">02 · Industry Context</div>
+            <h2 class="section-title">The Rise of Ecosystem Banking</h2>
+            <p class="section-intro">What customers want has moved. Payments, shopping, mobility, identity—all beginning in apps outside the bank. Banks are becoming infrastructure. Platforms are becoming relationships.</p>
+            
+            <div class="highlight-box">
+                <h3>The Critical Shift</h3>
+                <p>If banks lose the daily relationship, they lose the future value. Banks are where money sleeps but no longer where money lives.</p>
+            </div>
+
+            <h3 style="margin: 3rem 0 1.5rem; font-size: 1.25rem; font-weight: 500;">ASEAN Leaders Today</h3>
+            <ul class="styled-list">
+                <li>DBS: Banking inside ecosystems</li>
+                <li>OCBC / UOB: SME + lifestyle platforms</li>
+                <li>Grab / SeaMoney: Financial lives at the edge</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Maybank's Strengths -->
+    <section>
+        <div class="container">
+            <div class="section-number">03 · Core Strengths</div>
+            <h2 class="section-title">What Maybank Has Done Right</h2>
+            <p class="section-intro">A strong core to defend. Maybank is in the best position of any Malaysian bank to lead ASEAN's digital finance ecosystems.</p>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Capability</th>
+                            <th>Why It Matters</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Largest low-cost deposit base</td>
+                            <td>Cheap funding = pricing power</td>
+                        </tr>
+                        <tr>
+                            <td>Retail and Islamic leadership</td>
+                            <td>Scale advantage that compounds</td>
+                        </tr>
+                        <tr>
+                            <td>Regional presence in ASEAN</td>
+                            <td>Access to faster growth markets</td>
+                        </tr>
+                        <tr>
+                            <td>Digital transformation (M25+)</td>
+                            <td>Solid platform to build new franchises</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Innovation Challenge -->
+    <section style="background: var(--bg-light);">
+        <div class="container">
+            <div class="section-number">04 · The Challenge</div>
+            <h2 class="section-title">Where the System Breaks</h2>
+            <p class="section-intro">Maybank innovates. But transformation stalls inside the Core. If new businesses must behave like a 60-year-old bank to survive, they will never grow into the next core.</p>
+            
+            <h3 style="margin: 2rem 0 1.5rem; font-size: 1.25rem; font-weight: 500;">Symptoms</h3>
+            <ul class="styled-list">
+                <li>Many pilots. Few scaled P&Ls</li>
+                <li>MAE is strong, but still a banking app</li>
+                <li>Innovation KPIs tied to deposit and ROE metrics</li>
+                <li>High governance friction on any idea that cannibalises</li>
+                <li>Builders rotate back into the Core before scaling</li>
+            </ul>
+
+            <div class="quote">
+                <span class="quote-emphasis">Maybank today:</span> Innovation theatre → but not yet innovation engine
+            </div>
+        </div>
+    </section>
+
+    <!-- Theta Framework -->
+    <section>
+        <div class="container">
+            <div class="section-number">05 · Strategic Analysis</div>
+            <h2 class="section-title">Theta Framework: Where Value Lives Now and Next</h2>
+            <p class="section-intro">Maybank mastered banking scale. Now it must master platform scale.</p>
+            
+            <div class="chart-container">
+                <div class="chart-title">Resource Allocation: Current vs Ideal</div>
+                <div class="bar-chart">
+                    <div class="bar-item">
+                        <div class="bar-label">Core (Current)</div>
+                        <div class="bar-wrapper">
+                            <div class="bar" style="width: 70%;">
+                                <span class="bar-value">70%</span>
+                            </div>
+                            <span class="bar-percentage"></span>
+                        </div>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar-label">Core (Ideal)</div>
+                        <div class="bar-wrapper">
+                            <div class="bar" style="width: 55%; opacity: 0.6;">
+                                <span class="bar-value">50-55%</span>
+                            </div>
+                            <span class="bar-percentage"></span>
+                        </div>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar-label">Edge (Current)</div>
+                        <div class="bar-wrapper">
+                            <div class="bar" style="width: 25%;">
+                                <span class="bar-value">25%</span>
+                            </div>
+                            <span class="bar-percentage"></span>
+                        </div>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar-label">Edge (Ideal)</div>
+                        <div class="bar-wrapper">
+                            <div class="bar" style="width: 40%; opacity: 0.6;">
+                                <span class="bar-value">35-40%</span>
+                            </div>
+                            <span class="bar-percentage"></span>
+                        </div>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar-label">Beyond (Current)</div>
+                        <div class="bar-wrapper">
+                            <div class="bar" style="width: 5%;">
+                                <span class="bar-value">5%</span>
+                            </div>
+                            <span class="bar-percentage"></span>
+                        </div>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar-label">Beyond (Ideal)</div>
+                        <div class="bar-wrapper">
+                            <div class="bar" style="width: 15%; opacity: 0.6;">
+                                <span class="bar-value">10-15%</span>
+                            </div>
+                            <span class="bar-percentage"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Zone</th>
+                            <th>Purpose</th>
+                            <th>Current</th>
+                            <th>Ideal</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Core</strong></td>
+                            <td>Defend deposit franchise</td>
+                            <td>~70%</td>
+                            <td>50–55%</td>
+                            <td>Safe but aging</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Edge</strong></td>
+                            <td>Build new digital franchises</td>
+                            <td>~25%</td>
+                            <td>35–40%</td>
+                            <td>MAE, embedded finance</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Beyond</strong></td>
+                            <td>Create future economic systems</td>
+                            <td>~5%</td>
+                            <td>10–15%</td>
+                            <td>AI + digital identity</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Competition -->
+    <section style="background: var(--bg-light);">
+        <div class="container">
+            <div class="section-number">06 · Competitive Landscape</div>
+            <h2 class="section-title">The Leadership Race</h2>
+            <p class="section-intro">Maybank dominates the Core. But that no longer guarantees leadership.</p>
+            
+            <h3 style="margin: 3rem 0 1.5rem; font-size: 1.25rem; font-weight: 500;">Local Comparison</h3>
+            <div class="comparison-grid">
+                <div class="comparison-card highlight">
+                    <div class="comparison-header">Maybank</div>
+                    <div class="comparison-values">
+                        <span class="comparison-label">Core</span>
+                        <span class="comparison-value">70%</span>
+                    </div>
+                    <div class="comparison-values">
+                        <span class="comparison-label">Edge</span>
+                        <span class="comparison-value">25%</span>
+                    </div>
+                    <div class="comparison-values">
+                        <span class="comparison-label">Beyond</span>
+                        <span class="comparison-value">5%</span>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--text-light);">Plays defense while others build offense</p>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 3rem;">
+                <h3>The Reality</h3>
+                <p>Maybank is ahead locally but falling behind regionally.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategic Gap -->
+    <section>
+        <div class="container">
+            <div class="section-number">07 · Strategic Gap</div>
+            <h2 class="section-title">Leadership Identity vs Future Reality</h2>
+            <p class="section-intro">Not a digital gap. A leadership architecture gap.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin: 3rem 0;">
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--maybank-navy);">What Built the Core</h3>
+                    <ul class="styled-list">
+                        <li>Risk management first</li>
+                        <li>Predictable ROE</li>
+                        <li>Zero surprise execution</li>
+                        <li>Compliance excellence</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--maybank-gold);">What Wins the Future</h3>
+                    <ul class="styled-list">
+                        <li>Talent who build new business lines</li>
+                        <li>Cannibalisation tolerance</li>
+                        <li>P&L autonomy</li>
+                        <li>Edge metrics (LTV, ecosystem MAU, velocity)</li>
+                        <li>Faster path to "new core"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Behavior -->
+    <section style="background: var(--bg-light);">
+        <div class="container">
+            <div class="section-number">08 · Market Signal</div>
+            <h2 class="section-title">Attention Migration in Malaysia</h2>
+            <p class="section-intro">Younger customers build financial habits outside bank ecosystems. If the bank does not follow user gravity, user gravity will not return to the bank.</p>
+            
+            <div class="chart-container">
+                <div class="chart-title">Where Financial Actions Begin Daily</div>
+                <div style="margin: 2rem 0;">
+                    <div style="margin-bottom: 2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span style="font-weight: 600; color: var(--text-dark);">Age <35</span>
+                            <span style="font-size: 0.875rem; color: var(--text-light);">Super apps, e-wallets, marketplaces</span>
+                        </div>
+                        <div style="height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden;">
+                            <div style="width: 75%; height: 100%; background: linear-gradient(90deg, var(--maybank-gold), #F5C54D);"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span style="font-weight: 600; color: var(--text-dark);">Age 45+</span>
+                            <span style="font-size: 0.875rem; color: var(--text-light);">Bank apps and branches</span>
+                        </div>
+                        <div style="height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden;">
+                            <div style="width: 65%; height: 100%; background: var(--maybank-navy);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quote">
+                Banks are where money sleeps but no longer where money lives.
+            </div>
+        </div>
+    </section>
+
+    <!-- New Core -->
+    <section>
+        <div class="container">
+            <div class="section-number">09 · The Path Forward</div>
+            <h2 class="section-title">Platform Scale in ASEAN</h2>
+            <p class="section-intro">This is not disruption from outsiders. It is expansion from the most trusted incumbent.</p>
+            
+            <h3 style="margin: 3rem 0 1.5rem; font-size: 1.25rem; font-weight: 500;">New Core Engines</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Engine</th>
+                            <th>TAM</th>
+                            <th>Network Effects</th>
+                            <th>Trust Synergy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Embedded finance for SMEs across ASEAN</td>
+                            <td>High</td>
+                            <td>High</td>
+                            <td>High</td>
+                        </tr>
+                        <tr>
+                            <td>AI-led personal wealth and advisory</td>
+                            <td>High</td>
+                            <td>High</td>
+                            <td>High</td>
+                        </tr>
+                        <tr>
+                            <td>Digital identity + trust infrastructure</td>
+                            <td>High</td>
+                            <td>High</td>
+                            <td>High</td>
+                        </tr>
+                        <tr>
+                            <td>Cross-border payments and remittance rails</td>
+                            <td>High</td>
+                            <td>High</td>
+                            <td>High</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Transformation Plan -->
+    <section style="background: var(--bg-light);">
+        <div class="container">
+            <div class="section-number">10 · Action Framework</div>
+            <h2 class="section-title">The Theta Transformation Plan</h2>
+            <p class="section-intro">One strategic move: Allow Edge to become the next Core.</p>
+            
+            <div class="highlight-box">
+                <h3>Edge deserves oxygen. Beyond deserves ambition.</h3>
+            </div>
+
+            <h3 style="margin: 3rem 0 1.5rem; font-size: 1.25rem; font-weight: 500;">Structural Requirements</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Shift</th>
+                            <th>From</th>
+                            <th>To</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Governance</strong></td>
+                            <td>Risk-first</td>
+                            <td>Growth-first with guardrails</td>
+                        </tr>
+                        <tr>
+                            <td><strong>P&L</strong></td>
+                            <td>Integrated into Core</td>
+                            <td>Autonomous business units</td>
+                        </tr>
+                        <tr>
+                            <td><strong>KPIs</strong></td>
+                            <td>ROE + CASA</td>
+                            <td>Lifetime value + network scale</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Talent</strong></td>
+                            <td>Protectors</td>
+                            <td>Builders</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Culture</strong></td>
+                            <td>No until yes</td>
+                            <td>Yes until no</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conclusion -->
+    <section>
+        <div class="container">
+            <div class="section-number">11 · Conclusion</div>
+            <h2 class="section-title">The Decade that Decides</h2>
+            <p class="section-intro">Maybank has everything to win the next chapter of ASEAN finance: Trust, Brand, Scale, Capital, Customers.</p>
+            
+            <div class="stats-grid" style="margin: 3rem 0;">
+                <div class="stat-card">
+                    <div class="stat-label">Foundation</div>
+                    <div class="stat-value" style="font-size: 1.5rem;">Trust</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Advantage</div>
+                    <div class="stat-value" style="font-size: 1.5rem;">Scale</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Opportunity</div>
+                    <div class="stat-value" style="font-size: 1.5rem;">Platform</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Requirement</div>
+                    <div class="stat-value" style="font-size: 1.5rem;">Leadership</div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>What it needs is a different definition of leadership.</h3>
+                <p>Leadership that does not only safeguard what Maybank built. Leadership that absorbs what it will become.</p>
+            </div>
+
+            <div class="quote" style="margin-top: 4rem;">
+                If Maybank commits now: <span class="quote-emphasis">Malaysia leads ASEAN Banking</span> instead of just participating in it.
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-section">
+        <div class="container">
+            <h2 class="cta-title">The Question</h2>
+            <p class="cta-text">The question is no longer whether Maybank can transform. It is whether Maybank is willing to choose a new core.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>Strategic Case Study · 2025 · By Christine Pamela</p>
+            <p style="margin-top: 0.5rem; opacity: 0.5;">Theta Framework Analysis</p>
+        </div>
+    </footer>
+</body>
+</html>
