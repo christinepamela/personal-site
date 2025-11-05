@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keysight Case Study | From Craft to Cost</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(234, 88, 12, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            z-index: 1;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-label {
+            font-size: 0.875rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #ea580c;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        .hero .subtitle {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .hero .meta {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 3rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.875rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, 10px); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Section Styling */
+        section {
+            padding: 6rem 0;
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .section-label {
+            font-size: 0.875rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #ea580c;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+            margin-top: 2rem;
+        }
+
+        p {
+            font-size: 1.125rem;
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        /* Overview Section */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .overview-card {
+            padding: 2rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid #ea580c;
+        }
+
+        .overview-card h4 {
+            font-size: 1rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .overview-card .value {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin: 3rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #ea580c 0%, #1b263b 100%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2.5rem;
+            padding-left: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ea580c;
+            border: 3px solid #ffffff;
+            box-shadow: 0 0 0 2px #ea580c;
+        }
+
+        .timeline-year {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content {
+            font-size: 1rem;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        /* Innovation Framework Table */
+        .framework-table {
+            width: 100%;
+            margin: 3rem 0;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .framework-table thead {
+            background: #0d1b2a;
+            color: #ffffff;
+        }
+
+        .framework-table th {
+            padding: 1.25rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .framework-table td {
+            padding: 1.25rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 1rem;
+            color: #4a5568;
+        }
+
+        .framework-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .framework-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .zone-indicator {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .zone-core {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .zone-adjacent {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .zone-edge {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .zone-beyond {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        .zone-frontier {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        /* Challenge Section */
+        .challenge-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+            padding: 3rem;
+            border-radius: 8px;
+            margin: 3rem 0;
+            border-left: 4px solid #ea580c;
+        }
+
+        .challenge-box h3 {
+            color: #92400e;
+            margin-top: 0;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .impact-item {
+            background: #ffffff;
+            padding: 1.5rem;
+            border-radius: 6px;
+        }
+
+        .impact-item strong {
+            display: block;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .impact-item span {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        /* Quote */
+        .quote-block {
+            margin: 4rem 0;
+            padding: 3rem;
+            background: #f8fafc;
+            border-left: 4px solid #1b263b;
+            font-size: 1.5rem;
+            font-style: italic;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        /* Crossroads Section */
+        .crossroads {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .path {
+            padding: 2.5rem;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .path-success {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: 2px solid #10b981;
+        }
+
+        .path-risk {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border: 2px solid #ef4444;
+        }
+
+        .path-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .path h4 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .path p {
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        /* Recommendations */
+        .recommendations {
+            background: #0d1b2a;
+            color: #ffffff;
+            padding: 6rem 2rem;
+            margin-top: 6rem;
+        }
+
+        .recommendations .container {
+            max-width: 1100px;
+        }
+
+        .recommendations h2 {
+            color: #ffffff;
+        }
+
+        .recommendations .section-label {
+            color: #ea580c;
+        }
+
+        .rec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .rec-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .rec-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .rec-card h4 {
+            color: #ea580c;
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+        }
+
+        .rec-card p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        /* Footer */
+        footer {
+            background: #f8fafc;
+            padding: 3rem 2rem;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .subtitle {
+                font-size: 1.125rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .crossroads {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 4rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-label">Strategic Case Study</div>
+            <h1>From Craft to Cost</h1>
+            <p class="subtitle">Keysight Technologies and the Innovation Consequences</p>
+            <div class="meta">By Christine Pamela</div>
+        </div>
+        <div class="scroll-indicator">Scroll Down ↓</div>
+    </div>
+
+    <!-- Overview Section -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Executive Summary</div>
+                <h2>The Legacy of Precision</h2>
+            </div>
+            <p>Keysight Technologies carries the engineering DNA of Hewlett-Packard's original Test & Measurement division. As a pure-play leader in electronic test and measurement, Keysight stands at a critical juncture—balancing operational efficiency with the innovation culture that defined its origins.</p>
+            
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <h4>Annual Revenue</h4>
+                    <div class="value">~$5.0B</div>
+                </div>
+                <div class="overview-card">
+                    <h4>Founded</h4>
+                    <div class="value">2014</div>
+                </div>
+                <div class="overview-card">
+                    <h4>Heritage</h4>
+                    <div class="value">HP Legacy</div>
+                </div>
+                <div class="overview-card">
+                    <h4>Market</h4>
+                    <div class="value">Electronic Test</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Origins Section -->
+    <section style="background: #f8fafc;">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Corporate Evolution</div>
+                <h2>Origins and Lineage</h2>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">1960s</div>
+                    <div class="timeline-content">HP pioneers precision electronic instruments, setting the tone for Silicon Valley's early inventor culture</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">1999</div>
+                    <div class="timeline-content">HP spins off measurement businesses into Agilent Technologies</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2014</div>
+                    <div class="timeline-content">Agilent separates electronic measurement assets as Keysight Technologies (NYSE: November 3, 2014)</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2025</div>
+                    <div class="timeline-content">Strategic expansion through major acquisitions including Spirent, broadening into network test</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What Keysight Builds -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Core Capabilities</div>
+                <h2>What Keysight Builds</h2>
+            </div>
+            
+            <p>Keysight enables electronic systems across the complete lifecycle: design → prototype → test → manufacturing → network/cloud optimization.</p>
+            
+            <h3>Core Solution Areas</h3>
+            <div class="impact-grid">
+                <div class="impact-item">
+                    <strong>Instrument Hardware</strong>
+                    <span>Oscilloscopes, VNAs, signal/spectrum analyzers, 5G RF testers, field instruments</span>
+                </div>
+                <div class="impact-item">
+                    <strong>Software & Simulation</strong>
+                    <span>PathWave: integrated design validation, modeling and digital twins</span>
+                </div>
+                <div class="impact-item">
+                    <strong>Network & Cloud Test</strong>
+                    <span>5G/6G network emulation, data center test, cybersecurity validation</span>
+                </div>
+                <div class="impact-item">
+                    <strong>Specialty Verticals</strong>
+                    <span>Automotive ADAS and EV, aerospace & defense, semiconductor and photonics, quantum measurement</span>
+                </div>
+            </div>
+
+            <div class="quote-block">
+                The strategy is clear: capture value earlier in the workflow, and shift from "boxes" to software-centric engineering platforms.
+            </div>
+        </div>
+    </section>
+
+    <!-- Innovation Framework -->
+    <section style="background: #f8fafc;">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Theta Framework Analysis</div>
+                <h2>Innovation Portfolio Mapping</h2>
+            </div>
+
+            <table class="framework-table">
+                <thead>
+                    <tr>
+                        <th>Zone</th>
+                        <th>Focus Area</th>
+                        <th>Keysight Position</th>
+                        <th>Weight</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="zone-indicator zone-core">Core</span></td>
+                        <td>Incremental improvements to RF instruments</td>
+                        <td>Bread-and-butter revenue drivers</td>
+                        <td><strong>50%</strong></td>
+                    </tr>
+                    <tr>
+                        <td><span class="zone-indicator zone-adjacent">Core Adjacent</span></td>
+                        <td>Expand test tech into new sectors</td>
+                        <td>EV, ADAS, optical</td>
+                        <td><strong>15%</strong></td>
+                    </tr>
+                    <tr>
+                        <td><span class="zone-indicator zone-edge">Edge</span></td>
+                        <td>New software-driven workflows</td>
+                        <td>PathWave, cloud-based design and network emulation</td>
+                        <td><strong>20%</strong></td>
+                    </tr>
+                    <tr>
+                        <td><span class="zone-indicator zone-beyond">Beyond</span></td>
+                        <td>Transformational test for new markets</td>
+                        <td>Quantum, 6G, cybersecurity digital twins</td>
+                        <td><strong>10%</strong></td>
+                    </tr>
+                    <tr>
+                        <td><span class="zone-indicator zone-frontier">Frontier</span></td>
+                        <td>Speculative long-range bets</td>
+                        <td>Terahertz, novel sensing</td>
+                        <td><strong>5%</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p style="margin-top: 2rem;"><strong>Key Insight:</strong> Core pays the bills; Edge is the bridge; Beyond seeds the future. But the shift from Core → Edge → Beyond is not fast enough.</p>
+        </div>
+    </section>
+
+    <!-- The Challenge -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Critical Challenge</div>
+                <h2>The Reversal of the HP Way</h2>
+            </div>
+
+            <p>HP's original philosophy was simple: <strong>the people who understand the product best should lead the product.</strong></p>
+
+            <div class="challenge-box">
+                <h3>When You Offshore Hardware, You Offshore the Craft</h3>
+                <p>From the mid-2000s, Agilent/Keysight relocated final assembly, calibration operations, and development support to Penang, Singapore, and China.</p>
+                
+                <div class="impact-grid">
+                    <div class="impact-item">
+                        <strong>Tacit Knowledge Relocated</strong>
+                        <span>RF calibration and analog front-end expertise shifted abroad</span>
+                    </div>
+                    <div class="impact-item">
+                        <strong>U.S. Engineering Pipeline Thinned</strong>
+                        <span>Senior domain experts retired faster than successors emerged</span>
+                    </div>
+                    <div class="impact-item">
+                        <strong>Role Reversal</strong>
+                        <span>SEA teams increasingly supporting U.S. engineering</span>
+                    </div>
+                    <div class="impact-item">
+                        <strong>Cultural Drift</strong>
+                        <span>From hands-on experimentation → commercial optimization mindset</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quote-block">
+                Authority is in California. Expertise is in Penang. Innovation becomes incremental because the true instrument builders are not the ones writing the roadmap.
+            </div>
+
+            <p>This creates a clear inversion:</p>
+            <ul style="font-size: 1.125rem; color: #4a5568; line-height: 1.8; margin-left: 2rem;">
+                <li>From lab-led to finance-led</li>
+                <li>From invention-driven to efficiency-driven</li>
+                <li>From engineering mastery driving decisions to margin optimization driving strategy</li>
+            </ul>
+
+            <p style="margin-top: 2rem;"><strong>Keysight still delivers strong products. But the cultural engine that made HP a pioneer has shifted gears—and geography—without recalibrating who leads the future.</strong></p>
+        </div>
+    </section>
+
+    <!-- Strategic Crossroads -->
+    <section style="background: #f8fafc;">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Future Scenarios</div>
+                <h2>Strategic Crossroads</h2>
+            </div>
+
+            <div class="crossroads">
+                <div class="path path-success">
+                    <div class="path-icon">✓</div>
+                    <h4>Path Forward</h4>
+                    <p>A software-defined measurement leader driving the future of 6G, photonics and quantum test</p>
+                </div>
+                <div class="path path-risk">
+                    <div class="path-icon">⚠</div>
+                    <h4>Path of Decline</h4>
+                    <p>A premium hardware vendor defending legacy margins in a commoditizing market</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recommendations -->
+    <section class="recommendations">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Strategic Imperatives</div>
+                <h2>To Win the Next Decade</h2>
+            </div>
+
+            <div class="rec-grid">
+                <div class="rec-card">
+                    <h4>Build AI-Native Workflows</h4>
+                    <p>Instead of adding AI as a feature, fundamentally rethink measurement and test through an AI-first lens</p>
+                </div>
+                <div class="rec-card">
+                    <h4>Elevate SEA Teams</h4>
+                    <p>Treat Southeast Asia engineering teams as innovation centers, not operators—give them strategic authority</p>
+                </div>
+                <div class="rec-card">
+                    <h4>Reconstruct Lab Culture</h4>
+                    <p>Rebuild a lab-first culture around RF craft and advanced analog—bring the inventors back to the center</p>
+                </div>
+                <div class="rec-card">
+                    <h4>Reconnect to HP Roots</h4>
+                    <p>Rediscover the courage to invent: prioritize invention before optimization, engineering mastery before margin</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conclusion -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Final Thought</div>
+                <h2>The Case Isn't Closed Yet</h2>
+            </div>
+
+            <p style="font-size: 1.25rem;">Keysight's evolution tells a larger story: <strong>when a company moves from craft to cost, innovation becomes an accounting line—and the future becomes incremental.</strong></p>
+
+            <p style="font-size: 1.25rem; margin-top: 2rem;">The next chapter depends on whether Keysight rediscovers the courage to invent.</p>
+
+            <div class="quote-block" style="margin-top: 3rem;">
+                You need the original "toolmakers" to build transformative test systems—and many aren't there anymore.
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 Christine Pamela | Strategic Case Study Series</p>
+    </footer>
+</body>
+</html>
