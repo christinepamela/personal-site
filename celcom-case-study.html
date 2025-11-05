@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CelcomDigi: Becoming a World-Class Innovation Telco</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            color: #1a1a1a;
+            line-height: 1.6;
+            background: #ffffff;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #0047AB 0%, #1a73e8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 2;
+            max-width: 900px;
+            padding: 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero .subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            opacity: 0.95;
+            margin-bottom: 1rem;
+        }
+
+        .hero .author {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-top: 3rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            opacity: 0.7;
+            font-size: 0.9rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, 10px); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Section Styling */
+        section {
+            padding: 6rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #0047AB;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Executive Summary */
+        .executive-summary {
+            background: #f8f9fa;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #0047AB;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        /* Content Sections */
+        .content-block {
+            margin-bottom: 3rem;
+        }
+
+        .content-block h3 {
+            font-size: 1.8rem;
+            color: #0047AB;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+        }
+
+        .content-block p {
+            font-size: 1.1rem;
+            color: #444;
+            margin-bottom: 1rem;
+        }
+
+        .content-block ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .content-block li {
+            padding: 0.8rem 0;
+            padding-left: 2rem;
+            position: relative;
+            font-size: 1.05rem;
+            color: #444;
+        }
+
+        .content-block li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #0047AB;
+            font-weight: bold;
+        }
+
+        /* Innovation Table */
+        .innovation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .innovation-table th {
+            background: #0047AB;
+            color: white;
+            padding: 1.2rem;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .innovation-table td {
+            padding: 1.2rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .innovation-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .innovation-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .zone-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .zone-core { background: #e8f5e9; color: #2e7d32; }
+        .zone-edge { background: #fff3e0; color: #ef6c00; }
+        .zone-beyond { background: #fce4ec; color: #c2185b; }
+
+        /* Charts Section */
+        .charts-section {
+            background: #f8f9fa;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .chart-container h3 {
+            font-size: 1.3rem;
+            color: #0047AB;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 350px;
+        }
+
+        /* Recommendations */
+        .recommendations {
+            background: linear-gradient(135deg, #0047AB 0%, #1a73e8 100%);
+            color: white;
+        }
+
+        .recommendations h2 {
+            color: white;
+        }
+
+        .recommendations p {
+            color: rgba(255,255,255,0.95);
+        }
+
+        .rec-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .rec-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .rec-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 400;
+        }
+
+        .rec-card p {
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        footer p {
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1>How CelcomDigi Can Become a World-Class Innovation Telco</h1>
+            <p class="subtitle">From Scale Leadership to Innovation Excellence</p>
+            <p class="author">A Case Study by Christine Pamela</p>
+        </div>
+        <div class="scroll-indicator">↓ Scroll to explore</div>
+    </div>
+
+    <!-- Executive Summary -->
+    <section class="executive-summary">
+        <div class="container">
+            <div class="section-header">
+                <h2>Executive Summary</h2>
+                <p>CelcomDigi stands at a critical juncture: it has won scale through the 2022 merger, but innovation remains incremental. The opportunity is clear—shift from market leader to innovation exporter.</p>
+            </div>
+            
+            <div class="summary-grid">
+                <div class="stat-card">
+                    <div class="stat-value">RM12.8B</div>
+                    <div class="stat-label">FY2024 Revenue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">#1</div>
+                    <div class="stat-label">Market Position by Subscribers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">70%</div>
+                    <div class="stat-label">Innovation in Core (needs rebalancing)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2022</div>
+                    <div class="stat-label">Celcom-Digi Merger Year</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Challenge -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2>The Challenge</h2>
+            </div>
+            
+            <div class="content-block">
+                <p style="font-size: 1.3rem; text-align: center; color: #0047AB; margin-bottom: 2rem;">Malaysia needs a telco that exports technology, not just imports it.</p>
+                
+                <ul>
+                    <li>Most innovation today lives in Core operations—better bundles, better networks, better apps</li>
+                    <li>Global leaders are shifting investment to Edge (enterprise platforms) and Beyond (moonshots)</li>
+                    <li>CelcomDigi has execution excellence but innovation ambition must accelerate</li>
+                    <li>Maxis leads the current enterprise battlefield; CelcomDigi can lead the next one</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Innovation Mapping -->
+    <section class="charts-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Current Innovation Portfolio</h2>
+                <p>The Theta Innovation Framework maps CelcomDigi's initiatives across three zones: Core, Edge, and Beyond</p>
+            </div>
+
+            <table class="innovation-table">
+                <thead>
+                    <tr>
+                        <th>Zone</th>
+                        <th>Initiative Focus</th>
+                        <th>Goal</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="zone-badge zone-core">Core</span></td>
+                        <td>4G modernization, network integration</td>
+                        <td>Cost efficiency, experience</td>
+                        <td>Executing</td>
+                    </tr>
+                    <tr>
+                        <td><span class="zone-badge zone-core">Core</span></td>
+                        <td>Convergence and household share</td>
+                        <td>Higher ARPU</td>
+                        <td>Expanding quickly</td>
+                    </tr>
+                    <tr>
+                        <td><span class="zone-badge zone-core">Core</span></td>
+                        <td>Digital care and unified app</td>
+                        <td>Cost efficiency</td>
+                        <td>Mature</td>
+                    </tr>
+                    <tr>
+                        <td><span class="zone-badge zone-edge">Edge</span></td>
+                        <td>Private 5G industry solutions</td>
+                        <td>Enterprise growth</td>
+                        <td>Pilots → Scale</td>
+                    </tr>
+                    <tr>
+                        <td><span class="zone-badge zone-edge">Edge</span></td>
+                        <td>Cloud, IoT, cybersecurity partners</td>
+                        <td>New revenue</td>
+                        <td>Growing</td>
+                    </tr>
+                    <tr>
+                        <td><span class="zone-badge zone-edge">Edge</span></td>
+                        <td>Platform APIs</td>
+                        <td>Telco-as-a-service</td>
+                        <td>Early</td>
+                    </tr>
+                    <tr>
+                        <td><span class="zone-badge zone-beyond">Beyond</span></td>
+                        <td>AI-driven networks</td>
+                        <td>Autonomous operations</td>
+                        <td>Phase 1</td>
+                    </tr>
+                    <tr>
+                        <td><span class="zone-badge zone-beyond">Beyond</span></td>
+                        <td>Web3 identity and services</td>
+                        <td>Future ecosystem bet</td>
+                        <td>Exploring</td>
+                    </tr>
+                    <tr>
+                        <td><span class="zone-badge zone-beyond">Beyond</span></td>
+                        <td>Satellite and NTN</td>
+                        <td>Universal coverage</td>
+                        <td>Watching pilots</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Data Visualizations -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2>Performance & Positioning</h2>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>Revenue Trend (2020-2024)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Innovation Portfolio Split</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="portfolioChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Competitive Positioning (Malaysia)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="competitiveChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Global Innovation Benchmarking</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="benchmarkChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recommendations -->
+    <section class="recommendations">
+        <div class="container">
+            <div class="section-header">
+                <h2>The 70-20-10 Transformation</h2>
+                <p>Gradually rebalance innovation investment from 70/25/5 to 60/30/10 by 2027</p>
+            </div>
+
+            <div class="rec-cards">
+                <div class="rec-card">
+                    <h3>Core (60%)</h3>
+                    <p><strong>Accelerate fixed-mobile convergence.</strong> Maintain the cash flow engine while improving operational efficiency through AI and automation.</p>
+                </div>
+
+                <div class="rec-card">
+                    <h3>Edge (30%)</h3>
+                    <p><strong>Scale private 5G and enterprise platforms.</strong> This is where global telcos are winning. Build vertical-specific solutions and platform APIs.</p>
+                </div>
+
+                <div class="rec-card">
+                    <h3>Beyond (10%)</h3>
+                    <p><strong>Stand up a Moonshot Lab.</strong> Focus on three bets: AI-driven networks, digital identity, and satellite connectivity. Move from utility to tech exporter.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final Takeaway -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2>Final Takeaway</h2>
+            </div>
+            
+            <div class="content-block">
+                <p style="font-size: 1.4rem; text-align: center; color: #0047AB; line-height: 1.8; max-width: 800px; margin: 0 auto;">
+                    CelcomDigi has already won scale. Now it must win the future. Malaysia's innovation economy is waiting for a national champion—one that stops importing innovation and starts exporting it.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2025 Case Study by Christine Pamela | CelcomDigi Innovation Analysis</p>
+        </div>
+    </footer>
+
+    <script>
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['2020', '2021', '2022', '2023', '2024'],
+                datasets: [{
+                    label: 'Total Revenue',
+                    data: [10.8, 11.1, 12.4, 12.7, 12.8],
+                    borderColor: '#0047AB',
+                    backgroundColor: 'rgba(0, 71, 171, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                }, {
+                    label: 'Service Revenue',
+                    data: [9.3, 9.5, 10.6, 10.8, 10.79],
+                    borderColor: '#1a73e8',
+                    backgroundColor: 'rgba(26, 115, 232, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'RM Billions'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Portfolio Chart
+        const portfolioCtx = document.getElementById('portfolioChart').getContext('2d');
+        new Chart(portfolioCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Core', 'Edge', 'Beyond'],
+                datasets: [{
+                    data: [70, 25, 5],
+                    backgroundColor: ['#4caf50', '#ff9800', '#e91e63']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Competitive Chart
+        const competitiveCtx = document.getElementById('competitiveChart').getContext('2d');
+        new Chart(competitiveCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'CelcomDigi',
+                    data: [{x: 6.5, y: 8.5}],
+                    backgroundColor: '#0047AB',
+                    pointRadius: 10
+                }, {
+                    label: 'Maxis',
+                    data: [{x: 7.5, y: 8.0}],
+                    backgroundColor: '#ff9800',
+                    pointRadius: 10
+                }, {
+                    label: 'TM',
+                    data: [{x: 7.0, y: 7.0}],
+                    backgroundColor: '#4caf50',
+                    pointRadius: 10
+                }, {
+                    label: 'U Mobile',
+                    data: [{x: 6.0, y: 6.0}],
+                    backgroundColor: '#e91e63',
+                    pointRadius: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Innovation Ambition'
+                        },
+                        min: 5,
+                        max: 9
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Execution Strength'
+                        },
+                        min: 5,
+                        max: 9
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Benchmark Chart
+        const benchmarkCtx = document.getElementById('benchmarkChart').getContext('2d');
+        new Chart(benchmarkCtx, {
+            type: 'bar',
+            data: {
+                labels: ['SK Telecom', 'Docomo', 'Telefonica', 'Vodafone', 'Verizon', 'CelcomDigi'],
+                datasets: [{
+                    label: 'Innovation Score',
+                    data: [9.0, 8.8, 8.0, 7.2, 7.0, 6.0],
+                    backgroundColor: ['#999', '#999', '#999', '#999', '#999', '#0047AB']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 10,
+                        title: {
+                            display: true,
+                            text: 'Innovation Ambition Score'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
