@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proton Case Study | Christine Pamela</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --proton-blue: #003d82;
+            --proton-yellow: #ffd100;
+            --text-dark: #1a1a1a;
+            --text-light: #666;
+            --bg-light: #f8f9fa;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, var(--proton-blue) 0%, #001f4d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            opacity: 0.5;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 1;
+            max-width: 900px;
+            padding: 2rem;
+        }
+
+        .hero-label {
+            font-size: 0.875rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+            color: var(--proton-yellow);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 300;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 strong {
+            font-weight: 600;
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.7;
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            font-weight: 300;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 3rem;
+            justify-content: center;
+            font-size: 0.875rem;
+            opacity: 0.7;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        .scroll-indicator svg {
+            width: 24px;
+            height: 24px;
+            stroke: white;
+            opacity: 0.6;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Section */
+        section {
+            padding: 5rem 0;
+        }
+
+        section:nth-child(even) {
+            background: var(--bg-light);
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--proton-blue);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 3rem;
+            letter-spacing: -0.5px;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+
+        /* Executive Summary */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--proton-blue);
+            transition: transform 0.3s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 61, 130, 0.1);
+        }
+
+        .summary-card h4 {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--proton-blue);
+            margin-bottom: 0.75rem;
+        }
+
+        .summary-card p {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        /* Timeline */
+        .timeline-wrapper {
+            overflow-x: auto;
+            margin: 3rem 0;
+            padding: 2rem 0;
+        }
+
+        .timeline {
+            display: flex;
+            min-width: 900px;
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            flex: 1;
+            position: relative;
+            text-align: center;
+        }
+
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            background: var(--proton-blue);
+            border: 4px solid white;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 0 0 4px var(--bg-light);
+        }
+
+        .timeline-dot.highlight {
+            background: var(--proton-yellow);
+            width: 24px;
+            height: 24px;
+        }
+
+        .timeline-year {
+            font-weight: 600;
+            color: var(--proton-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .timeline-product {
+            display: inline-block;
+            background: var(--proton-yellow);
+            color: var(--proton-blue);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        /* Charts */
+        .chart-container {
+            background: white;
+            padding: 3rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 3rem;
+            margin: 3rem 0;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            color: var(--text-dark);
+        }
+
+        canvas {
+            max-width: 100%;
+            height: 300px !important;
+        }
+
+        /* Tech Transfer Diagram */
+        .tech-diagram {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 3rem 0;
+        }
+
+        .tech-box {
+            background: white;
+            padding: 2rem 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid var(--border);
+            position: relative;
+        }
+
+        .tech-box.owned {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .tech-box.not-owned {
+            border-color: #ef4444;
+            background: #fef2f2;
+            opacity: 0.7;
+        }
+
+        .tech-box-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .tech-box-status {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+
+        .tech-box.owned .tech-box-status {
+            color: #10b981;
+        }
+
+        .tech-box.not-owned .tech-box-status {
+            color: #ef4444;
+        }
+
+        /* Culture Pyramid */
+        .pyramid {
+            max-width: 600px;
+            margin: 3rem auto;
+        }
+
+        .pyramid-layer {
+            background: white;
+            margin-bottom: 1rem;
+            padding: 1.5rem 2rem;
+            border-radius: 8px;
+            border-left: 4px solid;
+            transition: transform 0.3s ease;
+        }
+
+        .pyramid-layer:hover {
+            transform: translateX(8px);
+        }
+
+        .pyramid-layer:nth-child(1) {
+            border-color: #dc2626;
+            background: linear-gradient(to right, #fef2f2, white);
+        }
+
+        .pyramid-layer:nth-child(2) {
+            border-color: #f59e0b;
+            background: linear-gradient(to right, #fffbeb, white);
+            margin-left: 2rem;
+        }
+
+        .pyramid-layer:nth-child(3) {
+            border-color: #eab308;
+            background: linear-gradient(to right, #fefce8, white);
+            margin-left: 4rem;
+        }
+
+        .pyramid-layer h4 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .pyramid-layer p {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 3rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th {
+            background: var(--proton-blue);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .comparison-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover {
+            background: var(--bg-light);
+        }
+
+        .metric-label {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .metric-before {
+            color: #dc2626;
+        }
+
+        .metric-after {
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        /* Flow Diagram */
+        .flow-diagram {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+            position: relative;
+        }
+
+        .flow-box {
+            background: white;
+            padding: 2rem 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--proton-blue);
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .flow-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .flow-box strong {
+            display: block;
+            font-size: 1.1rem;
+            color: var(--proton-blue);
+            margin-bottom: 0.75rem;
+        }
+
+        .flow-box p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        .flow-box::after {
+            content: '→';
+            position: absolute;
+            right: -2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: #d1d5db;
+            font-weight: bold;
+        }
+
+        .flow-box:last-child::after {
+            content: '';
+        }
+
+        .flow-box:nth-child(1) { border-top-color: #94a3b8; }
+        .flow-box:nth-child(2) { border-top-color: #94a3b8; }
+        .flow-box:nth-child(3) { border-top-color: #94a3b8; }
+        .flow-box:nth-child(4) { border-top-color: #94a3b8; }
+        .flow-box:nth-child(5) { border-top-color: #94a3b8; }
+        .flow-box:nth-child(6) { border-top-color: #64748b; }
+
+        /* Theta Matrix */
+        .theta-matrix {
+            margin: 3rem 0;
+            overflow-x: auto;
+        }
+
+        .theta-table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-collapse: collapse;
+        }
+
+        .theta-table th {
+            background: var(--proton-blue);
+            color: white;
+            padding: 1.25rem;
+            text-align: left;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .theta-table td {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        .theta-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .theta-table tr:hover {
+            background: var(--bg-light);
+        }
+
+        .theta-zone-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .theta-zone-badge.core {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .theta-zone-badge.adjacent {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .theta-zone-badge.edge {
+            background: #fed7aa;
+            color: #9a3412;
+        }
+
+        .theta-zone-badge.beyond {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        /* Risk Table */
+        .risk-table {
+            margin: 3rem 0;
+        }
+
+        .risk-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid;
+            display: grid;
+            grid-template-columns: 1fr 120px 2fr 2fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        .risk-card.high {
+            border-color: #dc2626;
+        }
+
+        .risk-card.medium {
+            border-color: #f59e0b;
+        }
+
+        .risk-card.low {
+            border-color: #10b981;
+        }
+
+        .risk-label {
+            font-weight: 600;
+        }
+
+        .risk-zone {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: var(--bg-light);
+        }
+
+        /* Spider Chart */
+        .spider-container {
+            max-width: 700px;
+            margin: 3rem auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .spider-container canvas {
+            height: 400px !important;
+        }
+
+        /* Quote Section */
+        .quote-section {
+            background: var(--proton-blue);
+            color: white;
+            padding: 5rem 2rem;
+            text-align: center;
+            margin: 5rem 0;
+        }
+
+        .quote-text {
+            font-size: 2.5rem;
+            font-weight: 300;
+            line-height: 1.3;
+            max-width: 900px;
+            margin: 0 auto;
+            letter-spacing: -0.5px;
+        }
+
+        .quote-author {
+            margin-top: 2rem;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Imperatives */
+        .imperatives {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .imperative-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .imperative-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--proton-yellow);
+        }
+
+        .imperative-number {
+            font-size: 3rem;
+            font-weight: 200;
+            color: var(--proton-blue);
+            opacity: 0.2;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .imperative-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .imperative-desc {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        footer p {
+            color: rgba(255,255,255,0.7);
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .hero-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .tech-diagram {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .risk-card {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-diagram {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-box::after {
+                content: '↓';
+                right: 50%;
+                top: auto;
+                bottom: -2.5rem;
+                transform: translateX(50%);
+            }
+
+            .quote-text {
+                font-size: 1.5rem;
+            }
+
+            .pyramid-layer {
+                margin-left: 0 !important;
+            }
+
+            .theta-matrix {
+                overflow-x: auto;
+            }
+
+            .spider-container canvas {
+                height: 350px !important;
+            }
+
+            canvas {
+                height: 250px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-label">Case Study</div>
+            <h1>
+                Why a National Car with Billions of Investment 
+                <strong>Still Struggled to Stand Alone</strong>
+            </h1>
+            <p class="hero-subtitle">
+                A strategic analysis of Proton's journey through licensing, acquisition, and partnership
+            </p>
+            <div class="hero-meta">
+                <span>By Christine Pamela</span>
+                <span>•</span>
+                <span>Strategy Analysis</span>
+                <span>•</span>
+                <span>November 2025</span>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Executive Summary -->
+    <section>
+        <div class="container">
+            <div class="section-label">Overview</div>
+            <h2>Executive Summary</h2>
+            
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h4>National Strategy</h4>
+                    <p>Proton began as a national industrialization strategy to build local automotive capabilities.</p>
+                </div>
+                
+                <div class="summary-card">
+                    <h4>Tech Dependency</h4>
+                    <p>Early success depended on Mitsubishi tech licensing — limited local R&D maturity.</p>
+                </div>
+                
+                <div class="summary-card">
+                    <h4>Market Protection</h4>
+                    <p>Protectionism led to overreliance on domestic demand and weak export competitiveness.</p>
+                </div>
+                
+                <div class="summary-card">
+                    <h4>Failed Innovation</h4>
+                    <p>Two innovation reinventions failed to drive systemic capability — Lotus and localization.</p>
+                </div>
+                
+                <div class="summary-card">
+                    <h4>Geely Partnership</h4>
+                    <p>Geely partnership finally enabled modern product competitiveness and scale.</p>
+                </div>
+                
+                <div class="summary-card">
+                    <h4>Identity Crisis</h4>
+                    <p>Proton's identity still depends on borrowed innovation rather than indigenous IP.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline -->
+    <section style="background: var(--bg-light);">
+        <div class="container">
+            <div class="section-label">Historical Evolution</div>
+            <h2>Three Eras of Strategic Transformation</h2>
+            
+            <div class="timeline-wrapper">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot highlight"></div>
+                        <div class="timeline-year">1983</div>
+                        <div class="timeline-title">Foundation</div>
+                        <div class="timeline-desc">Mitsubishi Licensing Era Begins</div>
+                        <div class="timeline-product">Saga Launch</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-year">1993</div>
+                        <div class="timeline-title">Peak Dominance</div>
+                        <div class="timeline-desc">60% Market Share</div>
+                        <div class="timeline-product">Wira Launch</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot highlight"></div>
+                        <div class="timeline-year">1996</div>
+                        <div class="timeline-title">Lotus Acquisition</div>
+                        <div class="timeline-desc">Innovation Push #2</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-year">2000</div>
+                        <div class="timeline-title">Self-Development</div>
+                        <div class="timeline-desc">First Indigenous Platform</div>
+                        <div class="timeline-product">Waja Launch</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-year">2016</div>
+                        <div class="timeline-title">Market Collapse</div>
+                        <div class="timeline-desc">16% Market Share</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot highlight"></div>
+                        <div class="timeline-year">2017</div>
+                        <div class="timeline-title">Geely Partnership</div>
+                        <div class="timeline-desc">Strategic Reset</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot highlight"></div>
+                        <div class="timeline-year">2018</div>
+                        <div class="timeline-title">Revival</div>
+                        <div class="timeline-desc">Modern Product Era</div>
+                        <div class="timeline-product">X70 Launch</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Market Performance -->
+    <section>
+        <div class="container">
+            <div class="section-label">Market Data</div>
+            <h2>Performance Metrics</h2>
+            
+            <div class="chart-grid">
+                <div class="chart-container">
+                    <div class="chart-title">Malaysia Market Share (1990–2024)</div>
+                    <canvas id="marketShareChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-title">Production Volume Rebound Post-Geely</div>
+                    <canvas id="productionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Innovation Push #1 Failed -->
+    <section style="background: var(--bg-light);">
+        <div class="container">
+            <div class="section-label">Analysis</div>
+            <h2>Why Innovation Push #1 Failed</h2>
+            <h3>The Mitsubishi Licensing Phase</h3>
+            
+            <p>Proton assembled, but did not design. This created a fundamental gap in design autonomy and engineering capability. Local engineers were not fully integrated into high-value development work, and licensing agreements did not include access to Mitsubishi's future platforms.</p>
+            
+            <p>The result was a false sense of capability — Proton assumed national champion status too early, without building the foundational technical expertise needed for long-term independence.</p>
+            
+            <h3 style="margin-top: 3rem;">Tech Transfer Gap Analysis</h3>
+            
+            <div class="tech-diagram">
+                <div class="tech-box not-owned">
+                    <div class="tech-box-title">Design</div>
+                    <div class="tech-box-status">Not Owned</div>
+                </div>
+                
+                <div class="tech-box not-owned">
+                    <div class="tech-box-title">Testing</div>
+                    <div class="tech-box-status">Not Owned</div>
+                </div>
+                
+                <div class="tech-box owned">
+                    <div class="tech-box-title">Manufacturing</div>
+                    <div class="tech-box-status">Owned</div>
+                </div>
+                
+                <div class="tech-box not-owned">
+                    <div class="tech-box-title">Supplier Ecosystem</div>
+                    <div class="tech-box-status">Not Owned</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Innovation Push #2 Failed -->
+    <section>
+        <div class="container">
+            <div class="section-label">Analysis</div>
+            <h2>Why Innovation Push #2 Failed</h2>
+            <h3>The Lotus Era</h3>
+            
+            <p>Lotus represented performance and handling excellence — but not mass-market innovation. The capabilities remained isolated in the UK, and Malaysian engineering teams did not absorb the critical knowledge transfer needed.</p>
+            
+            <p>Internal resistance to modernization became a significant barrier. As the author notes from direct experience: <em>"Management was excited, but engineering teams resisted stepping up. The system discouraged ambition."</em></p>
+            
+            <h3 style="margin-top: 3rem;">Culture Barrier Pyramid</h3>
+            
+            <div class="pyramid">
+                <div class="pyramid-layer">
+                    <h4>Political Interference</h4>
+                    <p>Top-down decisions without market alignment, frequent leadership changes disrupting strategy execution</p>
+                </div>
+                
+                <div class="pyramid-layer">
+                    <h4>Risk-Avoiding Engineering</h4>
+                    <p>Teams resistant to new technologies, preference for proven methods over innovation</p>
+                </div>
+                
+                <div class="pyramid-layer">
+                    <h4>Misaligned Incentives</h4>
+                    <p>Limited meritocracy, procurement politics, system that discouraged ambition and excellence</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Innovation Push #3 Works -->
+    <section style="background: var(--bg-light);">
+        <div class="container">
+            <div class="section-label">Transformation</div>
+            <h2>Why Innovation Push #3 Works</h2>
+            <h3>The Geely Partnership</h3>
+            
+            <p>Five structural changes made the difference:</p>
+            
+            <div class="summary-grid" style="margin: 2rem 0;">
+                <div class="summary-card">
+                    <h4>Technology</h4>
+                    <p>CMA/BMA global EV-ready platforms providing modern architecture</p>
+                </div>
+                
+                <div class="summary-card">
+                    <h4>Scale</h4>
+                    <p>Access to China suppliers and cost curve advantages</p>
+                </div>
+                
+                <div class="summary-card">
+                    <h4>Brand</h4>
+                    <p>Supportive but competitive internal benchmarking</p>
+                </div>
+                
+                <div class="summary-card">
+                    <h4>Exports</h4>
+                    <p>China, ASEAN, and Middle East pathways unlocked</p>
+                </div>
+                
+                <div class="summary-card">
+                    <h4>Talent</h4>
+                    <p>Fresh engineering leadership and mobility programs</p>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 3rem;">Before vs After Comparison</h3>
+            
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Before Geely (2016)</th>
+                            <th>After Geely (2023)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="metric-label">Platform Cost</td>
+                            <td class="metric-before">High - proprietary development</td>
+                            <td class="metric-after">Reduced 30-40% via shared platforms</td>
+                        </tr>
+                        <tr>
+                            <td class="metric-label">Quality Defects</td>
+                            <td class="metric-before">Above industry average</td>
+                            <td class="metric-after">Improved to near-premium standards</td>
+                        </tr>
+                        <tr>
+                            <td class="metric-label">Safety (ASEAN NCAP)</td>
+                            <td class="metric-before">3-4 stars</td>
+                            <td class="metric-after">5 stars (X70, X50, X90)</td>
+                        </tr>
+                        <tr>
+                            <td class="metric-label">Launch Speed</td>
+                            <td class="metric-before">4-5 years per model</td>
+                            <td class="metric-after">18-24 months</td>
+                        </tr>
+                        <tr>
+                            <td class="metric-label">Market Share</td>
+                            <td class="metric-before">16% (collapsing)</td>
+                            <td class="metric-after">20-24% (recovering)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Political Economy -->
+    <section>
+        <div class="container">
+            <div class="section-label">Root Causes</div>
+            <h2>Political Economy Effects</h2>
+            
+            <p>Protectionism was initially successful in building local capabilities, but eventually trapped Proton in a cycle of complacency. Frequent leadership and strategy changes led to execution inconsistency, while the captive supplier ecosystem remained fragmented and uncompetitive.</p>
+            
+            <h3 style="margin-top: 3rem;">The Doom Loop</h3>
+            
+            <div class="flow-diagram">
+                <div class="flow-box">
+                    <strong>Protection</strong>
+                    <p>High tariffs shield market</p>
+                </div>
+                
+                <div class="flow-box">
+                    <strong>Complacency</strong>
+                    <p>No pressure to innovate</p>
+                </div>
+                
+                <div class="flow-box">
+                    <strong>Quality Issues</strong>
+                    <p>Product deterioration</p>
+                </div>
+                
+                <div class="flow-box">
+                    <strong>Brand Erosion</strong>
+                    <p>Consumer trust collapse</p>
+                </div>
+                
+                <div class="flow-box">
+                    <strong>Import Liberalization</strong>
+                    <p>Policy shift</p>
+                </div>
+                
+                <div class="flow-box">
+                    <strong>Market Collapse</strong>
+                    <p>16% share by 2016</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Theta Framework -->
+    <section style="background: var(--bg-light);">
+        <div class="container">
+            <div class="section-label">Strategic Framework</div>
+            <h2>Theta Framework: Innovation Mapping</h2>
+            
+            <p>Analyzing Proton's innovation capabilities across four strategic zones reveals where the company creates value and where it remains dependent on external partners.</p>
+            
+            <div class="theta-matrix">
+                <table class="theta-table">
+                    <thead>
+                        <tr>
+                            <th>Zone</th>
+                            <th>Current Proton Example</th>
+                            <th>Capability Ownership</th>
+                            <th>Value Capture</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="theta-zone-badge core">Core</span></td>
+                            <td>SUV lineup upgrades, ADAS, cost optimization</td>
+                            <td>Medium</td>
+                            <td>High (local sales)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="theta-zone-badge adjacent">Adjacent</span></td>
+                            <td>Connected features, mild hybrid tech</td>
+                            <td>Low–Medium</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <td><span class="theta-zone-badge edge">Edge</span></td>
+                            <td>Smart distribution & financing w/ Geely network</td>
+                            <td>Low</td>
+                            <td>Shared</td>
+                        </tr>
+                        <tr>
+                            <td><span class="theta-zone-badge beyond">Beyond</span></td>
+                            <td>EV future (rebadged Smart #1 development support)</td>
+                            <td>Very Low</td>
+                            <td>Very Low</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Risk Outlook -->
+    <section>
+        <div class="container">
+            <div class="section-label">Risk Assessment</div>
+            <h2>Strategic Risk Outlook</h2>
+            
+            <div class="risk-table">
+                <div class="risk-card high">
+                    <div>
+                        <div class="risk-label">Geely Dependency</div>
+                    </div>
+                    <div>
+                        <span class="risk-zone">Edge</span>
+                    </div>
+                    <div>
+                        <p style="margin: 0; font-size: 0.9rem;">Brand and tech autonomy risk — over-reliance on partner platforms limits long-term independence</p>
+                    </div>
+                    <div>
+                        <p style="margin: 0; font-size: 0.9rem; color: var(--proton-blue);"><strong>Mitigation:</strong> Gradual IP co-ownership agreements</p>
+                    </div>
+                </div>
+                
+                <div class="risk-card high">
+                    <div>
+                        <div class="risk-label">EV Acceleration Gap</div>
+                    </div>
+                    <div>
+                        <span class="risk-zone">Beyond</span>
+                    </div>
+                    <div>
+                        <p style="margin: 0; font-size: 0.9rem;">Market shifting faster than Proton can adapt — limited EV development capability</p>
+                    </div>
+                    <div>
+                        <p style="margin: 0; font-size: 0.9rem; color: var(--proton-blue);"><strong>Mitigation:</strong> Local battery/tooling ecosystem development</p>
+                    </div>
+                </div>
+                
+                <div class="risk-card medium">
+                    <div>
+                        <div class="risk-label">Brand Perception</div>
+                    </div>
+                    <div>
+                        <span class="risk-zone">Core</span>
+                    </div>
+                    <div>
+                        <p style="margin: 0; font-size: 0.9rem;">Still viewed as "budget" option despite quality improvements</p>
+                    </div>
+                    <div>
+                        <p style="margin: 0; font-size: 0.9rem; color: var(--proton-blue);"><strong>Mitigation:</strong> Build trust via exports and premium positioning</p>
+                    </div>
+                </div>
+                
+                <div class="risk-card medium">
+                    <div>
+                        <div class="risk-label">Supplier Capability</div>
+                    </div>
+                    <div>
+                        <span class="risk-zone">Core</span>
+                    </div>
+                    <div>
+                        <p style="margin: 0; font-size: 0.9rem;">Cost and quality mismatches in local supplier base</p>
+                    </div>
+                    <div>
+                        <p style="margin: 0; font-size: 0.9rem; color: var(--proton-blue);"><strong>Mitigation:</strong> Tier-1 consolidation and partnerships</p>
+                    </div>
+                </div>
+                
+                <div class="risk-card low">
+                    <div>
+                        <div class="risk-label">Workforce Upskilling</div>
+                    </div>
+                    <div>
+                        <span class="risk-zone">Edge</span>
+                    </div>
+                    <div>
+                        <p style="margin: 0; font-size: 0.9rem;">Fear of new tech integration among existing workforce</p>
+                    </div>
+                    <div>
+                        <p style="margin: 0; font-size: 0.9rem; color: var(--proton-blue);"><strong>Mitigation:</strong> Joint R&D mobility pipelines with Geely</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proton vs Tesla -->
+    <section style="background: var(--bg-light);">
+        <div class="container">
+            <div class="section-label">Comparative Analysis</div>
+            <h2>Proton vs Tesla: Innovation DNA</h2>
+            
+            <p>Comparing Proton with Tesla reveals fundamental differences in innovation philosophy, ownership structure, and strategic approach.</p>
+            
+            <div class="spider-container">
+                <div class="chart-title" style="text-align: center;">Innovation DNA Comparison</div>
+                <canvas id="spiderChart"></canvas>
+            </div>
+            
+            <div class="comparison-table" style="margin-top: 3rem;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dimension</th>
+                            <th>Proton</th>
+                            <th>Tesla</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="metric-label">IP Ownership</td>
+                            <td>Mostly Geely-provided</td>
+                            <td>Full-stack indigenous</td>
+                        </tr>
+                        <tr>
+                            <td class="metric-label">Business Model</td>
+                            <td>Local champion strategy</td>
+                            <td>Global product-first</td>
+                        </tr>
+                        <tr>
+                            <td class="metric-label">Innovation Zone</td>
+                            <td>Core with borrowed Edge</td>
+                            <td>Beyond leading Edge</td>
+                        </tr>
+                        <tr>
+                            <td class="metric-label">Talent Density</td>
+                            <td>Fragmented & political</td>
+                            <td>High-agency innovation culture</td>
+                        </tr>
+                        <tr>
+                            <td class="metric-label">Capital Strategy</td>
+                            <td>Government-led survival cycles</td>
+                            <td>Market-led scale cycles</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategic Imperatives -->
+    <section>
+        <div class="container">
+            <div class="section-label">Path Forward</div>
+            <h2>What Proton Must Do Next</h2>
+            
+            <div class="imperatives">
+                <div class="imperative-card">
+                    <div class="imperative-number">1</div>
+                    <div class="imperative-title">Own Core Technology</div>
+                    <p class="imperative-desc">Develop at least one indigenous technology platform — not just rebadging. This could be in EV battery management, autonomous driving software, or unique Malaysian design language.</p>
+                </div>
+                
+                <div class="imperative-card">
+                    <div class="imperative-number">2</div>
+                    <div class="imperative-title">Export-First Products</div>
+                    <p class="imperative-desc">Design and launch products specifically for export markets to prove brand capability beyond protected domestic territory. Success in competitive markets validates quality.</p>
+                </div>
+                
+                <div class="imperative-card">
+                    <div class="imperative-number">3</div>
+                    <div class="imperative-title">Malaysian EV Identity</div>
+                    <p class="imperative-desc">Push a distinct Malaysian EV identity through design, user interface, ergonomics, and safety features that reflect local innovation — not borrowed engineering.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Closing Quote -->
+    <div class="quote-section">
+        <div class="quote-text">
+            "Proton cannot keep renting its future."
+        </div>
+        <div class="quote-author">— Strategic Imperative for Indigenous Innovation</div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Christine Pamela. Strategic Case Study Analysis.</p>
+        </div>
+    </footer>
+
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <script>
+        // Market Share Chart
+        const marketShareCtx = document.getElementById('marketShareChart').getContext('2d');
+        new Chart(marketShareCtx, {
+            type: 'line',
+            data: {
+                labels: ['1990', '1993', '1996', '2000', '2005', '2010', '2016', '2020', '2024'],
+                datasets: [{
+                    label: 'Market Share (%)',
+                    data: [45, 60, 55, 48, 40, 30, 16, 18, 22],
+                    borderColor: '#003d82',
+                    backgroundColor: 'rgba(0, 61, 130, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 70,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            },
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Production Chart
+        const productionCtx = document.getElementById('productionChart').getContext('2d');
+        new Chart(productionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['2010', '2012', '2014', '2016', '2018', '2020', '2022', '2023'],
+                datasets: [{
+                    label: 'Production Volume (thousands)',
+                    data: [250, 200, 150, 70, 95, 110, 140, 148],
+                    backgroundColor: function(context) {
+                        const index = context.dataIndex;
+                        return index >= 4 ? '#ffd100' : '#003d82';
+                    },
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value + 'k';
+                            },
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Spider Chart
+        const spiderCtx = document.getElementById('spiderChart').getContext('2d');
+        new Chart(spiderCtx, {
+            type: 'radar',
+            data: {
+                labels: ['IP Ownership', 'Global Reach', 'Innovation Zone', 'Talent Density', 'Capital Independence'],
+                datasets: [{
+                    label: 'Proton',
+                    data: [3, 2, 4, 3, 2],
+                    borderColor: '#003d82',
+                    backgroundColor: 'rgba(0, 61, 130, 0.2)',
+                    pointBackgroundColor: '#003d82',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#003d82'
+                }, {
+                    label: 'Tesla',
+                    data: [10, 10, 10, 9, 9],
+                    borderColor: '#ffd100',
+                    backgroundColor: 'rgba(255, 209, 0, 0.2)',
+                    pointBackgroundColor: '#ffd100',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#ffd100'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 10,
+                        ticks: {
+                            stepSize: 2,
+                            font: {
+                                size: 12
+                            }
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 13
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                size: 13
+                            },
+                            padding: 20
+                        }
+                    }
+                }
+            }
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
