@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HP Case Study - Reclaiming the Pioneer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0096D6 0%, #005B8C 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="white" opacity="0.05"/></svg>');
+            background-size: 100px 100px;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 1;
+            max-width: 900px;
+            padding: 2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 0.875rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 300;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .hero-author {
+            font-size: 1rem;
+            opacity: 0.85;
+            font-style: italic;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            opacity: 0.7;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Executive Summary */
+        .executive-summary {
+            padding: 6rem 0;
+            background: #f8f9fa;
+        }
+
+        .summary-box {
+            background: white;
+            padding: 3rem;
+            border-left: 4px solid #0096D6;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+        }
+
+        .summary-box p {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: #444;
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 5rem 0;
+        }
+
+        .section-alt {
+            background: #fafbfc;
+        }
+
+        .section-number {
+            font-size: 0.75rem;
+            color: #0096D6;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            color: #1a1a1a;
+        }
+
+        .section p {
+            font-size: 1.0625rem;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+            margin: 3rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #0096D6;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -3.4rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border: 3px solid #0096D6;
+            border-radius: 50%;
+        }
+
+        .timeline-year {
+            font-weight: 600;
+            color: #0096D6;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Split Company Table */
+        .company-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .company-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            border-top: 4px solid #0096D6;
+        }
+
+        .company-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .company-card .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .company-card .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            font-weight: 500;
+            color: #666;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        /* Innovation Framework */
+        .framework-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .framework-item {
+            background: white;
+            padding: 2rem;
+            border-left: 4px solid #ddd;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .framework-item.core {
+            border-left-color: #4CAF50;
+        }
+
+        .framework-item.edge {
+            border-left-color: #FFC107;
+        }
+
+        .framework-item.beyond {
+            border-left-color: #F44336;
+        }
+
+        .framework-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .zone-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .zone-indicator.core { background: #4CAF50; }
+        .zone-indicator.edge { background: #FFC107; }
+        .zone-indicator.beyond { background: #F44336; }
+
+        .framework-item h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .framework-item p {
+            font-size: 0.9375rem;
+            color: #666;
+            margin: 0;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, #0096D6 0%, #005B8C 100%);
+            color: white;
+            padding: 3rem;
+            margin: 3rem 0;
+            border-radius: 4px;
+        }
+
+        .highlight-box h3 {
+            font-size: 1.75rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+
+        .highlight-box p {
+            color: rgba(255,255,255,0.95);
+            font-size: 1.0625rem;
+        }
+
+        /* List Styles */
+        ul.simple-list {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        ul.simple-list li {
+            padding-left: 2rem;
+            position: relative;
+            margin-bottom: 1rem;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        ul.simple-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #0096D6;
+            font-weight: 600;
+        }
+
+        /* Opportunities Table */
+        .opportunities-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .opportunity-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        }
+
+        .opportunity-card h4 {
+            color: #0096D6;
+            margin-bottom: 0.75rem;
+            font-size: 1.25rem;
+        }
+
+        .opportunity-card .subtitle {
+            color: #999;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        /* Conclusion */
+        .conclusion-quote {
+            font-size: 1.5rem;
+            font-weight: 300;
+            text-align: center;
+            color: #1a1a1a;
+            padding: 3rem 2rem;
+            margin: 3rem 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        footer p {
+            color: rgba(255,255,255,0.7);
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section h2 {
+                font-size: 1.75rem;
+            }
+
+            .company-split {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 1.5rem;
+            }
+
+            .summary-box {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-subtitle">Case Study</div>
+            <h1>Reclaiming the Pioneer: Can HP Return to the Future It Helped Create?</h1>
+            <div class="hero-author">By Christine Pamela</div>
+        </div>
+        <div class="scroll-indicator">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="7 13 12 18 17 13"></polyline>
+                <polyline points="7 6 12 11 17 6"></polyline>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Executive Summary -->
+    <section class="executive-summary">
+        <div class="container">
+            <div class="section-number">Executive Summary</div>
+            <div class="summary-box">
+                <p>HP was born as an inventor, shaping Silicon Valley's earliest culture and creating multiple technology categories. Over eight decades it transformed into a scaled operator, split into two corporations — HP Inc and Hewlett Packard Enterprise — that today lead printing, PCs, and enterprise infrastructure.</p>
+                <p style="margin-top: 1.5rem;"><strong>The question now: Will HP continue to optimize the present, or can it reclaim the future?</strong></p>
+                <p style="margin-top: 1.5rem;">HP's story is the story of a pioneer that became a defender. To remain relevant in the AI era, it must move from Core back into Edge (and at least one Beyond bet).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 1: Origin Story -->
+    <section class="section">
+        <div class="container">
+            <div class="section-number">01</div>
+            <h2>The Origin Story: A Company that Invented Silicon Valley</h2>
+            <p>Palo Alto. A garage. Bill Hewlett and Dave Packard created precision electronics, and with Stanford support, seeded what became the HP Way — an innovation-first, people-first culture that defined Silicon Valley before the term existed.</p>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">1939</div>
+                    <p>HP 200A oscillator — the first product that launched the company</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">1950s–1960s</div>
+                    <p>Test and measurement leadership established HP as precision engineering pioneer</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">1972</div>
+                    <p>HP-35: World's first handheld scientific calculator</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">1980s</div>
+                    <p>Laser and inkjet printing revolution transforms document technology</p>
+                </div>
+            </div>
+
+            <p><strong>HP wasn't following trends — it was setting them.</strong></p>
+        </div>
+    </section>
+
+    <!-- Section 2: Expansion -->
+    <section class="section section-alt">
+        <div class="container">
+            <div class="section-number">02</div>
+            <h2>Expansion and Reinvention: Growth Through Conglomeration</h2>
+            <p>From the 1950s through the 1990s, HP grew horizontally into computers, printers, networking, and services, becoming a diversified tech giant.</p>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">1999</div>
+                    <p><strong>Agilent spin-off</strong> — Core instrumentation business leaves HP</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2002</div>
+                    <p><strong>Compaq acquisition</strong> — PCs and servers scale up dramatically</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2008</div>
+                    <p><strong>EDS acquisition</strong> — Enterprise services expansion</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2011</div>
+                    <p><strong>Autonomy acquisition</strong> — $8.8B writedown leads to governance crisis</p>
+                </div>
+            </div>
+
+            <p>HP increasingly became big tech run by M&A, not invention.</p>
+        </div>
+    </section>
+
+    <!-- Section 3: The Split -->
+    <section class="section">
+        <div class="container">
+            <div class="section-number">03</div>
+            <h2>The 2015 Break: Clarity Over Complexity</h2>
+            <p>To regain focus, HP split into two public companies. Both remain large S&P 500 companies operating in distinct markets.</p>
+            
+            <div class="company-split">
+                <div class="company-card">
+                    <h3>HP Inc.</h3>
+                    <div class="metric">
+                        <span class="metric-label">Business Focus</span>
+                        <span class="metric-value">PCs, Printers, 3D</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Revenue (FY2024)</span>
+                        <span class="metric-value">~$53.6B</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Employees</span>
+                        <span class="metric-value">~58,000</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Market Role</span>
+                        <span class="metric-value">Consumer + Commercial Devices</span>
+                    </div>
+                </div>
+
+                <div class="company-card">
+                    <h3>Hewlett Packard Enterprise</h3>
+                    <div class="metric">
+                        <span class="metric-label">Business Focus</span>
+                        <span class="metric-value">Servers, Storage, Networking</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Revenue (FY2024)</span>
+                        <span class="metric-value">~$30.1B</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Employees</span>
+                        <span class="metric-value">~61,000</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Market Role</span>
+                        <span class="metric-value">Enterprise Infrastructure</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Innovation Framework -->
+    <section class="section section-alt">
+        <div class="container">
+            <div class="section-number">04</div>
+            <h2>Innovation Reinterpreted: The Theta Framework</h2>
+            <p>Mapping HP's innovation arc reveals a migration from Beyond → Edge → Core over eight decades. This is normal for scaled incumbents — but dangerous in platform shifts.</p>
+
+            <div class="framework-grid">
+                <div class="framework-item core">
+                    <div class="framework-header">
+                        <span class="zone-indicator core"></span>
+                        <h4>🟩 Core Innovation</h4>
+                    </div>
+                    <p><strong>Examples:</strong> PC refresh cycles, LaserJet/DeskJet updates, managed print services</p>
+                    <p><strong>Outcome:</strong> Sustained margins with supplies annuity model</p>
+                </div>
+
+                <div class="framework-item core">
+                    <div class="framework-header">
+                        <span class="zone-indicator core"></span>
+                        <h4>🟩 Core Adjacent</h4>
+                    </div>
+                    <p><strong>Examples:</strong> Commercial PCs, security hardening, fleet services</p>
+                    <p><strong>Outcome:</strong> Defending share in mature markets</p>
+                </div>
+
+                <div class="framework-item edge">
+                    <div class="framework-header">
+                        <span class="zone-indicator edge"></span>
+                        <h4>🟨 Edge — Architectural</h4>
+                    </div>
+                    <p><strong>Examples:</strong> All-in-One form factors, Instant Ink subscription</p>
+                    <p><strong>Outcome:</strong> New models without new categories</p>
+                </div>
+
+                <div class="framework-item edge">
+                    <div class="framework-header">
+                        <span class="zone-indicator edge"></span>
+                        <h4>🟨 Edge — Disruptive</h4>
+                    </div>
+                    <p><strong>Examples:</strong> WebOS tablets, Multi Jet Fusion 3D printing</p>
+                    <p><strong>Outcome:</strong> Mixed results; some traction in industrial segments</p>
+                </div>
+
+                <div class="framework-item beyond">
+                    <div class="framework-header">
+                        <span class="zone-indicator beyond"></span>
+                        <h4>🟥 Beyond — Historic</h4>
+                    </div>
+                    <p><strong>Examples:</strong> Calculators, early computing, print revolution</p>
+                    <p><strong>Outcome:</strong> Created entirely new markets</p>
+                </div>
+
+                <div class="framework-item beyond">
+                    <div class="framework-header">
+                        <span class="zone-indicator beyond"></span>
+                        <h4>🟥 Beyond — Recent</h4>
+                    </div>
+                    <p><strong>Examples:</strong> Memristor, The Machine</p>
+                    <p><strong>Outcome:</strong> Science leads product; no commercial escape velocity</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Strategic Tension -->
+    <section class="section">
+        <div class="container">
+            <div class="section-number">05</div>
+            <h2>Strategic Tension: The Past vs The Next Decade</h2>
+            <p>Core remains profitable, but Core cannot secure the next decade. HP needs new value pools.</p>
+
+            <h3 style="font-size: 1.5rem; margin-top: 3rem; margin-bottom: 1.5rem; font-weight: 400;">What's disrupting HP's Core engines?</h3>
+            <ul class="simple-list">
+                <li>AI-native personal compute (Copilot/Apple silicon wave)</li>
+                <li>Paperless workflows replacing printing</li>
+                <li>ARM + cloud-first devices reducing PC differentiation</li>
+                <li>Consumer hardware becoming utility</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Section 6: Opportunities -->
+    <section class="section section-alt">
+        <div class="container">
+            <div class="section-number">06</div>
+            <h2>Where the Opportunity Lies Next</h2>
+            <p>Three credible pathways — all Edge to Beyond:</p>
+
+            <div class="opportunities-grid">
+                <div class="opportunity-card">
+                    <div class="subtitle">🟨 Edge Innovation</div>
+                    <h4>AI-Integrated Workflows</h4>
+                    <p>Leverage channel and endpoint dominance in PC+peripherals+identity management</p>
+                </div>
+
+                <div class="opportunity-card">
+                    <div class="subtitle">🟨 Edge Innovation</div>
+                    <h4>Identity + Secure Access Hardware</h4>
+                    <p>PCs and printers control authentication surfaces in enterprise environments</p>
+                </div>
+
+                <div class="opportunity-card">
+                    <div class="subtitle">🟥 Beyond Innovation</div>
+                    <h4>Distributed / Localized Digital Manufacturing</h4>
+                    <p>Print IP + materials science enable factory-lite computing + local supply chains</p>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>A bold Beyond move:</h3>
+                <p>HP as the infrastructure of decentralized making — factory-lite computing + local supply to reduce global friction. That is a Silicon Valley origin move — creation, not protection.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 7: Competitive Context -->
+    <section class="section">
+        <div class="container">
+            <div class="section-number">07</div>
+            <h2>Competitor Trajectories</h2>
+            
+            <div class="framework-grid">
+                <div class="framework-item core">
+                    <div class="framework-header">
+                        <h4>HP Inc.</h4>
+                    </div>
+                    <p><strong>Path:</strong> Beyond → Edge → Core</p>
+                    <p><strong>Status:</strong> Defensive scale</p>
+                </div>
+
+                <div class="framework-item edge">
+                    <div class="framework-header">
+                        <h4>HPE</h4>
+                    </div>
+                    <p><strong>Path:</strong> Edge → Core → seeking Edge</p>
+                    <p><strong>Status:</strong> Enterprise cloud + AI positioning</p>
+                </div>
+
+                <div class="framework-item core">
+                    <div class="framework-header">
+                        <h4>Dell</h4>
+                    </div>
+                    <p><strong>Path:</strong> Core → Edge</p>
+                    <p><strong>Status:</strong> AI datacenter scale-up</p>
+                </div>
+
+                <div class="framework-item beyond">
+                    <div class="framework-header">
+                        <h4>Apple</h4>
+                    </div>
+                    <p><strong>Path:</strong> Edge → Beyond</p>
+                    <p><strong>Status:</strong> Category maker</p>
+                </div>
+
+                <div class="framework-item edge">
+                    <div class="framework-header">
+                        <h4>IBM</h4>
+                    </div>
+                    <p><strong>Path:</strong> Beyond → Services</p>
+                    <p><strong>Status:</strong> Hybrid/AI consulting</p>
+                </div>
+            </div>
+
+            <p style="margin-top: 3rem; font-size: 1.25rem; font-weight: 500; color: #0096D6;">HP is the only one that began in Beyond and retreated from it.</p>
+        </div>
+    </section>
+
+    <!-- Conclusion -->
+    <section class="section section-alt">
+        <div class="container">
+            <div class="section-number">08</div>
+            <h2>Conclusion: Will HP Become a Pioneer Again?</h2>
+            <p>HP's challenge is cultural as much as strategic. To survive the AI and decentralization era, HP must reclaim Edge and commit to at least one Beyond bet with conviction.</p>
+
+            <div style="margin: 3rem 0;">
+                <p><strong>Without this shift:</strong><br>It remains a global leader in declining or flat markets</p>
+                <p style="margin-top: 1.5rem;"><strong>With it:</strong><br>HP can invent the next platform it operates in — just like it did in 1939, 1968, and 1984.</p>
+            </div>
+
+            <div class="conclusion-quote">
+                "The world remembers the companies that create markets — not the ones that defend them."
+            </div>
+
+            <div class="highlight-box">
+                <h3>The question for HP:</h3>
+                <p style="font-size: 1.5rem; margin: 0;">Which does it want to be in 2035?</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2025 Christine Pamela · Case Study</p>
+        </div>
+    </footer>
+</body>
+</html>
