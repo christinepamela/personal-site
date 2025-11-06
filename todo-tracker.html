@@ -968,6 +968,7 @@
                 <button class="history-tab active" onclick="switchHistoryTab('stats')">📊 Stats</button>
                 <button class="history-tab" onclick="switchHistoryTab('completed')">✅ Completed Tasks</button>
                 <button class="history-tab" onclick="switchHistoryTab('incomplete')">⏳ Incomplete Tasks</button>
+                <button class="history-tab" onclick="switchHistoryTab('time')">⏱️ Time Analysis</button>
             </div>
 
             <!-- Stats Tab -->
@@ -983,6 +984,11 @@
             <!-- Incomplete Tasks Tab -->
             <div class="history-section" id="incomplete-section">
                 <div id="incomplete-tasks-list"></div>
+            </div>
+                    
+            <!-- Time Analysis Tab -->
+            <div class="history-section" id="time-section">
+                <div id="time-analysis-content"></div>
             </div>
         </div>
 
@@ -1694,29 +1700,34 @@
         }
 
         function switchHistoryTab(tab) {
-            // Hide all sections
-            document.getElementById('stats-section').classList.remove('active');
-            document.getElementById('completed-section').classList.remove('active');
-            document.getElementById('incomplete-section').classList.remove('active');  // ADD THIS LINE
-            
-            // Remove active from all tabs
-            document.querySelectorAll('.history-tab').forEach(t => t.classList.remove('active'));
-            
-            // Show selected section and tab
-            if (tab === 'stats') {
-                document.getElementById('stats-section').classList.add('active');
-                event.target.classList.add('active');
-                renderHistoryStats();
-            } else if (tab === 'completed') {  // CHANGE "else" TO "else if"
-                document.getElementById('completed-section').classList.add('active');
-                event.target.classList.add('active');
-                renderCompletedTasks();
-            } else if (tab === 'incomplete') {  // ADD THIS ENTIRE BLOCK
-                document.getElementById('incomplete-section').classList.add('active');
-                event.target.classList.add('active');
-                renderIncompleteTasks();
+                // Hide all sections
+                document.getElementById('stats-section').classList.remove('active');
+                document.getElementById('completed-section').classList.remove('active');
+                document.getElementById('incomplete-section').classList.remove('active');
+                document.getElementById('time-section').classList.remove('active');
+                
+                // Remove active from all tabs
+                document.querySelectorAll('.history-tab').forEach(t => t.classList.remove('active'));
+                
+                // Show selected section and tab
+                if (tab === 'stats') {
+                    document.getElementById('stats-section').classList.add('active');
+                    event.target.classList.add('active');
+                    renderHistoryStats();
+                } else if (tab === 'completed') {
+                    document.getElementById('completed-section').classList.add('active');
+                    event.target.classList.add('active');
+                    renderCompletedTasks();
+                } else if (tab === 'incomplete') {
+                    document.getElementById('incomplete-section').classList.add('active');
+                    event.target.classList.add('active');
+                    renderIncompleteTasks();
+                } else if (tab === 'time') {
+                    document.getElementById('time-section').classList.add('active');
+                    event.target.classList.add('active');
+                    renderTimeAnalysis();
+                }
             }
-        }
 
         function renderHistoryStats() {
             const container = document.getElementById('calendars-container');
@@ -1885,17 +1896,160 @@
         }
 
         function renderIncompleteTasks() {
-    const container = document.getElementById('incomplete-tasks-list');
-    const currentDateStr = state.currentDate.toISOString().split('T')[0];
+                const container = document.getElementById('incomplete-tasks-list');
+                const currentDateStr = state.currentDate.toISOString().split('T')[0];
+                
+                const incompleteByDate = {};
+                state.tasks.forEach(task => {
+                    if (!task.completed && task.date < currentDateStr) {
+                        if (!incompleteByDate[task.date]) {
+                            incompleteByDate[task.date] = [];
+                        }
+                        incompleteByDate[task.date].push(task);
+                    }
+            
+                        function renderTimeAnalysis() {
+                const container = document.getElementById('time-analysis-content');
+                
+                // Get completed tasks
+                const completedTasks = state.tasks.filter(t => t.completed);
+                
+                if (completedTasks.length === 0) {
+                    container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:20px;">No completed tasks yet. Complete some tasks to see time analysis!</p>';
+                    return;
+                }
+                
+                // Calculate overall time metrics
+                const totalEstimated = completedTasks.reduce((sum, t) => sum + t.estimatedTime, 0);
+                const totalActual = completedTasks.reduce((sum, t) => sum + t.actualTime, 0);
+                const overallEfficiency = (totalEstimated / totalActual) * 100;
+                
+                // Calculate last 7 days work time
+                const sevenDaysAgo = new Date(state.currentDate);
+                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                const sevenDaysAgoStr = sevenDaysAgo.toISOString().split('T')[0];
+                
+                const lastWeekTasks = completedTasks.filter(t => t.date >= sevenDaysAgoStr);
+                const lastWeekMinutes = lastWeekTasks.reduce((sum, t) => sum + t.actualTime, 0);
+                const lastWeekHours = Math.floor(lastWeekMinutes / 60);
+                const lastWeekMins = lastWeekMinutes % 60;
+                
+                // Group tasks by date for daily breakdown
+                const tasksByDate = {};
+                completedTasks.forEach(task => {
+                    if (!tasksByDate[task.date]) {
+                        tasksByDate[task.date] = [];
+                    }
+                    tasksByDate[task.date].push(task);
+                });
+                
+                const sortedDates = Object.keys(tasksByDate).sort().reverse().slice(0, 14); // Last 14 days
+                
+                const dailyBreakdownHtml = sortedDates.map(date => {
+                    const dateObj = new Date(date);
+                    const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                    const tasks = tasksByDate[date];
+                    
+                    const dayEstimated = tasks.reduce((sum, t) => sum + t.estimatedTime, 0);
+                    const dayActual = tasks.reduce((sum, t) => sum + t.actualTime, 0);
+                    const dayEfficiency = (dayEstimated / dayActual) * 100;
+                    
+                    const estHours = Math.floor(dayEstimated / 60);
+                    const estMins = dayEstimated % 60;
+                    const actHours = Math.floor(dayActual / 60);
+                    const actMins = dayActual % 60;
+                    
+                    let efficiencyClass = 'efficiency-slow';
+                    let efficiencyIcon = '🐢';
+                    if (dayEfficiency >= 100) {
+                        efficiencyClass = 'efficiency-excellent';
+                        efficiencyIcon = '⚡';
+                    } else if (dayEfficiency >= 90) {
+                        efficiencyClass = 'efficiency-good';
+                        efficiencyIcon = '👍';
+                    } else if (dayEfficiency >= 75) {
+                        efficiencyClass = 'efficiency-ok';
+                        efficiencyIcon = '⏱️';
+                    }
+        
+                    return `
+                        <div class="history-completed-tasks">
+                            <div style="font-weight: 700; color: var(--primary); margin-bottom: 12px;">${dateStr} (${tasks.length} tasks)</div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                                <div class="completed-task">
+                                    <div class="completed-task-name">📊 Estimated Time</div>
+                                    <div class="completed-task-meta">${estHours}h ${estMins}m</div>
+                                </div>
+                                <div class="completed-task">
+                                    <div class="completed-task-name">⏱️ Actual Time</div>
+                                    <div class="completed-task-meta">${actHours}h ${actMins}m</div>
+                                </div>
+                                <div class="completed-task">
+                                    <div class="completed-task-name">⚡ Efficiency</div>
+                                    <div class="completed-task-meta">
+                                        <span class="efficiency-badge ${efficiencyClass}">${efficiencyIcon} ${Math.round(dayEfficiency)}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
     
-    const incompleteByDate = {};
-    state.tasks.forEach(task => {
-        if (!task.completed && task.date < currentDateStr) {
-            if (!incompleteByDate[task.date]) {
-                incompleteByDate[task.date] = [];
-            }
-            incompleteByDate[task.date].push(task);
-        }
+                const estHours = Math.floor(totalEstimated / 60);
+                const estMins = totalEstimated % 60;
+                const actHours = Math.floor(totalActual / 60);
+                const actMins = totalActual % 60;
+                
+                const html = `
+        <div style="margin-bottom: 30px;">
+            <h3 style="color: var(--primary); margin-bottom: 20px;">⏱️ Last 7 Days Work Summary</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-value">${lastWeekHours}h ${lastWeekMins}m</div>
+                    <div class="stat-label">Total Time Worked</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-value">${lastWeekTasks.length}</div>
+                    <div class="stat-label">Tasks Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-value">${Math.round((lastWeekTasks.reduce((sum, t) => sum + t.estimatedTime, 0) / lastWeekMinutes) * 100)}%</div>
+                    <div class="stat-label">Average Efficiency</div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+            <h3 style="color: var(--primary); margin-bottom: 20px;">📈 All-Time Overview</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                <div class="completed-task" style="border-left-color: var(--primary);">
+                    <div class="completed-task-name">📊 Total Estimated</div>
+                    <div class="completed-task-meta">${estHours}h ${estMins}m</div>
+                </div>
+                <div class="completed-task" style="border-left-color: var(--secondary);">
+                    <div class="completed-task-name">⏱️ Total Actual</div>
+                    <div class="completed-task-meta">${actHours}h ${actMins}m</div>
+                </div>
+                <div class="completed-task" style="border-left-color: var(--success);">
+                    <div class="completed-task-name">⚡ Overall Efficiency</div>
+                    <div class="completed-task-meta">${Math.round(overallEfficiency)}%</div>
+                </div>
+                <div class="completed-task" style="border-left-color: var(--accent);">
+                    <div class="completed-task-name">✅ Total Tasks</div>
+                    <div class="completed-task-meta">${completedTasks.length} completed</div>
+                </div>
+            </div>
+        </div>
+        
+        <h3 style="color: var(--primary); margin-bottom: 20px;">📅 Daily Breakdown (Last 14 Days)</h3>
+        ${dailyBreakdownHtml}
+    `;
+    
+    container.innerHTML = html;
+}
     });
 
     if (Object.keys(incompleteByDate).length === 0) {
