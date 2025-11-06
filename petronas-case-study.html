@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petronas Energy Transition | A Case Study by Christine Pamela</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --petronas-green: #00A19C;
+            --petronas-dark: #003C3C;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+            --bg-light: #fafafa;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--white);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--petronas-dark) 0%, var(--petronas-green) 100%);
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(0, 161, 156, 0.3) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            max-width: 900px;
+            padding: 0 2rem;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .hero-label {
+            font-size: 0.875rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 300;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            letter-spacing: -1px;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            font-weight: 300;
+            opacity: 0.95;
+            margin-bottom: 3rem;
+            line-height: 1.5;
+        }
+
+        .hero-meta {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.875rem;
+            opacity: 0.7;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Section */
+        section {
+            padding: 6rem 0;
+        }
+
+        section:nth-child(even) {
+            background: var(--bg-light);
+        }
+
+        .section-label {
+            font-size: 0.875rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--petronas-green);
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 300;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin: 2.5rem 0 1rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .lead {
+            font-size: 1.375rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--petronas-green);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--petronas-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--petronas-dark);
+            color: var(--white);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            font-weight: 500;
+            font-size: 0.875rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        tbody tr:hover {
+            background: var(--bg-light);
+        }
+
+        /* Chart */
+        .chart-container {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .theta-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .theta-zone {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            border-top: 4px solid;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .theta-zone.core { border-color: #4CAF50; }
+        .theta-zone.edge { border-color: #FFC107; }
+        .theta-zone.beyond { border-color: #FF5722; }
+
+        .zone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .zone-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        .zone-percentage {
+            font-size: 1.5rem;
+            font-weight: 300;
+            opacity: 0.7;
+        }
+
+        .zone-items {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Competitor Radar */
+        .radar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .radar-item {
+            text-align: center;
+        }
+
+        .company-name {
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .bar-chart {
+            background: var(--bg-light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .bar {
+            height: 8px;
+            background: var(--petronas-green);
+            transition: width 0.3s ease;
+        }
+
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Callout Box */
+        .callout {
+            background: var(--petronas-dark);
+            color: var(--white);
+            padding: 2.5rem;
+            border-radius: 8px;
+            margin: 3rem 0;
+        }
+
+        .callout h3 {
+            color: var(--white);
+            margin-top: 0;
+        }
+
+        .callout p {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* List */
+        ul.styled-list {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        ul.styled-list li {
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        ul.styled-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--petronas-green);
+        }
+
+        /* Scenario Cards */
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .scenario-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            border-top: 4px solid var(--petronas-green);
+        }
+
+        .scenario-card.warning { border-color: #FFC107; }
+        .scenario-card.success { border-color: #4CAF50; }
+
+        .scenario-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .scenario-metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .scenario-metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-value {
+            font-weight: 500;
+        }
+
+        .metric-value.positive { color: #4CAF50; }
+        .metric-value.negative { color: #FF5722; }
+
+        /* Footer */
+        footer {
+            background: var(--petronas-dark);
+            color: var(--white);
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        footer p {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .theta-matrix {
+                grid-template-columns: 1fr;
+            }
+            
+            section {
+                padding: 4rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-label">Case Study</div>
+            <h1>Malaysia's Energy Future Depends on Petronas Breaking Its Old Playbook</h1>
+            <p class="hero-subtitle">How Malaysia's energy giant must shift from resource extraction to system-level value creation</p>
+            <div class="hero-meta">By Christine Pamela</div>
+        </div>
+        <div class="scroll-indicator">↓ Scroll to explore</div>
+    </div>
+
+    <!-- Lead Statement -->
+    <section>
+        <div class="container">
+            <div class="section-label">Executive Summary</div>
+            <p class="lead">Petronas sits at the center of Malaysia's energy economy. For decades, it powered national growth and became a global LNG leader. But the rules of the energy game are changing. The companies that will dominate the next half-century won't be the ones who extract hydrocarbons more efficiently—they will be the ones who build new energy systems faster.</p>
+            <p class="lead">Petronas can no longer be Malaysia's ATM while others build the future energy economy Malaysia will depend on.</p>
+        </div>
+    </section>
+
+    <!-- The Reality Today -->
+    <section>
+        <div class="container">
+            <div class="section-label">01. Current State</div>
+            <h2>The Reality Today</h2>
+            <p>Petronas remains one of the strongest national oil companies in the world, with resilient operations and regional leadership. But value remains concentrated in fossil systems.</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">85-90%</div>
+                    <div class="stat-label">Core fossil fuel operations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">8-12%</div>
+                    <div class="stat-label">Adjacent edge innovations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1-3%</div>
+                    <div class="stat-label">Transformational investments</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="chart-title">Theta Innovation Portfolio</h3>
+                <div class="theta-matrix">
+                    <div class="theta-zone core">
+                        <div class="zone-header">
+                            <div class="zone-title">Core</div>
+                            <div class="zone-percentage">88%</div>
+                        </div>
+                        <div class="zone-items">
+                            Upstream O&G<br>
+                            LNG Operations<br>
+                            Pengerang Complex<br>
+                            Retail & Lubricants
+                        </div>
+                    </div>
+                    <div class="theta-zone edge">
+                        <div class="zone-header">
+                            <div class="zone-title">Edge</div>
+                            <div class="zone-percentage">10%</div>
+                        </div>
+                        <div class="zone-items">
+                            CCS/CCUS Pilots<br>
+                            Solar (Amplus)<br>
+                            Hydrogen Blue<br>
+                            Digital Operations
+                        </div>
+                    </div>
+                    <div class="theta-zone beyond">
+                        <div class="zone-header">
+                            <div class="zone-title">Beyond</div>
+                            <div class="zone-percentage">2%</div>
+                        </div>
+                        <div class="zone-items">
+                            Green Hydrogen<br>
+                            Synthetic Fuels<br>
+                            Carbon Mineralization<br>
+                            Cleantech Ventures
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+          </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="callout">
+                <h3>Strategic Thesis</h3>
+                <p>Malaysia's next 50 years of economic security depend on Petronas shifting from extracting resources to system-level value creation. The next decade decides whether we lead the energy future—or import it later at a higher cost.</p>
+            </div>
+      
+      <div class="container">
+            <p>A Case Study by Christine Pamela</p>
+            <p style="margin-top: 1rem; font-size: 0.875rem;">© 2025 | Strategic Analysis for Malaysia's Energy Future</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Fade in elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>The Constraint</h3>
+                <p>Malaysia's fiscal stability still depends partly on high Petronas dividends. This reduces capital available for new growth and innovation scaling.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Threat -->
+    <section>
+        <div class="container">
+            <div class="section-label">02. Competitive Landscape</div>
+            <h2>The Threat</h2>
+            <p>Global competitors are rewiring their business models, shifting capital from Core to Edge and Beyond. Petronas is shifting slower.</p>
+
+            <div class="chart-container">
+                <h3 class="chart-title">Competitor Capital Allocation</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Company</th>
+                                <th>Core (O&G)</th>
+                                <th>Edge</th>
+                                <th>Beyond</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Shell</td>
+                                <td>65%</td>
+                                <td>25%</td>
+                                <td>10%</td>
+                            </tr>
+                            <tr>
+                                <td>BP</td>
+                                <td>55%</td>
+                                <td>30%</td>
+                                <td>15%</td>
+                            </tr>
+                            <tr>
+                                <td>Equinor</td>
+                                <td>72%</td>
+                                <td>23%</td>
+                                <td>5%</td>
+                            </tr>
+                            <tr>
+                                <td>ADNOC</td>
+                                <td>80%</td>
+                                <td>18%</td>
+                                <td>2%</td>
+                            </tr>
+                            <tr style="background: rgba(0,161,156,0.1);">
+                                <td><strong>Petronas</strong></td>
+                                <td><strong>88%</strong></td>
+                                <td><strong>10%</strong></td>
+                                <td><strong>2%</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <h3>What Competitors Are Doing Right</h3>
+            <ul class="styled-list">
+                <li><strong>Shell:</strong> Building mobility and hydrogen ecosystems across EU and Asia</li>
+                <li><strong>BP:</strong> Acquiring renewables and EV charging networks aggressively</li>
+                <li><strong>Equinor:</strong> Leading in offshore wind and CCS scaling</li>
+                <li><strong>Saudi Aramco:</strong> Heavy investments in AI and advanced materials</li>
+            </ul>
+
+            <div class="callout">
+                <h3>The Risk</h3>
+                <p>If Petronas delays, Malaysia risks becoming the resource supplier for other nations' energy transitions—exporting raw materials while importing finished clean energy solutions.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Trap -->
+    <section>
+        <div class="container">
+            <div class="section-label">03. Innovation Barriers</div>
+            <h2>The Trap</h2>
+            <p>Petronas is innovating—but value gets stuck. This is not a leadership failure. It is structural inertia.</p>
+
+            <h3>The Innovation Death Valley</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Initiative</th>
+                            <th>Stage</th>
+                            <th>Barrier</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CCS/CCUS</td>
+                            <td>Demo</td>
+                            <td>Policy + price signal missing</td>
+                        </tr>
+                        <tr>
+                            <td>Solar</td>
+                            <td>Commercial</td>
+                            <td>Low margins + competition</td>
+                        </tr>
+                        <tr>
+                            <td>Hydrogen</td>
+                            <td>Pilot</td>
+                            <td>No offtake certainty</td>
+                        </tr>
+                        <tr>
+                            <td>AI/Automation</td>
+                            <td>Pilot</td>
+                            <td>Business unit adoption slow</td>
+                        </tr>
+                        <tr>
+                            <td>Startups/Ventures</td>
+                            <td>Pilot</td>
+                            <td>Delayed procurement + finance red tape</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Problem Pattern</h3>
+            <ul class="styled-list">
+                <li>Accelerator + pilot launches successfully ✅</li>
+                <li>Procurement delays create friction ⚠️</li>
+                <li>Budget freeze or no scale decision ❌</li>
+                <li>Startup dies or exits Malaysia</li>
+            </ul>
+
+            <p>Many founders experience: <em>"Petronas gave us access then slowed us down."</em></p>
+
+            <h3>Root Causes of Structural Inertia</h3>
+            <ul class="styled-list">
+                <li>Deep operational complexity</li>
+                <li>High compliance requirements</li>
+                <li>Public pressure and scrutiny</li>
+                <li>Safety-first culture</li>
+                <li>Dividend expectations limiting capital flexibility</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- The Stakes -->
+    <section>
+        <div class="container">
+            <div class="section-label">04. National Impact</div>
+            <h2>The Stakes for Malaysia</h2>
+            <p>This is no longer just a Petronas challenge. The next decade determines whether Malaysians build or buy their energy future.</p>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>National Stakes</th>
+                            <th>What Happens If Slow</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Energy sovereignty</td>
+                            <td>Higher import dependence</td>
+                        </tr>
+                        <tr>
+                            <td>Revenue resilience</td>
+                            <td>Fiscal pressure returns</td>
+                        </tr>
+                        <tr>
+                            <td>Jobs + talent</td>
+                            <td>Brain drain accelerates</td>
+                        </tr>
+                        <tr>
+                            <td>Cost of living</td>
+                            <td>Higher energy & utility costs</td>
+                        </tr>
+                        <tr>
+                            <td>Industrial competitiveness</td>
+                            <td>Miss hydrogen/CCS manufacturing opportunity</td>
+                        </tr>
+                        <tr>
+                            <td>Public equity</td>
+                            <td>Rakyat pays for the future but doesn't own it</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Shift Required -->
+    <section>
+        <div class="container">
+            <div class="section-label">05. Strategic Recommendation</div>
+            <h2>The Shift Required</h2>
+            <p>Energy transition requires rotation, not pilots. New revenue pools must grow before oil peaks.</p>
+
+            <div class="chart-container">
+                <h3 class="chart-title">Capital Reallocation Roadmap</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Zone</th>
+                                <th>Today</th>
+                                <th>Required by 2030</th>
+                                <th>Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Core</td>
+                                <td>85-90%</td>
+                                <td>70-75%</td>
+                                <td style="color: #FF5722;">-15%</td>
+                            </tr>
+                            <tr>
+                                <td>Edge</td>
+                                <td>8-12%</td>
+                                <td>15-20%</td>
+                                <td style="color: #4CAF50;">+8%</td>
+                            </tr>
+                            <tr>
+                                <td>Beyond</td>
+                                <td>1-3%</td>
+                                <td>10-15%</td>
+                                <td style="color: #4CAF50;">+12%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <h3>The Playbook Petronas Must Break</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Barrier</th>
+                            <th>What Needs to Change</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Procurement blocks innovation</td>
+                            <td>30-day payment terms for startups</td>
+                        </tr>
+                        <tr>
+                            <td>Good pilots die at PoC stage</td>
+                            <td>Create auto-scale contracts</td>
+                        </tr>
+                        <tr>
+                            <td>Tech built only for internal ops</td>
+                            <td>Sell energy ecosystems to customers</td>
+                        </tr>
+                        <tr>
+                            <td>New tech lacks commercial muscle</td>
+                            <td>Build independent business units</td>
+                        </tr>
+                        <tr>
+                            <td>Innovation is siloed</td>
+                            <td>Ecosystem-led investing</td>
+                        </tr>
+                        <tr>
+                            <td>Risk aversion in leadership</td>
+                            <td>Incentives tied to Edge + Beyond revenue</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout">
+                <h3>Simple Rule for Transformation</h3>
+                <p>Core fixes margins.<br>Edge fixes growth.<br>Beyond fixes the future.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scenarios -->
+    <section>
+        <div class="container">
+            <div class="section-label">06. Future Scenarios</div>
+            <h2>Economic Outcomes 2030–2050</h2>
+            <p>Three paths for Malaysia's economy depending on Petronas transition strategy.</p>
+
+            <div class="scenario-grid">
+                <div class="scenario-card warning">
+                    <div class="scenario-title">Business as Usual</div>
+                    <div class="scenario-metric">
+                        <span>Oil Dependency</span>
+                        <span class="metric-value">High</span>
+                    </div>
+                    <div class="scenario-metric">
+                        <span>New Energy Share</span>
+                        <span class="metric-value">Low</span>
+                    </div>
+                    <div class="scenario-metric">
+                        <span>GDP Impact 2050</span>
+                        <span class="metric-value negative">-6%</span>
+                    </div>
+                    <div class="scenario-metric">
+                        <span>Employment</span>
+                        <span class="metric-value negative">-80k jobs</span>
+                    </div>
+                    <div class="scenario-metric">
+                        <span>Malaysia Role</span>
+                        <span class="metric-value">Hydrocarbon follower</span>
+                    </div>
+                </div>
+
+                <div class="scenario-card">
+                    <div class="scenario-title">Accelerated Transition</div>
+                    <div class="scenario-metric">
+                        <span>Oil Dependency</span>
+                        <span class="metric-value">Medium</span>
+                    </div>
+                    <div class="scenario-metric">
+                        <span>New Energy Share</span>
+                        <span class="metric-value">High</span>
+                    </div>
+                    <div class="scenario-metric">
+                        <span>GDP Impact 2050</span>
+                        <span class="metric-value positive">+4%</span>
+                    </div>
+                    <div class="scenario-metric">
+                        <span>Employment</span>
+                        <span class="metric-value positive">+120k jobs</span>
+                    </div>
+                    <div class="scenario-metric">
+                        <span>Malaysia Role</span>
+                        <span class="metric-value">Hydrogen and CCS hub</span>
+                    </div>
+                </div>
+
+                <div class="scenario-card success">
+                    <div class="scenario-title">Full Leapfrog</div>
+                    <div class="scenario-metric">
+                        <span>Oil Dependency</span>
+                        <span class="metric-value">Low</span>
+                    </div>
+                    <div class="scenario-metric">
+                        <span>New Energy Share</span>
+                        <span class="metric-value">Very High</span>
+                    </div>
+                    <div class="scenario-metric">
+                        <span>GDP Impact 2050</span>
+                        <span class="metric-value positive">+9%</span>
+                    </div>
+                    <div class="scenario-metric">
+                        <span>Employment</span>
+                        <span class="metric-value positive">+350k jobs</span>
+                    </div>
+                    <div class="scenario-metric">
+                        <span>Malaysia Role</span>
+                        <span class="metric-value">Battery + digital energy exporter</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Outcome -->
+    <section>
+        <div class="container">
+            <div class="section-label">07. Vision</div>
+            <h2>The Outcome — If Petronas Leads</h2>
+            
+            <h3>Petronas Becomes:</h3>
+            <ul class="styled-list">
+                <li>Malaysia's economic backbone</li>
+                <li>ASEAN's carbon management leader</li>
+                <li>Asia's hydrogen hub</li>
+                <li>A global clean energy architect—not just an LNG exporter</li>
+            </ul>
+
+            <h3>Malaysia Becomes:</h3>
+            <ul class="styled-list">
+                <li>A shaper of future energy systems</li>
+                <li>Not a buyer of other nations' solutions</li>
+            </ul>
+
+            <div class="callout">
+                <h3>
