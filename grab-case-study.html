@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grab Case Study - At the Crossroads</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --grab-green: #00B14F;
+            --grab-dark: #1A1A1A;
+            --text-primary: #2C2C2C;
+            --text-secondary: #666666;
+            --bg-light: #FAFAFA;
+            --accent: #00B14F;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(0,177,79,0.1) 0%, transparent 70%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.5; }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            padding: 2rem;
+            max-width: 900px;
+        }
+
+        .hero-subtitle {
+            color: var(--grab-green);
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .hero-title {
+            color: white;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 300;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .hero-description {
+            color: #B0B0B0;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .hero-meta {
+            color: #808080;
+            font-size: 0.9rem;
+            margin-top: 3rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+            opacity: 0;
+            transform: translateY(-100%);
+            transition: all 0.3s ease;
+        }
+
+        nav.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+        }
+
+        nav a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--grab-green);
+        }
+
+        /* Content Sections */
+        section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            margin-bottom: 4rem;
+            text-align: center;
+        }
+
+        .section-label {
+            color: var(--grab-green);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 300;
+            color: var(--grab-dark);
+            margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin: 4rem 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #E8E8E8;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--grab-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .content-card {
+            padding: 2.5rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #E8E8E8;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--grab-green), #00D45A);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            color: var(--grab-dark);
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: white;
+            padding: 3rem;
+            border-radius: 8px;
+            border: 1px solid #E8E8E8;
+            margin: 3rem auto;
+            max-width: 100%;
+        }
+
+        .chart-title {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--grab-dark);
+            font-weight: 400;
+        }
+
+        /* Theta Framework Chart */
+        .theta-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 400px;
+            padding: 2rem;
+            gap: 2rem;
+        }
+
+        .theta-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bar-stack {
+            width: 100%;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 0;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .bar-segment {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .bar-segment:hover {
+            opacity: 0.8;
+            transform: scaleX(1.05);
+        }
+
+        .core-seg { background: #00B14F; }
+        .edge-seg { background: #FFA500; }
+        .beyond-seg { background: #FF6B6B; }
+
+        .bar-label {
+            font-weight: 600;
+            color: var(--grab-dark);
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .bar-sublabel {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        /* SWOT Grid */
+        .swot-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .swot-card {
+            padding: 2.5rem;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .swot-card.strengths { border-color: #00B14F; }
+        .swot-card.weaknesses { border-color: #FF6B6B; }
+        .swot-card.opportunities { border-color: #4A90E2; }
+        .swot-card.threats { border-color: #FFA500; }
+
+        .swot-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: var(--grab-dark);
+        }
+
+        .swot-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .swot-card li {
+            padding: 0.75rem 0;
+            color: var(--text-secondary);
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .swot-card li:last-child {
+            border-bottom: none;
+        }
+
+        .swot-card li::before {
+            content: '→';
+            margin-right: 0.75rem;
+            color: var(--grab-green);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #E8E8E8;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            flex: 1;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #E8E8E8;
+            margin: 0 2rem;
+        }
+
+        .timeline-year {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--grab-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-text {
+            color: var(--text-secondary);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            top: 2rem;
+            width: 16px;
+            height: 16px;
+            background: var(--grab-green);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 0 4px white, 0 0 0 6px var(--grab-green);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--grab-dark);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-text {
+            color: #B0B0B0;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .swot-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline::before {
+                left: 0;
+            }
+
+            .timeline-item {
+                flex-direction: column !important;
+            }
+
+            .timeline-content {
+                margin: 0 0 0 2rem;
+            }
+
+            .timeline-dot {
+                left: 0;
+            }
+
+            .theta-chart {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .bar-stack {
+                min-height: 200px;
+            }
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="nav">
+        <ul>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#performance">Performance</a></li>
+            <li><a href="#innovation">Innovation</a></li>
+            <li><a href="#analysis">Analysis</a></li>
+            <li><a href="#recommendations">Recommendations</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-subtitle">Case Study</div>
+            <h1 class="hero-title">At the Crossroads: Stabilizing Growth and Preparing for the Next Wave of Tech</h1>
+            <p class="hero-description">A Strategic Analysis of Grab's Innovation Journey</p>
+            <div class="hero-meta">By Christine Pamela | Southeast Asia's Super-App Ecosystem</div>
+        </div>
+        <div class="scroll-indicator">Scroll to explore ↓</div>
+    </div>
+
+    <!-- Overview Section -->
+    <section id="overview">
+        <div class="section-header">
+            <div class="section-label">Introduction</div>
+            <h2 class="section-title">The Everyday Everything App</h2>
+            <p class="section-subtitle">Grab has evolved from a Malaysian taxi-hailing startup to Southeast Asia's leading super-app, integrating mobility, delivery, and financial services across eight countries.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">$3.07B</div>
+                <div class="stat-label">Annual Revenue (TTM)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">8+</div>
+                <div class="stat-label">Countries</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">50-70%</div>
+                <div class="stat-label">Market Share</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">12,566</div>
+                <div class="stat-label">Employees</div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="content-card">
+                <div class="card-icon">🚗</div>
+                <h3 class="card-title">Mobility</h3>
+                <p class="card-description">Ride-hailing and urban transport services generating $1.05B in revenue, forming the foundation of the super-app ecosystem.</p>
+            </div>
+            <div class="content-card">
+                <div class="card-icon">🍔</div>
+                <h3 class="card-title">Delivery</h3>
+                <p class="card-description">Food, grocery, and parcel logistics contributing $1.49B, the largest revenue segment with strong growth potential.</p>
+            </div>
+            <div class="content-card">
+                <div class="card-icon">💳</div>
+                <h3 class="card-title">Financial Services</h3>
+                <p class="card-description">GrabPay wallet, lending, insurance, and embedded banking generating $253M with significant ecosystem synergies.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Section -->
+    <section id="performance" style="background: var(--bg-light);">
+        <div class="section-header">
+            <div class="section-label">Financial Performance</div>
+            <h2 class="section-title">Growth Trajectory</h2>
+            <p class="section-subtitle">Strong revenue growth with improving profitability metrics, though challenges remain in achieving net profitability.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">+18.9%</div>
+                <div class="stat-label">Revenue Growth (YoY)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">$313M</div>
+                <div class="stat-label">Adjusted EBITDA (2024)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">-$105M</div>
+                <div class="stat-label">Net Income (2024)</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3 class="chart-title">Revenue Distribution by Segment</h3>
+            <div class="theta-chart">
+                <div class="theta-bar">
+                    <div class="bar-stack">
+                        <div class="bar-segment core-seg" style="height: 150px;">Mobility $1.05B</div>
+                    </div>
+                    <div class="bar-label">Mobility</div>
+                    <div class="bar-sublabel">34% of Revenue</div>
+                </div>
+                <div class="theta-bar">
+                    <div class="bar-stack">
+                        <div class="bar-segment core-seg" style="height: 200px;">Deliveries $1.49B</div>
+                    </div>
+                    <div class="bar-label">Deliveries</div>
+                    <div class="bar-sublabel">49% of Revenue</div>
+                </div>
+                <div class="theta-bar">
+                    <div class="bar-stack">
+                        <div class="bar-segment edge-seg" style="height: 100px;">FinTech $253M</div>
+                    </div>
+                    <div class="bar-label">Financial Services</div>
+                    <div class="bar-sublabel">8% of Revenue</div>
+                </div>
+                <div class="theta-bar">
+                    <div class="bar-stack">
+                        <div class="bar-segment beyond-seg" style="height: 75px;">Other $280M</div>
+                    </div>
+                    <div class="bar-label">Other Services</div>
+                    <div class="bar-sublabel">9% of Revenue</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Innovation Section -->
+    <section id="innovation">
+        <div class="section-header">
+            <div class="section-label">Innovation Framework</div>
+            <h2 class="section-title">Theta Framework Analysis</h2>
+            <p class="section-subtitle">Mapping Grab's innovation portfolio across Core, Edge, and Beyond zones reveals strategic funding patterns and dependencies.</p>
+        </div>
+
+        <div class="chart-container">
+            <h3 class="chart-title">Innovation Funding Allocation</h3>
+            <div class="theta-chart">
+                <div class="theta-bar">
+                    <div class="bar-stack">
+                        <div class="bar-segment core-seg" style="height: 180px;">45-50%</div>
+                        <div class="bar-segment edge-seg" style="height: 140px;">35-40%</div>
+                        <div class="bar-segment beyond-seg" style="height: 80px;">15-20%</div>
+                    </div>
+                    <div class="bar-label">Expected</div>
+                    <div class="bar-sublabel">Theta Framework</div>
+                </div>
+                <div class="theta-bar">
+                    <div class="bar-stack">
+                        <div class="bar-segment core-seg" style="height: 200px;">~50%</div>
+                        <div class="bar-segment edge-seg" style="height: 120px;">~30%</div>
+                        <div class="bar-segment beyond-seg" style="height: 80px;">~20%</div>
+                    </div>
+                    <div class="bar-label">Grab Reality</div>
+                    <div class="bar-sublabel">Current Allocation</div>
+                </div>
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color core-seg"></div>
+                    <span>Core Optimization</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color edge-seg"></div>
+                    <span>Edge Innovation</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color beyond-seg"></div>
+                    <span>Beyond / Transformational</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="content-card">
+                <h3 class="card-title" style="color: #00B14F;">🟩 Core (45-50%)</h3>
+                <p class="card-description"><strong>Focus:</strong> Optimize mobility, deliveries, and wallet<br><br><strong>Funding:</strong> Operating cash flow, internal reinvestment<br><br><strong>Status:</strong> ✅ Well-aligned and funded</p>
+            </div>
+            <div class="content-card">
+                <h3 class="card-title" style="color: #FFA500;">🟨 Edge (35-40%)</h3>
+                <p class="card-description"><strong>Focus:</strong> GrabMaps, AI logistics, fintech lending<br><br><strong>Funding:</strong> Internal revenue + external capital<br><br><strong>Status:</strong> ⚖️ Partially dependent on investors</p>
+            </div>
+            <div class="content-card">
+                <h3 class="card-title" style="color: #FF6B6B;">🟥 Beyond (15-20%)</h3>
+                <p class="card-description"><strong>Focus:</strong> Autonomous vehicles, embedded banking<br><br><strong>Funding:</strong> SPAC proceeds, partnerships<br><br><strong>Status:</strong> ⚖️ High external funding dependency</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Analysis Section -->
+    <section id="analysis" style="background: var(--bg-light);">
+        <div class="section-header">
+            <div class="section-label">Strategic Analysis</div>
+            <h2 class="section-title">SWOT Assessment</h2>
+        </div>
+
+        <div class="swot-grid">
+            <div class="swot-card strengths">
+                <h3 class="swot-title">Strengths</h3>
+                <ul>
+                    <li>Market leader with strong network effects</li>
+                    <li>Integrated super-app ecosystem</li>
+                    <li>Growing revenue and adjusted EBITDA</li>
+                    <li>Proprietary AI and mapping technology</li>
+                </ul>
+            </div>
+            <div class="swot-card weaknesses">
+                <h3 class="swot-title">Weaknesses</h3>
+                <ul>
+                    <li>Net income still negative; high operational costs</li>
+                    <li>Over-reliance on external funding for Edge/Beyond</li>
+                    <li>Complex regional operations</li>
+                    <li>Slower Malaysia ecosystem growth</li>
+                </ul>
+            </div>
+            <div class="swot-card opportunities">
+                <h3 class="swot-title">Opportunities</h3>
+                <ul>
+                    <li>Fintech expansion and embedded finance</li>
+                    <li>Autonomous mobility and AI-driven logistics</li>
+                    <li>Super-app monetization (data, loyalty)</li>
+                    <li>Regional expansion and partnerships</li>
+                </ul>
+            </div>
+            <div class="swot-card threats">
+                <h3 class="swot-title">Threats</h3>
+                <ul>
+                    <li>Intense regional competition (GoTo, Foodpanda)</li>
+                    <li>Regulatory and labor risks</li>
+                    <li>Macro-economic pressures</li>
+                    <li>Technology adoption and execution risks</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section id="timeline">
+        <div class="section-header">
+            <div class="section-label">Evolution</div>
+            <h2 class="section-title">Innovation Timeline</h2>
+            <p class="section-subtitle">A phased approach to transformational growth across multiple time horizons.</p>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">0-2 Years</div>
+                    <p class="timeline-text">Core optimization and revenue stabilizers. Focus on improving UX, routing efficiency, and loyalty programs across existing services.</p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">2-5 Years</div>
+                    <p class="timeline-text">Edge scaling and adjacent market expansion. GrabMaps commercialization, AI logistics, and fintech lending at scale.</p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">5-10 Years</div>
+                    <p class="timeline-text">Disruptive innovation and market displacement. Full autonomous mobility deployment and complete embedded banking integration.</p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-year">10+ Years</div>
+                    <p class="timeline-text">Frontier research and speculative R&D. Drone delivery networks, quantum AI applications, and next-generation logistics.</p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recommendations Section -->
+    <section id="recommendations" style="background: var(--bg-light);">
+        <div class="section-header">
+            <div class="section-label">Strategic Recommendations</div>
+            <h2 class="section-title">Path Forward</h2>
+            <p class="section-subtitle">Key actions to align innovation funding, reduce external dependencies, and sustain long-term growth.</p>
+        </div>
+
+        <div class="content-grid">
+            <div class="content-card">
+                <div class="card-icon">📊</div>
+                <h3 class="card-title">Structured Funding</h3>
+                <p class="card-description">Allocate systematic percentage of revenue to Edge and Beyond projects to reduce reliance on external capital and maintain strategic autonomy.</p>
+            </div>
+            <div class="content-card">
+                <div class="card-icon">🎯</div>
+                <h3 class="card-title">Phased Deployment</h3>
+                <p class="card-description">Pilot Edge and Beyond initiatives in smaller markets before scaling to reduce execution risk and optimize resource allocation.</p>
+            </div>
+            <div class="content-card">
+                <div class="card-icon">⚖️</div>
+                <h3 class="card-title">Regulatory Engagement</h3>
+                <p class="card-description">Proactive engagement with regulators and transparent policies for drivers and merchants to mitigate compliance risks.</p>
+            </div>
+            <div class="content-card">
+                <div class="card-icon">🔬</div>
+                <h3 class="card-title">Technology Investment</h3>
+                <p class="card-description">Build internal AI and technology talent to reduce dependence on external partners and accelerate innovation cycles.</p>
+            </div>
+            <div class="content-card">
+                <div class="card-icon">💪</div>
+                <h3 class="card-title">Core Strengthening</h3>
+                <p class="card-description">Strengthen core revenue engines in mobility and delivery to generate sustainable cash flow for long-term transformational bets.</p>
+            </div>
+            <div class="content-card">
+                <div class="card-icon">🌐</div>
+                <h3 class="card-title">Diversified Portfolio</h3>
+                <p class="card-description">Diversify innovation bets across mobility, delivery, fintech, and frontier technology to spread risk and capture multiple growth vectors.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Takeaways -->
+    <section id="takeaways">
+        <div class="section-header">
+            <div class="section-label">Summary</div>
+            <h2 class="section-title">Key Takeaways</h2>
+        </div>
+
+        <div class="chart-container">
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div style="padding: 2rem; border-left: 4px solid var(--grab-green); margin-bottom: 2rem; background: var(--bg-light);">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--grab-dark);">Market Position</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.8;">Grab is the dominant platform in Southeast Asia with a strong super-app ecosystem, embedded AI capabilities, and multiple revenue streams spanning mobility, delivery, and financial services.</p>
+                </div>
+                
+                <div style="padding: 2rem; border-left: 4px solid #FFA500; margin-bottom: 2rem; background: var(--bg-light);">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--grab-dark);">Financial Health</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.8;">Core business remains stable with healthy revenue growth (+18.9% YoY) and positive adjusted EBITDA ($313M), though net profitability remains elusive due to high operational costs and investment in innovation.</p>
+                </div>
+                
+                <div style="padding: 2rem; border-left: 4px solid #FF6B6B; margin-bottom: 2rem; background: var(--bg-light);">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--grab-dark);">Innovation Challenge</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.8;">Edge and Beyond initiatives show partial misalignment with the Theta Framework, relying heavily on external funding (SPAC proceeds, partnerships) rather than systematic internal allocation—creating vulnerability to capital market fluctuations.</p>
+                </div>
+                
+                <div style="padding: 2rem; border-left: 4px solid #4A90E2; background: var(--bg-light);">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 1rem; color: var(--grab-dark);">Strategic Imperative</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.8;">Strategic alignment of funding, phased deployment of innovations, and ecosystem diversification will be critical for sustaining growth, achieving profitability, and realizing the long-term vision of the super-app.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem; font-weight: 300;">Grab Case Study</h3>
+            <p class="footer-text">At the Crossroads: Stabilizing Growth and Preparing for the Next Wave of Tech</p>
+            <p class="footer-text" style="margin-top: 1rem;">© 2025 Christine Pamela | Strategic Innovation Analysis</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Show navigation on scroll
+        const nav = document.getElementById('nav');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > window.innerHeight * 0.5) {
+                nav.classList.add('visible');
+            } else {
+                nav.classList.remove('visible');
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards and charts
+        document.querySelectorAll('.stat-card, .content-card, .swot-card, .chart-container').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Animate stats on scroll
+        const animateStats = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statValue = entry.target.querySelector('.stat-value');
+                    const text = statValue.textContent;
+                    
+                    if (text.includes(') || text.includes('%') || text.includes('+')) {
+                        statValue.style.transform = 'scale(1.1)';
+                        setTimeout(() => {
+                            statValue.style.transform = 'scale(1)';
+                        }, 300);
+                    }
+                    
+                    observer.unobserve(entry.target);
+                }
+            });
+        };
+
+        const statsObserver = new IntersectionObserver(animateStats, observerOptions);
+        document.querySelectorAll('.stat-card').forEach(card => {
+            statsObserver.observe(card);
+        });
+    </script>
+</body>
+</html>
