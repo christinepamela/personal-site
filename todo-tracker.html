@@ -1907,13 +1907,50 @@
                         }
                         incompleteByDate[task.date].push(task);
                     }
+                });
+            
+                if (Object.keys(incompleteByDate).length === 0) {
+                    container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:20px;">No incomplete tasks from previous days. Great job staying on top of things! 🎉</p>';
+                    return;
                 }
+            
+                const sortedDates = Object.keys(incompleteByDate).sort().reverse();
+            
+                const html = sortedDates.map(date => {
+                    const dateObj = new Date(date);
+                    const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                    const tasks = incompleteByDate[date];
+            
+                    const tasksHtml = tasks.map(task => {
+                        const goal = task.goalId ? state.goals.find(g => g.id === task.goalId) : null;
+                        const goalTag = goal ? `<span class="goal-tag">${goal.text}</span>` : '';
+            
+                        return `
+                            <div class="completed-task" style="border-left-color: var(--coral);">
+                                <div class="completed-task-name">${task.text}</div>
+                                <div class="completed-task-meta">
+                                    ⏱️ ${task.estimatedTime}min ${goalTag}
+                                    <button onclick="rescheduleTask(${task.id})" style="margin-left: 10px; padding: 4px 12px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em;">Reschedule</button>
+                                    <button onclick="deleteTask(${task.id})" style="margin-left: 6px; padding: 4px 12px; background: var(--coral); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em;">Delete</button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+            
+                    return `
+                        <div class="history-completed-tasks">
+                            <div style="font-weight: 700; color: var(--coral); margin-bottom: 12px;">${dateStr} (${tasks.length} incomplete)</div>
+                            ${tasksHtml}
+                        </div>
+                    `;
+                }).join('');
+            
+                container.innerHTML = html;
             }
             
             function renderTimeAnalysis() {
                 const container = document.getElementById('time-analysis-content');
                 
-                // Get completed tasks
                 const completedTasks = state.tasks.filter(t => t.completed);
                 
                 if (completedTasks.length === 0) {
@@ -1921,12 +1958,10 @@
                     return;
                 }
                 
-                // Calculate overall time metrics
                 const totalEstimated = completedTasks.reduce((sum, t) => sum + t.estimatedTime, 0);
                 const totalActual = completedTasks.reduce((sum, t) => sum + t.actualTime, 0);
                 const overallEfficiency = (totalEstimated / totalActual) * 100;
                 
-                // Calculate last 7 days work time
                 const sevenDaysAgo = new Date(state.currentDate);
                 sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
                 const sevenDaysAgoStr = sevenDaysAgo.toISOString().split('T')[0];
@@ -1936,7 +1971,6 @@
                 const lastWeekHours = Math.floor(lastWeekMinutes / 60);
                 const lastWeekMins = lastWeekMinutes % 60;
                 
-                // Group tasks by date for daily breakdown
                 const tasksByDate = {};
                 completedTasks.forEach(task => {
                     if (!tasksByDate[task.date]) {
@@ -1945,7 +1979,7 @@
                     tasksByDate[task.date].push(task);
                 });
                 
-                const sortedDates = Object.keys(tasksByDate).sort().reverse().slice(0, 14); // Last 14 days
+                const sortedDates = Object.keys(tasksByDate).sort().reverse().slice(0, 14);
                 
                 const dailyBreakdownHtml = sortedDates.map(date => {
                     const dateObj = new Date(date);
@@ -1973,7 +2007,7 @@
                         efficiencyClass = 'efficiency-ok';
                         efficiencyIcon = '⏱️';
                     }
-        
+            
                     return `
                         <div class="history-completed-tasks">
                             <div style="font-weight: 700; color: var(--primary); margin-bottom: 12px;">${dateStr} (${tasks.length} tasks)</div>
@@ -1996,130 +2030,90 @@
                         </div>
                     `;
                 }).join('');
-    
+            
                 const estHours = Math.floor(totalEstimated / 60);
                 const estMins = totalEstimated % 60;
                 const actHours = Math.floor(totalActual / 60);
                 const actMins = totalActual % 60;
                 
                 const html = `
-        <div style="margin-bottom: 30px;">
-            <h3 style="color: var(--primary); margin-bottom: 20px;">⏱️ Last 7 Days Work Summary</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                <div class="stat-card">
-                    <div class="stat-icon">📅</div>
-                    <div class="stat-value">${lastWeekHours}h ${lastWeekMins}m</div>
-                    <div class="stat-label">Total Time Worked</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📊</div>
-                    <div class="stat-value">${lastWeekTasks.length}</div>
-                    <div class="stat-label">Tasks Completed</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">⚡</div>
-                    <div class="stat-value">${Math.round((lastWeekTasks.reduce((sum, t) => sum + t.estimatedTime, 0) / lastWeekMinutes) * 100)}%</div>
-                    <div class="stat-label">Average Efficiency</div>
-                </div>
-            </div>
-        </div>
-        
-        <div style="margin-bottom: 30px;">
-            <h3 style="color: var(--primary); margin-bottom: 20px;">📈 All-Time Overview</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
-                <div class="completed-task" style="border-left-color: var(--primary);">
-                    <div class="completed-task-name">📊 Total Estimated</div>
-                    <div class="completed-task-meta">${estHours}h ${estMins}m</div>
-                </div>
-                <div class="completed-task" style="border-left-color: var(--secondary);">
-                    <div class="completed-task-name">⏱️ Total Actual</div>
-                    <div class="completed-task-meta">${actHours}h ${actMins}m</div>
-                </div>
-                <div class="completed-task" style="border-left-color: var(--success);">
-                    <div class="completed-task-name">⚡ Overall Efficiency</div>
-                    <div class="completed-task-meta">${Math.round(overallEfficiency)}%</div>
-                </div>
-                <div class="completed-task" style="border-left-color: var(--accent);">
-                    <div class="completed-task-name">✅ Total Tasks</div>
-                    <div class="completed-task-meta">${completedTasks.length} completed</div>
-                </div>
-            </div>
-        </div>
-        
-        <h3 style="color: var(--primary); margin-bottom: 20px;">📅 Daily Breakdown (Last 14 Days)</h3>
-        ${dailyBreakdownHtml}
-    `;
-    
-    container.innerHTML = html;
-}
-    });
-
-    if (Object.keys(incompleteByDate).length === 0) {
-        container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:20px;">No incomplete tasks from previous days. Great job staying on top of things! 🎉</p>';
-        return;
-    }
-
-    const sortedDates = Object.keys(incompleteByDate).sort().reverse();
-
-    const html = sortedDates.map(date => {
-        const dateObj = new Date(date);
-        const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-        const tasks = incompleteByDate[date];
-
-        const tasksHtml = tasks.map(task => {
-            const goal = task.goalId ? state.goals.find(g => g.id === task.goalId) : null;
-            const goalTag = goal ? `<span class="goal-tag">${goal.text}</span>` : '';
-
-            return `
-                <div class="completed-task" style="border-left-color: var(--coral);">
-                    <div class="completed-task-name">${task.text}</div>
-                    <div class="completed-task-meta">
-                        ⏱️ ${task.estimatedTime}min ${goalTag}
-                        <button onclick="rescheduleTask(${task.id})" style="margin-left: 10px; padding: 4px 12px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em;">Reschedule</button>
-                        <button onclick="deleteTask(${task.id})" style="margin-left: 6px; padding: 4px 12px; background: var(--coral); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em;">Delete</button>
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: var(--primary); margin-bottom: 20px;">⏱️ Last 7 Days Work Summary</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                            <div class="stat-card">
+                                <div class="stat-icon">📅</div>
+                                <div class="stat-value">${lastWeekHours}h ${lastWeekMins}m</div>
+                                <div class="stat-label">Total Time Worked</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📊</div>
+                                <div class="stat-value">${lastWeekTasks.length}</div>
+                                <div class="stat-label">Tasks Completed</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">⚡</div>
+                                <div class="stat-value">${Math.round((lastWeekTasks.reduce((sum, t) => sum + t.estimatedTime, 0) / lastWeekMinutes) * 100)}%</div>
+                                <div class="stat-label">Average Efficiency</div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            `;
-        }).join('');
-
-        return `
-            <div class="history-completed-tasks">
-                <div style="font-weight: 700; color: var(--coral); margin-bottom: 12px;">${dateStr} (${tasks.length} incomplete)</div>
-                ${tasksHtml}
-            </div>
-        `;
-    }).join('');
-
-    container.innerHTML = html;
-}
-
-    function rescheduleTask(taskId) {
-        const task = state.tasks.find(t => t.id === taskId);
-        if (task) {
-            const newDate = prompt('Reschedule to which date? (YYYY-MM-DD format)\n\nExamples:\n- Today: ' + state.currentDate.toISOString().split('T')[0] + '\n- Tomorrow: ' + new Date(state.currentDate.getTime() + 24*60*60*1000).toISOString().split('T')[0]);
-            
-            if (newDate) {
-                const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-                if (!dateRegex.test(newDate)) {
-                    alert('❌ Invalid date format. Please use YYYY-MM-DD format (e.g., 2025-10-26)');
-                    return;
-                }
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: var(--primary); margin-bottom: 20px;">📈 All-Time Overview</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                            <div class="completed-task" style="border-left-color: var(--primary);">
+                                <div class="completed-task-name">📊 Total Estimated</div>
+                                <div class="completed-task-meta">${estHours}h ${estMins}m</div>
+                            </div>
+                            <div class="completed-task" style="border-left-color: var(--secondary);">
+                                <div class="completed-task-name">⏱️ Total Actual</div>
+                                <div class="completed-task-meta">${actHours}h ${actMins}m</div>
+                            </div>
+                            <div class="completed-task" style="border-left-color: var(--success);">
+                                <div class="completed-task-name">⚡ Overall Efficiency</div>
+                                <div class="completed-task-meta">${Math.round(overallEfficiency)}%</div>
+                            </div>
+                            <div class="completed-task" style="border-left-color: var(--accent);">
+                                <div class="completed-task-name">✅ Total Tasks</div>
+                                <div class="completed-task-meta">${completedTasks.length} completed</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 style="color: var(--primary); margin-bottom: 20px;">📅 Daily Breakdown (Last 14 Days)</h3>
+                    ${dailyBreakdownHtml}
+                `;
                 
-                const selectedDate = new Date(newDate);
-                if (isNaN(selectedDate.getTime())) {
-                    alert('❌ Invalid date. Please check the date and try again.');
-                    return;
-                }
-                
-                task.date = newDate;
-                saveData();
-                renderEverything();
-                alert('✅ Task rescheduled to ' + selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }));
+                container.innerHTML = html;
             }
-        }
-    }
-
-        init();
+            
+            function rescheduleTask(taskId) {
+                const task = state.tasks.find(t => t.id === taskId);
+                if (task) {
+                    const newDate = prompt('Reschedule to which date? (YYYY-MM-DD format)\n\nExamples:\n- Today: ' + state.currentDate.toISOString().split('T')[0] + '\n- Tomorrow: ' + new Date(state.currentDate.getTime() + 24*60*60*1000).toISOString().split('T')[0]);
+                    
+                    if (newDate) {
+                        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                        if (!dateRegex.test(newDate)) {
+                            alert('❌ Invalid date format. Please use YYYY-MM-DD format (e.g., 2025-10-26)');
+                            return;
+                        }
+                        
+                        const selectedDate = new Date(newDate);
+                        if (isNaN(selectedDate.getTime())) {
+                            alert('❌ Invalid date. Please check the date and try again.');
+                            return;
+                        }
+                        
+                        task.date = newDate;
+                        saveData();
+                        renderEverything();
+                        alert('✅ Task rescheduled to ' + selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }));
+                    }
+                }
+            }
+            
+            init();
     </script>
 </body>
 </html>
