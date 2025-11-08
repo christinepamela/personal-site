@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Google Dilemma - Case Study</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #2d3436;
+            background: #ffffff;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(66, 133, 244, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(234, 67, 53, 0.1) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            max-width: 900px;
+            z-index: 1;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            font-weight: 300;
+            margin-bottom: 2rem;
+            opacity: 0.7;
+        }
+
+        .hero-meta {
+            font-size: 0.95rem;
+            opacity: 0.7;
+            margin-top: 2rem;
+        }
+
+        .accent {
+            color: #4285f4;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem 2rem;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #2d3436;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #4285f4;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Section Styles */
+        section {
+            margin-bottom: 6rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 3rem;
+            letter-spacing: -0.01em;
+            border-bottom: 2px solid #4285f4;
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .subsection {
+            margin-bottom: 3rem;
+        }
+
+        .subsection h3 {
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #4a4a4a;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Cards */
+        .card {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 4px;
+            border-left: 3px solid #4285f4;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: #1a1a1a;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: #5a5a5a;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #4285f4, #ea4335);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 1rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -3.5rem;
+            top: 0.3rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4285f4;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #4285f4;
+        }
+
+        .timeline-year {
+            font-weight: 600;
+            color: #4285f4;
+            margin-bottom: 0.3rem;
+        }
+
+        /* Stats Bar */
+        .stats {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .stat {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #4285f4;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6a6a6a;
+            margin-top: 0.5rem;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 4px;
+            margin: 2rem 0;
+        }
+
+        /* Theta Framework Table */
+        .framework-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .framework-table th {
+            background: #4285f4;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .framework-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .framework-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Comparison Table */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1px;
+            background: #e0e0e0;
+            margin: 2rem 0;
+        }
+
+        .comparison > div {
+            background: white;
+            padding: 1.5rem;
+        }
+
+        .comparison-header {
+            background: #2d3436 !important;
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-label {
+            background: #f8f9fa !important;
+            font-weight: 500;
+        }
+
+        /* Lists */
+        ul.styled-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul.styled-list li {
+            padding-left: 1.5rem;
+            margin-bottom: 0.8rem;
+            position: relative;
+        }
+
+        ul.styled-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #4285f4;
+            font-weight: bold;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8eaf6 100%);
+            border-left: 4px solid #4285f4;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 4px;
+        }
+
+        .highlight-box p {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: #2d3436;
+            margin: 0;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 6rem;
+        }
+
+        footer p {
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+            
+            nav ul {
+                gap: 1rem;
+            }
+
+            .container {
+                padding: 3rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1>The <span class="accent">Google</span> Dilemma</h1>
+            <p class="hero-subtitle">Google wins at ideas. Others win at execution.</p>
+            <p class="hero-subtitle">The commercialization gap.</p>
+            <p class="hero-meta">A case study by Christine Pamela Angle</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#history">History</a></li>
+            <li><a href="#ecosystem">Ecosystem</a></li>
+            <li><a href="#innovation">Innovation</a></li>
+            <li><a href="#risks">Risks</a></li>
+            <li><a href="#conclusion">Conclusion</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Overview Section -->
+        <section id="overview">
+            <h2 class="section-title">Overview</h2>
+            <p>Google is the world's leading internet technology company, known for search and digital advertising, Android and ChromeOS, YouTube, Maps, Gmail, Workspace, cloud computing, AI research, and custom chips (TPUs). A subsidiary of Alphabet Inc. since 2015, created to separate core revenue engines from long-term experimental bets.</p>
+
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-value">75-80%</span>
+                    <span class="stat-label">Revenue from Advertising</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">10-12%</span>
+                    <span class="stat-label">Revenue from Cloud</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">2B+</span>
+                    <span class="stat-label">YouTube Users</span>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>Core Strengths</h3>
+                <div class="grid-3">
+                    <div class="card">
+                        <h4>AI Leadership</h4>
+                        <p>Transformers invented at Google. DeepMind breakthroughs in AlphaGo, AlphaFold, and Gemini.</p>
+                    </div>
+                    <div class="card">
+                        <h4>Infrastructure Scale</h4>
+                        <p>Global distribution, data scale, and vertical integration from chips to cloud to user.</p>
+                    </div>
+                    <div class="card">
+                        <h4>Financial Resilience</h4>
+                        <p>Search ads remain the financial engine behind almost everything.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- History Section -->
+        <section id="history">
+            <h2 class="section-title">History</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">1998</div>
+                    <p>Google founded</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2000</div>
+                    <p>AdWords launches</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2004</div>
+                    <p>IPO and Gmail</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2005</div>
+                    <p>Android acquisition</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2006</div>
+                    <p>YouTube acquisition</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2008</div>
+                    <p>Chrome launch</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2015</div>
+                    <p>Alphabet restructuring</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2016</div>
+                    <p>Google Assistant and AI acceleration</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2023-2025</div>
+                    <p>Gemini and Search Generative Experience (SGE)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Ecosystem -->
+        <section id="ecosystem">
+            <h2 class="section-title">Product Ecosystem</h2>
+            <div class="grid-2">
+                <div>
+                    <h3>Consumer</h3>
+                    <ul class="styled-list">
+                        <li>Search, Android, Chrome</li>
+                        <li>Maps, Gmail, Drive, Photos</li>
+                        <li>YouTube with over 2 billion users</li>
+                    </ul>
+
+                    <h3 style="margin-top: 2rem;">Enterprise</h3>
+                    <ul class="styled-list">
+                        <li>Google Cloud Platform (GCP)</li>
+                        <li>Strong in AI and data services</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Hardware</h3>
+                    <ul class="styled-list">
+                        <li>Pixel phones</li>
+                        <li>Pixel Watch</li>
+                        <li>Nest devices</li>
+                    </ul>
+
+                    <h3 style="margin-top: 2rem;">AI and Research</h3>
+                    <ul class="styled-list">
+                        <li>DeepMind</li>
+                        <li>Gemini</li>
+                        <li>TPUs, robotics</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Innovation Engines -->
+        <section id="innovation">
+            <h2 class="section-title">Innovation Engines</h2>
+            
+            <div class="subsection">
+                <h3>Alphabet X: The Moonshot Factory</h3>
+                <p><strong>Mission:</strong> Solve global problems with 10x solutions. Led by Astro Teller with a focus on killing ideas early to avoid sunk-cost waste.</p>
+                <div class="grid-2">
+                    <div class="card">
+                        <h4>Successes</h4>
+                        <p>Waymo (autonomous vehicles), Wing (drone delivery), Verily (life sciences)</p>
+                    </div>
+                    <div class="card">
+                        <h4>Failures</h4>
+                        <p>Makani (energy kites), Loon (internet balloons), Smart Contact Lenses</p>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem;"><strong>Bottleneck:</strong> Invention is strong. Scaling into profitable businesses is weak.</p>
+            </div>
+
+            <div class="subsection">
+                <h3>DeepMind: Science Engine of Alphabet</h3>
+                <p><strong>Mission:</strong> Solve intelligence and use it to advance science.</p>
+                <p><strong>Breakthroughs:</strong> AlphaGo, AlphaZero, AlphaFold, Gemini, robotics AI. Now integrating more tightly with Google products.</p>
+                <p><strong>Tension:</strong> Research timelines vs revenue timelines. Superior science vs slower commercial traction.</p>
+            </div>
+
+            <div class="subsection">
+                <h3>Major Bets Beyond the Core</h3>
+                <div class="grid-3">
+                    <div class="card">
+                        <h4>Waymo</h4>
+                        <p>Autonomous vehicles leading the self-driving race</p>
+                    </div>
+                    <div class="card">
+                        <h4>Health Tech</h4>
+                        <p>Verily and Isomorphic Labs advancing life sciences</p>
+                    </div>
+                    <div class="card">
+                        <h4>Quantum Computing</h4>
+                        <p>Building the future of computation</p>
+                    </div>
+                    <div class="card">
+                        <h4>Robotics</h4>
+                        <p>AI-powered physical intelligence</p>
+                    </div>
+                    <div class="card">
+                        <h4>Spatial & AR</h4>
+                        <p>Next-generation interfaces</p>
+                    </div>
+                    <div class="card">
+                        <h4>Project Suncatcher</h4>
+                        <p>AI compute in space (prototypes ~2027)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>The Theta Framework: Google's Innovation Map</h3>
+                <table class="framework-table">
+                    <thead>
+                        <tr>
+                            <th>Zone</th>
+                            <th>Focus</th>
+                            <th>Allocation</th>
+                            <th>What Lives Here</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Core</strong></td>
+                            <td>Protect revenue</td>
+                            <td>~65%</td>
+                            <td>Search, Ads, Android, YouTube, Workspace, data centers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Edge</strong></td>
+                            <td>Unlock new business models</td>
+                            <td>~25%</td>
+                            <td>Cloud AI, SGE, Gemini in Workspace, Pixel expansion</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Beyond</strong></td>
+                            <td>Build new industries</td>
+                            <td>~10%</td>
+                            <td>DeepMind AGI, Waymo, quantum computing, robotics, Suncatcher</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="highlight-box">
+                    <p>Google lives in Core and invents in Beyond. Edge is where value is trapped.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Risks Section -->
+        <section id="risks">
+            <h2 class="section-title">The Five Risks</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h4>1. Business Model Fragility</h4>
+                    <p>AI may shrink ad clicks and search real estate, threatening the core revenue engine.</p>
+                </div>
+                <div class="card">
+                    <h4>2. AI Paradox</h4>
+                    <p>Google created the breakthroughs (Transformers, TPUs) that others rushed to sell.</p>
+                </div>
+                <div class="card">
+                    <h4>3. Commercialization Bottleneck</h4>
+                    <p>Bureaucracy slows scaling and monetization of innovations.</p>
+                </div>
+                <div class="card">
+                    <h4>4. Platform Erosion</h4>
+                    <p>Apple, Amazon, TikTok, and Microsoft control demand entry points.</p>
+                </div>
+                <div class="card">
+                    <h4>5. Regulation and Reputation</h4>
+                    <p>Antitrust pressure threatens integration advantages.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Dilemma -->
+        <section id="conclusion">
+            <h2 class="section-title">The Google Dilemma</h2>
+            <p>Google today mirrors IBM in the 1990s:</p>
+            
+            <div class="comparison">
+                <div class="comparison-header">Pattern</div>
+                <div class="comparison-header">IBM Then</div>
+                <div class="comparison-header">Google Now</div>
+                
+                <div class="comparison-label">Core dependence</div>
+                <div>Mainframes</div>
+                <div>Search and ads</div>
+                
+                <div class="comparison-label">Heavy research</div>
+                <div>IBM Labs</div>
+                <div>DeepMind</div>
+                
+                <div class="comparison-label">Missed market shifts</div>
+                <div>PC wave</div>
+                <div>AI agent wave</div>
+                
+                <div class="comparison-label">Cultural inertia</div>
+                <div>Safety in status quo</div>
+                <div>"Do not break search"</div>
+                
+                <div class="comparison-label">Reinvention required</div>
+                <div>Services and cloud</div>
+                <div>AI native interfaces</div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 3rem;">
+                <p><strong>Strategic Question:</strong> Can Google reinvent search before the market reinvents information access without Google?</p>
+            </div>
+
+            <div class="highlight-box">
+                <p>Unless it commercializes its breakthroughs, Google may repeat IBM's arc: survive but surrender category leadership.</p>
+            </div>
+
+            <div style="margin-top: 3rem; padding: 2rem; background: #f8f9fa; border-radius: 4px; text-align: center;">
+                <h3 style="color: #4285f4; font-size: 1.8rem; font-weight: 300; margin-bottom: 1rem;">One Sentence Conclusion</h3>
+                <p style="font-size: 1.2rem; font-style: italic; color: #2d3436;">Google is the best in the world at inventing the future and scaling the present, yet still learning how to turn breakthrough science into breakthrough businesses.</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>The Google Dilemma</p>
+        <p>A case study by Christine Pamela Angle</p>
+    </footer>
+</body>
+</html>
