@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bosch Case Study | Hardware Giants Need Software Souls</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #1a1a1a;
+            line-height: 1.6;
+            background: #ffffff;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #EA0016 0%, #c50014 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0,0,0,0.1) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 1;
+            max-width: 900px;
+            padding: 2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-description {
+            font-size: 1.3rem;
+            font-weight: 300;
+            opacity: 0.95;
+            margin-bottom: 3rem;
+            line-height: 1.5;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 6rem 0;
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #EA0016;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.7;
+            max-width: 800px;
+        }
+
+        /* Overview Grid */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .overview-card {
+            background: #f8f8f8;
+            padding: 2rem;
+            border-radius: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .overview-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .overview-card-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #EA0016;
+            margin-bottom: 0.5rem;
+        }
+
+        .overview-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .overview-card-description {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Business Divisions */
+        .division-list {
+            display: grid;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .division-item {
+            background: white;
+            border-left: 4px solid #EA0016;
+            padding: 2rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .division-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .division-icon {
+            font-size: 2rem;
+        }
+
+        .division-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .division-subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .division-list-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .division-list-item {
+            font-size: 0.9rem;
+            color: #444;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .division-list-item::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #EA0016;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .comparison-column {
+            background: #f8f8f8;
+            padding: 2rem;
+            border-radius: 4px;
+        }
+
+        .comparison-column.strengths {
+            border-top: 3px solid #4CAF50;
+        }
+
+        .comparison-column.challenges {
+            border-top: 3px solid #EA0016;
+        }
+
+        .comparison-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #1a1a1a;
+        }
+
+        .comparison-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .comparison-item {
+            font-size: 0.95rem;
+            color: #444;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .comparison-item::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            font-weight: 600;
+        }
+
+        .strengths .comparison-item::before {
+            color: #4CAF50;
+        }
+
+        .challenges .comparison-item::before {
+            color: #EA0016;
+        }
+
+        /* Theta Framework */
+        .theta-grid {
+            display: grid;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .theta-zone {
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border-left: 6px solid;
+        }
+
+        .theta-zone.core {
+            border-left-color: #4CAF50;
+        }
+
+        .theta-zone.edge {
+            border-left-color: #FFC107;
+        }
+
+        .theta-zone.beyond {
+            border-left-color: #EA0016;
+        }
+
+        .theta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .theta-title-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theta-emoji {
+            font-size: 1.8rem;
+        }
+
+        .theta-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .theta-percentage {
+            font-size: 1.8rem;
+            font-weight: 700;
+            opacity: 0.3;
+        }
+
+        .theta-innovation {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .theta-examples {
+            font-size: 0.95rem;
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .theta-purpose {
+            font-size: 0.9rem;
+            color: #EA0016;
+            font-weight: 500;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        /* Ecosystem Table */
+        .ecosystem-table {
+            margin-top: 3rem;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        thead {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        th {
+            padding: 1.2rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 1.5rem 1.2rem;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.95rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: #f8f8f8;
+        }
+
+        .table-initiative {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        /* Quote Section */
+        .quote-section {
+            background: #f8f8f8;
+            padding: 6rem 0;
+            text-align: center;
+        }
+
+        .quote-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .quote-text {
+            font-size: 2.5rem;
+            font-weight: 300;
+            line-height: 1.4;
+            color: #1a1a1a;
+            margin-bottom: 2rem;
+        }
+
+        .quote-highlight {
+            color: #EA0016;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .footer-author {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-description {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .comparison-table {
+                grid-template-columns: 1fr;
+            }
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 4rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-subtitle">Case Study</div>
+            <h1 class="hero-title">When Hardware Giants Need Software Souls</h1>
+            <p class="hero-description">How Bosch Is Rewiring an Industrial Titan for the Era of Intelligent Machines</p>
+        </div>
+        <div class="scroll-indicator">Scroll to explore</div>
+    </div>
+
+    <!-- Company Overview -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Introduction</div>
+                <h2 class="section-title">What Bosch Is</h2>
+                <p class="section-description">
+                    Bosch is a German multinational engineering and technology company, headquartered near Stuttgart. Founded in 1886 by Robert Bosch, the company is rooted in industrial, automotive, and consumer technology, built on deep engineering expertise and intellectual property.
+                </p>
+            </div>
+
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <div class="overview-card-label">Founded</div>
+                    <div class="overview-card-value">1886</div>
+                    <div class="overview-card-description">Over 138 years of engineering excellence</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-card-label">Employees</div>
+                    <div class="overview-card-value">~420K</div>
+                    <div class="overview-card-description">Global workforce across 60+ countries</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-card-label">Revenue (2024)</div>
+                    <div class="overview-card-value">~€91B</div>
+                    <div class="overview-card-description">Diversified across four major divisions</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-card-label">Patents/Year</div>
+                    <div class="overview-card-value">4,000</div>
+                    <div class="overview-card-description">Operating like a tech company inside a manufacturing empire</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Business Divisions -->
+    <section style="background: #f8f8f8;">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Business Model</div>
+                <h2 class="section-title">Four Strategic Divisions</h2>
+                <p class="section-description">
+                    Bosch's transformation spans multiple sectors, each facing unique challenges in the shift from hardware to software-defined platforms.
+                </p>
+            </div>
+
+            <div class="division-list">
+                <div class="division-item">
+                    <div class="division-header">
+                        <div class="division-icon">🚗</div>
+                        <div>
+                            <div class="division-title">Mobility (~60% of revenue)</div>
+                        </div>
+                    </div>
+                    <div class="division-subtitle">Tier-1 automotive powerhouse evolving into software-led mobility</div>
+                    <div class="division-list-items">
+                        <div class="division-list-item">ADAS & autonomous systems</div>
+                        <div class="division-list-item">EV drive systems + semiconductors</div>
+                        <div class="division-list-item">Vehicle sensors and connectivity</div>
+                        <div class="division-list-item">Mobility services</div>
+                    </div>
+                </div>
+
+                <div class="division-item">
+                    <div class="division-header">
+                        <div class="division-icon">🏭</div>
+                        <div>
+                            <div class="division-title">Industrial Technology</div>
+                        </div>
+                    </div>
+                    <div class="division-subtitle">Automation and robotics for factories of the future</div>
+                    <div class="division-list-items">
+                        <div class="division-list-item">Bosch Rexroth automation</div>
+                        <div class="division-list-item">Industry 4.0 software and controls</div>
+                    </div>
+                </div>
+
+                <div class="division-item">
+                    <div class="division-header">
+                        <div class="division-icon">🔧</div>
+                        <div>
+                            <div class="division-title">Consumer Goods</div>
+                        </div>
+                    </div>
+                    <div class="division-subtitle">Trusted premium durability</div>
+                    <div class="division-list-items">
+                        <div class="division-list-item">Home appliances (BSH joint venture)</div>
+                        <div class="division-list-item">Power tools and household equipment</div>
+                    </div>
+                </div>
+
+                <div class="division-item">
+                    <div class="division-header">
+                        <div class="division-icon">⚡</div>
+                        <div>
+                            <div class="division-title">Energy & Building Technology</div>
+                        </div>
+                    </div>
+                    <div class="division-subtitle">Infrastructure electrification</div>
+                    <div class="division-list-items">
+                        <div class="division-list-item">Heat pumps</div>
+                        <div class="division-list-item">Smart buildings and security</div>
+                        <div class="division-list-item">Commercial HVAC</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Culture Analysis -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Cultural Analysis</div>
+                <h2 class="section-title">Strengths & Challenges</h2>
+                <p class="section-description">
+                    Bosch is built for hardware excellence and now must master software ecosystems—a fundamental cultural and operational shift.
+                </p>
+            </div>
+
+            <div class="comparison-table">
+                <div class="comparison-column strengths">
+                    <h3 class="comparison-title">Strengths</h3>
+                    <div class="comparison-list">
+                        <div class="comparison-item">Engineering excellence</div>
+                        <div class="comparison-item">Stable foundation structure</div>
+                        <div class="comparison-item">Sustainability leadership</div>
+                        <div class="comparison-item">Trusted global brand</div>
+                    </div>
+                </div>
+
+                <div class="comparison-column challenges">
+                    <h3 class="comparison-title">Challenges</h3>
+                    <div class="comparison-list">
+                        <div class="comparison-item">Slow decision-making</div>
+                        <div class="comparison-item">Software talent + culture gap</div>
+                        <div class="comparison-item">Siloed organization</div>
+                        <div class="comparison-item">Margin pressure in auto + consumer</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Theta Framework -->
+    <section style="background: #f8f8f8;">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Innovation Framework</div>
+                <h2 class="section-title">Bosch in the Theta Framework</h2>
+                <p class="section-description">
+                    Where innovation lives today (Core) isn't where Bosch's next growth must come from (Edge → Beyond).
+                </p>
+            </div>
+
+            <div class="theta-grid">
+                <div class="theta-zone core">
+                    <div class="theta-header">
+                        <div class="theta-title-group">
+                            <div class="theta-emoji">🟩</div>
+                            <h3 class="theta-title">Core</h3>
+                        </div>
+                        <div class="theta-percentage">55%</div>
+                    </div>
+                    <div class="theta-innovation">Incremental + Adjacent Innovation</div>
+                    <div class="theta-examples">
+                        Auto components, power tools, appliances, connected upgrades
+                    </div>
+                    <div class="theta-purpose">→ Funds the future</div>
+                </div>
+
+                <div class="theta-zone edge">
+                    <div class="theta-header">
+                        <div class="theta-title-group">
+                            <div class="theta-emoji">🟨</div>
+                            <h3 class="theta-title">Edge</h3>
+                        </div>
+                        <div class="theta-percentage">30%</div>
+                    </div>
+                    <div class="theta-innovation">Architectural + Disruptive Innovation</div>
+                    <div class="theta-examples">
+                        A.IoT platforms, predictive maintenance, ADAS, SiC chips, heat pumps
+                    </div>
+                    <div class="theta-purpose">→ Unlock trapped value, move from hardware to software</div>
+                </div>
+
+                <div class="theta-zone beyond">
+                    <div class="theta-header">
+                        <div class="theta-title-group">
+                            <div class="theta-emoji">🟥</div>
+                            <h3 class="theta-title">Beyond</h3>
+                        </div>
+                        <div class="theta-percentage">15%</div>
+                    </div>
+                    <div class="theta-innovation">Transformational + Frontier Innovation</div>
+                    <div class="theta-examples">
+                        Hydrogen ecosystems, industrial energy platforms, quantum security
+                    </div>
+                    <div class="theta-purpose">→ Keep Bosch relevant in the 2040s and beyond</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ecosystem Strategy -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Innovation Ecosystem</div>
+                <h2 class="section-title">Startup & Partnership Strategy</h2>
+                <p class="section-description">
+                    Bosch has built a comprehensive ecosystem to bridge "old Bosch" to "new Bosch" through venture investments, accelerators, and open innovation platforms.
+                </p>
+            </div>
+
+            <div class="ecosystem-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Initiative</th>
+                            <th>What It Does</th>
+                            <th>Why It Matters</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="table-initiative">Bosch Ventures (CVC)</td>
+                            <td>Invests in deep tech start-ups globally</td>
+                            <td>Early access to new tech + future acquisitions</td>
+                        </tr>
+                        <tr>
+                            <td class="table-initiative">Open Bosch</td>
+                            <td>Venture-client model; pilots inside Bosch units</td>
+                            <td>Startup agility + rapid integration</td>
+                        </tr>
+                        <tr>
+                            <td class="table-initiative">Startup Harbour</td>
+                            <td>Accelerator for digital + sensor innovations</td>
+                            <td>Talent + early-stage co-build capability</td>
+                        </tr>
+                        <tr>
+                            <td class="table-initiative">Bosch Business Innovations</td>
+                            <td>Internal startup builder</td>
+                            <td>Bridges "old Bosch" to "new Bosch"</td>
+                        </tr>
+                        <tr>
+                            <td class="table-initiative">Innovation Partnerships Portal</td>
+                            <td>Open submissions from tech ecosystem</td>
+                            <td>Crowd-sourced discovery → lowers R&D cost and time</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quote Section -->
+    <div class="quote-section">
+        <div class="container">
+            <div class="quote-content">
+                <p class="quote-text">
+                    Bosch does not struggle with <span class="quote-highlight">invention</span>.<br>
+                    It struggles with <span class="quote-highlight">reinvention at software speed</span>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>Case Study: When Hardware Giants Need Software Souls</p>
+                <p>How Bosch Is Rewiring an Industrial Titan for the Era of Intelligent Machines</p>
+            </div>
+            <div class="footer-author">
+                A case study by Christine Pamela
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
