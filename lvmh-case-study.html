@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LVMH Case Study: Culture vs. Tech in Luxury</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            color: #1a1a1a;
+            line-height: 1.6;
+            background: #ffffff;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            padding: 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            color: #d4af37;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .hero-author {
+            font-size: 1rem;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.7); 
+            margin-top: 2rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #d4af37;
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Section Styling */
+        section {
+            padding: 6rem 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        section:last-child {
+            border-bottom: none;
+        }
+
+        .section-header {
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #d4af37;
+            margin-bottom: 1rem;
+            font-weight: 400;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            letter-spacing: 0.02em;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin: 3rem 0 1.5rem;
+            letter-spacing: 0.02em;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        /* Executive Summary */
+        .executive-summary {
+            background: #f8f8f8;
+            padding: 3rem;
+            border-left: 3px solid #d4af37;
+            margin: 2rem 0;
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+
+        /* Data Grid */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .data-card {
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .data-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .data-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #999;
+            margin-bottom: 0.5rem;
+        }
+
+        .data-value {
+            font-size: 2rem;
+            font-weight: 300;
+            color: #1a1a1a;
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+
+        th {
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        tr:hover {
+            background: #f8f8f8;
+        }
+
+        /* Innovation Framework */
+        .theta-framework {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .zone-card {
+            padding: 2rem;
+            border-radius: 2px;
+            color: #ffffff;
+            min-height: 300px;
+        }
+
+        .zone-core {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b21 100%);
+        }
+
+        .zone-edge {
+            background: linear-gradient(135deg, #8b6914 0%, #b8941f 100%);
+        }
+
+        .zone-beyond {
+            background: linear-gradient(135deg, #8b1a1a 0%, #b52424 100%);
+        }
+
+        .zone-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .zone-percentage {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+
+        .zone-description {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .zone-list {
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+
+        .zone-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.9rem;
+        }
+
+        .zone-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Comparison Table */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .company-card {
+            border: 2px solid #e5e5e5;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .company-card:hover {
+            border-color: #d4af37;
+            transform: translateY(-5px);
+        }
+
+        .company-name {
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .company-focus {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .focus-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .bar {
+            height: 8px;
+            background: #e5e5e5;
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .bar-core { background: #3d6b21; }
+        .bar-edge { background: #b8941f; }
+        .bar-beyond { background: #b52424; }
+
+        /* Risk Table */
+        .risk-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .risk-card {
+            border-left: 4px solid #b52424;
+            padding: 1.5rem;
+            background: #f8f8f8;
+        }
+
+        .risk-title {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Quote/Insight */
+        .insight-box {
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 3rem;
+            margin: 3rem 0;
+            text-align: center;
+            font-size: 1.5rem;
+            font-style: italic;
+            line-height: 1.8;
+            border-left: 4px solid #d4af37;
+        }
+
+        /* Recommendation */
+        .recommendation {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin: 3rem 0;
+            padding: 3rem;
+            background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 100%);
+        }
+
+        .allocation {
+            text-align: center;
+        }
+
+        .allocation-label {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #999;
+            margin-bottom: 1rem;
+        }
+
+        .allocation-value {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .allocation-bars {
+            display: flex;
+            height: 60px;
+            margin-top: 1rem;
+            gap: 2px;
+        }
+
+        .alloc-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 400;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .theta-framework {
+                grid-template-columns: 1fr;
+            }
+
+            .recommendation {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 4rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-subtitle">Case Study</div>
+            <h1>Culture vs. Tech in Luxury:<br>Is LVMH Future-Ready?</h1>
+            <p class="hero-author">By Christine Pamela</p>
+        </div>
+        <div class="scroll-indicator">Scroll to Explore</div>
+    </div>
+
+    <!-- Executive Summary -->
+    <section>
+        <div class="container">
+            <div class="section-header">Executive Summary</div>
+            <h2>The Luxury Paradox</h2>
+            <div class="executive-summary">
+                LVMH dominates global luxury today. Its Core and Edge zones secure profit and cultural relevance, while Beyond-zone investments are minimal, creating a risk of technological under-preparedness for digital-native luxury consumers. Comparative insight with Kering, Chanel, and Hermès shows that LVMH leads in scale and margin but lags in future-oriented, tech-forward initiatives.
+            </div>
+        </div>
+    </section>
+
+    <!-- Background & Growth -->
+    <section>
+        <div class="container">
+            <div class="section-header">Background</div>
+            <h2>LVMH Overview</h2>
+            
+            <div class="data-grid">
+                <div class="data-card">
+                    <div class="data-label">Founded</div>
+                    <div class="data-value">1987</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-label">2024 Revenue</div>
+                    <div class="data-value">€86B+</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-label">Employees</div>
+                    <div class="data-value">~196,000</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-label">Brands</div>
+                    <div class="data-value">75+</div>
+                </div>
+            </div>
+
+            <h3>Louis Vuitton: The Crown Jewel</h3>
+            <p>Louis Vuitton contributes approximately 25% of LVMH's revenue but generates over 45% of profit, making it both a cash engine and cultural powerhouse. Founded in 1854, the brand has evolved from trunk-maker to global status symbol under creative directors Nicolas Ghesquière and Pharrell Williams.</p>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Acquisition</th>
+                            <th>Price</th>
+                            <th>Strategic Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1987</td>
+                            <td>LV + Moët Hennessy</td>
+                            <td>—</td>
+                            <td>Conglomerate formed</td>
+                        </tr>
+                        <tr>
+                            <td>1999</td>
+                            <td>Fendi</td>
+                            <td>~$300M</td>
+                            <td>Rescued brand → profitable</td>
+                        </tr>
+                        <tr>
+                            <td>2011</td>
+                            <td>Bulgari</td>
+                            <td>$5.2B</td>
+                            <td>Jewelry acceleration</td>
+                        </tr>
+                        <tr>
+                            <td>2017</td>
+                            <td>Christian Dior Couture</td>
+                            <td>$13B</td>
+                            <td>Full control of Dior</td>
+                        </tr>
+                        <tr>
+                            <td>2021</td>
+                            <td>Tiffany & Co.</td>
+                            <td>$15.8B</td>
+                            <td>US flagship jewel, youth appeal</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Innovation Framework -->
+    <section style="background: #f8f8f8;">
+        <div class="container">
+            <div class="section-header">Innovation Framework</div>
+            <h2>The Theta Model: Three Zones of Innovation</h2>
+            
+            <div class="theta-framework">
+                <div class="zone-card zone-core">
+                    <div class="zone-title">Core Zone 🟩</div>
+                    <div class="zone-percentage">70%</div>
+                    <div class="zone-description">Optimize & extend existing luxury powerhouses. Cash engine through leather goods, selective retail, and heritage brands.</div>
+                    <ul class="zone-list">
+                        <li>Louis Vuitton leather goods refreshes</li>
+                        <li>Sephora format expansion</li>
+                        <li>Moët Hennessy limited drops</li>
+                        <li>Tiffany Blue Box revivals</li>
+                    </ul>
+                </div>
+
+                <div class="zone-card zone-edge">
+                    <div class="zone-title">Edge Zone 🟨</div>
+                    <div class="zone-percentage">25%</div>
+                    <div class="zone-description">New experiences + cultural reinvention. Brand heat and youth relevance through bold collaborations.</div>
+                    <ul class="zone-list">
+                        <li>LV x Supreme</li>
+                        <li>Fenty Beauty (Rihanna)</li>
+                        <li>Loewe (Jonathan Anderson)</li>
+                        <li>Virtual runway pilots</li>
+                    </ul>
+                </div>
+
+                <div class="zone-card zone-beyond">
+                    <div class="zone-title">Beyond Zone 🟥</div>
+                    <div class="zone-percentage">5%</div>
+                    <div class="zone-description">Future bets + transformational initiatives. System-level change in digital identity, AI, and sustainability.</div>
+                    <ul class="zone-list">
+                        <li>Aura Blockchain Consortium</li>
+                        <li>Biotech + luxury materials R&D</li>
+                        <li>Next-gen retail AI</li>
+                        <li>Space-related activations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Competitive Comparison -->
+    <section>
+        <div class="container">
+            <div class="section-header">Competitive Analysis</div>
+            <h2>LVMH vs. Luxury Peers</h2>
+            
+            <div class="comparison-grid">
+                <div class="company-card">
+                    <div class="company-name">LVMH</div>
+                    <div class="company-focus">
+                        <div class="focus-bar">
+                            <span>Core</span>
+                            <div class="bar"><div class="bar-fill bar-core" style="width: 70%"></div></div>
+                            <span>70%</span>
+                        </div>
+                        <div class="focus-bar">
+                            <span>Edge</span>
+                            <div class="bar"><div class="bar-fill bar-edge" style="width: 25%"></div></div>
+                            <span>25%</span>
+                        </div>
+                        <div class="focus-bar">
+                            <span>Beyond</span>
+                            <div class="bar"><div class="bar-fill bar-beyond" style="width: 5%"></div></div>
+                            <span>5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="company-card">
+                    <div class="company-name">Kering</div>
+                    <div class="company-focus">
+                        <div class="focus-bar">
+                            <span>Core</span>
+                            <div class="bar"><div class="bar-fill bar-core" style="width: 50%"></div></div>
+                            <span>50%</span>
+                        </div>
+                        <div class="focus-bar">
+                            <span>Edge</span>
+                            <div class="bar"><div class="bar-fill bar-edge" style="width: 35%"></div></div>
+                            <span>35%</span>
+                        </div>
+                        <div class="focus-bar">
+                            <span>Beyond</span>
+                            <div class="bar"><div class="bar-fill bar-beyond" style="width: 15%"></div></div>
+                            <span>15%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="company-card">
+                    <div class="company-name">Chanel</div>
+                    <div class="company-focus">
+                        <div class="focus-bar">
+                            <span>Core</span>
+                            <div class="bar"><div class="bar-fill bar-core" style="width: 60%"></div></div>
+                            <span>60%</span>
+                        </div>
+                        <div class="focus-bar">
+                            <span>Edge</span>
+                            <div class="bar"><div class="bar-fill bar-edge" style="width: 30%"></div></div>
+                            <span>30%</span>
+                        </div>
+                        <div class="focus-bar">
+                            <span>Beyond</span>
+                            <div class="bar"><div class="bar-fill bar-beyond" style="width: 10%"></div></div>
+                            <span>10%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="company-card">
+                    <div class="company-name">Hermès</div>
+                    <div class="company-focus">
+                        <div class="focus-bar">
+                            <span>Core</span>
+                            <div class="bar"><div class="bar-fill bar-core" style="width: 85%"></div></div>
+                            <span>85%</span>
+                        </div>
+                        <div class="focus-bar">
+                            <span>Edge</span>
+                            <div class="bar"><div class="bar-fill bar-edge" style="width: 10%"></div></div>
+                            <span>10%</span>
+                        </div>
+                        <div class="focus-bar">
+                            <span>Beyond</span>
+                            <div class="bar"><div class="bar-fill bar-beyond" style="width: 5%"></div></div>
+                            <span>5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="company-card">
+                    <div class="company-name">Richemont</div>
+                    <div class="company-focus">
+                        <div class="focus-bar">
+                            <span>Core</span>
+                            <div class="bar"><div class="bar-fill bar-core" style="width: 80%"></div></div>
+                            <span>80%</span>
+                        </div>
+                        <div class="focus-bar">
+                            <span>Edge</span>
+                            <div class="bar"><div class="bar-fill bar-edge" style="width: 15%"></div></div>
+                            <span>15%</span>
+                        </div>
+                        <div class="focus-bar">
+                            <span>Beyond</span>
+                            <div class="bar"><div class="bar-fill bar-beyond" style="width: 5%"></div></div>
+                            <span>5%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p style="margin-top: 3rem;">Kering leads in future-focused innovation with 15% Beyond allocation, heavily invested in NFTs, virtual fashion, and sustainability labs. LVMH and Hermès share conservative 5% Beyond investments, but LVMH's scale and cultural dominance provide more resilience.</p>
+        </div>
+    </section>
+
+    <!-- Strategic Risks -->
+    <section style="background: #f8f8f8;">
+        <div class="container">
+            <div class="section-header">Risk Analysis</div>
+            <h2>Strategic Vulnerabilities</h2>
+            
+            <div class="risk-grid">
+                <div class="risk-card">
+                    <div class="risk-title">Overreliance on Asia</div>
+                    <p>Asia represents 35%+ of revenue. Geopolitical tensions and economic slowdowns in China create cyclical vulnerability.</p>
+                </div>
+
+                <div class="risk-card">
+                    <div class="risk-title">Brand Dilution</div>
+                    <p>Excessive collaborations and market saturation risk eroding the mystique and exclusivity that define luxury.</p>
+                </div>
+
+                <div class="risk-card">
+                    <div class="risk-title">Counterfeiting</div>
+                    <p>Over 90% of Louis Vuitton products in circulation are counterfeit, threatening brand exclusivity and pricing power.</p>
+                </div>
+
+                <div class="risk-card">
+                    <div class="risk-title">Digital-Native Competitors</div>
+                    <p>Web3 ecosystems, virtual fashion platforms, and direct-to-consumer digital brands bypass traditional luxury gatekeepers.</p>
+                </div>
+
+                <div class="risk-card">
+                    <div class="risk-title">Tech Ecosystem Lag</div>
+                    <p>Lack of investment in digital identity, AI personalization, and circularity platforms may cede leadership to tech-forward competitors.</p>
+                </div>
+
+                <div class="risk-card">
+                    <div class="risk-title">Sustainability Backlash</div>
+                    <p>Growing consumer scrutiny and activist pressure demand authentic circular economy solutions, not greenwashing.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Insight -->
+    <section>
+        <div class="container">
+            <div class="insight-box">
+                "LVMH risks becoming the Kodak of luxury — dominant now but underweight in tomorrow's operating system."
+            </div>
+        </div>
+    </section>
+
+    <!-- Recommendations -->
+    <section style="background: #f8f8f8;">
+        <div class="container">
+            <div class="section-header">Strategic Recommendations</div>
+            <h2>Path to Future-Readiness</h2>
+            
+            <div class="recommendation">
+                <div class="allocation">
+                    <div class="allocation-label">Current Allocation</div>
+                    <div class="allocation-value">70 / 25 / 5</div>
+                    <div class="allocation-bars">
+                        <div class="alloc-bar bar-core" style="flex: 70;">70%</div>
+                        <div class="alloc-bar bar-edge" style="flex: 25;">25%</div>
+                        <div class="alloc-bar bar-beyond" style="flex: 5;">5%</div>
+                    </div>
+                </div>
+
+                <div class="allocation">
+                    <div class="allocation-label">Target by 2030</div>
+                    <div class="allocation-value">60 / 25 / 15</div>
+                    <div class="allocation-bars">
+                        <div class="alloc-bar bar-core" style="flex: 60;">60%</div>
+                        <div class="alloc-bar bar-edge" style="flex: 25;">25%</div>
+                        <div class="alloc-bar bar-beyond" style="flex: 15;">15%</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Priority Beyond Initiatives</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Focus Area</th>
+                            <th>Strategic Importance</th>
+                            <th>Timeline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Smart Luxury</td>
+                            <td>Materials innovation + authentication technology to combat counterfeiting and enhance value</td>
+                            <td>2025-2027</td>
+                        </tr>
+                        <tr>
+                            <td>True Circularity</td>
+                            <td>Resale, repair, and upcycling ecosystems that enhance rather than diminish desirability</td>
+                            <td>2025-2028</td>
+                        </tr>
+                        <tr>
+                            <td>Digital Identity</td>
+                            <td>Web3 ownership, virtual goods, and metaverse presence for digital-native consumers</td>
+                            <td>2025-2030</td>
+                        </tr>
+                        <tr>
+                            <td>AI-Augmented Craftsmanship</td>
+                            <td>Personalization at scale without sacrificing human artistry and heritage</td>
+                            <td>2026-2030</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conclusion -->
+    <section>
+        <div class="container">
+            <div class="section-header">Conclusion</div>
+            <h2>The Future of Luxury</h2>
+            <p style="font-size: 1.3rem; line-height: 1.8; max-width: 900px; margin: 0 auto;">
+                LVMH preserves the past, dominates the present, and must invest strategically to secure the future. The conglomerate's unparalleled scale, cultural relevance, and financial strength provide a strong foundation. However, to maintain leadership through 2030 and beyond, LVMH must shift from a 70/25/5 to a 60/25/15 allocation model—reducing Core dominance while tripling Beyond investments in digital identity, AI, and circular luxury ecosystems.
+            </p>
+            <p style="font-size: 1.3rem; line-height: 1.8; max-width: 900px; margin: 2rem auto 0;">
+                The question is not whether LVMH will remain dominant today, but whether it will define luxury tomorrow.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="color: #d4af37; letter-spacing: 0.2em; text-transform: uppercase; font-size: 0.9rem;">Case Study</p>
+            <p style="margin-top: 0.5rem; opacity: 0.7;">LVMH: Culture vs. Tech in Luxury</p>
+            <p style="margin-top: 1rem; opacity: 0.5; font-size: 0.9rem;">© 2025 Christine Pamela</p>
+        </div>
+    </footer>
+</body>
+</html>
