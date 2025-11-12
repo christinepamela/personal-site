@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theta Framework - Innovation Mapping for Consultancies</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            overflow: hidden;
+            background: #0f172a;
+        }
+
+        .slide {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        /* Hero Slide */
+        .hero-slide {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+        }
+
+        .hero-blob-1 {
+            position: absolute;
+            top: 5rem;
+            left: 5rem;
+            width: 24rem;
+            height: 24rem;
+            background: #10b981;
+            border-radius: 50%;
+            filter: blur(80px);
+        }
+
+        .hero-blob-2 {
+            position: absolute;
+            bottom: 5rem;
+            right: 5rem;
+            width: 24rem;
+            height: 24rem;
+            background: #f59e0b;
+            border-radius: 50%;
+            filter: blur(80px);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 80rem;
+        }
+
+        .hero-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+        }
+
+        .hero-title {
+            font-size: 7rem;
+            font-weight: 300;
+            color: white;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.05em;
+            line-height: 1;
+        }
+
+        .hero-subtitle {
+            font-size: 2rem;
+            color: #cbd5e1;
+            font-weight: 300;
+            margin-bottom: 3rem;
+        }
+
+        .hero-divider {
+            height: 1px;
+            width: 8rem;
+            background: #10b981;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-description {
+            font-size: 1.5rem;
+            color: #94a3b8;
+            font-weight: 300;
+            line-height: 1.8;
+            max-width: 56rem;
+            margin: 0 auto;
+        }
+
+        /* White/Light Slides */
+        .white-slide {
+            background: white;
+        }
+
+        .light-slide {
+            background: #f8fafc;
+        }
+
+        .container {
+            max-width: 80rem;
+            width: 100%;
+        }
+
+        .section-label {
+            font-size: 0.875rem;
+            color: #10b981;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .section-title {
+            font-size: 4rem;
+            font-weight: 300;
+            color: #0f172a;
+            margin-bottom: 2rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-subtitle {
+            font-size: 1.5rem;
+            color: #64748b;
+            font-weight: 300;
+            margin-bottom: 3rem;
+        }
+
+        /* Challenge Cards */
+        .challenge-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+        }
+
+        .challenge-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .challenge-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .challenge-card h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #0f172a;
+        }
+
+        .challenge-card p {
+            color: #64748b;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* Table */
+        .table-container {
+            max-height: calc(100vh - 20rem);
+            overflow-y: auto;
+            margin-bottom: 4rem;
+        }
+
+        .theta-table {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .theta-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .theta-table thead {
+            background: #0f172a;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .theta-table th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .theta-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .zone-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .zone-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+        }
+
+        .core-row {
+            background: #f0fdf4;
+        }
+
+        .edge-row {
+            background: #fffbeb;
+        }
+
+        .beyond-row {
+            background: #fef2f2;
+        }
+
+        /* Dark Slide */
+        .dark-slide {
+            background: #0f172a;
+        }
+
+        .dark-label {
+            color: #10b981;
+        }
+
+        .dark-title {
+            color: white;
+            font-size: 4rem;
+        }
+
+        .dark-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4rem;
+            text-align: center;
+        }
+
+        .dark-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dark-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            background: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .dark-card h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .dark-card p {
+            color: #94a3b8;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* KPI Cards */
+        .kpi-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 80rem;
+        }
+
+        .kpi-card {
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .kpi-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .kpi-card h3 {
+            font-size: 2rem;
+            font-weight: 500;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-card p {
+            color: #64748b;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .kpi-card small {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        /* 4-Move Grid */
+        .move-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .move-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .move-number {
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .move-card h3 {
+            font-size: 2rem;
+            font-weight: 500;
+            color: #0f172a;
+            margin-bottom: 0.75rem;
+        }
+
+        .move-card > p {
+            color: #64748b;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .move-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+        }
+
+        .move-footer span:first-child {
+            color: #94a3b8;
+        }
+
+        .move-footer span:last-child {
+            color: #0f172a;
+            font-weight: 500;
+        }
+
+        /* Partnership Quote */
+        .partnership-quote {
+            background: #1e293b;
+            border-radius: 0.75rem;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .partnership-quote p {
+            font-size: 2rem;
+            color: white;
+            font-weight: 300;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .partnership-divider {
+            height: 1px;
+            width: 6rem;
+            background: #10b981;
+        }
+
+        .partnership-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            text-align: center;
+        }
+
+        .partnership-item h4 {
+            font-size: 3rem;
+            font-weight: 300;
+            color: #10b981;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .partnership-item p {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        /* Alignment Cards */
+        .alignment-container {
+            max-height: calc(100vh - 18rem);
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+
+        .alignment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .alignment-card {
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            padding: 2rem;
+        }
+
+        .alignment-card h3 {
+            font-size: 2rem;
+            font-weight: 500;
+            color: #0f172a;
+            margin-bottom: 0.75rem;
+        }
+
+        .alignment-card p {
+            color: #64748b;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* Positioning Quote */
+        .positioning-quote {
+            background: #1e293b;
+            border-radius: 0.75rem;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .positioning-quote p {
+            font-size: 2.5rem;
+            color: white;
+            font-weight: 300;
+            line-height: 1.6;
+            letter-spacing: -0.02em;
+        }
+
+        .positioning-footer {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            color: #94a3b8;
+        }
+
+        .positioning-item div:first-child {
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .positioning-item div:last-child {
+            color: white;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        /* Client Paths */
+        .paths-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .path-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .path-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+        }
+
+        .path-card h3 {
+            font-size: 2rem;
+            font-weight: 500;
+            color: #0f172a;
+            margin-bottom: 1rem;
+        }
+
+        .path-card > p {
+            color: #64748b;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .path-card small {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 50;
+        }
+
+        .nav-button {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            color: #0f172a;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background: #f1f5f9;
+            transform: scale(1.05);
+        }
+
+        .nav-button:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
+        .nav-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background: #94a3b8;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-dot.active {
+            width: 2rem;
+            background: #10b981;
+        }
+
+        .nav-dot:hover:not(.active) {
+            background: #cbd5e1;
+        }
+
+        /* Slide Counter */
+        .slide-counter {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            font-size: 0.875rem;
+            font-weight: 300;
+            z-index: 50;
+        }
+
+        .counter-light {
+            color: #64748b;
+        }
+
+        .counter-dark {
+            color: white;
+        }
+
+        /* Keyboard Hint */
+        .keyboard-hint {
+            position: fixed;
+            bottom: 6rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #94a3b8;
+            font-size: 0.875rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @media (max-width: 1200px) {
+            .hero-title {
+                font-size: 4rem;
+            }
+            
+            .section-title, .dark-title {
+                font-size: 2.5rem;
+            }
+            
+            .challenge-grid,
+            .dark-grid,
+            .paths-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .move-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .partnership-item h4 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Slide 1: Hero -->
+    <div class="slide active hero-slide">
+        <div class="hero-bg">
+            <div class="hero-blob-1"></div>
+            <div class="hero-blob-2"></div>
+        </div>
+        <div class="slide-content">
+            <div class="hero-content">
+                <div class="hero-dots">
+                    <div class="hero-dot" style="background: #10b981;"></div>
+                    <div class="hero-dot" style="background: #f59e0b;"></div>
+                    <div class="hero-dot" style="background: #f43f5e;"></div>
+                </div>
+                <h1 class="hero-title">Theta Framework</h1>
+                <p class="hero-subtitle">Innovation Mapping for Strategic Consultancies</p>
+                <div class="hero-divider"></div>
+                <p class="hero-description">
+                    Helping your clients build the next revenue engine<br/>while safeguarding the one they already have
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 2: The Challenge -->
+    <div class="slide white-slide">
+        <div class="slide-content">
+            <div class="container">
+                <div style="margin-bottom: 4rem;">
+                    <div class="section-label">The Challenge</div>
+                    <h2 class="section-title">The portfolio balance dilemma</h2>
+                </div>
+                <div class="challenge-grid">
+                    <div class="challenge-card">
+                        <div class="challenge-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                            </svg>
+                        </div>
+                        <h3>Core-Heavy</h3>
+                        <p>Most portfolios focus 80%+ on incremental optimization, missing transformational opportunities</p>
+                    </div>
+                    <div class="challenge-card">
+                        <div class="challenge-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <circle cx="12" cy="12" r="6"></circle>
+                                <circle cx="12" cy="12" r="2"></circle>
+                            </svg>
+                        </div>
+                        <h3>Pilot Purgatory</h3>
+                        <p>Edge initiatives remain small experiments without clear scaling paths or investment criteria</p>
+                    </div>
+                    <div class="challenge-card">
+                        <div class="challenge-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                <polyline points="17 6 23 6 23 12"></polyline>
+                            </svg>
+                        </div>
+                        <h3>Beyond Speculation</h3>
+                        <p>Moonshots lack structure, metrics, and board-level credibility for strategic resource allocation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: The Map -->
+    <div class="slide light-slide">
+        <div class="slide-content">
+            <div class="container">
+                <div style="margin-bottom: 2rem; text-align: center;">
+                    <div class="section-label">The Theta Map</div>
+                    <h2 class="section-title">Three zones, one portfolio</h2>
+                </div>
+                <div class="table-container">
+                    <div class="theta-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Zone</th>
+                                    <th>Innovation Type</th>
+                                    <th>Market Reach</th>
+                                    <th>Tech Change</th>
+                                    <th>Example</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="core-row">
+                                    <td>
+                                        <div class="zone-badge">
+                                            <div class="zone-dot" style="background: #10b981;"></div>
+                                            <strong>Core</strong>
+                                        </div>
+                                    </td>
+                                    <td style="color: #475569;">Core Innovation</td>
+                                    <td style="color: #64748b;">Existing</td>
+                                    <td style="color: #64748b;">Low / Incremental</td>
+                                    <td style="color: #64748b;">Intel processors</td>
+                                </tr>
+                                <tr class="core-row">
+                                    <td>
+                                        <div class="zone-badge">
+                                            <div class="zone-dot" style="background: #10b981;"></div>
+                                            <strong>Core</strong>
+                                        </div>
+                                    </td>
+                                    <td style="color: #475569;">Adjacent Innovation</td>
+                                    <td style="color: #64748b;">Existing → New</td>
+                                    <td style="color: #64748b;">Low / Incremental</td>
+                                    <td style="color: #64748b;">LEGO STEM kits</td>
+                                </tr>
+                                <tr class="edge-row">
+                                    <td>
+                                        <div class="zone-badge">
+                                            <div class="zone-dot" style="background: #f59e0b;"></div>
+                                            <strong>Edge</strong>
+                                        </div>
+                                    </td>
+                                    <td style="color: #475569;">Architectural Innovation</td>
+                                    <td style="color: #64748b;">Existing → New</td>
+                                    <td style="color: #64748b;">Moderate → High</td>
+                                    <td style="color: #64748b;">Walkman → AirPods</td>
+                                </tr>
+                                <tr class="edge-row">
+                                    <td>
+                                        <div class="zone-badge">
+                                            <div class="zone-dot" style="background: #f59e0b;"></div>
+                                            <strong>Edge</strong>
+                                        </div>
+                                    </td>
+                                    <td style="color: #475569;">Disruptive Innovation</td>
+                                    <td style="color: #64748b;">New</td>
+                                    <td style="color: #64748b;">Moderate → High</td>
+                                    <td style="color: #64748b;">iPod, Uber</td>
+                                </tr>
+                                <tr class="beyond-row">
+                                    <td>
+                                        <div class="zone-badge">
+                                            <div class="zone-dot" style="background: #f43f5e;"></div>
+                                            <strong>Beyond</strong>
+                                        </div>
+                                    </td>
+                                    <td style="color: #475569;">Transformational</td>
+                                    <td style="color: #64748b;">New → Emerging</td>
+                                    <td style="color: #64748b;">Radical</td>
+                                    <td style="color: #64748b;">AI, Electric vehicles</td>
+                                </tr>
+                                <tr class="beyond-row">
+                                    <td>
+                                        <div class="zone-badge">
+                                            <div class="zone-dot" style="background: #f43f5e;"></div>
+                                            <strong>Beyond</strong>
+                                        </div>
+                                    </td>
+                                    <td style="color: #475569;">Frontier Research</td>
+                                    <td style="color: #64748b;">Speculative</td>
+                                    <td style="color: #64748b;">Extreme</td>
+                                    <td style="color: #64748b;">Quantum computing</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: Value Proposition -->
+    <div class="slide dark-slide">
+        <div class="slide-content">
+            <div class="container" style="text-align: center;">
+                <div style="margin-bottom: 4rem;">
+                    <div class="section-label dark-label">Why Theta Matters</div>
+                    <h2 class="section-title dark-title">Built for consultancy excellence</h2>
+                </div>
+                <div class="dark-grid">
+                    <div class="dark-card">
+                        <div class="dark-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                        </div>
+                        <h3>Faster Baseline</h3>
+                        <p>Shorter client workshops with structured scoring frameworks</p>
+                    </div>
+                    <div class="dark-card">
+                        <div class="dark-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                                <circle cx="12" cy="8" r="7"></circle>
+                                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                            </svg>
+                        </div>
+                        <h3>Board Credibility</h3>
+                        <p>Quantitative maps that resonate at C-suite and board level</p>
+                    </div>
+                    <div class="dark-card">
+                        <div class="dark-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                                <line x1="12" y1="20" x2="12" y2="10"></line>
+                                <line x1="18" y1="20" x2="18" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="16"></line>
+                            </svg>
+                        </div>
+                        <h3>Measurable KPIs</h3>
+                        <p>Learning velocity, adoption metrics, strategic optionality</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5: KPIs -->
+    <div class="slide white-slide">
+        <div class="slide-content">
+            <div class="container">
+                <div style="margin-bottom: 4rem; text-align: center;">
+                    <div class="section-label">Innovation Metrics</div>
+                    <h2 class="section-title">Key Performance Indicators</h2>
+                </div>
+                <div class="kpi-list">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: #d1fae5;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>Learning Velocity</h3>
+                            <p>Speed from idea → prototype → real-world test</p>
+                            <small>Measurement: Cycle time per experiment</small>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: #fef3c7;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <circle cx="12" cy="12" r="6"></circle>
+                                <circle cx="12" cy="12" r="2"></circle>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>Risk-Taking & Failure Rate</h3>
+                            <p>Intelligent experimentation; learning from "smart failures"</p>
+                            <small>Measurement: % experiments that fail but improve iteration</small>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background: #fecdd3;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                <polyline points="17 6 23 6 23 12"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>Adoption & Market Traction</h3>
+                            <p>Real-world validation from early users</p>
+                            <small>Measurement: Engagement, testing, adoption metrics</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: 4-Move System -->
+    <div class="slide light-slide">
+        <div class="slide-content">
+            <div class="container">
+                <div style="margin-bottom: 4rem; text-align: center;">
+                    <div class="section-label">Delivery Model</div>
+                    <h2 class="section-title">The 4-Move System</h2>
+                    <p class="section-subtitle">No 200-page decks. No innovation theater. Just revenue + learning velocity.</p>
+                </div>
+                <div class="move-grid">
+                    <div class="move-card">
+                        <div class="move-number" style="color: #10b981;">01</div>
+                        <h3>The Deep Audit</h3>
+                        <p>Clarity & portfolio baseline</p>
+                        <div class="move-footer">
+                            <span>6–8 weeks</span>
+                            <span>C-suite / Board</span>
+                        </div>
+                    </div>
+                    <div class="move-card">
+                        <div class="move-number" style="color: #f59e0b;">02</div>
+                        <h3>Rewire the System</h3>
+                        <p>Governance & funding lanes</p>
+                        <div class="move-footer">
+                            <span>3–6 months</span>
+                            <span>CFO + CTO</span>
+                        </div>
+                    </div>
+                    <div class="move-card">
+                        <div class="move-number" style="color: #f43f5e;">03</div>
+                        <h3>Ship the Future</h3>
+                        <p>Working pilots + revenue metrics</p>
+                        <div class="move-footer">
+                            <span>6–18 months</span>
+                            <span>Product + BU heads</span>
+                        </div>
+                    </div>
+                    <div class="move-card">
+                        <div class="move-number" style="color: #64748b;">04</div>
+                        <h3>Builders Academy</h3>
+                        <p>Talent & culture shift</p>
+                        <div class="move-footer">
+                            <span>On-demand + live</span>
+                            <span>HR + Innovation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7: Partnership Model -->
+    <div class="slide dark-slide">
+        <div class="slide-content">
+            <div class="container">
+                <div style="margin-bottom: 4rem; text-align: center;">
+                    <div class="section-label dark-label">Partnership Model</div>
+                    <h2 class="section-title dark-title">Your client, our framework</h2>
+                </div>
+                <div class="partnership-quote">
+                    <p>"Think of Theta as a licensed delivery product: you retain the client relationship, we provide the framework, diagnostics, and tools."</p>
+                    <div class="partnership-divider"></div>
+                </div>
+                <div class="partnership-grid">
+                    <div class="partnership-item">
+                        <h4>You Lead</h4>
+                        <p>Client relationship & delivery</p>
+                    </div>
+                    <div class="partnership-item">
+                        <h4>We Support</h4>
+                        <p>Framework & methodology</p>
+                    </div>
+                    <div class="partnership-item">
+                        <h4>Together</h4>
+                        <p>Co-branding & joint IP</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 8: Firm Alignment -->
+    <div class="slide white-slide">
+        <div class="slide-content">
+            <div class="container">
+                <div style="margin-bottom: 3rem; text-align: center;">
+                    <div class="section-label">Firm Alignment</div>
+                    <h2 class="section-title">Tailored to your practice</h2>
+                </div>
+                <div class="alignment-container">
+                    <div class="alignment-list">
+                        <div class="alignment-card">
+                            <h3>Bain & Company</h3>
+                            <p>Emphasize efficiency + measurable ROI. Accelerate results in workshops & board sessions without extra headcount. Perfect complement to Results Delivery® methodology.</p>
+                        </div>
+                        <div class="alignment-card">
+                            <h3>Boston Consulting Group</h3>
+                            <p>Strategy + portfolio mapping. Operational complement to Horizons / Growth Share Matrix. Actionable execution metrics that translate insight into impact.</p>
+                        </div>
+                        <div class="alignment-card">
+                            <h3>Boutique & Niche Firms</h3>
+                            <p>Differentiation + premium service. Future-proof clients without destabilizing current revenue. Scalable IP that enhances your unique positioning.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 9: Positioning -->
+    <div class="slide dark-slide">
+        <div class="slide-content">
+            <div class="container" style="text-align: center;">
+                <div style="margin-bottom: 3rem;">
+                    <div class="section-label dark-label">Strategic Positioning</div>
+                    <h2 class="section-title dark-title">Operating system for future core</h2>
+                </div>
+                <div class="positioning-quote">
+                    <p>"New demand is forming faster than old categories can adapt. Smart companies build the next category while leading the current one."</p>
+                </div>
+                <div class="positioning-footer">
+                    <div class="positioning-item">
+                        <div>Category</div>
+                        <div>Emerging markets & category creation</div>
+                    </div>
+                    <div class="positioning-item">
+                        <div>Mission</div>
+                        <div>Help clients win, not just survive</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 10: Client Paths -->
+    <div class="slide light-slide">
+        <div class="slide-content">
+            <div class="container">
+                <div style="margin-bottom: 4rem; text-align: center;">
+                    <div class="section-label">Client Pathways</div>
+                    <h2 class="section-title">Three strategic paths</h2>
+                </div>
+                <div class="paths-grid">
+                    <div class="path-card">
+                        <div class="path-dot" style="background: #10b981;"></div>
+                        <h3>Protect the Core</h3>
+                        <p>Banks, Telco, Regulated Industries</p>
+                        <small>DBS, Celcom</small>
+                    </div>
+                    <div class="path-card">
+                        <div class="path-dot" style="background: #f59e0b;"></div>
+                        <h3>Scale the Edge</h3>
+                        <p>Consumer + Tech</p>
+                        <small>Grab, Huawei, Microsoft</small>
+                    </div>
+                    <div class="path-card">
+                        <div class="path-dot" style="background: #f43f5e;"></div>
+                        <h3>Create Beyond</h3>
+                        <p>Premium Brands, Moonshot Orgs</p>
+                        <small>SpaceX, Tesla, LVMH</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 11: Closing -->
+    <div class="slide hero-slide">
+        <div class="hero-bg">
+            <div class="hero-blob-1" style="top: 5rem; right: 5rem; left: auto;"></div>
+            <div class="hero-blob-2" style="bottom: 5rem; left: 5rem; right: auto;"></div>
+        </div>
+        <div class="slide-content">
+            <div class="hero-content">
+                <h2 class="hero-title" style="font-size: 5rem;">Partnership Integration</h2>
+                <p class="hero-subtitle" style="font-size: 1.75rem; max-width: 56rem; margin: 0 auto 3rem; line-height: 1.8;">
+                    Theta enhances your advisory value.<br/>
+                    You retain client ownership.<br/>
+                    We provide structured methodology and implementation guidance.
+                </p>
+                <div class="hero-divider" style="margin-bottom: 3rem;"></div>
+                <p class="hero-description" style="font-size: 1.25rem;">
+                    Contact us to discuss co-delivery opportunities
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <button class="nav-button" id="prevBtn" onclick="prevSlide()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+        <div class="nav-dots" id="navDots"></div>
+        <button class="nav-button" id="nextBtn" onclick="nextSlide()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter" id="slideCounter">
+        <span id="counterText">01 / 11</span>
+    </div>
+
+    <!-- Keyboard Hint -->
+    <div class="keyboard-hint" id="keyboardHint">
+        Use arrow keys or click to navigate
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const darkSlides = [0, 3, 6, 8, 10]; // Indices of dark slides
+
+        // Initialize navigation dots
+        function initNavDots() {
+            const navDots = document.getElementById('navDots');
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'nav-dot';
+                if (i === 0) dot.classList.add('active');
+                dot.onclick = () => goToSlide(i);
+                navDots.appendChild(dot);
+            }
+        }
+
+        // Update slide display
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                }
+            });
+
+            // Update navigation dots
+            const dots = document.querySelectorAll('.nav-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.remove('active');
+                if (index === currentSlide) {
+                    dot.classList.add('active');
+                }
+            });
+
+            // Update buttons
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+
+            // Update counter
+            const counterText = `${String(currentSlide + 1).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`;
+            const counter = document.getElementById('counterText');
+            counter.textContent = counterText;
+            
+            // Update counter color based on slide
+            const counterContainer = document.getElementById('slideCounter');
+            if (darkSlides.includes(currentSlide)) {
+                counterContainer.className = 'slide-counter counter-dark';
+            } else {
+                counterContainer.className = 'slide-counter counter-light';
+            }
+
+            // Hide keyboard hint after first slide
+            if (currentSlide > 0) {
+                document.getElementById('keyboardHint').style.display = 'none';
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlides();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlides();
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlides();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        // Touch navigation for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                nextSlide();
+            }
+            if (touchEndX > touchStartX + 50) {
+                prevSlide();
+            }
+        }
+
+        // Initialize
+        initNavDots();
+        updateSlides();
+    </script>
+</body>
+</html>
