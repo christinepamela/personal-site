@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theta Innovation Assessment | Christine Pamela</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background: #FAFAFA;
+        }
+
+        .header {
+            padding: 2rem 0;
+            text-align: center;
+            border-bottom: 1px solid #E5E5E5;
+            background: white;
+        }
+        
+        .brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .intro h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }
+
+        .intro p {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: white;
+            border: 1px solid #E5E5E5;
+            border-radius: 8px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-icon {
+            font-size: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .question {
+            margin-bottom: 2.5rem;
+        }
+
+        .question:last-child {
+            margin-bottom: 0;
+        }
+
+        .question-text {
+            font-weight: 500;
+            font-size: 1.05rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            border: 2px solid #E5E5E5;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            border-color: #999;
+            background: #fafafa;
+        }
+
+        .option input[type="radio"] {
+            margin-top: 0.2rem;
+            margin-right: 1rem;
+            cursor: pointer;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .option.selected {
+            border-color: #333;
+            background: #f8f8f8;
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .submit-button {
+            padding: 1.2rem 3rem;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+
+        .submit-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            display: none;
+            margin-top: 3rem;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .results-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }
+
+        .chart-container {
+            background: white;
+            border: 1px solid #E5E5E5;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .bar {
+            flex: 1;
+            text-align: center;
+        }
+
+        .bar-fill {
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.6s ease;
+        }
+
+        .bar-fill.core {
+            background: linear-gradient(to top, #4caf50, #81c784);
+        }
+
+        .bar-fill.edge {
+            background: linear-gradient(to top, #ffc107, #ffd54f);
+        }
+
+        .bar-fill.beyond {
+            background: linear-gradient(to top, #f44336, #ef5350);
+        }
+
+        .bar-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            padding: 1rem;
+        }
+
+        .bar-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-top: 1rem;
+            color: #333;
+        }
+
+        .recommendations {
+            background: white;
+            border: 1px solid #E5E5E5;
+            border-radius: 8px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .recommendations h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            color: #1a1a1a;
+        }
+
+        .recommendation-item {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-left: 4px solid;
+            background: #fafafa;
+        }
+
+        .recommendation-item.core {
+            border-color: #4caf50;
+        }
+
+        .recommendation-item.edge {
+            border-color: #ffc107;
+        }
+
+        .recommendation-item.beyond {
+            border-color: #f44336;
+        }
+
+        .recommendation-item h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+            color: #1a1a1a;
+        }
+
+        .recommendation-item p {
+            color: #666;
+            line-height: 1.7;
+        }
+
+        .case-studies {
+            background: white;
+            border: 1px solid #E5E5E5;
+            border-radius: 8px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .case-studies h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            color: #1a1a1a;
+        }
+
+        .case-link {
+            display: block;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #E5E5E5;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .case-link:hover {
+            border-color: #333;
+            background: #fafafa;
+        }
+
+        .cta-box {
+            background: #333;
+            color: white;
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .cta-box h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-box p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1.2rem 2.5rem;
+            background: white;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background: #f0f0f0;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #E5E5E5;
+            z-index: 1000;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #333;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .intro h1 {
+                font-size: 2rem;
+            }
+
+            .chart {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .bar-fill {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <header class="header">
+        <a href="https://christinepamela.com/theta_framework.html" class="brand">Theta Assessment</a>
+    </header>
+
+    <div class="container">
+        <div class="intro">
+            <h1>Discover Your Innovation Imbalance</h1>
+            <p>Most companies protect today's business at the expense of tomorrow's growth. This assessment identifies gaps in your Core, Edge, and Beyond innovation zones.</p>
+        </div>
+
+        <form id="assessmentForm">
+            <!-- CORE SECTION -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">🟩</div>
+                    <h2 class="section-title">Core (Protect the Core)</h2>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">1. How much of your organization's focus is currently on defending and optimizing existing products/services?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="core_q1" value="0" id="core_q1_0" required>
+                            <label for="core_q1_0">&lt;50%</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="core_q1" value="2" id="core_q1_2">
+                            <label for="core_q1_2">50–75%</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="core_q1" value="4" id="core_q1_4">
+                            <label for="core_q1_4">75%+</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">2. How formalized are your processes for revenue protection and operational excellence?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="core_q2" value="0" id="core_q2_0" required>
+                            <label for="core_q2_0">Ad hoc</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="core_q2" value="1" id="core_q2_1">
+                            <label for="core_q2_1">Some processes</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="core_q2" value="3" id="core_q2_3">
+                            <label for="core_q2_3">Standardized & tracked</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">3. How frequently do you measure ROI, churn, and EBITDA per product line?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="core_q3" value="0" id="core_q3_0" required>
+                            <label for="core_q3_0">Rarely</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="core_q3" value="1" id="core_q3_1">
+                            <label for="core_q3_1">Occasionally</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="core_q3" value="3" id="core_q3_3">
+                            <label for="core_q3_3">Regularly</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">4. Do your teams resist changes that might destabilize current revenue streams?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="core_q4" value="3" id="core_q4_3" required>
+                            <label for="core_q4_3">Strongly resist</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="core_q4" value="1" id="core_q4_1">
+                            <label for="core_q4_1">Neutral</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="core_q4" value="0" id="core_q4_0">
+                            <label for="core_q4_0">Open to small adjustments</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">5. How confident are your executives in the current product's market defensibility?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="core_q5" value="0" id="core_q5_0" required>
+                            <label for="core_q5_0">Low</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="core_q5" value="1" id="core_q5_1">
+                            <label for="core_q5_1">Medium</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="core_q5" value="3" id="core_q5_3">
+                            <label for="core_q5_3">High</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EDGE SECTION -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">🟨</div>
+                    <h2 class="section-title">Edge (Scale the Edge)</h2>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">1. What proportion of investment goes into new product/market experiments?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="edge_q1" value="0" id="edge_q1_0" required>
+                            <label for="edge_q1_0">&lt;10%</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="edge_q1" value="2" id="edge_q1_2">
+                            <label for="edge_q1_2">10–25%</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="edge_q1" value="4" id="edge_q1_4">
+                            <label for="edge_q1_4">25%+</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">2. How fast can your team move from hypothesis → prototype → real-world test?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="edge_q2" value="0" id="edge_q2_0" required>
+                            <label for="edge_q2_0">6 months per experiment</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="edge_q2" value="2" id="edge_q2_2">
+                            <label for="edge_q2_2">3–6 months</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="edge_q2" value="4" id="edge_q2_4">
+                            <label for="edge_q2_4">&lt;3 months</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">3. How tolerant is leadership of smart failures that lead to learning?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="edge_q3" value="0" id="edge_q3_0" required>
+                            <label for="edge_q3_0">Low tolerance</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="edge_q3" value="2" id="edge_q3_2">
+                            <label for="edge_q3_2">Moderate</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="edge_q3" value="4" id="edge_q3_4">
+                            <label for="edge_q3_4">High</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">4. How well does the team capture and act on market feedback from early adopters?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="edge_q4" value="0" id="edge_q4_0" required>
+                            <label for="edge_q4_0">Poor</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="edge_q4" value="2" id="edge_q4_2">
+                            <label for="edge_q4_2">Some</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="edge_q4" value="4" id="edge_q4_4">
+                            <label for="edge_q4_4">Strong</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">5. Do you have clear metrics to track revenue growth potential in emerging opportunities?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="edge_q5" value="0" id="edge_q5_0" required>
+                            <label for="edge_q5_0">No</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="edge_q5" value="2" id="edge_q5_2">
+                            <label for="edge_q5_2">Partially</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="edge_q5" value="4" id="edge_q5_4">
+                            <label for="edge_q5_4">Yes</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEYOND SECTION -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">🟥</div>
+                    <h2 class="section-title">Beyond (Create Beyond)</h2>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">1. Are you actively exploring new markets, technologies, or business models beyond your current category?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="beyond_q1" value="0" id="beyond_q1_0" required>
+                            <label for="beyond_q1_0">Not yet</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="beyond_q1" value="2" id="beyond_q1_2">
+                            <label for="beyond_q1_2">Some experiments</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="beyond_q1" value="4" id="beyond_q1_4">
+                            <label for="beyond_q1_4">Strategic programs</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">2. Do you measure strategic defensibility, patents, or future market optionality?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="beyond_q2" value="0" id="beyond_q2_0" required>
+                            <label for="beyond_q2_0">No</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="beyond_q2" value="1" id="beyond_q2_1">
+                            <label for="beyond_q2_1">Minimal</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="beyond_q2" value="3" id="beyond_q2_3">
+                            <label for="beyond_q2_3">Regularly</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">3. Do you have dedicated resources for moonshot innovation (time, talent, budget)?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="beyond_q3" value="0" id="beyond_q3_0" required>
+                            <label for="beyond_q3_0">No</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="beyond_q3" value="1" id="beyond_q3_1">
+                            <label for="beyond_q3_1">Partial</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="beyond_q3" value="3" id="beyond_q3_3">
+                            <label for="beyond_q3_3">Fully dedicated</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">4. Do executives consider Beyond initiatives in board-level strategy discussions?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="beyond_q4" value="0" id="beyond_q4_0" required>
+                            <label for="beyond_q4_0">Rarely</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="beyond_q4" value="1" id="beyond_q4_1">
+                            <label for="beyond_q4_1">Occasionally</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="beyond_q4" value="3" id="beyond_q4_3">
+                            <label for="beyond_q4_3">Always</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <p class="question-text">5. Does your company have a culture that encourages thinking beyond the current product/service categories?</p>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" name="beyond_q5" value="0" id="beyond_q5_0" required>
+                            <label for="beyond_q5_0">No</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="beyond_q5" value="1" id="beyond_q5_1">
+                            <label for="beyond_q5_1">Sometimes</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="beyond_q5" value="3" id="beyond_q5_3">
+                            <label for="beyond_q5_3">Yes</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit-section">
+                <button type="submit" class="submit-button">See Your Results</button>
+            </div>
+        </form>
+
+        <div class="results" id="results">
+            <div class="results-header">
+                <h2>Your Innovation Portfolio Balance</h2>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart">
+                    <div class="bar">
+                        <div class="bar-fill core" id="coreBar" style="height: 0%;">
+                            <div class="bar-value" id="coreValue">0%</div>
+                        </div>
+                        <div class="bar-label">🟩 Core</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-fill edge" id="edgeBar" style="height: 0%;">
+                            <div class="bar-value" id="edgeValue">0%</div>
+                        </div>
+                        <div class="bar-label">🟨 Edge</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-fill beyond" id="beyondBar" style="height: 0%;">
+                            <div class="bar-value" id="beyondValue">0%</div>
+                        </div>
+                        <div class="bar-label">🟥 Beyond</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommendations" id="recommendationsContainer">
+                <h3>Your Strategic Recommendations</h3>
+                <div id="recommendationsList"></div>
+            </div>
+
+            <div class="case-studies">
+                <h3>Relevant Case Studies</h3>
+                <div id="caseStudiesList"></div>
+            </div>
+
+            <div class="cta-box">
+                <h3>Ready to Fix Your Innovation Gaps?</h3>
+                <p>Schedule a Free Innovation Audit to map your blockers and define your next steps.</p>
+                <a href="innovation-offerings.html" class="cta-button">Explore the 4-Move System →</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle option selection visual feedback
+        document.querySelectorAll('.option input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const optionGroup = this.closest('.options');
+                optionGroup.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                this.closest('.option').classList.add('selected');
+                updateProgress();
+            });
+        });
+
+        // Progress bar
+        function updateProgress() {
+            const totalQuestions = 15;
+            const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
+            const progress = (answeredQuestions / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Form submission
+        document.getElementById('assessmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Calculate scores
+            let coreScore = 0;
+            let edgeScore = 0;
+            let beyondScore = 0;
+
+            // Core questions
+            for (let i = 1; i <= 5; i++) {
+                const value = document.querySelector(`input[name="core_q${i}"]:checked`);
+                if (value) coreScore += parseInt(value.value);
+            }
+
+            // Edge questions
+            for (let i = 1; i <= 5; i++) {
+                const value = document.querySelector(`input[name="edge_q${i}"]:checked`);
+                if (value) edgeScore += parseInt(value.value);
+            }
+
+            // Beyond questions
+            for (let i = 1; i <= 5; i++) {
+                const value = document.querySelector(`input[name="beyond_q${i}"]:checked`);
+                if (value) beyondScore += parseInt(value.value);
+            }
+
+            const totalScore = coreScore + edgeScore + beyondScore;
+            const corePercent = Math.round((coreScore / totalScore) * 100);
+            const edgePercent = Math.round((edgeScore / totalScore) * 100);
+            const beyondPercent = Math.round((beyondScore / totalScore) * 100);
+
+            // Display results
+            displayResults(corePercent, edgePercent, beyondPercent);
+        });
+
+        function displayResults
