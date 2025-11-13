@@ -396,7 +396,7 @@
     </div>
 
     <header class="header">
-        <a href="https://christinepamela.com/theta_framework.html" class="brand">Theta Assessment</a>
+        <a href="https://christinepamela.com" class="brand">Christine Pamela</a>
     </header>
 
     <div class="container">
@@ -806,4 +806,150 @@
             displayResults(corePercent, edgePercent, beyondPercent);
         });
 
-        function displayResults
+        function displayResults(corePercent, edgePercent, beyondPercent) {
+            // Hide form, show results
+            document.getElementById('assessmentForm').style.display = 'none';
+            document.getElementById('results').classList.add('show');
+
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+
+            // Animate bars
+            setTimeout(() => {
+                document.getElementById('coreBar').style.height = corePercent + '%';
+                document.getElementById('coreValue').textContent = corePercent + '%';
+                
+                document.getElementById('edgeBar').style.height = edgePercent + '%';
+                document.getElementById('edgeValue').textContent = edgePercent + '%';
+                
+                document.getElementById('beyondBar').style.height = beyondPercent + '%';
+                document.getElementById('beyondValue').textContent = beyondPercent + '%';
+            }, 200);
+
+            // Generate recommendations
+            generateRecommendations(corePercent, edgePercent, beyondPercent);
+            
+            // Display relevant case studies
+            displayCaseStudies(corePercent, edgePercent, beyondPercent);
+        }
+
+        function generateRecommendations(core, edge, beyond) {
+            const container = document.getElementById('recommendationsList');
+            let recommendations = [];
+
+            // Core recommendations
+            if (core < 55) {
+                recommendations.push({
+                    zone: 'core',
+                    title: '🟩 Core Zone: Under-Protected',
+                    text: 'Your company may be under-protecting its current revenue engine. Consider reinforcing operational excellence and governance before scaling edge or beyond initiatives. Focus on revenue protection, margin improvement, and process standardization.'
+                });
+            } else if (core > 75) {
+                recommendations.push({
+                    zone: 'core',
+                    title: '🟩 Core Zone: Over-Indexed',
+                    text: 'You\'re heavily focused on core operations, which provides stability but limits future growth. Begin shifting some resources toward Edge experiments to build your next S-curve before the current one flattens.'
+                });
+            }
+
+            // Edge recommendations
+            if (edge < 15) {
+                recommendations.push({
+                    zone: 'edge',
+                    title: '🟨 Edge Zone: Growth Opportunities Underdeveloped',
+                    text: 'Your Edge innovation is minimal. Focus on small, fast pilots to explore new revenue streams without destabilizing your core. Build protected lanes for experimentation with separate governance and faster decision loops.'
+                });
+            } else if (edge > 30) {
+                recommendations.push({
+                    zone: 'edge',
+                    title: '🟨 Edge Zone: High Experimentation',
+                    text: 'Strong Edge activity indicates healthy experimentation. Ensure you have clear stage-gate funding, proper metrics for early-stage innovation, and pathways to scale successful pilots.'
+                });
+            }
+
+            // Beyond recommendations
+            if (beyond < 5) {
+                recommendations.push({
+                    zone: 'beyond',
+                    title: '🟥 Beyond Zone: Future Market Options Limited',
+                    text: 'Future strategic optionality is minimal. Begin investing in moonshots and category creation to secure long-term defensibility. Dedicate resources to exploratory R&D and transformational initiatives.'
+                });
+            } else if (beyond > 15) {
+                recommendations.push({
+                    zone: 'beyond',
+                    title: '🟥 Beyond Zone: Strong Future Bets',
+                    text: 'Significant Beyond investment shows strategic foresight. Ensure these initiatives have board-level visibility, long-horizon metrics, and cultural support for speculative innovation.'
+                });
+            }
+
+            // Render recommendations
+            recommendations.forEach(rec => {
+                const div = document.createElement('div');
+                div.className = `recommendation-item ${rec.zone}`;
+                div.innerHTML = `
+                    <h4>${rec.title}</h4>
+                    <p>${rec.text}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function displayCaseStudies(core, edge, beyond) {
+            const container = document.getElementById('caseStudiesList');
+            const studies = [];
+
+            // Determine which case studies to show based on scores
+            if (core > 60) {
+                studies.push({
+                    title: 'DBS Bank: Against the Grain',
+                    url: 'dbs-case-study.html',
+                    description: 'How DBS balanced core banking operations with digital transformation'
+                });
+                studies.push({
+                    title: 'CelcomDigi: World-Class Innovation Telco',
+                    url: 'celcomdigi-case-study.html',
+                    description: 'Telecommunications leadership through core optimization'
+                });
+            }
+
+            if (edge > 20 || edge < 15) {
+                studies.push({
+                    title: 'Microsoft: The Empire That Almost Collapsed',
+                    url: 'microsoft-case-study.html',
+                    description: 'Satya Nadella\'s transformation from Windows-first to cloud-first'
+                });
+                studies.push({
+                    title: 'Huawei: Overcoming Macroeconomic Challenges',
+                    url: 'huawei-case-study.html',
+                    description: 'Strategic resilience through Edge diversification and innovation'
+                });
+            }
+
+            if (beyond < 10 || beyond > 15) {
+                studies.push({
+                    title: 'SpaceX: Can It Operate Without Elon Musk?',
+                    url: 'spacex-case-study.html',
+                    description: 'Beyond-zone innovation and transformational leadership'
+                });
+                studies.push({
+                    title: 'LVMH: Culture vs. Tech in Luxury',
+                    url: 'lvmh-case-study.html',
+                    description: 'Future-readiness in a heritage-driven industry'
+                });
+            }
+
+            // Render case studies
+            studies.forEach(study => {
+                const link = document.createElement('a');
+                link.href = study.url;
+                link.className = 'case-link';
+                link.innerHTML = `
+                    <strong>${study.title}</strong><br>
+                    <small style="color: #999;">${study.description}</small>
+                `;
+                container.appendChild(link);
+            });
+        }
+    </script>
+</body>
+</html>
