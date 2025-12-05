@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berjaya Corporation - Innovation Case Study</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: #fafafa;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="%23ffffff" opacity="0.05"/></svg>');
+            background-size: 50px 50px;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            color: white;
+            padding: 2rem;
+            max-width: 900px;
+        }
+
+        .hero-subtitle {
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #e74c3c;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .hero-tagline {
+            font-size: 1.3rem;
+            font-weight: 300;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Section Styling */
+        section {
+            padding: 6rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-label {
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #e74c3c;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #1a1a2e;
+            margin-bottom: 1rem;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 300;
+            color: #e74c3c;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Business Units */
+        .business-units {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .business-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+        }
+
+        .business-card h3 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #1a1a2e;
+            margin-bottom: 1rem;
+        }
+
+        .business-card p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        /* Theta Framework */
+        .theta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .theta-zone {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+        }
+
+        .theta-zone h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #1a1a2e;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .zone-number {
+            background: #e74c3c;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1rem;
+        }
+
+        .theta-zone ul {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .theta-zone li {
+            padding: 0.5rem 0;
+            color: #7f8c8d;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .theta-zone li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #e74c3c;
+        }
+
+        /* Innovation Playbook */
+        .playbook-grid {
+            display: grid;
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .playbook-item {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+        }
+
+        .playbook-item h3 {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #1a1a2e;
+            margin-bottom: 1rem;
+        }
+
+        .playbook-item h4 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #e74c3c;
+            margin: 1.5rem 0 0.5rem 0;
+        }
+
+        .playbook-item ul {
+            list-style: none;
+        }
+
+        .playbook-item li {
+            padding: 0.4rem 0;
+            color: #7f8c8d;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .playbook-item li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        /* Investment Focus */
+        .investment-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .investment-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .investment-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .investment-card h3 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: #e74c3c;
+        }
+
+        .investment-card p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+            margin: 4rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: #e0e0e0;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            width: 45%;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+        }
+
+        .timeline-year {
+            font-size: 2rem;
+            font-weight: 300;
+            color: #e74c3c;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content p {
+            color: #7f8c8d;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            background: #e74c3c;
+            border: 4px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px #e0e0e0;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a2e;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        footer p {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-tagline {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .theta-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline::before {
+                left: 0;
+            }
+
+            .timeline-item:nth-child(odd),
+            .timeline-item:nth-child(even) {
+                flex-direction: row;
+            }
+
+            .timeline-content {
+                width: calc(100% - 3rem);
+                margin-left: 3rem;
+            }
+
+            .timeline-dot {
+                left: 0;
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-subtitle">Innovation Case Study</div>
+            <h1>Berjaya Corporation</h1>
+            <p class="hero-tagline">Applying the Theta Framework to Malaysia's Most Diversified Consumer Group</p>
+        </div>
+        <div class="scroll-indicator">Scroll to explore</div>
+    </section>
+
+    <!-- Overview Section -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Overview</div>
+                <h2 class="section-title">A Legacy of Success</h2>
+                <p class="section-description">
+                    Berjaya—meaning "success" in Malay—has evolved into one of Malaysia's most prominent consumer-focused conglomerates, touching lives through hospitality, property, retail, entertainment, and essential services.
+                </p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">16K+</div>
+                    <div class="stat-label">Employees</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">40+</div>
+                    <div class="stat-label">Years of Legacy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Major Sectors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">SEA+</div>
+                    <div class="stat-label">Regional Reach</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Evolution Timeline -->
+    <section style="background: white;">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">History</div>
+                <h2 class="section-title">Evolution & Growth</h2>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">1984</div>
+                        <p>Vincent Tan acquires control of Berjaya Industrial Berhad, marking the beginning of the modern Berjaya Group</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">1988</div>
+                        <p>Inter-Pacific Industrial Group Berhad becomes the holding company, consolidating operations under one umbrella</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">2006</div>
+                        <p>Berjaya Corporation Berhad is established as the listed entity on Bursa Malaysia following major restructuring</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-year">Today</div>
+                        <p>A diversified consumer conglomerate operating across property, hospitality, retail, gaming, automotive, and clean technology</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Business Units -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Portfolio</div>
+                <h2 class="section-title">Business Sectors</h2>
+                <p class="section-description">
+                    A comprehensive ecosystem spanning multiple consumer touchpoints
+                </p>
+            </div>
+
+            <div class="business-units">
+                <div class="business-card">
+                    <h3>Property Development</h3>
+                    <p>Residential and commercial projects, integrated developments, and township-scale assets across key markets</p>
+                </div>
+
+                <div class="business-card">
+                    <h3>Hospitality</h3>
+                    <p>Hotel and resort management across Malaysia, Southeast Asia, and selected global destinations</p>
+                </div>
+
+                <div class="business-card">
+                    <h3>Retail & F&B</h3>
+                    <p>Consumer brands, lifestyle retail networks, and franchise operations serving diverse markets</p>
+                </div>
+
+                <div class="business-card">
+                    <h3>Gaming & Lottery</h3>
+                    <p>Long-standing cashflow engine providing entertainment and lottery management services</p>
+                </div>
+
+                <div class="business-card">
+                    <h3>Motor Trading</h3>
+                    <p>Automotive retail and distribution operations in strategic regional markets</p>
+                </div>
+
+                <div class="business-card">
+                    <h3>Environmental Services</h3>
+                    <p>Recent diversification into sustainability offerings and clean technology solutions</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Theta Framework -->
+    <section style="background: white;">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Framework Analysis</div>
+                <h2 class="section-title">The Theta Framework</h2>
+                <p class="section-description">
+                    Mapping Berjaya's current position and future opportunity spaces across four innovation zones
+                </p>
+            </div>
+
+            <div class="theta-grid">
+                <div class="theta-zone">
+                    <h3><span class="zone-number">1</span> Core</h3>
+                    <p style="color: #7f8c8d; margin-bottom: 1rem;">Existing Markets, Low Tech Change</p>
+                    <ul>
+                        <li>Hotels and resorts</li>
+                        <li>Property development</li>
+                        <li>Retail and F&B brands</li>
+                        <li>Lottery and gaming operations</li>
+                        <li>Operational improvements and loyalty upgrades</li>
+                    </ul>
+                </div>
+
+                <div class="theta-zone">
+                    <h3><span class="zone-number">2</span> Adjacent</h3>
+                    <p style="color: #7f8c8d; margin-bottom: 1rem;">Existing to Nearby Markets</p>
+                    <ul>
+                        <li>Hospitality expansion into new regions</li>
+                        <li>Integrated developments (Berjaya Times Square)</li>
+                        <li>New F&B verticals and franchise categories</li>
+                        <li>Brand extensions via sports and lifestyle</li>
+                        <li>Capability-led expansion model</li>
+                    </ul>
+                </div>
+
+                <div class="theta-zone">
+                    <h3><span class="zone-number">3</span> Edge</h3>
+                    <p style="color: #7f8c8d; margin-bottom: 1rem;">Architectural & Disruptive Models</p>
+                    <ul>
+                        <li>Integrated property formats (mall + hotel + theme park)</li>
+                        <li>Digital upgrades to hospitality and retail</li>
+                        <li>Clean technology integration</li>
+                        <li>Early online gaming initiatives</li>
+                        <li>Sustainable and green tech investments</li>
+                    </ul>
+                </div>
+
+                <div class="theta-zone">
+                    <h3><span class="zone-number">4</span> Beyond</h3>
+                    <p style="color: #7f8c8d; margin-bottom: 1rem;">Transformational & Frontier</p>
+                    <ul>
+                        <li>Currently limited presence</li>
+                        <li>Requires deep tech and R&D investment</li>
+                        <li>New talent and governance structures needed</li>
+                        <li>Opportunity for venture arms and innovation labs</li>
+                        <li>Separate entities for experimentation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Insights -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Analysis</div>
+                <h2 class="section-title">Key Strategic Insights</h2>
+            </div>
+
+            <div style="background: white; padding: 3rem; border-radius: 8px; box-shadow: 0 2px 20px rgba(0,0,0,0.05);">
+                <div style="display: grid; gap: 2rem;">
+                    <div>
+                        <h3 style="color: #e74c3c; font-size: 1.3rem; margin-bottom: 1rem;">Strengths</h3>
+                        <ul style="list-style: none; color: #7f8c8d;">
+                            <li style="padding: 0.5rem 0; padding-left: 1.5rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: #e74c3c;">✓</span>
+                                Strong brand recognition across Malaysia
+                            </li>
+                            <li style="padding: 0.5rem 0; padding-left: 1.5rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: #e74c3c;">✓</span>
+                                Diversified revenue and asset base reducing risk
+                            </li>
+                            <li style="padding: 0.5rem 0; padding-left: 1.5rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: #e74c3c;">✓</span>
+                                Ability to cross-leverage property, hospitality, and retail
+                            </li>
+                            <li style="padding: 0.5rem 0; padding-left: 1.5rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: #e74c3c;">✓</span>
+                                Long-term value through strategic real estate holdings
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 style="color: #1a1a2e; font-size: 1.3rem; margin-bottom: 1rem;">Challenges</h3>
+                        <ul style="list-style: none; color: #7f8c8d;">
+                            <li style="padding: 0.5rem 0; padding-left: 1.5rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: #1a1a2e;">→</span>
+                                Conglomerate complexity with uneven business unit performance
+                            </li>
+                            <li style="padding: 0.5rem 0; padding-left: 1.5rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: #1a1a2e;">→</span>
+                                Vulnerability to changing consumer patterns
+                            </li>
+                            <li style="padding: 0.5rem 0; padding-left: 1.5rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: #1a1a2e;">→</span>
+                                Heavy asset portfolio limiting organizational agility
+                            </li>
+                            <li style="padding: 0.5rem 0; padding-left: 1.5rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: #1a1a2e;">→</span>
+                                Limited exposure to high-growth innovation sectors
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #f8f9fa; padding: 2rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+                        <h3 style="color: #1a1a2e; font-size: 1.3rem; margin-bottom: 1rem;">Strategic Recommendation</h3>
+                        <p style="color: #7f8c8d; line-height: 1.8;">
+                            To access disruption and future markets, Berjaya requires new structural approaches—venture investment arms, innovation funds, and experimental labs operating outside legacy processes. This allows the conglomerate to experiment with emerging technologies without destabilizing its profitable core operations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Innovation Playbook -->
+    <section style="background: white;">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Strategy</div>
+                <h2 class="section-title">Innovation Playbook</h2>
+                <p class="section-description">
+                    A strategic framework for accessing disruption and future markets without destabilizing core operations
+                </p>
+            </div>
+
+            <div class="playbook-grid">
+                <div class="playbook-item">
+                    <h3>Strategic Foundation</h3>
+                    <h4>Innovation Operating System</h4>
+                    <ul>
+                        <li><strong>Core Operations Layer:</strong> Digital check-in, energy optimization, predictive maintenance</li>
+                        <li><strong>Edge Layer:</strong> Hybrid retail, PropTech developments, tech-driven hospitality</li>
+                        <li><strong>Beyond Layer:</strong> New systems through Berjaya Ventures or Berjaya Labs</li>
+                    </ul>
+                </div>
+
+                <div class="playbook-item">
+                    <h3>Capital Allocation</h3>
+                    <h4>Berjaya Ventures Fund</h4>
+                    <p style="color: #7f8c8d; margin-bottom: 1rem;">RM150-300 million over five years for strategic startup investments</p>
+                    <ul>
+                        <li>Green and clean technology</li>
+                        <li>PropTech innovations</li>
+                        <li>Hospitality technology</li>
+                        <li>Digital services platforms</li>
+                        <li>Blockchain integrity systems</li>
+                    </ul>
+                    <h4 style="margin-top: 2rem;">Internal Innovation Fund</h4>
+                    <p style="color: #7f8c8d; margin-bottom: 1rem;">RM20-50 million annually for rapid prototyping</p>
+                    <ul>
+                        <li>90-day test cycles with clear keep/kill decisions</li>
+                    </ul>
+                </div>
+
+                <div class="playbook-item">
+                    <h3>Business Unit Innovations</h3>
+                    <h4>Hospitality</h4>
+                    <ul>
+                        <li>AI concierge services and autonomous operations</li>
+                        <li>Wellness tourism and energy-efficient resorts</li>
+                    </ul>
+                    <h4>Property Development</h4>
+                    <ul>
+                        <li>Smart building systems and modular construction</li>
+                        <li>IoT asset management and sustainable materials</li>
+                    </ul>
+                    <h4>Gaming & Lottery</h4>
+                    <ul>
+                        <li>Blockchain integrity layers</li>
+                        <li>Digital-first gaming formats</li>
+                    </ul>
+                    <h4>Retail & F&B</h4>
+                    <ul>
+                        <li>Predictive inventory and automated formats</li>
+                        <li>Unified loyalty systems</li>
+                    </ul>
+                </div>
+
+                <div class="playbook-item">
+                    <h3>Organization & Culture</h3>
+                    <h4>Berjaya Lab</h4>
+                    <p style="color: #7f8c8d; margin-bottom: 1rem;">Standalone entity for building future ventures and strategic partnerships</p>
+                    <h4>Cross-Group Innovation Guilds</h4>
+                    <ul>
+                        <li>AI and automation</li>
+                        <li>Sustainability initiatives</li>
+                        <li>Blockchain applications</li>
+                        <li>Consumer experience design</li>
+                        <li>Digital transformation</li>
+                    </ul>
+                    <h4>Innovation KPIs</h4>
+                    <ul>
+                        <li>Revenue contribution from new initiatives</li>
+                        <li>Number of pilots launched</li>
+                        <li>Cost savings achieved</li>
+                        <li>Customer experience metrics</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Investment Focus -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Future Focus</div>
+                <h2 class="section-title">Investment Priorities for 2030</h2>
+                <p class="section-description">
+                    Strategic areas where Berjaya should invest to remain relevant in the next decade
+                </p>
+            </div>
+
+            <div class="investment-cards">
+                <div class="investment-card">
+                    <h3>Sustainable Technology</h3>
+                    <p>Clean energy integration across properties, carbon-neutral resorts, and green building certifications</p>
+                </div>
+
+                <div class="investment-card">
+                    <h3>Digital Transformation</h3>
+                    <p>End-to-end digital customer journeys, unified data platforms, and AI-driven personalization</p>
+                </div>
+
+                <div class="investment-card">
+                    <h3>PropTech Integration</h3>
+                    <p>Smart townships, IoT-enabled buildings, and data-driven property management systems</p>
+                </div>
+
+                <div class="investment-card">
+                    <h3>Next-Gen Hospitality</h3>
+                    <p>Autonomous services, contactless experiences, and wellness-focused offerings</p>
+                </div>
+
+                <div class="investment-card">
+                    <h3>Blockchain & Security</h3>
+                    <p>Transparent gaming systems, fraud detection, and customer trust platforms</p>
+                </div>
+
+                <div class="investment-card">
+                    <h3>Innovation Ventures</h3>
+                    <p>Strategic investments in high-growth startups aligned with core competencies</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Closing Statement -->
+    <section style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 8rem 0;">
+        <div class="container">
+            <div style="max-width: 800px; margin: 0 auto; text-align: center; color: white;">
+                <div style="font-size: 2.5rem; font-weight: 300; line-height: 1.5; margin-bottom: 2rem;">
+                    Berjaya's legacy is strong, but its next chapter depends on disciplined innovation built on a resilient core.
+                </div>
+                <div style="width: 60px; height: 2px; background: #e74c3c; margin: 0 auto;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="margin-bottom: 0.5rem; font-size: 1rem; opacity: 0.9;">A case study by Christine Pamela</p>
+            <p style="font-size: 0.85rem;">© Theta Framework 2025. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
