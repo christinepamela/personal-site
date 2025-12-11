@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Innovation Underdog's Playbook | Christine Pamela</title>
+    <title>The Innovation Underdog's Playbook | Direct Engagement</title>
     <style>
         * {
             margin: 0;
@@ -21,60 +21,29 @@
             --slate-300: #cbd5e1;
             --slate-100: #f1f5f9;
             --slate-50: #f8fafc;
-            --white: #ffffff;
+            --amber: #f59e0b;
+            --rose: #f43f5e;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: #ffffff;
             color: var(--slate-900);
             line-height: 1.6;
-            background: var(--white);
+            overflow-x: hidden;
         }
 
-        /* Header */
-        .header {
-            border-bottom: 1px solid var(--slate-100);
-            padding: 2rem 0;
-            background: var(--white);
-        }
-
-        .header-content {
-            max-width: 80rem;
-            margin: 0 auto;
-            padding: 0 2rem;
+        .hero-cover {
+            height: 100vh;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-        }
-
-        .brand {
-            font-size: 1.125rem;
-            font-weight: 500;
-            color: var(--slate-900);
-            text-decoration: none;
-            letter-spacing: 0.02em;
-        }
-
-        .nav-link {
-            color: var(--slate-600);
-            text-decoration: none;
-            font-size: 0.875rem;
-            transition: color 0.2s;
-        }
-
-        .nav-link:hover {
-            color: var(--emerald);
-        }
-
-        /* Hero */
-        .hero {
+            justify-content: center;
             background: linear-gradient(135deg, var(--slate-900) 0%, var(--slate-800) 50%, var(--slate-900) 100%);
             position: relative;
             overflow: hidden;
-            padding: 8rem 2rem;
         }
 
-        .hero::before {
+        .hero-cover::before {
             content: '';
             position: absolute;
             width: 600px;
@@ -87,11 +56,25 @@
             right: -200px;
         }
 
+        .hero-cover::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: var(--emerald);
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.1;
+            bottom: -150px;
+            left: -150px;
+        }
+
         .hero-content {
-            max-width: 80rem;
-            margin: 0 auto;
+            text-align: center;
             position: relative;
             z-index: 1;
+            max-width: 900px;
+            padding: 2rem;
         }
 
         .hero-label {
@@ -99,38 +82,64 @@
             color: var(--emerald);
             font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 2rem;
+            letter-spacing: 0.2em;
+            margin-bottom: 3rem;
         }
 
         .hero-title {
-            font-size: 4rem;
+            font-size: 5.5rem;
             font-weight: 300;
-            color: var(--white);
+            color: #ffffff;
             margin-bottom: 2rem;
-            letter-spacing: -0.02em;
-            line-height: 1.2;
-            max-width: 56rem;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
         }
 
         .hero-subtitle {
             font-size: 1.5rem;
             color: var(--slate-300);
             font-weight: 300;
-            margin-bottom: 3rem;
-            max-width: 48rem;
+            margin-bottom: 2rem;
             line-height: 1.6;
         }
 
-        /* Container */
-        .container {
-            max-width: 80rem;
-            margin: 0 auto;
-            padding: 0 2rem;
+        .hero-book {
+            font-size: 1rem;
+            color: var(--slate-400);
+            font-style: italic;
+            margin-bottom: 4rem;
         }
 
-        /* Section */
-        .section {
+        .hero-author {
+            font-size: 1.125rem;
+            color: var(--slate-400);
+            font-weight: 400;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--slate-400);
+            font-size: 0.875rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 3rem;
+        }
+
+        section {
             padding: 8rem 0;
         }
 
@@ -140,573 +149,823 @@
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            margin-bottom: 1rem;
-            text-align: center;
+            margin-bottom: 1.5rem;
         }
 
         .section-title {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 300;
             color: var(--slate-900);
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
             letter-spacing: -0.02em;
             line-height: 1.2;
-            text-align: center;
         }
 
         .section-intro {
             font-size: 1.25rem;
             color: var(--slate-600);
             margin-bottom: 4rem;
-            max-width: 48rem;
+            max-width: 800px;
             line-height: 1.8;
-            text-align: center;
-            margin-left: auto;
-            margin-right: auto;
         }
 
-        /* Primary Choice Cards */
-        .choice-grid {
+        .two-col-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 3rem;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
             margin: 4rem 0;
-            max-width: 70rem;
-            margin-left: auto;
-            margin-right: auto;
         }
 
-        .choice-card {
+        .col-header {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--slate-900);
+            margin-bottom: 1.5rem;
+        }
+
+        .col-faded .col-header {
+            color: var(--slate-400);
+        }
+
+        .company-list {
+            list-style: none;
+        }
+
+        .company-list li {
+            padding: 0.75rem 0;
+            font-size: 1.125rem;
+            color: var(--slate-700);
+            border-bottom: 1px solid var(--slate-100);
+        }
+
+        .col-faded .company-list li {
+            color: var(--slate-400);
+            opacity: 0.6;
+        }
+
+        .highlight-box {
             background: var(--slate-50);
-            padding: 4rem 3rem;
+            padding: 3rem;
             border-radius: 0.5rem;
-            border: 2px solid var(--slate-100);
-            transition: all 0.3s;
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
+            margin: 4rem 0;
+            border-left: 4px solid var(--emerald);
         }
 
-        .choice-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--emerald);
-            transform: scaleX(0);
-            transition: transform 0.3s;
+        .highlight-box p {
+            font-size: 1.375rem;
+            color: var(--slate-900);
+            font-weight: 400;
+            line-height: 1.7;
         }
 
-        .choice-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .case-card {
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.5rem;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .case-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
             border-color: var(--emerald);
         }
 
-        .choice-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .choice-icon {
-            font-size: 3rem;
-            margin-bottom: 2rem;
-            opacity: 0.2;
-        }
-
-        .choice-card h3 {
-            font-size: 2rem;
-            font-weight: 400;
+        .case-header {
+            font-size: 1.125rem;
+            font-weight: 500;
             color: var(--slate-900);
             margin-bottom: 1rem;
         }
 
-        .choice-card .subtitle {
-            font-size: 0.875rem;
-            color: var(--emerald);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 1.5rem;
-        }
-
-        .choice-card p {
+        .case-text {
+            font-size: 1rem;
             color: var(--slate-600);
             line-height: 1.7;
-            font-size: 1.125rem;
-            margin-bottom: 2rem;
         }
 
-        .choice-arrow {
-            margin-top: auto;
-            color: var(--emerald);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: gap 0.2s;
+        .emphasis-section {
+            background: var(--slate-900);
+            color: #ffffff;
+            padding: 6rem 0;
+            margin: 6rem 0;
         }
 
-        .choice-card:hover .choice-arrow {
-            gap: 1rem;
+        .emphasis-section .section-title {
+            color: #ffffff;
+            text-align: center;
+            font-size: 3rem;
         }
 
-        /* Information Directory */
-        .info-section {
-            background: var(--white);
-            border-top: 1px solid var(--slate-100);
+        .emphasis-section .section-intro {
+            color: var(--slate-300);
+            text-align: center;
+            margin: 0 auto 4rem;
+        }
+
+        .archetype-grid {
+            display: grid;
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .archetype-card {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 2rem;
+            align-items: start;
+            padding: 2rem 0;
             border-bottom: 1px solid var(--slate-100);
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin: 3rem 0;
+        .archetype-card:last-child {
+            border-bottom: none;
         }
 
-        .info-card {
+        .archetype-number {
+            width: 60px;
+            height: 60px;
             background: var(--slate-50);
-            padding: 3rem 2rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--slate-100);
-            transition: all 0.3s;
-            text-decoration: none;
-            color: inherit;
-            text-align: center;
-        }
-
-        .info-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.06);
-            border-color: var(--emerald);
-        }
-
-        .info-icon {
-            width: 4rem;
-            height: 4rem;
-            background: var(--emerald);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 2rem;
-            opacity: 0.15;
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--emerald);
         }
 
-        .info-card h3 {
-            font-size: 1.5rem;
+        .archetype-content h3 {
+            font-size: 1.375rem;
             font-weight: 500;
             color: var(--slate-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .archetype-content p {
+            font-size: 1.125rem;
+            color: var(--slate-600);
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        .framework-visual {
+            background: var(--slate-50);
+            padding: 4rem;
+            border-radius: 0.5rem;
+            margin: 4rem 0;
+        }
+
+        .zone-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 2rem;
+            align-items: center;
+            padding: 2rem;
+            margin: 1rem 0;
+            background: #ffffff;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .zone-row:hover {
+            transform: translateX(8px);
+        }
+
+        .zone-indicator {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .zone-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
+        .zone-dot.core { background: var(--emerald); }
+        .zone-dot.edge { background: var(--amber); }
+        .zone-dot.beyond { background: var(--rose); }
+
+        .zone-label {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--slate-900);
+        }
+
+        .zone-description {
+            font-size: 1.125rem;
+            color: var(--slate-600);
+            line-height: 1.6;
+        }
+
+        .phase-grid {
+            display: grid;
+            gap: 3rem;
+            margin: 4rem 0;
+        }
+
+        .phase-card {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 3rem;
+            padding: 3rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .phase-card:hover {
+            border-color: var(--emerald);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+        }
+
+        .phase-number {
+            font-size: 3rem;
+            font-weight: 300;
+            color: var(--emerald);
+            opacity: 0.3;
+        }
+
+        .phase-content h3 {
+            font-size: 1.75rem;
+            font-weight: 500;
+            color: var(--slate-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .phase-duration {
+            font-size: 0.875rem;
+            color: var(--emerald);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             margin-bottom: 1rem;
         }
 
-        .info-card p {
+        .phase-content p {
+            font-size: 1.125rem;
             color: var(--slate-600);
             line-height: 1.7;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
-        .info-link {
+        .deliverable-list {
+            list-style: none;
+            margin-top: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .deliverable-list li {
+            font-size: 1rem;
+            color: var(--slate-600);
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .deliverable-list li:before {
+            content: '→';
+            position: absolute;
+            left: -1.5rem;
             color: var(--emerald);
-            text-decoration: none;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: gap 0.2s;
         }
 
-        .info-link:hover {
-            gap: 0.75rem;
+        .warning-box {
+            background: var(--slate-900);
+            color: #ffffff;
+            padding: 4rem;
+            border-radius: 0.5rem;
+            margin: 4rem 0;
         }
 
-        /* Thought Leadership */
-        .thought-leadership {
+        .warning-box h3 {
+            font-size: 2rem;
+            font-weight: 400;
+            color: #ffffff;
+            margin-bottom: 2rem;
+        }
+
+        .warning-list {
+            list-style: none;
+        }
+
+        .warning-list li {
+            padding: 1rem 0;
+            padding-left: 2rem;
+            font-size: 1.125rem;
+            color: var(--slate-300);
+            position: relative;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .warning-list li:before {
+            content: '×';
+            position: absolute;
+            left: 0;
+            color: var(--rose);
+            font-size: 1.75rem;
+            font-weight: 300;
+        }
+
+        .warning-list li:last-child {
+            border-bottom: none;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 8rem 0;
             background: var(--slate-50);
         }
 
-        .articles-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-
-        .article-card {
-            background: var(--white);
-            border-radius: 0.5rem;
-            overflow: hidden;
-            border: 1px solid var(--slate-100);
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.3s;
-        }
-
-        .article-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.06);
-            border-color: var(--emerald);
-        }
-
-        .article-image {
-            width: 100%;
-            height: 200px;
-            background: var(--slate-200);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--slate-400);
-            font-size: 0.875rem;
-        }
-
-        .article-content {
-            padding: 2rem;
-        }
-
-        .article-card h3 {
-            font-size: 1.25rem;
-            font-weight: 500;
-            color: var(--slate-900);
-            margin-bottom: 1rem;
-            line-height: 1.4;
-        }
-
-        .article-card p {
-            color: var(--slate-600);
-            line-height: 1.7;
-            margin-bottom: 1rem;
-            font-size: 0.95rem;
-        }
-
-        .article-meta {
-            font-size: 0.875rem;
-            color: var(--slate-400);
-        }
-
-        /* CTA Section */
-        .cta-section {
-            background: var(--slate-900);
-            color: var(--white);
-            padding: 6rem 0;
-        }
-
-        .cta-content {
-            text-align: center;
-            max-width: 48rem;
-            margin: 0 auto;
-        }
-
         .cta-section .section-title {
-            color: var(--white);
+            text-align: center;
+            margin-bottom: 1rem;
         }
 
         .cta-section .section-intro {
-            color: var(--slate-300);
+            text-align: center;
             margin: 0 auto 3rem;
         }
 
-        .cta-buttons {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .cta-button-primary {
+        .cta-button {
+            display: inline-block;
             padding: 1.25rem 3rem;
             background: var(--emerald);
-            color: var(--white);
+            color: #ffffff;
             text-decoration: none;
             border-radius: 0.5rem;
+            font-size: 1.125rem;
             font-weight: 500;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            letter-spacing: 0.02em;
         }
 
-        .cta-button-primary:hover {
-            background: var(--white);
-            color: var(--slate-900);
+        .cta-button:hover {
+            background: var(--slate-900);
             transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
         }
 
-        .cta-button-secondary {
-            padding: 1.25rem 3rem;
-            background: transparent;
-            color: var(--white);
-            text-decoration: none;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            border: 1px solid var(--slate-600);
-            transition: all 0.3s;
-        }
-
-        .cta-button-secondary:hover {
-            border-color: var(--emerald);
-            background: var(--emerald);
-        }
-
-        /* Footer */
         .footer {
             background: var(--slate-900);
             color: var(--slate-300);
-            padding: 3rem 0;
+            padding: 4rem 0;
             text-align: center;
-            border-top: 1px solid var(--slate-800);
         }
 
         .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
             margin-bottom: 2rem;
         }
 
         .footer-link {
             color: var(--slate-300);
             text-decoration: none;
-            font-size: 0.875rem;
-            transition: color 0.2s;
+            margin: 0 1.5rem;
+            font-size: 1rem;
+            transition: color 0.3s ease;
         }
 
         .footer-link:hover {
             color: var(--emerald);
         }
 
-        /* Responsive */
+        .footer-copyright {
+            font-size: 0.875rem;
+            color: var(--slate-600);
+        }
+
         @media (max-width: 1024px) {
-            .hero-title {
-                font-size: 3rem;
-            }
-
-            .section-title {
-                font-size: 2.5rem;
-            }
-
-            .choice-grid,
-            .info-grid,
-            .articles-grid {
-                grid-template-columns: 1fr;
-            }
+            .hero-title { font-size: 4rem; }
+            .section-title { font-size: 2.5rem; }
+            .two-col-grid, .case-grid { grid-template-columns: 1fr; }
+            .phase-card { grid-template-columns: 60px 1fr; gap: 2rem; }
+            section { padding: 5rem 0; }
+            .container { padding: 0 2rem; }
         }
 
         @media (max-width: 768px) {
-            .hero {
-                padding: 5rem 2rem;
-            }
+            .hero-title { font-size: 3rem; }
+            .hero-subtitle { font-size: 1.25rem; }
+            .section-title { font-size: 2rem; }
+            .archetype-card, .zone-row { grid-template-columns: 1fr; }
+        }
 
-            .hero-title {
-                font-size: 2.5rem;
-            }
-
-            .hero-subtitle {
-                font-size: 1.25rem;
-            }
-
-            .section {
-                padding: 5rem 0;
-            }
-
-            .choice-card {
-                padding: 3rem 2rem;
-            }
-
-            .cta-buttons {
-                flex-direction: column;
-            }
-
-            .cta-button-primary,
-            .cta-button-secondary {
-                width: 100%;
-            }
+        @media print {
+            .scroll-indicator { display: none; }
+            section { page-break-inside: avoid; }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <a href="https://christinepamela.com" class="brand">Christine Pamela</a>
-            <a href="https://christinepamela.com/consultation.html" class="nav-link">All Consultations</a>
-        </div>
-    </header>
-
-    <!-- Hero -->
-    <section class="hero">
+    <div class="hero-cover">
         <div class="hero-content">
-            <div class="hero-label">Strategic Innovation Advisory</div>
+            <div class="hero-label">Theta Framework • Direct Engagement</div>
             <h1 class="hero-title">The Innovation Underdog's Playbook</h1>
-            <p class="hero-subtitle">For leaders of large companies looking to balance their innovation portfolio between core and breakthrough initiatives, and to prepare for the future without disrupting the present.</p>
-            <p style="font-size: 1rem; color: var(--slate-400); font-style: italic; margin-top: 1.5rem;">From the forthcoming book: Innovation Underdogs: The Corporate Rebel Playbook</p>
+            <p class="hero-subtitle">Building breakthrough innovations without disrupting your core business</p>
+            <p class="hero-book">From the forthcoming book: Innovation Underdogs: The Corporate Rebel Playbook</p>
+            <p class="hero-author">Christine Pamela</p>
+        </div>
+        <div class="scroll-indicator">Scroll to explore</div>
+    </div>
+
+    <!-- THE PROBLEM -->
+    <section>
+        <div class="container">
+            <div class="section-label">The Context</div>
+            <h2 class="section-title">The Innovation We're Talking About</h2>
+            
+            <div class="two-col-grid">
+                <div class="col-faded">
+                    <div class="col-header">Didn't Adapt</div>
+                    <ul class="company-list">
+                        <li>Kodak</li>
+                        <li>Nokia</li>
+                        <li>Blackberry</li>
+                        <li>Palm</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="col-header">Continually Reinvent</div>
+                    <ul class="company-list">
+                        <li>Fujifilm</li>
+                        <li>Apple</li>
+                        <li>Siemens</li>
+                        <li>Alphabet</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p class="section-intro">We're not talking about innovation labs, hackathons, or incremental programs. This isn't about fixing your entire company.</p>
+
+            <div class="highlight-box">
+                <p>Innovation on the Edge and Beyond focuses on a small, protected part of the company—about 5%—that grows until it can stand alongside the core.</p>
+            </div>
+
+            <p class="section-intro">Kodak invented digital photography but was too afraid to embrace it. Nokia, BlackBerry, and Palm clung to what worked. Apple was willing to cannibalize the iPad with the iPhone. Fujifilm pivoted from film to healthcare. The difference? The willingness to embrace change.</p>
         </div>
     </section>
 
-    <!-- Primary Choice -->
-    <section class="section">
+    <section style="background: var(--slate-50);">
         <div class="container">
-            <div class="section-label">Choose Your Path</div>
-            <h2 class="section-title">How Would You Like to Engage?</h2>
-            <p class="section-intro">We partner with enterprise teams and advisory firms to build breakthrough innovation systems that actually ship.</p>
+            <div class="section-label">The Pattern</div>
+            <h2 class="section-title">The Reality Check</h2>
+            
+            <div class="case-grid">
+                <div class="case-card">
+                    <div class="case-header">Manufacturing Conglomerate</div>
+                    <p class="case-text">3 years funding "innovation theater" with 18 projects and no clear market path. We mapped the portfolio, killed 60% of stalled efforts, redirected capital into 2 high-complexity bets aligned with next-era demand shifts.</p>
+                </div>
+                <div class="case-card">
+                    <div class="case-header">Telco Giant</div>
+                    <p class="case-text">$2B company spent 18 months building an innovation lab. It produced 47 pilots, three awards, and zero revenue. We focused only on the 10% that had a real path to market.</p>
+                </div>
+                <div class="case-card">
+                    <div class="case-header">Regional Bank</div>
+                    <p class="case-text">$1B bank had a 40-page innovation strategy, seven committees, and zero working pilots. I separated core from breakthrough, cleaned up the management process, set proper KPIs. The first pilot went live in twelve weeks.</p>
+                </div>
+            </div>
 
-            <div class="choice-grid">
-                <a href="innovation-underdog-direct-engagement.html" class="choice-card">
-                    <div class="choice-icon">◆</div>
-                    <div class="subtitle">For Companies</div>
-                    <h3>Direct Engagement</h3>
-                    <p>Work directly with our team to diagnose portfolio imbalances, rewire governance structures, and ship breakthrough pilots that scale alongside your core business.</p>
-                    <div class="choice-arrow">
-                        Explore Engagement Model
-                        <span>→</span>
-                    </div>
-                </a>
-
-                <a href="partner-framework.html" class="choice-card">
-                    <div class="choice-icon">◆</div>
-                    <div class="subtitle">For Consultancies</div>
-                    <h3>Partnership Framework</h3>
-                    <p>Integrate the Theta methodology into your practice to deliver deeper strategic value to enterprise clients seeking innovation transformation.</p>
-                    <div class="choice-arrow">
-                        Explore Partnership
-                        <span>→</span>
-                    </div>
-                </a>
+            <div class="highlight-box">
+                <p>This is the pattern everywhere: Innovation theater that looks impressive on stage but dies in practice.</p>
             </div>
         </div>
     </section>
 
-    <!-- Information Directory -->
-    <section class="section info-section">
+    <section class="emphasis-section">
         <div class="container">
-            <div class="section-label">Resources</div>
-            <h2 class="section-title">Deep Dive Into Theta</h2>
-            <p class="section-intro">Explore the framework, diagnostic tools, and real-world case studies that demonstrate how companies navigate Core, Edge, and Beyond innovation.</p>
-
-            <div class="info-grid">
-                <a href="theta_framework.html" class="info-card">
-                    <div class="info-icon"></div>
-                    <h3>Theta Framework</h3>
-                    <p>Understand the three zones of innovation and where your initiatives truly sit. Map technological complexity against market reach to make better investment decisions.</p>
-                    <span class="info-link">
-                        Explore Framework
-                        <span>→</span>
-                    </span>
-                </a>
-
-                <a href="theta-assessment.html" class="info-card">
-                    <div class="info-icon"></div>
-                    <h3>Portfolio Assessment</h3>
-                    <p>Take our proprietary 15-minute diagnostic to reveal imbalances across Core, Edge, and Beyond zones with personalized recommendations.</p>
-                    <span class="info-link">
-                        Take Assessment
-                        <span>→</span>
-                    </span>
-                </a>
-
-                <a href="case-studies.html" class="info-card">
-                    <div class="info-icon"></div>
-                    <h3>Case Studies</h3>
-                    <p>See how companies like DBS, Microsoft, Huawei, and SpaceX navigated their innovation challenges across different zones.</p>
-                    <span class="info-link">
-                        View Case Studies
-                        <span>→</span>
-                    </span>
-                </a>
+            <h2 class="section-title">The Big Truth</h2>
+            <p class="section-intro">Innovation in large companies is broken.</p>
+            <p class="section-intro">Not because people are lazy or incapable. It breaks because the system rewards caution and short-term wins. Labs don't ship. Pilots don't scale. Strategies die in boardrooms.</p>
+            <div class="highlight-box" style="background: var(--slate-800); border-left-color: var(--emerald);">
+                <p style="color: #ffffff;">This playbook is for leaders who want to break that cycle intelligently, without blowing up their core business or indulging in theater.</p>
             </div>
         </div>
     </section>
 
-    <!-- Thought Leadership -->
-    <section class="section thought-leadership">
+    <!-- THE ARCHETYPES -->
+    <section>
         <div class="container">
-            <div class="section-label">Insights</div>
-            <h2 class="section-title">Thought Leadership</h2>
-            <p class="section-intro">Deep dives into the patterns, pitfalls, and principles that separate innovation theater from real transformation.</p>
-
-            <div class="articles-grid">
-                <a href="https://medium.com/@christinepamela/why-is-consultation-such-a-dirty-word-1b77f2fa5ee5" target="_blank" class="article-card">
-                    <div class="article-image">consultation-dirty-word.jpg</div>
-                    <div class="article-content">
-                        <h3>Why is consultation such a dirty word?</h3>
-                        <p>How the work stopped being about the work. An exploration of why consulting has lost credibility and what it takes to rebuild trust through real results.</p>
-                        <span class="article-meta">9 min read • Medium</span>
+            <div class="section-label">The Players</div>
+            <h2 class="section-title">Who This Is For</h2>
+            
+            <div class="archetype-grid">
+                <div class="archetype-card">
+                    <div class="archetype-number">01</div>
+                    <div class="archetype-content">
+                        <h3>The Enthusiastic Learners</h3>
+                        <p>"We want to innovate, but we don't know where to start."</p>
                     </div>
-                </a>
-
-                <a href="https://medium.com/@christinepamela/the-fear-of-cannibalism-2ae27d79f6c7" target="_blank" class="article-card">
-                    <div class="article-image">fear-cannibalism.jpg</div>
-                    <div class="article-content">
-                        <h3>The fear of cannibalism</h3>
-                        <p>How big companies trap themselves by clinging to their core. Why the companies that survive are willing to eat their own before someone else does.</p>
-                        <span class="article-meta">8 min read • Medium</span>
+                </div>
+                <div class="archetype-card">
+                    <div class="archetype-number">02</div>
+                    <div class="archetype-content">
+                        <h3>The Braggers</h3>
+                        <p>"We've invested millions in startups. That's enough innovation, right?"</p>
                     </div>
-                </a>
-
-                <a href="https://medium.com/@christinepamela/pricing-in-the-absence-of-a-benchmark-e26ff0e12655" target="_blank" class="article-card">
-                    <div class="article-image">pricing-benchmark.jpg</div>
-                    <div class="article-content">
-                        <h3>Pricing in the absence of a benchmark</h3>
-                        <p>Reflections on global price harmonization, differentiation, and customer value when no comparable products exist in your market.</p>
-                        <span class="article-meta">11 min read • Medium</span>
+                </div>
+                <div class="archetype-card">
+                    <div class="archetype-number">03</div>
+                    <div class="archetype-content">
+                        <h3>The Dissuaded & Frustrated</h3>
+                        <p>"Finance blocks every initiative."</p>
                     </div>
-                </a>
-
-                <a href="https://medium.com/@christinepamela/rethinking-market-validation-5748cf7541cd" target="_blank" class="article-card">
-                    <div class="article-image">market-validation.jpg</div>
-                    <div class="article-content">
-                        <h3>Rethinking market validation</h3>
-                        <p>Why the smartest companies ignore the usual market proof and win big. How McDonald's, Netflix, and Tesla redefined their addressable markets.</p>
-                        <span class="article-meta">8 min read • Medium</span>
+                </div>
+                <div class="archetype-card">
+                    <div class="archetype-number">04</div>
+                    <div class="archetype-content">
+                        <h3>The Financial Skeptics</h3>
+                        <p>"Why not just improve what already works?"</p>
                     </div>
-                </a>
-
-                <a href="https://medium.com/@christinepamela/rules-of-rebels-2aad3216fb27" target="_blank" class="article-card">
-                    <div class="article-image">rules-rebels.jpg</div>
-                    <div class="article-content">
-                        <h3>Rules of Rebels</h3>
-                        <p>How Mavericks, Skunkworks, and Open Source redefine innovation. The three-stage framework for corporate innovation that actually ships.</p>
-                        <span class="article-meta">7 min read • Medium</span>
+                </div>
+                <div class="archetype-card">
+                    <div class="archetype-number">05</div>
+                    <div class="archetype-content">
+                        <h3>The Innovators Fighting the Good Fight</h3>
+                        <p>"We've tried labs and hackathons. Ideas go nowhere."</p>
                     </div>
-                </a>
-
-                <a href="https://medium.com/@christinepamela/unlearning-leadership-6c5d4bf890e6" target="_blank" class="article-card">
-                    <div class="article-image">unlearning-leadership.jpg</div>
-                    <div class="article-content">
-                        <h3>Unlearning Leadership</h3>
-                        <p>A journey into self-awareness. Why agility, consciousness, and courage matter more than strategy decks and frameworks.</p>
-                        <span class="article-meta">4 min read • Medium</span>
-                    </div>
-                </a>
+                </div>
             </div>
-        </div>
-    </section>
 
-    <!-- CTA -->
-    <section class="cta-section">
-        <div class="container">
-            <div class="cta-content">
-                <div class="section-label" style="color: var(--emerald);">Corporate Strategy</div>
-                <h2 class="section-title">Request Innovation Audit</h2>
-                <p class="section-intro">Deep-dive portfolio mapping to identify imbalances, governance blockers, and breakthrough opportunities.</p>
-                <div class="cta-buttons">
-                    <a href="https://christinepamela.com/contact.html" class="cta-button-primary">Get Started</a>
-                    <a href="innovation-underdog-direct-engagement.html" class="cta-button-secondary">Learn More</a>
+            <div style="margin-top: 4rem;">
+                <p class="section-intro">Innovation doesn't fail because of bad ideas. It fails because the system is designed to protect the present, not build the future. Governance structures that work for core business strangle innovation. Metrics that matter to CFOs don't match metrics that guide builders. Political capital runs out before momentum builds.</p>
+                <div class="highlight-box">
+                    <p>The problem isn't innovation. It's the structure, incentives, and politics that surround it.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- THE FRAMEWORK -->
+    <section style="background: var(--slate-50);">
+        <div class="container">
+            <div class="section-label">The Solution</div>
+            <h2 class="section-title">The Theta Framework</h2>
+            <p class="section-intro">Most companies don't lack good ideas. They struggle to step back, see the big picture, then zoom in to turn those ideas into reality. The Theta Framework gives you that map.</p>
+
+            <div class="framework-visual">
+                <div class="zone-row">
+                    <div class="zone-indicator">
+                        <div class="zone-dot core"></div>
+                        <div class="zone-label">Core</div>
+                    </div>
+                    <div class="zone-description">Optimize what works (90% of your business)</div>
+                </div>
+                <div class="zone-row">
+                    <div class="zone-indicator">
+                        <div class="zone-dot edge"></div>
+                        <div class="zone-label">Edge</div>
+                    </div>
+                    <div class="zone-description">Build the next S-curve (disruptive bets)</div>
+                </div>
+                <div class="zone-row">
+                    <div class="zone-indicator">
+                        <div class="zone-dot beyond"></div>
+                        <div class="zone-label">Beyond</div>
+                    </div>
+                    <div class="zone-description">Plant seeds for the future (moonshots)</div>
+                </div>
+            </div>
+
+            <p class="section-intro">Companies die when they only live in Core. They burn out when they only chase Beyond. The best companies balance all three.</p>
+            <div class="highlight-box">
+                <p>The question isn't whether you innovate. It's <strong>where</strong> you're innovating, and whether you're building your next curve before the current one flattens.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW WE WORK TOGETHER -->
+    <section>
+        <div class="container">
+            <div class="section-label">The Engagement</div>
+            <h2 class="section-title">How We Work Together</h2>
+            <p class="section-intro">Every engagement follows a structured approach designed to move from diagnosis to execution quickly. No 200-page decks. No endless committees. Just clarity, action, and results.</p>
+            
+            <div class="phase-grid">
+                <div class="phase-card">
+                    <div class="phase-number">01</div>
+                    <div class="phase-content">
+                        <h3>Portfolio Audit & Diagnosis</h3>
+                        <div class="phase-duration">4-6 Weeks</div>
+                        <p>Before building anything new, you have to see the mess for what it is. I map your entire innovation portfolio across Core, Edge, and Beyond. I trace the blockers—decision loops, incentives, org charts, labs that build prototypes no one funds, metrics that make no sense.</p>
+                        <p>The goal isn't to blame. It's to help leaders see what's holding them back and where the real opportunities lie.</p>
+                        <ul class="deliverable-list">
+                            <li>Complete portfolio mapping (Core/Edge/Beyond)</li>
+                            <li>Governance and decision-making audit</li>
+                            <li>Gap analysis and strategic recommendations</li>
+                            <li>Kill/Fund/Redirect roadmap</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="phase-card">
+                    <div class="phase-number">02</div>
+                    <div class="phase-content">
+                        <h3>System Rewiring</h3>
+                        <div class="phase-duration">6-8 Weeks</div>
+                        <p>Breakthrough innovation can't grow inside structures built to protect the core. We create a protected lane with its own governance and funding. We hardwire a faster decision loop. We reset metrics to match each stage of growth—infant, child, teen, adult.</p>
+                        <p>When innovation stops fighting the core business, everything moves faster.</p>
+                        <ul class="deliverable-list">
+                            <li>New governance framework for Edge/Beyond initiatives</li>
+                            <li>Stage-appropriate metrics and KPIs</li>
+                            <li>Funding mechanisms and approval processes</li>
+                            <li>Team structure and accountability model</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="phase-card">
+                    <div class="phase-number">03</div>
+                    <div class="phase-content">
+                        <h3>Pilot Execution</h3>
+                        <div class="phase-duration">12-16 Weeks</div>
+                        <p>We work with your teams to ship real pilots, not PowerPoints. We focus on the initiatives with the highest potential for market traction and the clearest path to scale. We test, learn, iterate—fast.</p>
+                        <p>Good stories inspire. But innovation needs builders who ship.</p>
+                        <ul class="deliverable-list">
+                            <li>2-3 high-priority pilot launches</li>
+                            <li>Real market validation (not internal theater)</li>
+                            <li>Clear scaling criteria and checkpoints</li>
+                            <li>Regular progress reviews with leadership</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="phase-card">
+                    <div class="phase-number">04</div>
+                    <div class="phase-content">
+                        <h3>Scale & Transition</h3>
+                        <div class="phase-duration">Ongoing</div>
+                        <p>Successful pilots transition to dedicated teams with clear ownership. We establish handoff protocols, ensure continuity, and set up monitoring systems so momentum doesn't die after we leave.</p>
+                        <p>The goal is self-sufficiency—your teams running the new system without external dependency.</p>
+                        <ul class="deliverable-list">
+                            <li>Scale-ready operations playbook</li>
+                            <li>Team transition and ownership handoff</li>
+                            <li>Ongoing advisory for 6 months</li>
+                            <li>Quarterly portfolio health checks</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHAT YOU GET -->
+    <section style="background: var(--slate-50);">
+        <div class="container">
+            <div class="section-label">Outcomes</div>
+            <h2 class="section-title">What You Get</h2>
+            
+            <div class="two-col-grid">
+                <div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--slate-900);">Clarity</h3>
+                    <p class="section-intro">You'll know exactly where you stand—which initiatives matter, which are theater, and where to double down. No more guessing.</p>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--slate-900);">Speed</h3>
+                    <p class="section-intro">Pilots ship in weeks, not years. Decision loops get faster. Political gridlock breaks.</p>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--slate-900);">Real Results</h3>
+                    <p class="section-intro">Working products in market. Revenue-generating pilots. Scalable innovations that don't cannibalize the core.</p>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--slate-900);">System Change</h3>
+                    <p class="section-intro">The structures, metrics, and governance that enable continuous innovation—not one-time wins.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COST OF INACTION -->
+    <section class="emphasis-section">
+        <div class="container">
+            <h2 class="section-title">The Cost of Doing Nothing</h2>
+            <p class="section-intro">Innovation theater is a silent killer that erodes everything that makes a company resilient.</p>
+
+            <div class="two-col-grid">
+                <div>
+                    <h3 style="color: #ffffff; font-size: 1.5rem; margin-bottom: 1rem;">It rots the inside first</h3>
+                    <p class="section-intro">When smart people spend years in labs that never ship, they stop believing. The builders leave. The storytellers stay.</p>
+                </div>
+                <div>
+                    <h3 style="color: #ffffff; font-size: 1.5rem; margin-bottom: 1rem;">It makes shareholders blind</h3>
+                    <p class="section-intro">Quarter after quarter, the numbers look fine—until they don't. Innovation theater hides the lack of future bets under core revenue.</p>
+                </div>
+                <div>
+                    <h3 style="color: #ffffff; font-size: 1.5rem; margin-bottom: 1rem;">Customers drift, quietly</h3>
+                    <p class="section-intro">Customers don't leave in one big wave. They leak away in silence. While you perfect pilot decks, smaller players ship real things.</p>
+                </div>
+                <div>
+                    <h3 style="color: #ffffff; font-size: 1.5rem; margin-bottom: 1rem;">The price compounds</h3>
+                    <p class="section-intro">Pain delayed is not pain avoided. It's pain with interest.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUALIFICATION -->
+    <section>
+        <div class="container">
+            <div class="section-label">Qualification</div>
+            <h2 class="section-title">This Is Not For Everyone</h2>
+            
+            <div class="warning-box">
+                <h3>This Is Not For You If:</h3>
+                <ul class="warning-list">
+                    <li>You want a 200-page strategy deck</li>
+                    <li>You care more about awards than revenue</li>
+                    <li>You need to "look busy" instead of shipping</li>
+                    <li>You're not ready to kill sacred cows</li>
+                    <li>5% feels like too much to bet on the future</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 4rem;">
+                <p>This <strong>IS</strong> for you if you're tired of the theater, want the pipes fixed, and you're ready to ship.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEXT STEPS -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="section-label">Next Steps</div>
+            <h2 class="section-title">Start With a Portfolio Audit</h2>
+            <p class="section-intro">Limited availability for deep-dive portfolio diagnostics. We work with 3-5 enterprise clients at a time to ensure quality and impact.</p>
+            <p style="font-size: 1.125rem; color: var(--slate-600); margin-bottom: 3rem;">First audit includes complete mapping + strategic clarity report.</p>
+            <a href="https://christinepamela.com/contact.html" class="cta-button">Request Audit</a>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section>
+        <div class="container" style="max-width: 800px; margin: 0 auto;">
+            <div class="section-label">About</div>
+            <h2 class="section-title">Christine Pamela</h2>
+            
+            <p class="section-intro">I work behind the scenes with leadership teams and entrepreneurs to help large companies build real breakthrough innovation again.</p>
+            
+            <p class="section-intro">My background spans industries from mobility to healthtech to manufacturing across Asia, Europe, and the US. I've spent years in the trenches of innovation as both a founder and a fixer.</p>
+            
+            <p class="section-intro">I'm not big on the hype. I prefer building and fixing the systems that let the next generation build what matters.</p>
+
+            <div style="margin-top: 4rem; padding-top: 3rem; border-top: 1px solid var(--slate-200);">
+                <a href="https://christinepamela.com" target="_blank" style="color: var(--emerald); text-decoration: none; font-size: 1.125rem; font-weight: 500;">christinepamela.com →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
     <footer class="footer">
         <div class="container">
             <div class="footer-links">
                 <a href="https://christinepamela.com" class="footer-link">Website</a>
-                <a href="https://christinepamela.com/consultation.html" class="footer-link">All Consultations</a>
+                <a href="innovation-underdog-consultation.html" class="footer-link">Main Page</a>
                 <a href="https://christinepamela.com/contact.html" class="footer-link">Contact</a>
             </div>
-            <p style="font-size: 0.875rem; color: var(--slate-600);">© 2025 Theta Framework. All rights reserved.</p>
+            <p class="footer-copyright">© 2025 Theta Framework. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.case-card, .archetype-card, .phase-card, .zone-row').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
 </body>
 </html>
