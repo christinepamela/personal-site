@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theta: Innovation Portfolio Mapping</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+            overflow-x: hidden;
+            font-weight: 400;
+        }
+
+        .section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            position: relative;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #004c97 0%, #0066cc 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 4.5rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero-content .subtitle {
+            font-size: 1.3rem;
+            font-weight: 400;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            opacity: 0.95;
+            line-height: 1.7;
+        }
+
+        .hero-content .tagline {
+            font-size: 0.95rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: #004c97;
+            letter-spacing: -0.01em;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 3rem;
+            font-weight: 400;
+            line-height: 1.7;
+        }
+
+        .content-block {
+            margin-bottom: 3rem;
+        }
+
+        .content-block h3 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .content-block p {
+            font-size: 1.05rem;
+            color: #444;
+            line-height: 1.8;
+            font-weight: 400;
+        }
+
+        .problem-section {
+            background: #f8f9fa;
+        }
+
+        .problem-list {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .problem-item {
+            background: white;
+            padding: 2rem;
+            border-left: 3px solid #004c97;
+            font-size: 1.05rem;
+            font-weight: 400;
+            color: #444;
+        }
+
+        .framework-visual {
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .framework-visual img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .insight-card {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 4px;
+        }
+
+        .insight-card h4 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            color: #004c97;
+        }
+
+        .insight-card p {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #444;
+            line-height: 1.7;
+        }
+
+        .case-study {
+            background: #f8f9fa;
+        }
+
+        .intel-visual {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .intel-visual img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .timeline {
+            margin-top: 2rem;
+        }
+
+        .timeline-item {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-item strong {
+            color: #004c97;
+            font-weight: 500;
+        }
+
+        .timeline-item p {
+            margin-top: 0.5rem;
+            font-size: 1rem;
+            color: #444;
+            font-weight: 400;
+        }
+
+        .value-props {
+            counter-reset: value-counter;
+        }
+
+        .value-item {
+            margin-bottom: 3rem;
+            padding-left: 4rem;
+            position: relative;
+        }
+
+        .value-item::before {
+            counter-increment: value-counter;
+            content: counter(value-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: #004c97;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 400;
+        }
+
+        .value-item h4 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 0.8rem;
+            color: #1a1a1a;
+        }
+
+        .value-item p {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #444;
+            line-height: 1.7;
+        }
+
+        .stages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stage-card {
+            background: white;
+            padding: 2rem;
+            border-top: 3px solid #004c97;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .stage-card h4 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 0.8rem;
+            color: #004c97;
+        }
+
+        .stage-card .stage-subtitle {
+            font-size: 0.9rem;
+            color: #999;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stage-card p {
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .stage-card .audience {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .closing {
+            background: linear-gradient(135deg, #004c97 0%, #0066cc 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .closing p {
+            font-size: 1.3rem;
+            font-weight: 400;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        .highlight {
+            color: #0066cc;
+            font-weight: 400;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .value-item {
+                padding-left: 3rem;
+            }
+
+            .stages-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="section hero">
+        <div class="hero-content">
+            <div class="tagline">Innovation Portfolio Diagnostic</div>
+            <h1>Theta</h1>
+            <p class="subtitle">Mapping innovation portfolios without breaking the core — a way to see how different types of innovation behave inside large organizations, and why some scale while others stall or die.</p>
+            <div class="scroll-indicator">Scroll to explore</div>
+        </div>
+    </section>
+
+    <!-- What Theta Is -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">What Theta Is</h2>
+            <p class="section-subtitle">A portfolio-level diagnostic that helps leaders see the whole system</p>
+            
+            <div class="content-block">
+                <p>Theta is a portfolio-level diagnostic that helps leaders zoom out to assess the health of their innovation system, then zoom in to adjust governance, incentives, and execution based on the type of innovation involved.</p>
+            </div>
+
+            <div class="content-block">
+                <p>It clarifies where initiatives sit, how they should be managed, and why they behave the way they do. When leaders see the portfolio clearly, <span class="highlight">strategy shifts from aspiration to prescription.</span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Core Problem -->
+    <section class="section problem-section">
+        <div class="container">
+            <h2 class="section-title">The Core Problem</h2>
+            <p class="section-subtitle">A recurring pattern in large organizations</p>
+            
+            <div class="problem-list">
+                <div class="problem-item">The core controls capital, metrics, talent, and attention</div>
+                <div class="problem-item">New initiatives do not fit core logic</div>
+                <div class="problem-item">Isolation protects innovation, but prevents scale</div>
+                <div class="problem-item">Reintegration is where most efforts fail</div>
+            </div>
+
+            <div class="content-block" style="margin-top: 3rem;">
+                <p style="font-size: 1.2rem; font-weight: 400; color: #004c97;">Most innovation failures are structural, not technical.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Theta Map -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">The Theta Map</h2>
+            <p class="section-subtitle">Two dimensions that distinguish different kinds of newness</p>
+            
+            <div class="framework-visual">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 1000'%3E%3Crect fill='%23f8f9fa' width='1200' height='1000'/%3E%3Ctext x='600' y='500' font-family='Arial' font-size='48' fill='%23999' text-anchor='middle'%3ETheta Framework Map%3C/text%3E%3Ctext x='600' y='560' font-family='Arial' font-size='24' fill='%23ccc' text-anchor='middle'%3ETechnology Complexity × Market Reach%3C/text%3E%3C/svg%3E" alt="Theta XY Framework" style="max-width: 900px;">
+            </div>
+
+            <div class="content-block">
+                <p>Theta frames innovation along two dimensions: <strong>technology complexity</strong> (y-axis) and <strong>market reach</strong> (x-axis).</p>
+            </div>
+
+            <div class="content-block">
+                <p>It distinguishes different kinds of newness. Architectural, disruptive, transformational, and frontier initiatives behave differently and require different leadership, metrics, and timelines.</p>
+            </div>
+
+            <div class="content-block">
+                <p style="color: #004c97;">Treating them as one bucket is how companies apply the wrong rules to the right ideas.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- What Theta Reveals -->
+    <section class="section" style="background: #f8f9fa;">
+        <div class="container">
+            <h2 class="section-title">What Theta Reveals</h2>
+            <p class="section-subtitle">Making visible what is usually implicit</p>
+            
+            <div class="insight-grid">
+                <div class="insight-card">
+                    <h4>Capital Bias</h4>
+                    <p>Where capital is unintentionally biased toward the core</p>
+                </div>
+                <div class="insight-card">
+                    <h4>Governance Mismatch</h4>
+                    <p>Which initiatives are stalled due to mismatched governance or KPIs</p>
+                </div>
+                <div class="insight-card">
+                    <h4>Scale Barriers</h4>
+                    <p>Which efforts are protected but structurally prevented from scaling</p>
+                </div>
+            </div>
+
+            <div class="content-block" style="margin-top: 3rem;">
+                <p>This clarity often surfaces tensions leadership teams already feel, but cannot name.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Case Study: Intel -->
+    <section class="section case-study">
+        <div class="container">
+            <h2 class="section-title">One Short Case</h2>
+            <p class="section-subtitle">Intel's dilemma across leadership eras</p>
+            
+            <div class="content-block">
+                <p>Same company. Comparable resources. Very different outcomes. Across leadership eras, innovation results shifted not because of technology alone, but because of portfolio focus, tolerance for uncertainty, and reintegration pathways.</p>
+            </div>
+
+            <div class="intel-visual">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 500'%3E%3Crect fill='white' width='900' height='500'/%3E%3Ctext x='450' y='250' font-family='Arial' font-size='32' fill='%23999' text-anchor='middle'%3ECore/Edge/Beyond Distribution%3C/text%3E%3Ctext x='450' y='290' font-family='Arial' font-size='20' fill='%23ccc' text-anchor='middle'%3EAcross Intel Leadership Eras%3C/text%3E%3C/svg%3E" alt="Intel Leadership Comparison" style="max-width: 800px;">
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <strong>Andy Grove:</strong>
+                    <p>Strong edge ambition paired with operational discipline</p>
+                </div>
+                <div class="timeline-item">
+                    <strong>Craig Barrett:</strong>
+                    <p>Expanded adjacencies while weakening core coherence</p>
+                </div>
+                <div class="timeline-item">
+                    <strong>Paul Otellini:</strong>
+                    <p>Reinforced core PCs and servers, missed smartphone era</p>
+                </div>
+                <div class="timeline-item">
+                    <strong>Brian Krzanich:</strong>
+                    <p>Scattered edge bets (IoT, wearables, GPUs) while core manufacturing slipped</p>
+                </div>
+                <div class="timeline-item">
+                    <strong>Bob Swan:</strong>
+                    <p>Financial control overtook engineering ambition</p>
+                </div>
+                <div class="timeline-item">
+                    <strong>Lip-Bu Tan:</strong>
+                    <p>Stabilization and survival mode</p>
+                </div>
+            </div>
+
+            <div class="content-block" style="margin-top: 3rem;">
+                <p style="color: #004c97;">Theta helps make these differences visible early, before outcomes become obvious.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Senior Leadership Teams Care -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Why Senior Leadership Teams Care</h2>
+            <p class="section-subtitle">And why firms like BCG can bring it in</p>
+            
+            <div class="value-props">
+                <div class="value-item">
+                    <h4>Control Over Fragmented Portfolios</h4>
+                    <p>Senior teams fund dozens of initiatives but often lack a coherent view. Theta provides a single portfolio view without forcing premature financial precision. This becomes critical when boards ask: "Are we actually building the future, or just experimenting?"</p>
+                </div>
+
+                <div class="value-item">
+                    <h4>Reduced Decision Friction Across C-Suite</h4>
+                    <p>Leadership teams often talk past one another. Theta creates a shared structure without forcing any group to abandon its logic. Decisions anchor around where an initiative sits, what governance it needs, and what success should mean at that stage. This speeds alignment and lowers political drag.</p>
+                </div>
+
+                <div class="value-item">
+                    <h4>Insight Converted to Structural Commitment</h4>
+                    <p>Most organizations do not lack insight. They lack mechanisms that translate insight into operating change. Theta helps leaders separate core optimization from future growth explicitly, design funding and metrics by zone, and protect breakthrough initiatives without destabilizing the core.</p>
+                </div>
+
+                <div class="value-item">
+                    <h4>Expanded Optionality Without Increasing Risk</h4>
+                    <p>Senior leaders fear uncontrolled failure more than failure itself. Theta enables deliberate exploration, staged investment, and reversible bets where possible. Innovation becomes managed optionality rather than disruption theater. Boards understand this framing immediately.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How Portfolio Clarity Translates into Action -->
+    <section class="section" style="background: #f8f9fa;">
+        <div class="container">
+            <h2 class="section-title">How Portfolio Clarity Translates into Action</h2>
+            <p class="section-subtitle">Work unfolds in predictable stages — not all clients need every step</p>
+            
+            <div class="stages-grid">
+                <div class="stage-card">
+                    <h4>Portfolio Diagnosis</h4>
+                    <div class="stage-subtitle">Clarity and baseline</div>
+                    <p>Senior teams gain a shared view of where initiatives sit, where value is trapped, and where governance mismatches exist.</p>
+                    <p class="audience">Typical audience: C-suite, strategy, board committees</p>
+                </div>
+
+                <div class="stage-card">
+                    <h4>Governance & Funding Alignment</h4>
+                    <div class="stage-subtitle">Rewiring the system</div>
+                    <p>Different innovation zones require different decision rights, metrics, and funding lanes. This step reduces friction without destabilizing the core.</p>
+                    <p class="audience">Typical audience: CFO, CTO, transformation leaders</p>
+                </div>
+
+                <div class="stage-card">
+                    <h4>Focused Breakthrough Pilots</h4>
+                    <div class="stage-subtitle">Learning with consequences</div>
+                    <p>Select initiatives move forward with explicit success criteria tied to learning velocity, optionality, or early revenue, rather than premature scale expectations.</p>
+                    <p class="audience">Typical audience: BU leaders, product, venture teams</p>
+                </div>
+
+                <div class="stage-card">
+                    <h4>Capability & Leadership Development</h4>
+                    <div class="stage-subtitle">Making it repeatable</div>
+                    <p>Organizations institutionalize better innovation judgment through leadership development, operating norms, and internal builders.</p>
+                    <p class="audience">Typical audience: HR, innovation, senior leadership</p>
+                </div>
+            </div>
+
+            <div class="content-block" style="margin-top: 3rem; text-align: center;">
+                <p style="color: #666;">Not every client needs all four. The value is in choosing deliberately.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Closing -->
+    <section class="section closing">
+        <div class="container">
+            <p>Theta gives leadership teams a clearer way to govern innovation portfolios over time. For firms like BCG, it deepens client conversations, sharpens senior decision-making, and embeds structural value without increasing delivery burden.</p>
+        </div>
+    </section>
+</body>
+</html>
