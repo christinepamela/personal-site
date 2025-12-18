@@ -1,1 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intel Leadership Vision Map</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        .panel {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        .panel h2 {
+            color: #1a1a1a;
+            margin-bottom: 1.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .chart-container h3 {
+            margin-bottom: 1rem;
+            color: #374151;
+        }
+
+        .leader-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .leader-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .leader-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+        }
+
+        .leader-card.selected {
+            border-color: #6366f1;
+        }
+
+        .leader-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .leader-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .leader-period {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .badge {
+            padding: 0.5rem;
+            border-radius: 50%;
+            font-size: 1.2rem;
+        }
+
+        .badge-success { background: #10b981; }
+        .badge-warning { background: #f59e0b; }
+        .badge-critical { background: #ef4444; }
+        .badge-recovery { background: #3b82f6; }
+
+        .zone-bars {
+            margin: 1rem 0;
+        }
+
+        .zone-bar {
+            margin-bottom: 0.75rem;
+        }
+
+        .zone-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+            color: #6b7280;
+        }
+
+        .zone-label span:last-child {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .bar-track {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .bar-core { background: #10b981; }
+        .bar-edge { background: #f59e0b; }
+        .bar-beyond { background: #ef4444; }
+
+        .balance-score {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .balance-score span:first-child {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .balance-score span:last-child {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #6366f1;
+        }
+
+        .details {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #e5e7eb;
+            display: none;
+        }
+
+        .leader-card.selected .details {
+            display: block;
+        }
+
+        .detail-box {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .detail-box h4 {
+            font-size: 0.85rem;
+            color: #6366f1;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-box p {
+            font-size: 0.85rem;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .insight-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .insight-card.success { border-color: #10b981; background: #f0fdf4; }
+        .insight-card.warning { border-color: #f59e0b; background: #fffbeb; }
+        .insight-card.critical { border-color: #ef4444; background: #fef2f2; }
+        .insight-card.info { border-color: #3b82f6; background: #eff6ff; }
+
+        .insight-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .insight-card p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #374151;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .leader-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Intel Leadership Vision Map</h1>
+            <p>Theta Framework Analysis: Reproducible Balance Calculation</p>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-secondary" onclick="togglePanel('weights')">⚙️ Weights & Ranges</button>
+            <button class="btn btn-secondary" onclick="togglePanel('formula')">📊 Formula</button>
+        </div>
+
+        <!-- Weights Panel -->
+        <div id="weights" class="panel">
+            <h2>Component Weights & Ideal Ranges</h2>
+            <div class="grid">
+                <div>
+                    <h3>Core Zone 🟩</h3>
+                    <p style="font-size: 1.5rem; font-weight: 700; color: #10b981; margin: 0.5rem 0;">50% - 75%</p>
+                    <p style="color: #6b7280;">Foundation + Adjacent Innovation<br>Penalty: ×2 outside range</p>
+                </div>
+                <div>
+                    <h3>Edge Zone 🟨</h3>
+                    <p style="font-size: 1.5rem; font-weight: 700; color: #f59e0b; margin: 0.5rem 0;">15% - 30%</p>
+                    <p style="color: #6b7280;">Architectural + Early Disruptive<br>Penalty: ×4 outside range</p>
+                </div>
+                <div>
+                    <h3>Beyond Zone 🟥</h3>
+                    <p style="font-size: 1.5rem; font-weight: 700; color: #ef4444; margin: 0.5rem 0;">5% - 15%</p>
+                    <p style="color: #6b7280;">Long-Horizon + Moonshots<br>Penalty: ×10 outside range</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formula Panel -->
+        <div id="formula" class="panel">
+            <h2>Theta Balance Calculation Formula</h2>
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                <h3 style="margin-bottom: 0.5rem;">Step 1: Normalize to Percentages</h3>
+                <code style="display: block; background: #f9fafb; padding: 1rem; border-radius: 4px;">
+                    Total = Core + Edge + Beyond<br>
+                    Core% = (Core / Total) × 100<br>
+                    Edge% = (Edge / Total) × 100<br>
+                    Beyond% = (Beyond / Total) × 100
+                </code>
+            </div>
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                <h3 style="margin-bottom: 0.5rem;">Step 2: Calculate Component Scores</h3>
+                <code style="display: block; background: #f9fafb; padding: 1rem; border-radius: 4px; font-size: 0.85rem;">
+                    CoreScore = 100 if Core% ∈ [50,75], else 100 - 2×|Core% - 62.5|<br>
+                    EdgeScore = 100 if Edge% ∈ [15,30], else 100 - 4×|Edge% - 22.5|<br>
+                    BeyondScore = 100 if Beyond% ∈ [5,15], else 100 - 10×|Beyond% - 10|
+                </code>
+            </div>
+            <div style="background: white; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="margin-bottom: 0.5rem;">Step 3: Weighted Average</h3>
+                <code style="display: block; background: #f9fafb; padding: 1rem; border-radius: 4px;">
+                    Balance = (CoreScore × 0.35) + (EdgeScore × 0.30) + (BeyondScore × 0.15) + (CoherenceScore × 0.20)
+                </code>
+            </div>
+        </div>
+
+        <!-- Balance Trend Chart -->
+        <div class="chart-container">
+            <h3>Theta Balance Over Time</h3>
+            <canvas id="balanceChart" height="80"></canvas>
+        </div>
+
+        <!-- Zone Distribution Chart -->
+        <div class="chart-container">
+            <h3>Zone Distribution (Normalized %)</h3>
+            <canvas id="distributionChart" height="100"></canvas>
+        </div>
+
+        <!-- Leader Cards -->
+        <div class="leader-cards" id="leaderCards"></div>
+
+        <!-- Key Insights -->
+        <div style="margin-top: 3rem;">
+            <h2 style="text-align: center; margin-bottom: 2rem;">Theta Framework Insights</h2>
+            <div class="insights-grid">
+                <div class="insight-card success">
+                    <h4>✓ Strategic Appropriateness (Grove: 91)</h4>
+                    <p>47.5% Core, 42.5% Edge, 10% Beyond. Strong Core enabling strong Edge with intentionally lean Beyond. Balance ≠ equal distribution.</p>
+                </div>
+                <div class="insight-card critical">
+                    <h4>✗ Core Overoptimization (Otellini: 44, Swan: 54)</h4>
+                    <p>Core at 84-85% while Edge starved at 10-14%. Maximizing today's business creates blindness to S-curve transitions.</p>
+                </div>
+                <div class="insight-card warning">
+                    <h4>⚠ Chaos from Weak Foundation (Krzanich: 48)</h4>
+                    <p>Core at 23% while scattering to Edge/Beyond. Innovation without foundation creates fragmentation.</p>
+                </div>
+                <div class="insight-card info">
+                    <h4>↻ Recovery Discipline (Tan: 77)</h4>
+                    <p>Core at 60%, Edge at 32%. Stabilization enables future innovation cycles rather than forcing premature expansion.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Leader data
+        const leaders = [
+            {
+                name: "Andy Grove",
+                period: "1987-1998",
+                core: 95, edge: 85, beyond: 20,
+                interpretation: "The only era with true balance. Strong Core enabled strong Edge.",
+                outcome: "success",
+                keyInsight: "Built culture of discipline and productive paranoia. Beyond kept intentionally lean by design, not neglect."
+            },
+            {
+                name: "Craig Barrett",
+                period: "1998-2005",
+                core: 45, edge: 45, beyond: 10,
+                interpretation: "Overextended Core through excessive adjacency. Scattered Edge without focus.",
+                outcome: "warning",
+                keyInsight: "Heavy adjacent expansion into communications, networking, flash weakened Core discipline."
+            },
+            {
+                name: "Paul Otellini",
+                period: "2005-2013",
+                core: 90, edge: 15, beyond: 2,
+                interpretation: "Over-indexed on Core. Starved Edge, creating Intel's biggest missed wave.",
+                outcome: "critical",
+                keyInsight: "Excellent Core performance but critically underinvested in mobile/low-power."
+            },
+            {
+                name: "Brian Krzanich",
+                period: "2013-2018",
+                core: 35, edge: 65, beyond: 50,
+                interpretation: "The Chaos Period. Weak Core + overextended Edge/Beyond = fragmentation.",
+                outcome: "critical",
+                keyInsight: "Manufacturing catastrophe (14nm→10nm) while scattering across IoT, drones, wearables."
+            },
+            {
+                name: "Bob Swan",
+                period: "2019-2021",
+                core: 85, edge: 10, beyond: 5,
+                interpretation: "Over-optimized Core, underinvested in future. Shrinking innovation pipeline.",
+                outcome: "warning",
+                keyInsight: "Financial stability prioritized over technical advancement."
+            },
+            {
+                name: "Pat Gelsinger",
+                period: "2021-2024",
+                core: 60, edge: 60, beyond: 40,
+                interpretation: "Attempted rebalance of all zones, but hampered by inherited pipeline damage.",
+                outcome: "warning",
+                keyInsight: "Ambitious foundry transformation (IDM 2.0) while rebuilding weakened Core."
+            },
+            {
+                name: "Lip-Bu Tan",
+                period: "2024-Present",
+                core: 75, edge: 40, beyond: 10,
+                interpretation: "Emergency Core reconstruction. Minimal Beyond until foundation is solid.",
+                outcome: "recovery",
+                keyInsight: "Stabilization mode: manufacturing, finances, culture repair before healthy restart."
+            }
+        ];
+
+        // Calculate metrics
+        function calculateMetrics(leader) {
+            const total = leader.core + leader.edge + leader.beyond;
+            const coreP = Math.round((leader.core / total) * 100);
+            const edgeP = Math.round((leader.edge / total) * 100);
+            const beyondP = Math.round((leader.beyond / total) * 100);
+
+            const calculateRangeScore = (val, min, max, penalty) => {
+                if (val >= min && val <= max) return 100;
+                const mid = (min + max) / 2;
+                return Math.max(0, 100 - penalty * Math.abs(val - mid));
+            };
+
+            const calculateCoherence = (c, e, b) => {
+                let coh = 100;
+                if (c < 50 && (e > 60 || b > 30)) coh -= 30;
+                if (c > 80 && e < 30) coh -= 25;
+                if (c < 50 && e < 50 && b < 30) coh -= 20;
+                if (c > 70 && e > 60 && b < 30) coh += 20;
+                return Math.max(0, Math.min(100, coh));
+            };
+
+            const CS = Math.round(calculateRangeScore(coreP, 50, 75, 2));
+            const ES = Math.round(calculateRangeScore(edgeP, 15, 30, 4));
+            const BS = Math.round(calculateRangeScore(beyondP, 5, 15, 10));
+            const CP = Math.round(calculateCoherence(leader.core, leader.edge, leader.beyond));
+            const balance = Math.round(CS * 0.35 + ES * 0.30 + BS * 0.15 + CP * 0.20);
+
+            return { ...leader, coreP, edgeP, beyondP, CS, ES, BS, CP, balance };
+        }
+
+        const processedLeaders = leaders.map(calculateMetrics);
+
+        // Render leader cards
+        function renderLeaderCards() {
+            const container = document.getElementById('leaderCards');
+            container.innerHTML = processedLeaders.map((leader, idx) => `
+                <div class="leader-card" onclick="toggleCard(${idx})">
+                    <div class="leader-header">
+                        <div>
+                            <div class="leader-name">${leader.name}</div>
+                            <div class="leader-period">${leader.period}</div>
+                        </div>
+                        <div class="badge badge-${leader.outcome}">
+                            ${leader.outcome === 'success' ? '🏆' : leader.outcome === 'recovery' ? '📈' : '⚠️'}
+                        </div>
+                    </div>
+                    <div class="zone-bars">
+                        <div class="zone-bar">
+                            <div class="zone-label">
+                                <span>Core</span>
+                                <span>${leader.core} → ${leader.coreP}%</span>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill bar-core" style="width: ${leader.coreP}%"></div>
+                            </div>
+                        </div>
+                        <div class="zone-bar">
+                            <div class="zone-label">
+                                <span>Edge</span>
+                                <span>${leader.edge} → ${leader.edgeP}%</span>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill bar-edge" style="width: ${leader.edgeP}%"></div>
+                            </div>
+                        </div>
+                        <div class="zone-bar">
+                            <div class="zone-label">
+                                <span>Beyond</span>
+                                <span>${leader.beyond} → ${leader.beyondP}%</span>
+                            </div>
+                            <div class="bar-track">
+                                <div class="bar-fill bar-beyond" style="width: ${leader.beyondP}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="balance-score">
+                        <span>Theta Balance</span>
+                        <span>${leader.balance}</span>
+                    </div>
+                    <div class="details">
+                        <div class="detail-box">
+                            <h4>Theta Interpretation</h4>
+                            <p>${leader.interpretation}</p>
+                        </div>
+                        <div class="detail-box">
+                            <h4>Key Insight</h4>
+                            <p>${leader.keyInsight}</p>
+                        </div>
+                        <div class="detail-box">
+                            <h4>Score Breakdown</h4>
+                            <p style="font-family: monospace; font-size: 0.8rem;">
+                                Core: ${leader.CS} | Edge: ${leader.ES} | Beyond: ${leader.BS} | Coherence: ${leader.CP}<br>
+                                ${leader.CS}×0.35 + ${leader.ES}×0.30 + ${leader.BS}×0.15 + ${leader.CP}×0.20 = ${leader.balance}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Toggle card selection
+        function toggleCard(idx) {
+            const cards = document.querySelectorAll('.leader-card');
+            cards.forEach((card, i) => {
+                if (i === idx) {
+                    card.classList.toggle('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+        }
+
+        // Toggle panels
+        function togglePanel(id) {
+            const panel = document.getElementById(id);
+            panel.classList.toggle('active');
+        }
+
+        // Create charts
+        function createCharts() {
+            // Balance trend
+            new Chart(document.getElementById('balanceChart'), {
+                type: 'line',
+                data: {
+                    labels: processedLeaders.map(l => l.name.split(' ').pop()),
+                    datasets: [{
+                        label: 'Theta Balance',
+                        data: processedLeaders.map(l => l.balance),
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { display: true } },
+                    scales: { y: { min: 0, max: 100 } }
+                }
+            });
+
+            // Zone distribution
+            new Chart(document.getElementById('distributionChart'), {
+                type: 'bar',
+                data: {
+                    labels: processedLeaders.map(l => l.name.split(' ').pop()),
+                    datasets: [
+                        {
+                            label: 'Core %',
+                            data: processedLeaders.map(l => l.coreP),
+                            backgroundColor: '#10b981'
+                        },
+                        {
+                            label: 'Edge %',
+                            data: processedLeaders.map(l => l.edgeP),
+                            backgroundColor: '#f59e0b'
+                        },
+                        {
+                            label: 'Beyond %',
+                            data: processedLeaders.map(l => l.beyondP),
+                            backgroundColor: '#ef4444'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { display: true } },
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true, min: 0, max: 100 }
+                    }
+                }
+            });
+        }
+
+        // Initialize
+        renderLeaderCards();
+        createCharts();
+    </script>
+</body>
+</html>
