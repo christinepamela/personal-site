@@ -3,214 +3,828 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intel Case Study | Christine Pamela</title>
+    <title>Intel Case Study - Theta Framework Analysis</title>
     <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.8;
-            color: #333;
+        * {
             margin: 0;
             padding: 0;
-            background-color: #fff;
+            box-sizing: border-box;
         }
 
-        .case-study-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
+        :root {
+            --intel-blue: #0071c5;
+            --intel-dark: #0d1117;
+            --intel-light: #f5f7fa;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+            --accent: #0071c5;
         }
 
-        .case-study-header {
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #0d1117 0%, #1a1f2e 50%, #0071c5 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="rgba(255,255,255,0.05)"/></svg>') repeat;
+            opacity: 0.1;
+        }
+
+        .hero-content {
             text-align: center;
-            margin-bottom: 60px;
-            padding: 40px 0;
-            border-bottom: 1px solid #eee;
+            color: white;
+            z-index: 1;
+            max-width: 900px;
+            padding: 2rem;
         }
 
-        h1 {
-            font-size: 2.5em;
-            font-weight: 300;
-            color: #1a1a1a;
-            margin: 0;
+        .hero-subtitle {
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+            color: #87ceeb;
         }
 
-        h2 {
-            font-size: 1.8em;
-            font-weight: 300;
-            color: #1a1a1a;
-            margin-top: 50px;
-            margin-bottom: 25px;
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
         }
 
-        h3 {
-            font-size: 1.4em;
-            font-weight: 400;
-            color: #333;
-            margin-top: 30px;
+        .hero-description {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.8;
         }
 
-        p {
-            margin-bottom: 20px;
-            font-size: 1.1em;
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.6;
+            animation: bounce 2s infinite;
         }
 
-        ul {
-            padding-left: 20px;
-            margin-bottom: 30px;
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
         }
 
-        li {
-            margin-bottom: 10px;
-            font-size: 1.1em;
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
         }
 
-        .case-study-content {
-            margin-top: 40px;
+        /* Section Styling */
+        section {
+            padding: 6rem 0;
         }
 
-        .insights {
-            background-color: #f8f9fa;
-            padding: 30px;
-            border-radius: 5px;
-            margin-top: 40px;
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
         }
 
-        .timeline-section {
-            margin: 40px 0;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
+        .section-label {
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--intel-blue);
+            margin-bottom: 0.5rem;
         }
 
+        .section-title {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Executive Summary */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .summary-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--intel-blue);
+        }
+
+        .summary-card p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Problem Statement */
+        .problem-section {
+            background: var(--intel-light);
+        }
+
+        .problem-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .problem-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--intel-blue);
+        }
+
+        .problem-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .problem-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .problem-card li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .problem-card li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--intel-blue);
+        }
+
+        /* Leadership Timeline */
+        .timeline {
+            position: relative;
+            margin: 4rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--intel-blue);
+            opacity: 0.2;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            width: calc(50% - 2rem);
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--intel-blue);
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 0 0 4px rgba(0,113,197,0.1);
+        }
+
+        .timeline-period {
+            font-size: 0.85rem;
+            color: var(--intel-blue);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Theta Framework Visualization */
+        .framework-visual {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+            margin: 3rem 0;
+        }
+
+        .zone-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .zone-card {
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .zone-core {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .zone-edge {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .zone-beyond {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .zone-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .zone-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .zone-range {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .zone-description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* Key Insights */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .insight-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            border-top: 4px solid var(--intel-blue);
+        }
+
+        .insight-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .insight-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .insight-text {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Visualization Embed */
+        .visualization-section {
+            background: var(--intel-dark);
+            color: white;
+            padding: 6rem 0;
+        }
+
+        .viz-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 3rem;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+        }
+
+        /* Recommendations */
+        .recommendations {
+            background: linear-gradient(135deg, var(--intel-light) 0%, white 100%);
+        }
+
+        .rec-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            border-left: 6px solid var(--intel-blue);
+        }
+
+        .rec-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--intel-blue);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .rec-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .rec-description {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .rec-impact {
+            background: var(--intel-light);
+            padding: 1rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--intel-dark);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer p {
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .case-study-container {
-                padding: 20px;
+            .timeline::before {
+                left: 0;
             }
 
-            h1 {
-                font-size: 2em;
+            .timeline-item {
+                flex-direction: column !important;
             }
 
-            h2 {
-                font-size: 1.5em;
+            .timeline-content {
+                width: 100%;
             }
 
-            h3 {
-                font-size: 1.2em;
+            .timeline-marker {
+                left: 0;
+                transform: translateX(-50%);
             }
 
-            p, li {
-                font-size: 1em;
+            .zone-grid {
+                grid-template-columns: 1fr;
             }
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
         }
     </style>
 </head>
 <body>
-    <main class="case-study-container">
-        <section class="case-study-header">
-            <h1>Intel: Can It Overcome Its Biggest Crisis, or Will the Giant Fall?</h1>
-        </section>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-subtitle">Case Study</div>
+            <h1 class="hero-title">Intel's Innovation Dilemma</h1>
+            <p class="hero-description">
+                A strategic analysis through the Theta Framework revealing why innovation wasn't the problem, but executing it at scale was
+            </p>
+        </div>
+        <div class="scroll-indicator">Scroll to explore ↓</div>
+    </section>
 
-        <section class="case-study-content">
-            <!-- Early History -->
-            <p>In 1968, two visionaries, Gordon Moore and Robert Noyce, set out to change the world. After leaving Fairchild Semiconductor, they founded Intel, a company that would not just ride the wave of the computing revolution, but define it. Their mission was simple but audacious: to turn bold ideas into transformative technologies that would forever change the course of history.</p>
-
-            <div class="timeline-section">
-                <h2>Key Historical Milestones</h2>
-                <p>1971: Intel unveils the 4004 microprocessor, the first general-purpose microprocessor. This breakthrough would mark the beginning of a new era.</p>
-                <p>1978: Launch of the 8086 processor, establishing the foundation for x86 architecture.</p>
-                <p>1990s: The PC revolution and Wintel duopoly emerge.</p>
-                <p>2000s: Introduction of Xeon processors for data centers.</p>
+    <!-- Executive Summary -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Executive Summary</div>
+                <h2 class="section-title">The Core Challenge</h2>
+                <p class="section-description">
+                    Intel's struggle wasn't about lacking innovation—it was about executing that innovation at scale across shifting leadership priorities and organizational complexity.
+                </p>
             </div>
 
-            <!-- Early Success and Growth -->
-                <p>In 1971, just three years after Intel was founded, the company unveiled the 4004 microprocessor, the first general-purpose microprocessor. This breakthrough marked the beginning of a new era. Electronics were no longer constrained by hardwired logic but could now be programmed to perform virtually any task. The microprocessor wasn’t just an invention—it was a revolution, one that catapulted Intel to the forefront of the semiconductor industry.</p>
-
-                <p>Early on, Intel was a leader in memory chips, particularly dynamic random-access memory (DRAM). However, by the late 1970s, Japanese manufacturers were able to produce memory chips faster and more cheaply, forcing Intel to make a major decision: double down on memory or pivot to something new. Intel chose the latter, betting everything on microprocessors.</p>
-
-                <p>That gamble paid off in 1978 with the launch of the 8086 processor, the foundation for the now-ubiquitous x86 architecture. By the 1980s, x86 chips were powering IBM PCs, cementing Intel’s status as the backbone of personal computing.</p>
-
-                <p>The 1990s ushered in the PC revolution, and Intel was squarely in the driver’s seat. The company's partnership with Microsoft, known as the Wintel duopoly, was the defining alliance of the era. With the launch of the Pentium processor, Intel was no longer just selling chips; it was selling speed, power, and the promise of the digital future.</p>
-
-                <p>Intel became a household name. Its iconic "Intel Inside" branding campaign ensured that everyone, from tech enthusiasts to casual users, knew exactly what powered their computers. By the turn of the millennium, Intel wasn’t just a semiconductor company; it was a cultural and technological juggernaut.</p>
-
-                <p>As the PC market matured, Intel shifted its focus to new frontiers. The explosion of data in the 2000s, driven by the internet, created new opportunities. Intel capitalized on this by launching Xeon processors, designed for servers and data centers.</p>
-
-                <p>The real innovation came with the introduction of multi-core technology, which addressed the limitations of single-core processors and unlocked new possibilities for cloud computing. Xeon became the standard in data centers, and Intel’s dominance expanded from personal computing into enterprise infrastructure.</p>
-
-                <p>But no company, no matter how dominant, is immune to mistakes. The mobile revolution of the 2010s reshaped the technology landscape. While competitors like ARM and Apple surged ahead, Intel struggled to capitalize. Its Atom processors, designed for mobile devices, could not match the energy efficiency of ARM chips. Intel was left on the sidelines while ARM-based chips became the standard for smartphones and tablets.</p>
-
-                <p>Intel’s struggles didn’t end there. It also faced delays in adopting advanced manufacturing processes. The transition from 10nm to 7nm chips was slower than expected, allowing competitors like AMD and TSMC to gain significant ground. AMD’s EPYC processors, produced using TSMC’s cutting-edge fabrication processes, offered better performance and efficiency, gradually eating into Intel’s server market share. Then, Apple made a bold move in 2020 by transitioning to its own ARM-based M1 chips, a symbolic blow to Intel’s dominance.</p>
-
-            <h2>Leadership Challenges</h2>
-
-                <p>The challenges didn’t stop at technology. Internally, Intel grappled with a loss of leadership confidence. By December 1, 2024, the board had lost faith in CEO Pat Gelsinger’s ability to turn the company around. His ambitious revival plan had failed to produce tangible results quickly enough. The board cited multiple factors: a 33% drop in revenue, a 66% plunge in stock price, and a $16.6 billion loss in Q3 2024. Revenue from key chip manufacturing contracts with Microsoft and Amazon also fell short. Intel's market value had plummeted, now over 30 times smaller than Nvidia, which had emerged as the leader in AI chips.</p>
-
-                <p>Further compounding Intel’s struggles was a talent drain. Engineers and managers were leaving for competitors like AMD, Nvidia, and Lattice—companies perceived as more agile, innovative, and stable. This exodus reflected Intel’s difficulty in staying relevant in a rapidly evolving industry.</p>
-
-                <p>Despite these hurdles, Intel remained committed to reclaiming its leadership. Under the IDM 2.0 strategy, Gelsinger sought to combine in-house manufacturing with external foundry services through Intel Foundry Services (IFS), directly challenging TSMC and signaling the company’s intent to regain its place at the top of semiconductor fabrication. Critics argued the strategy had been costly and slow to produce results. ARM CEO René Haas questioned whether Intel’s ambitious timelines were realistic. Could Intel afford to stay vertically integrated, or would selective fabless operations better preserve competitiveness?</p>
-
-                <p>Intel’s reinvention also depended on new technological frontiers. Its Xeon Scalable Processors were optimized for AI workloads, while projects like Loihi (neuromorphic computing) and quantum processors aimed to push the boundaries of what was possible. Yet in an industry driven by speed and innovation, delays or underperformance could leave Intel further behind.</p>
-
-                <p>Following Gelsinger’s departure, Michelle Johnston Holthaus and David Zinsner served as interim co-CEOs. Holthaus, a 30-year Intel veteran, left the company in September 2025, and Lip-Bu Tan was appointed CEO in March 2025, signaling a new chapter in leadership. External pressures added another layer of complexity. Geopolitical tensions and global trade negotiations had the potential to influence Intel’s partnerships, funding strategies, and global operations, creating challenges that extended far beyond the company’s internal boardroom.</p>
-
-
-            <h2>Current Challenges and Reflection</h2>
-                <p>Intel’s history has been defined by transformation: pioneering the microprocessor, shaping personal computing, and driving the cloud era. Yet today, the company faces a crisis that strikes at the heart of its identity. Its core strengths—once an engine of growth—now risk constraining its ability to adapt to new technological directions.</p>
-
-                <p>The questions are more urgent than ever: Can Intel reinvent itself once again? Can it balance ambition with execution to regain trust and relevance? Or will it become a cautionary tale of a giant unable to keep pace with the industry’s rapid evolution? The answers will not only determine Intel’s future but have far-reaching implications for the entire semiconductor industry. For now, Intel’s greatest challenge isn’t just its competitors—it’s time itself.</p>
-
-            <h2>Theta Framework Analysis</h2>
-            
-            <h3>Core</h3>
-            <ul>
-                <li>Microprocessors: Intel's foundational role, starting with the 4004 microprocessor</li>
-                <li>Personal computing: x86 architecture and partnership with IBM</li>
-                <li>Server infrastructure: Xeon processors powering data centers</li>
-            </ul>
-
-            <h3>Adjacent</h3>
-            <ul>
-                <li>Memory chips: Early focus on DRAM before pivoting to microprocessors</li>
-                <li>Mobile technology: Attempt in the mobile market, struggling against ARM</li>
-                <li>Partnerships: Collaboration with Microsoft (Wintel duopoly)</li>
-            </ul>
-
-            <h3>Architectural</h3>
-            <ul>
-                <li>x86 architecture: Core architectural innovation</li>
-                <li>Multi-core processors: Improving efficiency for cloud computing</li>
-                <li>IDM 2.0 strategy: Combining in-house and external manufacturing</li>
-            </ul>
-
-            <h3>Disruptive</h3>
-            <ul>
-                <li>4004 microprocessor: Disruption in the semiconductor industry</li>
-                <li>Pentium processors: Revolutionizing personal computing</li>
-                <li>Mobile market struggles: Disrupted by ARM-based chips</li>
-            </ul>
-
-            <h3>Transformative</h3>
-            <ul>
-                <li>Memory to microprocessor shift: Changing the semiconductor industry</li>
-                <li>Intel Inside campaign: Transforming tech branding</li>
-                <li>Multi-core processors: Enabling cloud infrastructure</li>
-            </ul>
-
-            <h3>Frontier</h3>
-            <ul>
-                <li>AI and quantum computing: Pushing the limits of computing technology</li>
-                <li>IDM 2.0 and Intel Foundry Services (IFS): Competing with TSMC in semiconductor manufacturing</li>
-            </ul>
-
-            <div class="insights">
-                <h2>Key Insights</h2>
-                <p>From the Theta Framework, it appears that Intel is leaning heavily on legacy business models while attempting to expand into new frontiers without fully adapting to emerging market needs. Its slower recognition of tectonic shifts in mobile, AI, and quantum computing delayed adaptation.</p>
-                
-                <p>Intel's frontier initiatives may yet produce meaningful results, but they will likely require bold experimentation and learning from inherent innovation risks. Only through such efforts can Intel redefine its role in a rapidly evolving tech landscape. Without this, the company may struggle to keep pace with the next wave of technological change.</p>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h3>Market Position</h3>
+                    <p>From 90% CPU market share to watching AMD climb steadily while TSMC leads fabrication. Revenue dropped far below peak, margins tightened, and execution weakened.</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Innovation Reality</h3>
+                    <p>Intel has always been innovative. Projects like Larrabee, RealSense, Itanium, and 5G modems showed promise but never reached scale due to execution challenges.</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Leadership Impact</h3>
+                    <p>Seven CEO transitions in 37 years created strategic drift. Each leadership change disrupted innovation continuity, making long-term bets impossible to sustain.</p>
+                </div>
+                <div class="summary-card">
+                    <h3>The Diagnosis</h3>
+                    <p>Through the Theta Framework, we reveal how Intel confused Core execution with Edge innovation, starved Beyond investments, and lost the discipline that made Grove's era successful.</p>
+                </div>
             </div>
-        </section>
-    </main>
-</body>
-</html>
+        </div>
+    </section>
+
+    <!-- Problem Statement -->
+    <section class="problem-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">The Problem</div>
+                <h2 class="section-title">Where Intel Actually Struggled</h2>
+            </div>
+
+            <div class="problem-highlights">
+                <div class="problem-card">
+                    <h4>Core vs. Edge Confusion</h4>
+                    <ul>
+                        <li>Lean methods helped teams but couldn't compress multi-year chip pipelines</li>
+                        <li>Mobile, GPUs, accelerators treated like Core products</li>
+                        <li>Mismatched expectations overloaded Core operations</li>
+                    </ul>
+                </div>
+                <div class="problem-card">
+                    <h4>Edge/Beyond Under Core Constraints</h4>
+                    <ul>
+                        <li>Edge innovations needed autonomy but got Core oversight</li>
+                        <li>Beyond research lacked insulation from quarterly pressures</li>
+                        <li>Long-term breakthroughs delayed by short-term demands</li>
+                    </ul>
+                </div>
+                <div class="problem-card">
+                    <h4>Leadership Drift</h4>
+                    <ul>
+                        <li>CEO transitions shifted priorities and culture repeatedly</li>
+                        <li>Innovation continuity disrupted every 3-5 years</li>
+                        <li>No consistent framework across leadership changes</li>
+                    </ul>
+                </div>
+                <div class="problem-card">
+                    <h4>Strategic Misalignment</h4>
+                    <ul>
+                        <li>Tick-Tock model collapsed under increased complexity</li>
+                        <li>Manufacturing delays stretched from months to years</li>
+                        <li>Under-investment in quantum and advanced packaging</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leadership Timeline -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Historical Analysis</div>
+                <h2 class="section-title">Leadership Vision Through Theta</h2>
+                <p class="section-description">
+                    How each CEO's strategic focus shifted Intel's innovation balance across Core, Edge, and Beyond zones
+                </p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-period">1987-1998</div>
+                        <h3 class="timeline-name">Andy Grove</h3>
+                        <p class="timeline-desc">
+                            Built discipline and productive paranoia. Strong Core (47.5%) enabled strong Edge (42.5%) with intentionally lean Beyond (10%). The only era with true balance—zones reinforced rather than cannibalized each other.
+                        </p>
+                    </div>
+                    <div class="timeline-marker"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-period">1998-2005</div>
+                        <h3 class="timeline-name">Craig Barrett</h3>
+                        <p class="timeline-desc">
+                            Expanded into communications, networking, flash memory. Equal Core/Edge split (45%/45%) showed high activity but weakened foundation. Scattered Edge investments without strategic coherence—lots of motion, eroding discipline.
+                        </p>
+                    </div>
+                    <div class="timeline-marker"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-period">2005-2013</div>
+                        <h3 class="timeline-name">Paul Otellini</h3>
+                        <p class="timeline-desc">
+                            Massive Core optimization (84%) while starving Edge (14%) and eliminating Beyond (2%). Rejected iPhone partnership. Excellent PC/server performance masked the catastrophic missed mobile wave and architectural stagnation.
+                        </p>
+                    </div>
+                    <div class="timeline-marker"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-period">2013-2018</div>
+                        <h3 class="timeline-name">Brian Krzanich</h3>
+                        <p class="timeline-desc">
+                            The Chaos Period. Weak Core (23%) with scattered Edge/Beyond (43%/33%). Manufacturing catastrophe (14nm→10nm failures) while pursuing IoT, drones, wearables simultaneously. Innovation without foundation created fragmentation.
+                        </p>
+                    </div>
+                    <div class="timeline-marker"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-period">2019-2021</div>
+                        <h3 class="timeline-name">Bob Swan</h3>
+                        <p class="timeline-desc">
+                            Extreme Core focus (85%) while gutting Edge (10%). Financial discipline came at the cost of technical advancement. Architectural recovery deprioritized, creating severe technical debt Pat inherited.
+                        </p>
+                    </div>
+                    <div class="timeline-marker"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-period">2021-2024</div>
+                        <h3 class="timeline-name">Pat Gelsinger</h3>
+                        <p class="timeline-desc">
+                            Attempted rebalance (37.5% Core, 37.5% Edge, 25% Beyond) with IDM 2.0 and foundry transformation. Ambitious vision constrained by inherited pipeline damage and manufacturing delays. Tried to repair all zones simultaneously.
+                        </p>
+                    </div>
+                    <div class="timeline-marker"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-period">2024-Present</div>
+                        <h3 class="timeline-name">Lip-Bu Tan</h3>
+                        <p class="timeline-desc">
+                            Emergency Core reconstruction (60%) with selective Edge (32%). Stabilization mode: manufacturing, finances, culture repair before healthy Edge/Beyond restart. Deliberate sequencing rather than premature innovation.
+                        </p>
+                    </div>
+                    <div class="timeline-marker"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Theta Framework -->
+    <section class="problem-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">The Framework</div>
+                <h2 class="section-title">Understanding Theta's Three Zones</h2>
+                <p class="section-description">
+                    Innovation rarely fails from lack of ideas or talent. It fails when leaders cannot decide what to protect, stretch, or reinvent.
+                </p>
+            </div>
+
+            <div class="framework-visual">
+                <div class="zone-grid">
+                    <div class="zone-card zone-core">
+                        <div class="zone-label">🟩 Core Zone</div>
+                        <div class="zone-title">Core + Adjacent</div>
+                        <div class="zone-range">50-75%</div>
+                        <div class="zone-description">
+                            Strengthens the company and secures financial health. Foundation and adjacent innovation that protects margins and enables growth.
+                        </div>
+                    </div>
+                    <div class="zone-card zone-edge">
+                        <div class="zone-label">🟨 Edge Zone</div>
+                        <div class="zone-title">Architectural + Disruptive</div>
+                        <div class="zone-range">15-30%</div>
+                        <div class="zone-description">
+                            Develops architectural and disruptive bets for the next S-curve. Requires autonomy, rapid iteration, and tolerance for failure.
+                        </div>
+                    </div>
+                    <div class="zone-card zone-beyond">
+                        <div class="zone-label">🟥 Beyond Zone</div>
+                        <div class="zone-title">Long-Horizon + Moonshots</div>
+                        <div class="zone-range">5-15%</div>
+                        <div class="zone-description">
+                            Pursues long-term breakthroughs insulated from short-term pressures. Quantum computing, advanced packaging, transformational research.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Visualization -->
+    <section class="visualization-section">
+        <div class="container">
+            <div class="section-header" style="color: white;">
+                <div class="section-label" style="color: #87ceeb;">Interactive Analysis</div>
+                <h2 class="section-title">Intel Leadership Vision Map</h2>
+                <p class="section-description" style="color: rgba(255,255,255,0.8);">
+                    Explore how each leader's strategic focus created different balance scores. Click on any leader card to see detailed Theta component breakdowns.
+                </p>
+            </div>
+
+            <div class="viz-container">
+                <iframe 
+                    src="intel-visualization.html" 
+                    width="100%" 
+                    height="1200px" 
+                    style="border: none; border-radius: 8px;"
+                    title="Intel Theta Framework Visualization"
+                ></iframe>
+                <p style="text-align: center; color: var(--text-secondary); margin-top: 1rem; font-size: 0.9rem;">
+                    Note: Embed your React visualization artifact here by replacing the iframe src
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Insights -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Key Findings</div>
+                <h2 class="section-title">Critical Insights from Theta Analysis</h2>
+            </div>
+
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <div class="insight-icon">🎯</div>
+                    <h3 class="insight-title">Balance ≠ Equal Distribution</h3>
+                    <p class="insight-text">
+                        Grove's "balance" was 47.5% Core, 42.5% Edge, 10% Beyond—not 33/33/33. Strong Core enabled strong Edge. Strategic appropriateness matters more than mathematical centrism.
+                    </p>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-icon">⚠️</div>
+                    <h3 class="insight-title">Core Overoptimization Trap</h3>
+                    <p class="insight-text">
+                        Otellini (84% Core) and Swan (85% Core) maximized today's business while starving Edge. Short-term wins masked S-curve transitions until recovery became impossible.
+                    </p>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-icon">💥</div>
+                    <h3 class="insight-title">Chaos from Weak Foundation</h3>
+                    <p class="insight-text">
+                        Krzanich's weak Core (23%) couldn't support scattered Edge/Beyond bets. Manufacturing collapse + IoT/drone experiments = identity loss and fragmentation.
+                    </p>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-icon">🔄</div>
+                    <h3 class="insight-title">Recovery Requires Discipline</h3>
+                    <p class="insight-text">
+                        Tan's deliberate Core focus (60%) with selective Edge (32%) shows recovery wisdom: stabilize foundation before expanding. Can't skip repair to chase opportunities.
+                    </p>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-icon">📊</div>
+                    <h3 class="insight-title">Leadership Continuity Matters</h3>
+                    <p class="insight-text">
+                        Seven CEO transitions disrupted multi-year chip development cycles. Capital-intensive industries need strategic consistency—Theta provides that shared language.
+                    </p>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-icon">🚀</div>
+                    <h3 class="insight-title">Execution > Invention</h3>
+                    <p class="insight-text">
+                        Intel never lacked ideas—Larrabee, RealSense, Itanium all showed promise. Scaling innovation at manufacturing complexity separated leaders from followers.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recommendations -->
+    <section class="recommendations">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Strategic Recommendations</div>
+                <h2 class="section-title">How Theta Can Help Intel's Future</h2>
+            </div>
+
+            <div class="rec-card">
+                <div class="rec-number">1</div>
+                <h3 class="rec-title">Establish Clear Zone Governance</h3>
+                <p class="rec-description">
+                    Create distinct operating models for Core, Edge, and Beyond. Core needs efficiency and predictability. Edge needs autonomy and rapid iteration. Beyond needs insulation from quarterly pressures. Stop forcing Edge innovations through Core processes.
+                </p>
+                <div class="rec-impact">
+                    <strong>Expected Impact:</strong> Reduce time-to-market for Edge products by 30-40%, enable Beyond research to operate on 5-10 year horizons without premature commercialization pressure.
+                </div>
+            </div>
+
+            <div class="rec-card">
+                <div class="rec-number">2</div>
+                <h3 class="rec-title">Align Leadership Metrics to Zones</h3>
+                <p class="rec-description">
+                    Core leaders should be measured on operational excellence and margin protection. Edge leaders on speed-to-market and learning velocity. Beyond leaders on breakthrough potential and patent quality. Misaligned incentives kill innovation balance.
+                </p>
+                <div class="rec-impact">
+                    <strong>Expected Impact:</strong> Eliminate political battles between zones, create clarity on success metrics, enable leaders to optimize for their zone's strategic role.
+                </div>
+            </div>
+
+            <div class="rec-card">
+                <div class="rec-number">3</div>
+                <h3 class="rec-title">Protect Edge/Beyond from Core Constraints</h3>
+                <p class="rec-description">
+                    Mobile, GPUs, and accelerators failed because they were treated like Core products. Edge needs separate funding, faster decision-making, and permission to partner widely. Beyond needs patient capital and freedom from ROI discussions.
+                </p>
+                <div class="rec-impact">
+                    <strong>Expected Impact:</strong> Increase Edge success rate from ~20% to 40-50%, enable Beyond breakthroughs that create new markets rather than chasing existing ones.
+                </div>
+            </div>
+
+            <div class="
 
