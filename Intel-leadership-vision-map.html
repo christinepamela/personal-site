@@ -1,0 +1,509 @@
+import React, { useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, LineChart, Line } from 'recharts';
+import { TrendingUp, AlertTriangle, Award, Target, Info, Settings } from 'lucide-react';
+
+const IntelThetaVision = () => {
+  const [selectedLeader, setSelectedLeader] = useState(null);
+  const [showMethodology, setShowMethodology] = useState(false);
+  const [showWeights, setShowWeights] = useState(false);
+
+  // Calculation functions
+  const calculateRangeScore = (value, min, max, penalty) => {
+    if (value >= min && value <= max) return 100;
+    const midpoint = (min + max) / 2;
+    return Math.max(0, 100 - penalty * Math.abs(value - midpoint));
+  };
+
+  const calculateCoherence = (core, edge, beyond) => {
+    let coherence = 100;
+    
+    // Pattern 1: Weak core trying to support strong edge/beyond
+    if (core < 50 && (edge > 60 || beyond > 30)) {
+      coherence -= 30; // "Building castles in the air"
+    }
+    
+    // Pattern 2: Over-optimized core starving edge
+    if (core > 80 && edge < 30) {
+      coherence -= 25; // "Milking the cash cow"
+    }
+    
+    // Pattern 3: Scattered chaos (all zones weak)
+    if (core < 50 && edge < 50 && beyond < 30) {
+      coherence -= 20; // "Lost identity"
+    }
+    
+    // Bonus: Strong core enabling strong edge
+    if (core > 70 && edge > 60 && beyond < 30) {
+      coherence += 20; // "Healthy expansion"
+    }
+    
+    return Math.max(0, Math.min(100, coherence));
+  };
+
+  const calculateThetaBalance = (core, edge, beyond) => {
+    // Convert intensities to percentages
+    const total = core + edge + beyond;
+    const coreP = (core / total) * 100;
+    const edgeP = (edge / total) * 100;
+    const beyondP = (beyond / total) * 100;
+    
+    // Component scores using ideal ranges
+    const CS = calculateRangeScore(coreP, 50, 75, 2);
+    const ES = calculateRangeScore(edgeP, 15, 30, 4);
+    const BS = calculateRangeScore(beyondP, 5, 15, 10);
+    const CP = calculateCoherence(core, edge, beyond);
+    
+    // Weighted average (Core 35%, Edge 30%, Beyond 15%, Coherence 20%)
+    return Math.round(CS * 0.35 + ES * 0.30 + BS * 0.15 + CP * 0.20);
+  };
+
+  // Leader data with raw intensity scores
+  const leadersRaw = [
+    {
+      name: "Andy Grove",
+      period: "1987-1998",
+      core: 95,
+      edge: 85,
+      beyond: 20,
+      interpretation: "The only era with true balance. Strong Core enabled strong Edge.",
+      outcome: "success",
+      keyInsight: "Built culture of discipline and productive paranoia. Beyond kept intentionally lean by design, not neglect."
+    },
+    {
+      name: "Craig Barrett",
+      period: "1998-2005",
+      core: 45,
+      edge: 45,
+      beyond: 10,
+      interpretation: "Overextended Core through excessive adjacency. Scattered Edge without focus.",
+      outcome: "warning",
+      keyInsight: "Heavy adjacent expansion into communications, networking, flash weakened Core discipline. Lots of Edge activity but no strategic coherence."
+    },
+    {
+      name: "Paul Otellini",
+      period: "2005-2013",
+      core: 90,
+      edge: 15,
+      beyond: 2,
+      interpretation: "Over-indexed on Core. Starved Edge, creating Intel's biggest missed wave.",
+      outcome: "critical",
+      keyInsight: "Excellent Core performance but critically underinvested in mobile/low-power. Beyond essentially nonexistent."
+    },
+    {
+      name: "Brian Krzanich",
+      period: "2013-2018",
+      core: 35,
+      edge: 65,
+      beyond: 50,
+      interpretation: "The Chaos Period. Weak Core + overextended Edge/Beyond = fragmentation.",
+      outcome: "critical",
+      keyInsight: "Manufacturing catastrophe (14nm→10nm failures) while scattering across IoT, drones, wearables with zero coherence."
+    },
+    {
+      name: "Bob Swan",
+      period: "2019-2021",
+      core: 85,
+      edge: 10,
+      beyond: 5,
+      interpretation: "Over-optimized Core, underinvested in future. Shrinking innovation pipeline.",
+      outcome: "warning",
+      keyInsight: "Financial stability prioritized over technical advancement. Architectural recovery deprioritized."
+    },
+    {
+      name: "Pat Gelsinger",
+      period: "2021-2024",
+      core: 60,
+      edge: 60,
+      beyond: 40,
+      interpretation: "Attempted rebalance of all zones, but hampered by inherited pipeline damage.",
+      outcome: "warning",
+      keyInsight: "Ambitious foundry transformation (IDM 2.0) while rebuilding weakened Core. Vision constrained by execution bottlenecks."
+    },
+    {
+      name: "Lip-Bu Tan",
+      period: "2024-Present",
+      core: 75,
+      edge: 40,
+      beyond: 10,
+      interpretation: "Emergency Core reconstruction. Minimal Beyond until foundation is solid.",
+      outcome: "recovery",
+      keyInsight: "Stabilization mode: manufacturing, finances, culture repair before healthy Edge/Beyond restart."
+    }
+  ];
+
+  // Calculate derived metrics for each leader
+  const leaders = leadersRaw.map(leader => {
+    const total = leader.core + leader.edge + leader.beyond;
+    const coreP = (leader.core / total) * 100;
+    const edgeP = (leader.edge / total) * 100;
+    const beyondP = (leader.beyond / total) * 100;
+    
+    const CS = calculateRangeScore(coreP, 50, 75, 2);
+    const ES = calculateRangeScore(edgeP, 10, 25, 4);
+    const BS = calculateRangeScore(beyondP, 5, 15, 10);
+    const CP = calculateCoherence(leader.core, leader.edge, leader.beyond);
+    const balance = calculateThetaBalance(leader.core, leader.edge, leader.beyond);
+    
+    return {
+      ...leader,
+      corePercent: Math.round(coreP),
+      edgePercent: Math.round(edgeP),
+      beyondPercent: Math.round(beyondP),
+      coreScore: Math.round(CS),
+      edgeScore: Math.round(ES),
+      beyondScore: Math.round(BS),
+      coherenceScore: Math.round(CP),
+      balance
+    };
+  });
+
+  const getOutcomeColor = (outcome) => {
+    switch(outcome) {
+      case 'success': return 'bg-emerald-500';
+      case 'warning': return 'bg-amber-500';
+      case 'critical': return 'bg-red-500';
+      case 'recovery': return 'bg-blue-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  const getOutcomeIcon = (outcome) => {
+    switch(outcome) {
+      case 'success': return <Award className="w-4 h-4" />;
+      case 'warning': return <AlertTriangle className="w-4 h-4" />;
+      case 'critical': return <AlertTriangle className="w-4 h-4" />;
+      case 'recovery': return <TrendingUp className="w-4 h-4" />;
+      default: return <Target className="w-4 h-4" />;
+    }
+  };
+
+  const chartData = leaders.map(leader => ({
+    name: leader.name.split(' ').pop(),
+    'Core %': leader.corePercent,
+    'Edge %': leader.edgePercent,
+    'Beyond %': leader.beyondPercent,
+    Balance: leader.balance
+  }));
+
+  const balanceTrendData = leaders.map(leader => ({
+    name: leader.name.split(' ').pop(),
+    Balance: leader.balance
+  }));
+
+  const getRadarData = (leader) => [
+    { metric: 'Core Score', value: leader.coreScore },
+    { metric: 'Edge Score', value: leader.edgeScore },
+    { metric: 'Beyond Score', value: leader.beyondScore },
+    { metric: 'Coherence', value: leader.coherenceScore }
+  ];
+
+  return (
+    <div className="w-full max-w-7xl mx-auto p-6 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl shadow-2xl">
+      <div className="mb-8">
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-slate-800 mb-2">Intel Leadership Vision Map</h1>
+            <p className="text-slate-600 text-lg">Theta Framework Analysis: Reproducible Balance Calculation</p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowWeights(!showWeights)}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
+            >
+              <Settings className="w-4 h-4" />
+              <span className="text-sm font-medium">Weights</span>
+            </button>
+            <button
+              onClick={() => setShowMethodology(!showMethodology)}
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-colors"
+            >
+              <Info className="w-4 h-4" />
+              <span className="text-sm font-medium">Formula</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Weights Panel */}
+      {showWeights && (
+        <div className="bg-white rounded-lg p-6 shadow-lg mb-6 border-2 border-purple-300">
+          <h2 className="text-xl font-semibold text-purple-800 mb-4">Component Weights & Ideal Ranges</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-3">
+              <h3 className="font-semibold text-slate-800">Ideal Distribution Ranges</h3>
+              <div className="bg-emerald-50 p-3 rounded-lg">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm font-medium text-emerald-800">Core Zone</span>
+                  <span className="text-xs text-emerald-600">Penalty: ×2 outside range</span>
+                </div>
+                <div className="text-lg font-bold text-emerald-900">50% - 75%</div>
+                <p className="text-xs text-emerald-700 mt-1">Foundation + Adjacent Innovation</p>
+              </div>
+              <div className="bg-amber-50 p-3 rounded-lg">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm font-medium text-amber-800">Edge Zone</span>
+                  <span className="text-xs text-amber-600">Penalty: ×4 outside range</span>
+                </div>
+                <div className="text-lg font-bold text-amber-900">15% - 30%</div>
+                <p className="text-xs text-amber-700 mt-1">Architectural + Early Disruptive</p>
+              </div>
+              <div className="bg-red-50 p-3 rounded-lg">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm font-medium text-red-800">Beyond Zone</span>
+                  <span className="text-xs text-red-600">Penalty: ×10 outside range</span>
+                </div>
+                <div className="text-lg font-bold text-red-900">5% - 15%</div>
+                <p className="text-xs text-red-700 mt-1">Long-Horizon + Moonshots</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <h3 className="font-semibold text-slate-800">Balance Calculation Weights</h3>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between bg-slate-50 p-2 rounded">
+                  <span className="text-sm text-slate-700">Core Score</span>
+                  <span className="font-semibold text-slate-900">35%</span>
+                </div>
+                <div className="flex items-center justify-between bg-slate-50 p-2 rounded">
+                  <span className="text-sm text-slate-700">Edge Score</span>
+                  <span className="font-semibold text-slate-900">30%</span>
+                </div>
+                <div className="flex items-center justify-between bg-slate-50 p-2 rounded">
+                  <span className="text-sm text-slate-700">Beyond Score</span>
+                  <span className="font-semibold text-slate-900">15%</span>
+                </div>
+                <div className="flex items-center justify-between bg-slate-50 p-2 rounded">
+                  <span className="text-sm text-slate-700">Coherence Score</span>
+                  <span className="font-semibold text-slate-900">20%</span>
+                </div>
+              </div>
+              <div className="bg-indigo-50 p-3 rounded-lg mt-3">
+                <h4 className="text-sm font-semibold text-indigo-800 mb-2">Coherence Patterns</h4>
+                <ul className="text-xs text-indigo-700 space-y-1">
+                  <li>✗ Weak Core + Strong Edge/Beyond: -30</li>
+                  <li>✗ Over-optimized Core + Starved Edge: -25</li>
+                  <li>✗ All Zones Weak (Chaos): -20</li>
+                  <li>✓ Strong Core + Strong Edge + Lean Beyond: +20</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Methodology Panel */}
+      {showMethodology && (
+        <div className="bg-white rounded-lg p-6 shadow-lg mb-6 border-2 border-indigo-300">
+          <h2 className="text-xl font-semibold text-indigo-800 mb-4">Theta Balance Calculation Formula</h2>
+          <div className="space-y-4">
+            <div className="bg-indigo-50 p-4 rounded-lg">
+              <h3 className="font-semibold text-indigo-900 mb-2">Step 1: Normalize to Percentages</h3>
+              <code className="text-xs text-indigo-800 block">
+                Total = Core + Edge + Beyond<br/>
+                Core% = (Core / Total) × 100<br/>
+                Edge% = (Edge / Total) × 100<br/>
+                Beyond% = (Beyond / Total) × 100
+              </code>
+            </div>
+            <div className="bg-indigo-50 p-4 rounded-lg">
+              <h3 className="font-semibold text-indigo-900 mb-2">Step 2: Calculate Component Scores</h3>
+              <code className="text-xs text-indigo-800 block">
+                CoreScore = 100 if Core% ∈ [50,75], else 100 - 2×|Core% - 62.5|<br/>
+                EdgeScore = 100 if Edge% ∈ [15,30], else 100 - 4×|Edge% - 22.5|<br/>
+                BeyondScore = 100 if Beyond% ∈ [5,15], else 100 - 10×|Beyond% - 10|<br/>
+                CoherenceScore = Pattern-based (see weights panel)
+              </code>
+            </div>
+            <div className="bg-indigo-50 p-4 rounded-lg">
+              <h3 className="font-semibold text-indigo-900 mb-2">Step 3: Weighted Average</h3>
+              <code className="text-xs text-indigo-800 block">
+                Balance = (CoreScore × 0.35) + (EdgeScore × 0.30) + (BeyondScore × 0.15) + (CoherenceScore × 0.20)
+              </code>
+            </div>
+            <div className="bg-yellow-50 p-3 rounded-lg border-l-4 border-yellow-400">
+              <p className="text-xs text-yellow-800">
+                <strong>Note:</strong> This formula is pattern-aligned with observed Intel leadership behavior. The weights and penalties reflect strategic importance rather than mathematical centrism.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Balance Trend Line */}
+      <div className="bg-white rounded-lg p-6 shadow-lg mb-6">
+        <h2 className="text-xl font-semibold text-slate-700 mb-4">Theta Balance Over Time</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={balanceTrendData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis domain={[0, 100]} />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="Balance" stroke="#6366f1" strokeWidth={3} dot={{ r: 6 }} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Vision Distribution Chart */}
+      <div className="bg-white rounded-lg p-6 shadow-lg mb-6">
+        <h2 className="text-xl font-semibold text-slate-700 mb-4">Zone Distribution (Normalized %)</h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis domain={[0, 100]} />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="Core %" fill="#10b981" stackId="a" />
+            <Bar dataKey="Edge %" fill="#f59e0b" stackId="a" />
+            <Bar dataKey="Beyond %" fill="#ef4444" stackId="a" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Leader Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        {leaders.map((leader, idx) => (
+          <div
+            key={idx}
+            onClick={() => setSelectedLeader(selectedLeader === idx ? null : idx)}
+            className={`bg-white rounded-lg p-5 shadow-md cursor-pointer transition-all hover:shadow-xl ${
+              selectedLeader === idx ? 'ring-4 ring-blue-400' : ''
+            }`}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <h3 className="text-lg font-bold text-slate-800">{leader.name}</h3>
+                <p className="text-sm text-slate-500">{leader.period}</p>
+              </div>
+              <div className={`p-2 rounded-full ${getOutcomeColor(leader.outcome)} text-white`}>
+                {getOutcomeIcon(leader.outcome)}
+              </div>
+            </div>
+
+            {/* Intensity Scores */}
+            <div className="space-y-2 mb-3">
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-slate-600">Core (Intensity)</span>
+                  <span className="font-semibold">{leader.core} → {leader.corePercent}%</span>
+                </div>
+                <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500" style={{width: `${leader.corePercent}%`}}></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-slate-600">Edge (Intensity)</span>
+                  <span className="font-semibold">{leader.edge} → {leader.edgePercent}%</span>
+                </div>
+                <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-amber-500" style={{width: `${leader.edgePercent}%`}}></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-slate-600">Beyond (Intensity)</span>
+                  <span className="font-semibold">{leader.beyond} → {leader.beyondPercent}%</span>
+                </div>
+                <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-red-500" style={{width: `${leader.beyondPercent}%`}}></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Calculated Balance */}
+            <div className="pt-3 border-t border-slate-200">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-slate-600">Calculated Balance</span>
+                <span className="text-lg font-bold text-indigo-600">{leader.balance}</span>
+              </div>
+            </div>
+
+            {/* Expanded Details */}
+            {selectedLeader === idx && (
+              <div className="mt-4 pt-4 border-t border-slate-200 space-y-3">
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <p className="text-xs font-semibold text-blue-800 mb-1">Theta Interpretation:</p>
+                  <p className="text-xs text-blue-700">{leader.interpretation}</p>
+                </div>
+                <div className="bg-slate-50 p-3 rounded-lg">
+                  <p className="text-xs font-semibold text-slate-800 mb-1">Key Insight:</p>
+                  <p className="text-xs text-slate-600">{leader.keyInsight}</p>
+                </div>
+                
+                {/* Component Scores */}
+                <div className="bg-purple-50 p-3 rounded-lg">
+                  <p className="text-xs font-semibold text-purple-800 mb-2">Score Breakdown:</p>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <span className="text-slate-600">Core Score:</span>
+                      <span className="font-semibold ml-1">{leader.coreScore}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-600">Edge Score:</span>
+                      <span className="font-semibold ml-1">{leader.edgeScore}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-600">Beyond Score:</span>
+                      <span className="font-semibold ml-1">{leader.beyondScore}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-600">Coherence:</span>
+                      <span className="font-semibold ml-1">{leader.coherenceScore}</span>
+                    </div>
+                  </div>
+                  <div className="mt-2 pt-2 border-t border-purple-200">
+                    <code className="text-xs text-purple-700">
+                      {leader.coreScore}×0.35 + {leader.edgeScore}×0.30 + {leader.beyondScore}×0.15 + {leader.coherenceScore}×0.20 = {leader.balance}
+                    </code>
+                  </div>
+                </div>
+
+                {/* Radar Chart */}
+                <div className="bg-indigo-50 p-3 rounded-lg">
+                  <ResponsiveContainer width="100%" height={180}>
+                    <RadarChart data={getRadarData(leader)}>
+                      <PolarGrid />
+                      <PolarAngleAxis dataKey="metric" tick={{fontSize: 10}} />
+                      <PolarRadiusAxis domain={[0, 100]} tick={{fontSize: 10}} />
+                      <Radar dataKey="value" stroke="#6366f1" fill="#6366f1" fillOpacity={0.5} />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Key Patterns */}
+      <div className="bg-white rounded-lg p-6 shadow-lg">
+        <h2 className="text-xl font-semibold text-slate-700 mb-4">Theta Framework Insights</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-emerald-50 p-4 rounded-lg border-l-4 border-emerald-500">
+            <h3 className="font-semibold text-emerald-800 mb-2">✓ Strategic Appropriateness (Grove: 91)</h3>
+            <p className="text-sm text-emerald-700">47.5% Core, 42.5% Edge, 10% Beyond. Strong Core enabling strong Edge with intentionally lean Beyond. Balance ≠ equal distribution—it means zones that reinforce strategically.</p>
+          </div>
+          <div className="bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+            <h3 className="font-semibold text-red-800 mb-2">✗ Core Overoptimization (Otellini: 51, Swan: 59)</h3>
+            <p className="text-sm text-red-700">Core at 72-74% but Edge at 20-24%. Coherence penalty for starving Edge. Maximizing today's business creates blindness to S-curve transitions.</p>
+          </div>
+          <div className="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-500">
+            <h3 className="font-semibold text-amber-800 mb-2">⚠ Chaos from Weak Foundation (Krzanich: 48)</h3>
+            <p className="text-sm text-amber-700">Core at 23% (far below 50% minimum) while scattering to Edge 43%/Beyond 33%. Severe coherence penalty (-30). Innovation without foundation = fragmentation.</p>
+          </div>
+          <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+            <h3 className="font-semibold text-blue-800 mb-2">↻ Recovery Discipline (Tan: 77)</h3>
+            <p className="text-sm text-blue-700">Core at 60%, Edge at 32%, Beyond at 8%. Within healthy ranges with positive coherence bonus. Stabilization enables future innovation cycles.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-6 text-center text-sm text-slate-500">
+        Click leader cards for detailed score breakdowns • Click "Formula" or "Weights" buttons to see calculation methodology
+      </div>
+    </div>
+  );
+};
+
+export default IntelThetaVision;
