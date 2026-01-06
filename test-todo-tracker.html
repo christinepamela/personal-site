@@ -1897,65 +1897,7 @@ function archiveCompletedGoals(type) {
             }
 
 
-            function renderGoals() {
-              const html = state.goals.map(goal => {
-                const progress = (() => {
-                  if (goal.type === 'weekly' || !goal.type) {
-                    return goal.totalTasks === 0 ? 0 : (goal.completedTasks / goal.totalTasks) * 100;
-                  }
-                  if (goal.type === 'monthly') {
-                    const children = getChildGoals(goal.id).filter(c => c.type === 'weekly');
-                    if (children.length === 0) {
-                      return goal.totalTasks === 0 ? 0 : (goal.completedTasks / goal.totalTasks) * 100;
-                    }
-                    return children.reduce((sum, c) => {
-                      return sum + (c.totalTasks === 0 ? 100 : (c.completedTasks / c.totalTasks) * 100);
-                    }, 0) / children.length;
-                  }
-                  if (goal.type === 'quarterly') {
-                    const children = getChildGoals(goal.id).filter(c => c.type === 'monthly');
-                    if (children.length === 0) {
-                      return goal.totalTasks === 0 ? 0 : (goal.completedTasks / goal.totalTasks) * 100;
-                    }
-                    return children.reduce((sum, c) => {
-                      const cChildren = getChildGoals(c.id).filter(cc => cc.type === 'weekly');
-                      if (cChildren.length === 0) {
-                        return sum + (c.totalTasks === 0 ? 100 : (c.completedTasks / c.totalTasks) * 100);
-                      }
-                      return sum + cChildren.reduce((s, cc) => {
-                        return s + (cc.totalTasks === 0 ? 100 : (cc.completedTasks / cc.totalTasks) * 100);
-                      }, 0) / cChildren.length;
-                    }, 0) / children.length;
-                  }
-                  return goal.totalTasks === 0 ? 0 : (goal.completedTasks / goal.totalTasks) * 100;
-                })();
-                
-                const typeEmoji = { weekly: '📅', monthly: '📆', quarterly: '🗓️' };
-                const typeBadge = goal.type ? `<span style="font-size: 0.85em; opacity: 0.7;">${typeEmoji[goal.type] || '📅'} ${goal.type || 'weekly'}</span>` : '';
-                
-                const childCount = getChildGoals(goal.id).length;
-                const childBadge = childCount > 0 ? `<span style="font-size: 0.8em; margin-left: 8px; opacity: 0.6;">(${childCount} sub-goals)</span>` : '';
-                
-                return `
-                  <div class="goal-item">
-                    <div class="goal-header">
-                      <span class="goal-name" onclick="editGoal(${goal.id}, '${goal.text.replace(/'/g, "\\'")}', this)">
-                        ${goal.text} ${typeBadge}${childBadge}
-                      </span>
-                      <button class="goal-edit-btn" onclick="editGoal(${goal.id}, '${goal.text.replace(/'/g, "\\'")}', this)" title="Edit goal">✏️</button>
-                      <button class="goal-delete-btn" onclick="deleteGoal(${goal.id})">×</button>
-                    </div>
-                    <div class="goal-stats">${goal.completedTasks}/${goal.totalTasks} direct tasks · ${Math.round(progress)}% total</div>
-                    <div class="goal-progress-bar">
-                      <div class="goal-progress-fill" style="width: ${progress}%"></div>
-                    </div>
-                  </div>
-                `;
-              }).join('');
-              
-              document.getElementById('goals-list').innerHTML = html || '<p style="text-align:center;color:var(--text-light);padding:20px;">Add your first goal! 🎯</p>';
-            }
-
+           
         function editGoal(goalId, currentText, element) {
             const newText = prompt('Edit your goal:', currentText);
             if (newText && newText.trim()) {
@@ -2498,6 +2440,114 @@ function archiveCompletedGoals(type) {
                         alert('✅ Task rescheduled to ' + selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }));
                     }
                 }
+            }
+
+            // ============================================================
+            // 6. RENDER GOALS DASHBOARD
+            // ============================================================
+            
+            function renderGoalsDashboard() {
+                const container = document.getElementById('goals-dashboard');
+                
+                const quarterlyHtml = renderStrategicGoalSection('quarterly', '🗓️ Quarterly Goals', state.strategicGoals.quarterly);
+                const monthlyHtml = renderStrategicGoalSection('monthly', '📆 Monthly Goals', state.strategicGoals.monthly);
+                const weeklyHtml = renderStrategicGoalSection('weekly', '📅 Weekly Goals', state.strategicGoals.weekly);
+                
+                container.innerHTML = `
+                    <div style="margin-bottom: 30px;">
+                        <p style="color: var(--text-light); margin-bottom: 20px;">
+                            Track your strategic goals separately from daily tasks. Weekly goals auto-count from linked tasks.
+                        </p>
+                    </div>
+                    
+                    ${quarterlyHtml}
+                    ${monthlyHtml}
+                    ${weeklyHtml}
+                `;
+            }
+            
+            function renderStrategicGoalSection(type, title, goals) {
+                const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
+                const currentPeriod = type === 'weekly' ? getCurrentWeekString() : 
+                                     type === 'monthly' ? getCurrentMonthString() : 
+                                     getCurrentQuarterString();
+                
+                const activeGoals = goals.filter(g => g.period === currentPeriod || !g.done);
+                
+                const goalsHtml = activeGoals.length === 0 ? 
+                    `<p style="text-align:center;color:var(--text-light);padding:20px;">No ${type} goals yet. Click + to add one!</p>` :
+                    activeGoals.map(goal => {
+                        const categoryGoal = goal.categoryGoalId ? state.goals.find(g => g.id === goal.categoryGoalId) : null;
+                        const categoryBadge = categoryGoal ? `<span class="goal-tag">${categoryGoal.text}</span>` : '';
+                        
+                        let progressInfo = '';
+                        if (type === 'weekly' && goal.categoryGoalId && !goal.done) {
+                            const weekStart = getWeekStartDate(state.currentDate);
+                            const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
+                            
+                            const tasksInCategory = state.tasks.filter(t => {
+                                const taskDate = new Date(t.date);
+                                return t.completed && 
+                                       t.goalId === goal.categoryGoalId &&
+                                       taskDate >= weekStart && 
+                                       taskDate < weekEnd;
+                            });
+                            
+                            progressInfo = `<div style="font-size: 0.85em; color: var(--text-light); margin-top: 4px;">
+                                📊 ${tasksInCategory.length} tasks completed this week
+                            </div>`;
+                        }
+                        
+                        const completedBadge = goal.done ? 
+                            `<span style="color: var(--success); font-weight: 600; margin-left: 8px;">✓ Completed</span>` : '';
+                        
+                        return `
+                            <div class="completed-task" style="border-left-color: ${goal.done ? 'var(--success)' : 'var(--primary)'};">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                                    <div style="flex: 1;">
+                                        <input type="checkbox" 
+                                               ${goal.done ? 'checked' : ''} 
+                                               onchange="toggleStrategicGoal('${type}', ${goal.id})"
+                                               style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer;">
+                                        <span style="font-weight: 600; ${goal.done ? 'text-decoration: line-through; opacity: 0.6;' : ''}">
+                                            ${goal.text}
+                                        </span>
+                                        ${completedBadge}
+                                        ${categoryBadge}
+                                    </div>
+                                    <button onclick="deleteStrategicGoal('${type}', ${goal.id})" 
+                                            style="background: none; border: none; color: var(--coral); cursor: pointer; font-size: 1.2em; padding: 4px 8px;">×</button>
+                                </div>
+                                ${progressInfo}
+                                ${goal.completedDate ? `<div style="font-size: 0.8em; color: var(--text-light);">Completed: ${new Date(goal.completedDate).toLocaleDateString()}</div>` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                
+                return `
+                    <div style="margin-bottom: 30px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3 style="color: var(--primary); margin: 0;">${title}</h3>
+                            <div style="display: flex; gap: 10px;">
+                                <button onclick="addStrategicGoal('${type}')" 
+                                        class="btn btn-primary" 
+                                        style="padding: 8px 16px; font-size: 0.9em;">
+                                    + Add ${typeLabel}
+                                </button>
+                                ${activeGoals.filter(g => g.done).length > 0 ? `
+                                    <button onclick="archiveCompletedGoals('${type}')" 
+                                            class="btn btn-secondary" 
+                                            style="padding: 8px 16px; font-size: 0.9em;">
+                                        📦 Archive Completed
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div class="history-completed-tasks" style="padding: 20px;">
+                            ${goalsHtml}
+                        </div>
+                    </div>
+                `;
             }
 
             
