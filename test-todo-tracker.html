@@ -1182,72 +1182,25 @@
         }
 
         function addGoal() {
-            const input = document.getElementById('goal-input');
-            const text = input.value.trim();
-            
-            if (text) {
-              // Simple UI: prompt for type
-              const typeChoice = prompt(
-                'Goal type:\n0 = Weekly (default)\n1 = Monthly\n2 = Quarterly',
-                '0'
-              );
-              
-              const typeMap = { '0': 'weekly', '1': 'monthly', '2': 'quarterly' };
-              const type = typeMap[typeChoice] || 'weekly';
-              
-              let parentGoalId = null;
-              
-              // If monthly/quarterly, optionally link to parent
-              if (type === 'monthly') {
-                const weeklyGoals = state.goals.filter(g => g.type === 'weekly');
-                if (weeklyGoals.length > 0) {
-                  const choice = prompt(
-                    'Link to weekly goal? (leave blank for none)\n' +
-                    weeklyGoals.map((g, i) => `${i}: ${g.text}`).join('\n')
-                  );
-                  if (choice !== null && choice !== '') {
-                    const idx = parseInt(choice);
-                    if (!isNaN(idx) && weeklyGoals[idx]) {
-                      parentGoalId = weeklyGoals[idx].id;
-                    }
-                  }
+                const input = document.getElementById('goal-input');
+                const text = input.value.trim();
+                
+                if (text) {
+                    state.goals.push({
+                        id: Date.now(),
+                        text: text,
+                        created: new Date().toISOString(),
+                        completedTasks: 0,
+                        totalTasks: 0,
+                        color: getRandomColor()
+                    });
+                    
+                    saveData();
+                    updateGoalSelect();
+                    renderEverything();
+                    input.value = '';
                 }
-              }
-              
-              if (type === 'quarterly') {
-                const monthlyGoals = state.goals.filter(g => g.type === 'monthly');
-                if (monthlyGoals.length > 0) {
-                  const choice = prompt(
-                    'Link to monthly goal? (leave blank for none)\n' +
-                    monthlyGoals.map((g, i) => `${i}: ${g.text}`).join('\n')
-                  );
-                  if (choice !== null && choice !== '') {
-                    const idx = parseInt(choice);
-                    if (!isNaN(idx) && monthlyGoals[idx]) {
-                      parentGoalId = monthlyGoals[idx].id;
-                    }
-                  }
-                }
-              }
-              
-              state.goals.push({
-                id: Date.now(),
-                text: text,
-                created: new Date().toISOString(),
-                completedTasks: 0,
-                totalTasks: 0,
-                color: getRandomColor(),
-                type: type,
-                parentGoalId: parentGoalId,
-                period: getCurrentPeriod(type)
-              });
-              
-              saveData();
-              updateGoalSelect();
-              renderEverything();
-              input.value = '';
             }
-          }
         function getRandomColor() {
             const colors = ['#4F46E5', '#06B6D4', '#F59E0B', '#10B981', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316', '#6366F1', '#0EA5E9'];
             const usedColors = state.goals.map(g => g.color);
@@ -1847,62 +1800,33 @@ function archiveCompletedGoals(type) {
             }
 
         function renderGoals() {
-              const html = state.goals.map(goal => {
-                const progress = (() => {
-                  if (goal.type === 'weekly' || !goal.type) {
-                    return goal.totalTasks === 0 ? 0 : (goal.completedTasks / goal.totalTasks) * 100;
-                  }
-                  if (goal.type === 'monthly') {
-                    const children = getChildGoals(goal.id).filter(c => c.type === 'weekly');
-                    if (children.length === 0) {
-                      return goal.totalTasks === 0 ? 0 : (goal.completedTasks / goal.totalTasks) * 100;
-                    }
-                    return children.reduce((sum, c) => {
-                      return sum + (c.totalTasks === 0 ? 100 : (c.completedTasks / c.totalTasks) * 100);
-                    }, 0) / children.length;
-                  }
-                  if (goal.type === 'quarterly') {
-                    const children = getChildGoals(goal.id).filter(c => c.type === 'monthly');
-                    if (children.length === 0) {
-                      return goal.totalTasks === 0 ? 0 : (goal.completedTasks / goal.totalTasks) * 100;
-                    }
-                    return children.reduce((sum, c) => {
-                      const cChildren = getChildGoals(c.id).filter(cc => cc.type === 'weekly');
-                      if (cChildren.length === 0) {
-                        return sum + (c.totalTasks === 0 ? 100 : (c.completedTasks / c.totalTasks) * 100);
-                      }
-                      return sum + cChildren.reduce((s, cc) => {
-                        return s + (cc.totalTasks === 0 ? 100 : (cc.completedTasks / cc.totalTasks) * 100);
-                      }, 0) / cChildren.length;
-                    }, 0) / children.length;
-                  }
-                  return goal.totalTasks === 0 ? 0 : (goal.completedTasks / goal.totalTasks) * 100;
-                })();
+                const html = state.goals.map(goal => {
+                    const typeEmoji = { weekly: '📅', monthly: '📆', quarterly: '🗓️' };
+                    const typeBadge = goal.type ? `<span style="font-size: 0.85em; opacity: 0.7;">${typeEmoji[goal.type] || '📅'} ${goal.type || 'weekly'}</span>` : '';
+                    
+                    const childCount = getChildGoals(goal.id).length;
+                    const childBadge = childCount > 0 ? `<span style="font-size: 0.8em; margin-left: 8px; opacity: 0.6;">(${childCount} sub-goals)</span>` : '';
+                    
+                    const progress = goal.totalTasks === 0 ? 0 : (goal.completedTasks / goal.totalTasks) * 100;
+                    
+                    return `
+                        <div class="goal-item">
+                            <div class="goal-header">
+                                <span class="goal-name" onclick="editGoal(${goal.id}, '${goal.text.replace(/'/g, "\\'")}', this)">
+                                    ${goal.text} ${typeBadge}${childBadge}
+                                </span>
+                                <button class="goal-edit-btn" onclick="editGoal(${goal.id}, '${goal.text.replace(/'/g, "\\'")}', this)" title="Edit goal">✏️</button>
+                                <button class="goal-delete-btn" onclick="deleteGoal(${goal.id})">×</button>
+                            </div>
+                            <div class="goal-stats">${goal.completedTasks}/${goal.totalTasks} tasks</div>
+                            <div class="goal-progress-bar">
+                                <div class="goal-progress-fill" style="width: ${progress}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
                 
-                const typeEmoji = { weekly: '📅', monthly: '📆', quarterly: '🗓️' };
-                const typeBadge = goal.type ? `<span style="font-size: 0.85em; opacity: 0.7;">${typeEmoji[goal.type] || '📅'} ${goal.type || 'weekly'}</span>` : '';
-                
-                const childCount = getChildGoals(goal.id).length;
-                const childBadge = childCount > 0 ? `<span style="font-size: 0.8em; margin-left: 8px; opacity: 0.6;">(${childCount} sub-goals)</span>` : '';
-                
-                return `
-                  <div class="goal-item">
-                    <div class="goal-header">
-                      <span class="goal-name" onclick="editGoal(${goal.id}, '${goal.text.replace(/'/g, "\\'")}', this)">
-                        ${goal.text} ${typeBadge}${childBadge}
-                      </span>
-                      <button class="goal-edit-btn" onclick="editGoal(${goal.id}, '${goal.text.replace(/'/g, "\\'")}', this)" title="Edit goal">✏️</button>
-                      <button class="goal-delete-btn" onclick="deleteGoal(${goal.id})">×</button>
-                    </div>
-                    <div class="goal-stats">${goal.completedTasks}/${goal.totalTasks} direct tasks · ${Math.round(progress)}% total</div>
-                    <div class="goal-progress-bar">
-                      <div class="goal-progress-fill" style="width: ${progress}%"></div>
-                    </div>
-                  </div>
-                `;
-              }).join('');
-              
-              document.getElementById('goals-list').innerHTML = html || '<p style="text-align:center;color:var(--text-light);padding:20px;">Add your first goal! 🎯</p>';
+                document.getElementById('goals-list').innerHTML = html || '<p style="text-align:center;color:var(--text-light);padding:20px;">Add your first goal! 🎯</p>';
             }
 
 
