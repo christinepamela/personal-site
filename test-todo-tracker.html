@@ -1092,12 +1092,21 @@
         }
 
         function loadData() {
-            const saved = localStorage.getItem('modernTodoState');
-            if (saved) {
-                state = JSON.parse(saved);
-                state.currentDate = new Date(state.currentDate);
+                const saved = localStorage.getItem('modernTodoState');
+                if (saved) {
+                    state = JSON.parse(saved);
+                    state.currentDate = new Date(state.currentDate);
+                    
+                    // Initialize strategicGoals if it doesn't exist (for backwards compatibility)
+                    if (!state.strategicGoals) {
+                        state.strategicGoals = {
+                            quarterly: [],
+                            monthly: [],
+                            weekly: []
+                        };
+                    }
+                }
             }
-        }
 
         function saveData() {
             localStorage.setItem('modernTodoState', JSON.stringify(state));
