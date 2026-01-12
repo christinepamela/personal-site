@@ -180,7 +180,9 @@
         .task-input-group input[type="number"] {
             width: 100px;
         }
-
+        .task-input-group input[type="date"] {
+            width: 150px;
+        }
         .task-input-group select {
             width: 180px;
         }
@@ -907,6 +909,7 @@
                 <div class="task-input-group">
                     <input type="text" id="task-input" placeholder="What needs to be done?">
                     <input type="number" id="estimated-time" placeholder="Minutes">
+                    <input type="date" id="task-date" title="Task date">
                     <select id="task-goal">
                         <option value="">No goal</option>
                     </select>
@@ -1071,6 +1074,7 @@
             loadData();
             updateCurrentDate();
             updateGoalSelect();
+            setDefaultTaskDate();
             renderEverything();
             calculateStreak();
             setupEventListeners();
@@ -1169,9 +1173,15 @@
         }
 
         function updateCurrentDate() {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('current-date').textContent = state.currentDate.toLocaleDateString('en-US', options);
-        }
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                document.getElementById('current-date').textContent = state.currentDate.toLocaleDateString('en-US', options);
+                setDefaultTaskDate();
+            }
+            
+            function setDefaultTaskDate() {
+                const dateInput = document.getElementById('task-date');
+                dateInput.value = state.currentDate.toISOString().split('T')[0];
+            }
 
         function updateGoalSelect() {
             const select = document.getElementById('task-goal');
@@ -1223,10 +1233,12 @@
         function addTask() {
             const taskInput = document.getElementById('task-input');
             const timeInput = document.getElementById('estimated-time');
+            const dateInput = document.getElementById('task-date');
             const goalSelect = document.getElementById('task-goal');
             
             const text = taskInput.value.trim();
             const time = parseInt(timeInput.value);
+            const taskDate = dateInput.value;
             const goalId = goalSelect.value ? parseInt(goalSelect.value) : null;
 
             if (text && time) {
@@ -1236,7 +1248,7 @@
                     estimatedTime: time,
                     actualTime: time,
                     completed: false,
-                    date: state.currentDate.toISOString().split('T')[0],
+                    date: taskDate,
                     goalId: goalId
                 };
 
@@ -1252,6 +1264,7 @@
                 
                 taskInput.value = '';
                 timeInput.value = '';
+                setDefaultTaskDate();
                 goalSelect.value = '';
             }
         }
