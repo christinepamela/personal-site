@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bosch Case Study | Hardware Giants Need Software Souls</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -17,12 +18,13 @@
             color: #1a1a1a;
             line-height: 1.6;
             background: #ffffff;
+            overflow-x: hidden;
         }
 
         /* Hero Section */
         .hero {
             height: 100vh;
-            background: linear-gradient(135deg, #EA0016 0%, #c50014 100%);
+            background: linear-gradient(135deg, #EA0016 0%, #8B0000 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -38,41 +40,134 @@
             right: 0;
             bottom: 0;
             background: 
-                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(0,0,0,0.1) 0%, transparent 50%);
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0,0,0,0.15) 0%, transparent 50%);
         }
 
         .hero-content {
             text-align: center;
             color: white;
             z-index: 1;
-            max-width: 900px;
+            max-width: 1000px;
             padding: 2rem;
+            animation: fadeIn 1.2s ease-out;
         }
 
-        .hero-subtitle {
-            font-size: 0.9rem;
-            font-weight: 500;
-            letter-spacing: 3px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            opacity: 0.9;
-            margin-bottom: 1.5rem;
+            opacity: 0.85;
+            margin-bottom: 2rem;
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 30px;
         }
 
         .hero-title {
-            font-size: 4rem;
-            font-weight: 700;
+            font-size: 4.5rem;
+            font-weight: 800;
             line-height: 1.1;
             margin-bottom: 1.5rem;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
         }
 
-        .hero-description {
-            font-size: 1.3rem;
+        .hero-subtitle {
+            font-size: 1.5rem;
             font-weight: 300;
-            opacity: 0.95;
+            opacity: 0.9;
             margin-bottom: 3rem;
             line-height: 1.5;
+            letter-spacing: -0.01em;
+        }
+
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            letter-spacing: 1px;
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: white;
+            padding: 3rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .toc-item {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 8px;
+            background: #fafafa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .toc-item:hover {
+            background: #f0f0f0;
+            transform: translateY(-3px);
+        }
+
+        .toc-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #EA0016;
+            opacity: 0.3;
+            margin-bottom: 0.5rem;
+        }
+
+        .toc-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .toc-description {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Framing Note */
+        .framing-note {
+            max-width: 900px;
+            margin: 0 auto 3rem;
+            padding: 1.5rem;
+            background: #fafafa;
+            border-left: 3px solid #EA0016;
+            font-size: 0.95rem;
+            font-style: italic;
+            color: #666;
+            line-height: 1.7;
+        }
+
+        /* Chart Note */
+        .chart-note {
+            font-size: 0.75rem;
+            color: #666;
+            text-align: center;
+            margin-top: 1rem;
+            font-style: italic;
         }
 
         .scroll-indicator {
@@ -81,10 +176,10 @@
             left: 50%;
             transform: translateX(-50%);
             color: white;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             letter-spacing: 2px;
             text-transform: uppercase;
-            opacity: 0.7;
+            opacity: 0.6;
             animation: float 2s ease-in-out infinite;
         }
 
@@ -102,195 +197,104 @@
 
         /* Section Styles */
         section {
-            padding: 6rem 0;
+            padding: 7rem 0;
         }
 
         .section-header {
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
+            max-width: 900px;
         }
 
         .section-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 2px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
             text-transform: uppercase;
             color: #EA0016;
             margin-bottom: 1rem;
+            display: inline-block;
         }
 
         .section-title {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 700;
             color: #1a1a1a;
-            line-height: 1.2;
-            margin-bottom: 1rem;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
         }
 
         .section-description {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: #666;
-            line-height: 1.7;
-            max-width: 800px;
+            line-height: 1.8;
         }
 
-        /* Overview Grid */
-        .overview-grid {
+        /* Stats Grid */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 2rem;
-            margin-top: 3rem;
+            margin-top: 4rem;
         }
 
-        .overview-card {
-            background: #f8f8f8;
-            padding: 2rem;
-            border-radius: 4px;
-            transition: transform 0.3s ease;
+        .stat-card {
+            text-align: center;
+            padding: 2.5rem 1.5rem;
+            background: #fafafa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
         }
 
-        .overview-card:hover {
+        .stat-card:hover {
             transform: translateY(-5px);
+            border-color: #EA0016;
+            box-shadow: 0 10px 30px rgba(234, 0, 22, 0.1);
         }
 
-        .overview-card-label {
-            font-size: 0.7rem;
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #EA0016;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
             font-weight: 600;
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            color: #EA0016;
-            margin-bottom: 0.5rem;
+            color: #999;
+            margin-bottom: 0.75rem;
         }
 
-        .overview-card-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-        }
-
-        .overview-card-description {
+        .stat-description {
             font-size: 0.9rem;
             color: #666;
             line-height: 1.5;
         }
 
-        /* Business Divisions */
-        .division-list {
-            display: grid;
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .division-item {
+        /* Chart Container */
+        .chart-container {
             background: white;
-            border-left: 4px solid #EA0016;
-            padding: 2rem;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin: 3rem 0;
         }
 
-        .division-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .division-icon {
-            font-size: 2rem;
-        }
-
-        .division-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .division-subtitle {
-            font-size: 0.9rem;
-            color: #666;
-            font-style: italic;
-            margin-bottom: 1rem;
-        }
-
-        .division-list-items {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 0.75rem;
-        }
-
-        .division-list-item {
-            font-size: 0.9rem;
-            color: #444;
-            padding-left: 1rem;
-            position: relative;
-        }
-
-        .division-list-item::before {
-            content: '•';
-            position: absolute;
-            left: 0;
-            color: #EA0016;
-        }
-
-        /* Comparison Table */
-        .comparison-table {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .comparison-column {
-            background: #f8f8f8;
-            padding: 2rem;
-            border-radius: 4px;
-        }
-
-        .comparison-column.strengths {
-            border-top: 3px solid #4CAF50;
-        }
-
-        .comparison-column.challenges {
-            border-top: 3px solid #EA0016;
-        }
-
-        .comparison-title {
+        .chart-title {
             font-size: 1.3rem;
             font-weight: 600;
-            margin-bottom: 1.5rem;
             color: #1a1a1a;
+            margin-bottom: 2rem;
+            text-align: center;
         }
 
-        .comparison-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .comparison-item {
-            font-size: 0.95rem;
-            color: #444;
-            padding-left: 1.5rem;
-            position: relative;
-        }
-
-        .comparison-item::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            font-weight: 600;
-        }
-
-        .strengths .comparison-item::before {
-            color: #4CAF50;
-        }
-
-        .challenges .comparison-item::before {
-            color: #EA0016;
-        }
-
-        /* Theta Framework */
-        .theta-grid {
+        /* Theta Framework Visualization */
+        .theta-visual {
             display: grid;
             gap: 2rem;
             margin-top: 3rem;
@@ -298,29 +302,28 @@
 
         .theta-zone {
             background: white;
-            padding: 2rem;
-            border-radius: 4px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
             border-left: 6px solid;
+            position: relative;
+            transition: all 0.3s ease;
         }
 
-        .theta-zone.core {
-            border-left-color: #4CAF50;
+        .theta-zone:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
         }
 
-        .theta-zone.edge {
-            border-left-color: #FFC107;
-        }
-
-        .theta-zone.beyond {
-            border-left-color: #EA0016;
-        }
+        .theta-zone.core { border-left-color: #4CAF50; }
+        .theta-zone.edge { border-left-color: #FFC107; }
+        .theta-zone.beyond { border-left-color: #EA0016; }
 
         .theta-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
         }
 
         .theta-title-group {
@@ -330,157 +333,326 @@
         }
 
         .theta-emoji {
-            font-size: 1.8rem;
+            font-size: 2.5rem;
         }
 
         .theta-title {
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 2rem;
+            font-weight: 700;
             color: #1a1a1a;
         }
 
         .theta-percentage {
-            font-size: 1.8rem;
-            font-weight: 700;
-            opacity: 0.3;
+            font-size: 4rem;
+            font-weight: 800;
+            opacity: 0.15;
+            line-height: 1;
         }
 
-        .theta-innovation {
+        .theta-innovation-type {
             font-size: 0.85rem;
-            color: #666;
+            font-weight: 600;
+            color: #EA0016;
             margin-bottom: 1rem;
-            font-style: italic;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
         }
 
         .theta-examples {
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: #444;
-            line-height: 1.7;
-            margin-bottom: 1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
         }
 
         .theta-purpose {
-            font-size: 0.9rem;
-            color: #EA0016;
-            font-weight: 500;
-            padding-top: 1rem;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        /* Ecosystem Table */
-        .ecosystem-table {
-            margin-top: 3rem;
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        }
-
-        thead {
-            background: #1a1a1a;
-            color: white;
-        }
-
-        th {
-            padding: 1.2rem;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        td {
-            padding: 1.5rem 1.2rem;
-            border-bottom: 1px solid #e0e0e0;
             font-size: 0.95rem;
+            font-weight: 600;
+            color: #EA0016;
+            padding-top: 1.5rem;
+            border-top: 2px solid #f0f0f0;
         }
 
-        tr:last-child td {
+        /* Diagnostic Dashboard */
+        .diagnostic-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .diagnostic-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .diagnostic-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #1a1a1a;
+        }
+
+        .diagnostic-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .diagnostic-item:last-child {
             border-bottom: none;
         }
 
-        tbody tr:hover {
-            background: #f8f8f8;
+        .diagnostic-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 0.5rem;
         }
 
-        .table-initiative {
-            font-weight: 600;
+        .diagnostic-value {
+            font-size: 1rem;
             color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        /* Competitive Matrix */
+        .competitive-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .competitor-card {
+            background: #fafafa;
+            padding: 2rem;
+            border-radius: 8px;
+            border-top: 4px solid #EA0016;
+        }
+
+        .competitor-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .competitor-threat {
+            font-size: 0.85rem;
+            color: #EA0016;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .competitor-description {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Malaysia Section */
+        .malaysia-section {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white;
+        }
+
+        .malaysia-section .section-label {
+            color: #8c9eff;
+        }
+
+        .malaysia-section .section-title,
+        .malaysia-section .section-description {
+            color: white;
+        }
+
+        .malaysia-section .section-description {
+            opacity: 0.9;
+        }
+
+        .malaysia-card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .malaysia-card-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #8c9eff;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .malaysia-card-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.75rem;
+        }
+
+        .malaysia-card-description {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.6;
         }
 
         /* Quote Section */
         .quote-section {
-            background: #f8f8f8;
-            padding: 6rem 0;
+            background: #fafafa;
+            padding: 8rem 0;
             text-align: center;
         }
 
-        .quote-content {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
         .quote-text {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: 300;
             line-height: 1.4;
             color: #1a1a1a;
-            margin-bottom: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            letter-spacing: -0.01em;
         }
 
         .quote-highlight {
             color: #EA0016;
-            font-weight: 500;
+            font-weight: 600;
+        }
+
+        /* Framework Connection */
+        .framework-connection {
+            background: #1a1a1a;
+            color: white;
+            padding: 7rem 0;
+        }
+
+        .framework-connection .section-label {
+            color: #EA0016;
+        }
+
+        .framework-connection .section-title {
+            color: white;
+        }
+
+        .framework-connection .section-description {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .framework-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .framework-card {
+            background: rgba(255,255,255,0.05);
+            padding: 3rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .framework-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #EA0016;
+        }
+
+        .framework-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .framework-item {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.9);
+            padding-left: 1.5rem;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .framework-item::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #EA0016;
+            font-weight: 600;
         }
 
         /* Footer */
         footer {
-            background: #1a1a1a;
+            background: #0a0a0a;
             color: white;
-            padding: 3rem 0;
+            padding: 4rem 0;
             text-align: center;
         }
 
         .footer-content {
             font-size: 0.9rem;
-            opacity: 0.7;
+            opacity: 0.6;
+            line-height: 1.8;
         }
 
         .footer-author {
-            margin-top: 1rem;
+            margin-top: 2rem;
             font-size: 0.85rem;
-            opacity: 0.5;
+            opacity: 0.4;
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 968px) {
             .hero-title {
-                font-size: 2.5rem;
+                font-size: 3rem;
             }
 
-            .hero-description {
-                font-size: 1.1rem;
+            .hero-subtitle {
+                font-size: 1.2rem;
             }
 
             .section-title {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
 
-            .comparison-table {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .diagnostic-grid,
+            .framework-grid {
                 grid-template-columns: 1fr;
             }
 
-            .overview-grid {
+            .competitive-grid {
                 grid-template-columns: 1fr;
             }
 
             section {
-                padding: 4rem 0;
+                padding: 5rem 0;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 2.5rem;
+            }
+
+            .quote-text {
+                font-size: 1.8rem;
             }
         }
     </style>
@@ -489,183 +661,115 @@
     <!-- Hero Section -->
     <div class="hero">
         <div class="hero-content">
-            <div class="hero-subtitle">Case Study</div>
-            <h1 class="hero-title">When Hardware Giants Need Software Souls</h1>
-            <p class="hero-description">How Bosch Is Rewiring an Industrial Titan for the Era of Intelligent Machines</p>
+            <div class="hero-label">Strategic Case Study</div>
+            <h1 class="hero-title">When Hardware Giants<br>Need Software Souls</h1>
+            <p class="hero-subtitle">Applying the Theta Framework to Bosch's Industrial Transformation</p>
+            <div class="hero-meta">
+                <span>138 YEARS OF LEGACY</span>
+                <span>€91B REVENUE</span>
+                <span>3 THETA ZONES</span>
+            </div>
         </div>
         <div class="scroll-indicator">Scroll to explore</div>
     </div>
 
-    <!-- Company Overview -->
+    <!-- Table of Contents -->
+    <div class="toc">
+        <div class="toc-grid">
+            <div class="toc-item">
+                <div class="toc-number">01</div>
+                <div class="toc-title">Innovation Strategy</div>
+                <div class="toc-description">Portfolio mapping and strategic positioning analysis</div>
+            </div>
+            <div class="toc-item">
+                <div class="toc-number">02</div>
+                <div class="toc-title">Innovation Execution</div>
+                <div class="toc-description">Cultural dynamics and operational challenges</div>
+            </div>
+            <div class="toc-item">
+                <div class="toc-number">03</div>
+                <div class="toc-title">Regional Context</div>
+                <div class="toc-description">Bosch Malaysia transformation patterns</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Executive Summary -->
     <section>
         <div class="container">
+            <div class="framing-note">
+                This case study is an external diagnosis based on published data, public information and observed industrial transformation patterns. It is intended to surface structural questions.
+            </div>
+
             <div class="section-header">
-                <div class="section-label">Introduction</div>
-                <h2 class="section-title">What Bosch Is</h2>
+                <div class="section-label">Executive Summary</div>
+                <h2 class="section-title">The Challenge</h2>
                 <p class="section-description">
-                    Bosch is a German multinational engineering and technology company, headquartered near Stuttgart. Founded in 1886 by Robert Bosch, the company is rooted in industrial, automotive, and consumer technology, built on deep engineering expertise and intellectual property.
+                    Bosch exemplifies the Theta Framework's central thesis: exceptional at Core innovation (4,000 patents/year) but struggling with Edge transformation at software speed. This case study applies the Theta Framework to diagnose why Bosch's innovation architecture, optimized for hardware, creates structural tension in the age of software-defined everything.
                 </p>
             </div>
 
-            <div class="overview-grid">
-                <div class="overview-card">
-                    <div class="overview-card-label">Founded</div>
-                    <div class="overview-card-value">1886</div>
-                    <div class="overview-card-description">Over 138 years of engineering excellence</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">1886</div>
+                    <div class="stat-label">Founded</div>
+                    <div class="stat-description">138 years of engineering DNA</div>
                 </div>
-                <div class="overview-card">
-                    <div class="overview-card-label">Employees</div>
-                    <div class="overview-card-value">~420K</div>
-                    <div class="overview-card-description">Global workforce across 60+ countries</div>
+                <div class="stat-card">
+                    <div class="stat-value">420K</div>
+                    <div class="stat-label">Employees</div>
+                    <div class="stat-description">Global workforce, 60+ countries</div>
                 </div>
-                <div class="overview-card">
-                    <div class="overview-card-label">Revenue (2024)</div>
-                    <div class="overview-card-value">~€91B</div>
-                    <div class="overview-card-description">Diversified across four major divisions</div>
+                <div class="stat-card">
+                    <div class="stat-value">€91B</div>
+                    <div class="stat-label">Revenue 2024</div>
+                    <div class="stat-description">Diversified across 4 divisions</div>
                 </div>
-                <div class="overview-card">
-                    <div class="overview-card-label">Patents/Year</div>
-                    <div class="overview-card-value">4,000</div>
-                    <div class="overview-card-description">Operating like a tech company inside a manufacturing empire</div>
+                <div class="stat-card">
+                    <div class="stat-value">4,000</div>
+                    <div class="stat-label">Patents/Year</div>
+                    <div class="stat-description">Tech company inside manufacturing empire</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Business Divisions -->
-    <section style="background: #f8f8f8;">
+    <!-- Theta Portfolio Analysis -->
+    <section style="background: #fafafa;">
         <div class="container">
             <div class="section-header">
-                <div class="section-label">Business Model</div>
-                <h2 class="section-title">Four Strategic Divisions</h2>
+                <div class="section-label">Theta Framework Application</div>
+                <h2 class="section-title">Portfolio Mapping: Where Innovation Lives Today</h2>
                 <p class="section-description">
-                    Bosch's transformation spans multiple sectors, each facing unique challenges in the shift from hardware to software-defined platforms.
+                    Bosch's current portfolio reveals a classic innovation imbalance—65% in Core sustaining traditional business, while Edge and Beyond zones remain under-resourced for the software transition they must lead. Distribution estimate based on analysis of Bosch's strategic initiatives, R&D focus areas, and publicly disclosed investment patterns.
                 </p>
             </div>
 
-            <div class="division-list">
-                <div class="division-item">
-                    <div class="division-header">
-                        <div class="division-icon">🚗</div>
-                        <div>
-                            <div class="division-title">Mobility (~60% of revenue)</div>
-                        </div>
-                    </div>
-                    <div class="division-subtitle">Tier-1 automotive powerhouse evolving into software-led mobility</div>
-                    <div class="division-list-items">
-                        <div class="division-list-item">ADAS & autonomous systems</div>
-                        <div class="division-list-item">EV drive systems + semiconductors</div>
-                        <div class="division-list-item">Vehicle sensors and connectivity</div>
-                        <div class="division-list-item">Mobility services</div>
-                    </div>
-                </div>
-
-                <div class="division-item">
-                    <div class="division-header">
-                        <div class="division-icon">🏭</div>
-                        <div>
-                            <div class="division-title">Industrial Technology</div>
-                        </div>
-                    </div>
-                    <div class="division-subtitle">Automation and robotics for factories of the future</div>
-                    <div class="division-list-items">
-                        <div class="division-list-item">Bosch Rexroth automation</div>
-                        <div class="division-list-item">Industry 4.0 software and controls</div>
-                    </div>
-                </div>
-
-                <div class="division-item">
-                    <div class="division-header">
-                        <div class="division-icon">🔧</div>
-                        <div>
-                            <div class="division-title">Consumer Goods</div>
-                        </div>
-                    </div>
-                    <div class="division-subtitle">Trusted premium durability</div>
-                    <div class="division-list-items">
-                        <div class="division-list-item">Home appliances (BSH joint venture)</div>
-                        <div class="division-list-item">Power tools and household equipment</div>
-                    </div>
-                </div>
-
-                <div class="division-item">
-                    <div class="division-header">
-                        <div class="division-icon">⚡</div>
-                        <div>
-                            <div class="division-title">Energy & Building Technology</div>
-                        </div>
-                    </div>
-                    <div class="division-subtitle">Infrastructure electrification</div>
-                    <div class="division-list-items">
-                        <div class="division-list-item">Heat pumps</div>
-                        <div class="division-list-item">Smart buildings and security</div>
-                        <div class="division-list-item">Commercial HVAC</div>
-                    </div>
+            <div class="chart-container">
+                <div class="chart-title">Current Innovation Distribution vs. Required Transformation Mix</div>
+                <canvas id="portfolioChart"></canvas>
+                <div class="chart-note">
+                    Analytical visualization based on Theta Framework assessment criteria and public strategic communications
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Culture Analysis -->
-    <section>
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Cultural Analysis</div>
-                <h2 class="section-title">Strengths & Challenges</h2>
-                <p class="section-description">
-                    Bosch is built for hardware excellence and now must master software ecosystems—a fundamental cultural and operational shift.
-                </p>
-            </div>
-
-            <div class="comparison-table">
-                <div class="comparison-column strengths">
-                    <h3 class="comparison-title">Strengths</h3>
-                    <div class="comparison-list">
-                        <div class="comparison-item">Engineering excellence</div>
-                        <div class="comparison-item">Stable foundation structure</div>
-                        <div class="comparison-item">Sustainability leadership</div>
-                        <div class="comparison-item">Trusted global brand</div>
-                    </div>
-                </div>
-
-                <div class="comparison-column challenges">
-                    <h3 class="comparison-title">Challenges</h3>
-                    <div class="comparison-list">
-                        <div class="comparison-item">Slow decision-making</div>
-                        <div class="comparison-item">Software talent + culture gap</div>
-                        <div class="comparison-item">Siloed organization</div>
-                        <div class="comparison-item">Margin pressure in auto + consumer</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Theta Framework -->
-    <section style="background: #f8f8f8;">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Innovation Framework</div>
-                <h2 class="section-title">Bosch in the Theta Framework</h2>
-                <p class="section-description">
-                    Where innovation lives today (Core) isn't where Bosch's next growth must come from (Edge → Beyond).
-                </p>
-            </div>
-
-            <div class="theta-grid">
+            <div class="theta-visual">
                 <div class="theta-zone core">
                     <div class="theta-header">
                         <div class="theta-title-group">
                             <div class="theta-emoji">🟩</div>
                             <h3 class="theta-title">Core</h3>
                         </div>
-                        <div class="theta-percentage">55%</div>
+                        <div class="theta-percentage">65%</div>
                     </div>
-                    <div class="theta-innovation">Incremental + Adjacent Innovation</div>
+                    <div class="theta-innovation-type">Incremental + Adjacent Innovation</div>
                     <div class="theta-examples">
-                        Auto components, power tools, appliances, connected upgrades
+                        <strong>What lives here:</strong> Automotive components evolution, power tools refinement, home appliances upgrades, connected product features<br><br>
+                        <strong>Market reach:</strong> Existing automotive OEMs and industrial customers<br>
+                        <strong>Tech change:</strong> Low to moderate (electrification of existing platforms)<br>
+                        <strong>Typical governance:</strong> Operational oversight with quarterly reviews
                     </div>
-                    <div class="theta-purpose">→ Funds the future</div>
+                    <div class="theta-purpose">→ Generates margin to fund transformation, but bureaucratic processes slow software agility</div>
                 </div>
 
                 <div class="theta-zone edge">
@@ -674,13 +778,16 @@
                             <div class="theta-emoji">🟨</div>
                             <h3 class="theta-title">Edge</h3>
                         </div>
-                        <div class="theta-percentage">30%</div>
+                        <div class="theta-percentage">25%</div>
                     </div>
-                    <div class="theta-innovation">Architectural + Disruptive Innovation</div>
+                    <div class="theta-innovation-type">Architectural + Disruptive Innovation</div>
                     <div class="theta-examples">
-                        A.IoT platforms, predictive maintenance, ADAS, SiC chips, heat pumps
+                        <strong>What lives here:</strong> AIoT platforms, predictive maintenance software, ADAS systems, SiC semiconductor shift, heat pump systems<br><br>
+                        <strong>Market reach:</strong> New customer segments (software developers, mobility operators, energy utilities)<br>
+                        <strong>Tech change:</strong> High (hardware-to-software platform shift, AI integration)<br>
+                        <strong>Critical gap:</strong> Culture clash between hardware perfectionism and software iteration
                     </div>
-                    <div class="theta-purpose">→ Unlock trapped value, move from hardware to software</div>
+                    <div class="theta-purpose">→ Under-resourced and judged by Core KPIs too early—needs separate governance and metrics</div>
                 </div>
 
                 <div class="theta-zone beyond">
@@ -689,66 +796,340 @@
                             <div class="theta-emoji">🟥</div>
                             <h3 class="theta-title">Beyond</h3>
                         </div>
-                        <div class="theta-percentage">15%</div>
+                        <div class="theta-percentage">10%</div>
                     </div>
-                    <div class="theta-innovation">Transformational + Frontier Innovation</div>
+                    <div class="theta-innovation-type">Transformational + Frontier Innovation</div>
                     <div class="theta-examples">
-                        Hydrogen ecosystems, industrial energy platforms, quantum security
+                        <strong>What lives here:</strong> Hydrogen ecosystem infrastructure, industrial energy platforms, quantum security sensors, space technology partnerships<br><br>
+                        <strong>Market reach:</strong> Speculative and emerging (2030+ timeframe)<br>
+                        <strong>Tech change:</strong> Radical to extreme<br>
+                        <strong>Leadership gap:</strong> No dedicated "moonshot" governance separate from corporate R&D
                     </div>
-                    <div class="theta-purpose">→ Keep Bosch relevant in the 2040s and beyond</div>
+                    <div class="theta-purpose">→ Fragmented initiatives lack visionary narrative connecting to Bosch's future identity</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Ecosystem Strategy -->
+    <!-- Diagnostic Dashboard -->
     <section>
         <div class="container">
             <div class="section-header">
-                <div class="section-label">Innovation Ecosystem</div>
-                <h2 class="section-title">Startup & Partnership Strategy</h2>
+                <div class="section-label">Deep Diagnosis</div>
+                <h2 class="section-title">Cultural & Leadership Assessment</h2>
                 <p class="section-description">
-                    Bosch has built a comprehensive ecosystem to bridge "old Bosch" to "new Bosch" through venture investments, accelerators, and open innovation platforms.
+                    Using the Theta Framework's diagnostic toolkit reveals systemic misalignments between Bosch's hardware-era culture and software-era requirements.
                 </p>
             </div>
 
-            <div class="ecosystem-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Initiative</th>
-                            <th>What It Does</th>
-                            <th>Why It Matters</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="table-initiative">Bosch Ventures (CVC)</td>
-                            <td>Invests in deep tech start-ups globally</td>
-                            <td>Early access to new tech + future acquisitions</td>
-                        </tr>
-                        <tr>
-                            <td class="table-initiative">Open Bosch</td>
-                            <td>Venture-client model; pilots inside Bosch units</td>
-                            <td>Startup agility + rapid integration</td>
-                        </tr>
-                        <tr>
-                            <td class="table-initiative">Startup Harbour</td>
-                            <td>Accelerator for digital + sensor innovations</td>
-                            <td>Talent + early-stage co-build capability</td>
-                        </tr>
-                        <tr>
-                            <td class="table-initiative">Bosch Business Innovations</td>
-                            <td>Internal startup builder</td>
-                            <td>Bridges "old Bosch" to "new Bosch"</td>
-                        </tr>
-                        <tr>
-                            <td class="table-initiative">Innovation Partnerships Portal</td>
-                            <td>Open submissions from tech ecosystem</td>
-                            <td>Crowd-sourced discovery → lowers R&D cost and time</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="diagnostic-grid">
+                <div class="diagnostic-card">
+                    <h3>🎯 Maverick Analysis</h3>
+                    <div class="diagnostic-item">
+                        <div class="diagnostic-label">Do they exist?</div>
+                        <div class="diagnostic-value">Yes, but isolated in R&D labs and startup partnerships</div>
+                    </div>
+                    <div class="diagnostic-item">
+                        <div class="diagnostic-label">Are they protected?</div>
+                        <div class="diagnostic-value">Partially through Bosch Ventures portfolio, but not systematically</div>
+                    </div>
+                    <div class="diagnostic-item">
+                        <div class="diagnostic-label">Are they celebrated?</div>
+                        <div class="diagnostic-value">Organizational culture optimized for hardware precision and reliability may undervalue the different thinking patterns required for software platform innovation</div>
+                    </div>
+                    <div class="diagnostic-item" style="background: #fafafa; padding: 1rem; margin-top: 1rem; border-radius: 4px;">
+                        <div class="diagnostic-label" style="color: #EA0016; font-weight: 700;">Critical Gap</div>
+                        <div class="diagnostic-value">Cross-disciplinary thinking between hardware and software domains is rare</div>
+                    </div>
+                </div>
+
+                <div class="diagnostic-card">
+                    <h3>⚡ Leadership Patterns</h3>
+                    <div class="diagnostic-item">
+                        <div class="diagnostic-label">Agility</div>
+                        <div class="diagnostic-value">Slow decision cycles inherited from hardware development timelines constrain software iteration speed</div>
+                    </div>
+                    <div class="diagnostic-item">
+                        <div class="diagnostic-label">Awareness</div>
+                        <div class="diagnostic-value">Conscious of transformation need, though engineering excellence identity creates tension with software-era requirements</div>
+                    </div>
+                    <div class="diagnostic-item">
+                        <div class="diagnostic-label">Action</div>
+                        <div class="diagnostic-value">Investing in change initiatives without fundamental restructuring of core operating model</div>
+                    </div>
+                    <div class="diagnostic-item">
+                        <div class="diagnostic-label">Stage transition challenge</div>
+                        <div class="diagnostic-value">Tendency to impose corporate structure prematurely in Chaos→Build phase, reducing velocity</div>
+                    </div>
+                </div>
+
+                <div class="diagnostic-card">
+                    <h3>📊 Metrics Misalignment</h3>
+                    <div class="diagnostic-item">
+                        <div class="diagnostic-label">Core metrics applied to Edge</div>
+                        <div class="diagnostic-value">Revenue targets and margin % expected too early in platform development</div>
+                    </div>
+                    <div class="diagnostic-item">
+                        <div class="diagnostic-label">Missing Edge KPIs</div>
+                        <div class="diagnostic-value">Learning velocity, API adoption rates, early adopter engagement not tracked</div>
+                    </div>
+                    <div class="diagnostic-item">
+                        <div class="diagnostic-label">Beyond measurement gap</div>
+                        <div class="diagnostic-value">Risk-taking rate, ecosystem partnerships formed, technical breakthroughs not systematically measured</div>
+                    </div>
+                </div>
+
+                <div class="diagnostic-card">
+                    <h3>🔄 Process & Structure</h3>
+                    <div class="diagnostic-item">
+                        <div class="diagnostic-label">Skunkworks capability</div>
+                        <div class="diagnostic-value">Exists (Startup Harbour, Open Bosch) but suffers from "corporate immune system"</div>
+                    </div>
+                    <div class="diagnostic-item">
+                        <div class="diagnostic-label">Integration challenge</div>
+                        <div class="diagnostic-value">Successful innovations struggle to reintegrate into mothership</div>
+                    </div>
+                    <div class="diagnostic-item">
+                        <div class="diagnostic-label">Funding model flaw</div>
+                        <div class="diagnostic-value">Edge projects funded through annual OPEX requiring yearly justification vs. multi-year innovation bonds</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Competitive Threat -->
+    <section style="background: #fafafa;">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Competitive Landscape</div>
+                <h2 class="section-title">The Race Bosch Is Losing (And Must Win)</h2>
+                <p class="section-description">
+                    Three distinct competitive threats attack Bosch simultaneously: platform players creating ecosystem lock-in, specialized startups capturing profitable niches, and Chinese manufacturers achieving 3x development velocity.
+                </p>
+            </div>
+
+            <div class="chart-container" style="margin-top: 4rem;">
+                <div class="chart-title">Competitive Threat Matrix: Speed vs. Integration Depth</div>
+                <canvas id="competitiveChart"></canvas>
+                <div class="chart-note">
+                    Qualitative positioning for comparative purposes based on public strategy announcements and market observations
+                </div>
+            </div>
+
+            <div class="competitive-grid">
+                <div class="competitor-card">
+                    <div class="competitor-name">Platform Players</div>
+                    <div class="competitor-threat">Ecosystem Lock-In Risk</div>
+                    <div class="competitor-description">
+                        <strong>Tesla/NVIDIA:</strong> Vertical software stack making Bosch a commodity hardware supplier<br><br>
+                        <strong>Siemens Xcelerator:</strong> Clearer digital twin narrative and aggressive software M&A<br><br>
+                        <strong>Schneider EcoStruxure:</strong> More cohesive IoT platform story
+                    </div>
+                </div>
+
+                <div class="competitor-card">
+                    <div class="competitor-name">Niche Specialists</div>
+                    <div class="competitor-threat">Margin Erosion</div>
+                    <div class="competitor-description">
+                        <strong>Mobileye/Qualcomm:</strong> Chip-to-cloud ADAS solutions squeezing Tier-1 margins<br><br>
+                        <strong>Industrial AI startups:</strong> Attracting Bosch's best talent with focused innovation velocity<br><br>
+                        <strong>Heat pump specialists:</strong> Moving faster than conglomerate pace
+                    </div>
+                </div>
+
+                <div class="competitor-card">
+                    <div class="competitor-name">Speed Disruptors</div>
+                    <div class="competitor-threat">Time-to-Market Gap</div>
+                    <div class="competitor-description">
+                        <strong>Chinese EV makers + Huawei:</strong> 12-month vehicle development cycles vs. Bosch's 36-month timeline<br><br>
+                        <strong>BYD semiconductor integration:</strong> Vertical integration at Chinese manufacturing speed<br><br>
+                        <strong>Cost advantage:</strong> Lower-cost manufacturing threatening Malaysian operations
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategic Recommendations -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Analytical Implications</div>
+                <h2 class="section-title">Five Critical Tensions in Bosch's Transformation</h2>
+            </div>
+
+            <div class="theta-visual">
+                <div class="theta-zone core">
+                    <div class="theta-title-group">
+                        <div class="theta-emoji">1️⃣</div>
+                        <h3 class="theta-title">Governance Gap</h3>
+                    </div>
+                    <div class="theta-examples">
+                        Uniform processes across different innovation needs
+                    </div>
+                </div>
+
+                <div class="theta-zone edge">
+                    <div class="theta-title-group">
+                        <div class="theta-emoji">2️⃣</div>
+                        <h3 class="theta-title">Culture Clash</h3>
+                    </div>
+                    <div class="theta-examples">
+                        Hardware precision vs. software speed
+                    </div>
+                </div>
+
+                <div class="theta-zone beyond">
+                    <div class="theta-title-group">
+                        <div class="theta-emoji">3️⃣</div>
+                        <h3 class="theta-title">Metrics Mismatch</h3>
+                    </div>
+                    <div class="theta-examples">
+                        Wrong yardsticks for different games
+                    </div>
+                </div>
+
+                <div class="theta-zone core">
+                    <div class="theta-title-group">
+                        <div class="theta-emoji">4️⃣</div>
+                        <h3 class="theta-title">Talent Trap</h3>
+                    </div>
+                    <div class="theta-examples">
+                        Innovators with nowhere to grow
+                    </div>
+                </div>
+
+                <div class="theta-zone edge">
+                    <div class="theta-title-group">
+                        <div class="theta-emoji">5️⃣</div>
+                        <h3 class="theta-title">Sales Misfit</h3>
+                    </div>
+                    <div class="theta-examples">
+                        Selling platforms like parts
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container" style="margin-top: 4rem;">
+                <div class="chart-title">Transformation Pattern Timeline: Observed Adoption Curves</div>
+                <canvas id="roadmapChart"></canvas>
+                <div class="chart-note">
+                    Illustrative adoption patterns based on comparable industrial transformation case studies
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Malaysia Regional Spotlight -->
+    <section class="malaysia-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Regional Context</div>
+                <h2 class="section-title">Bosch Malaysia: Local Approach to Global Transformation</h2>
+                <p class="section-description">
+                    The Theta Framework reveals how Bosch's global transformation tensions appear differently at the regional level, with Malaysian operations facing unique accelerants and constraints.
+                </p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="malaysia-card">
+                    <div class="malaysia-card-title">Strategic Context</div>
+                    <div class="malaysia-card-value">ASEAN Hub</div>
+                    <div class="malaysia-card-description">
+                        Manufacturing center operating within Southeast Asia's accelerating industrial digitalization wave
+                    </div>
+                </div>
+                <div class="malaysia-card">
+                    <div class="malaysia-card-title">Primary Tension</div>
+                    <div class="malaysia-card-value">Talent + Margin</div>
+                    <div class="malaysia-card-description">
+                        Software engineering talent retention amid Singapore tech premium and Chinese manufacturing cost advantage
+                    </div>
+                </div>
+                <div class="malaysia-card">
+                    <div class="malaysia-card-title">Theta Pattern</div>
+                    <div class="malaysia-card-value">Amplified Edge Gap</div>
+                    <div class="malaysia-card-description">
+                        Regional operations experience global hardware-software transition challenges with compressed timelines
+                    </div>
+                </div>
+            </div>
+
+            <div class="theta-visual" style="margin-top: 4rem;">
+                <div class="theta-zone core" style="background: rgba(255,255,255,0.05); border-color: #4CAF50;">
+                    <div class="theta-header">
+                        <div class="theta-title-group">
+                            <div class="theta-emoji">🏭</div>
+                            <h3 class="theta-title" style="color: white;">Malaysia Core (65%)</h3>
+                        </div>
+                    </div>
+                    <div class="theta-innovation-type" style="color: #4CAF50;">Manufacturing Excellence Under Margin Pressure</div>
+                    <div class="theta-examples" style="color: rgba(255,255,255,0.9);">
+                        <strong>Observable pattern:</strong> Component production for global supply chain, Production System 4.0 implementation, rising labor and energy costs<br><br>
+                        <strong>Competitive pressure:</strong> Chinese manufacturers offering 20-30% cost advantage on equivalent quality components<br><br>
+                        <strong>Talent dynamics:</strong> Engineering graduates choosing Singapore fintech/SaaS roles at 40% salary premiums over manufacturing engineering
+                    </div>
+                    <div class="theta-purpose" style="color: #4CAF50; border-color: rgba(255,255,255,0.2);">→ Core efficiency improvements face diminishing returns without value model evolution</div>
+                </div>
+
+                <div class="theta-zone edge" style="background: rgba(255,255,255,0.05); border-color: #FFC107;">
+                    <div class="theta-header">
+                        <div class="theta-title-group">
+                            <div class="theta-emoji">🚀</div>
+                            <h3 class="theta-title" style="color: white;">Malaysia Edge (25%)</h3>
+                        </div>
+                    </div>
+                    <div class="theta-innovation-type" style="color: #FFC107;">Factory-as-Platform Opportunity</div>
+                    <div class="theta-examples" style="color: rgba(255,255,255,0.9);">
+                        <strong>Structural opportunity:</strong> Regional manufacturing facilities could serve as living laboratories for industrial IoT platform development<br><br>
+                        <strong>Talent value proposition shift:</strong> Manufacturing engineers gaining full-stack software skills through solving their own production challenges<br><br>
+                        <strong>Competitive positioning:</strong> Hardware-software integration capabilities difficult for pure cost competitors to replicate<br><br>
+                        <strong>Customer proximity:</strong> ASEAN industrial customers seeking proven implementations, not theoretical platforms
+                    </div>
+                    <div class="theta-purpose" style="color: #FFC107; border-color: rgba(255,255,255,0.2);">→ Could transform cost center into regional value creation engine if Edge investment increases</div>
+                </div>
+
+                <div class="theta-zone beyond" style="background: rgba(255,255,255,0.05); border-color: #EA0016;">
+                    <div class="theta-header">
+                        <div class="theta-title-group">
+                            <div class="theta-emoji">🌏</div>
+                            <h3 class="theta-title" style="color: white;">Malaysia Beyond (10%)</h3>
+                        </div>
+                    </div>
+                    <div class="theta-innovation-type" style="color: #EA0016;">Regional Innovation Leadership Gap</div>
+                    <div class="theta-examples" style="color: rgba(255,255,255,0.9);">
+                        <strong>ASEAN context:</strong> Southeast Asian governments investing heavily in industrial modernization and green energy infrastructure<br><br>
+                        <strong>Standards opportunity:</strong> Early participation in ASEAN smart manufacturing standards could create first-mover advantages<br><br>
+                        <strong>Ecosystem positioning:</strong> Regional startup acceleration programs could source innovations before European competitors<br><br>
+                        <strong>Green hydrogen context:</strong> Malaysia's renewable energy capacity positions country for hydrogen economy participation
+                    </div>
+                    <div class="theta-purpose" style="color: #EA0016; border-color: rgba(255,255,255,0.2);">→ Beyond zone largely absent at regional level, defaulting to headquarters initiatives</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 4rem; padding: 3rem; background: rgba(0,0,0,0.3); border-radius: 12px;">
+                <h3 style="color: white; margin-bottom: 2rem; font-size: 1.5rem;">Critical Tensions Surfaced by Regional Analysis</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                    <div>
+                        <h4 style="color: #8c9eff; font-size: 1rem; margin-bottom: 1rem; font-weight: 600;">Headquarters-Regional Misalignment</h4>
+                        <p style="color: rgba(255,255,255,0.9); font-size: 0.95rem; line-height: 1.7;">
+                            Global Edge initiatives designed in Germany may not translate effectively to ASEAN industrial contexts. Regional operations need authority to adapt platforms for local market requirements rather than implementing headquarters solutions as-is.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 style="color: #8c9eff; font-size: 1rem; margin-bottom: 1rem; font-weight: 600;">Value Capture Question</h4>
+                        <p style="color: rgba(255,255,255,0.9); font-size: 0.95rem; line-height: 1.7;">
+                            If Malaysian engineers develop software solutions for local factories, organizational questions arise: Does value accrue to regional P&L or global software division? Unclear answers discourage Edge innovation at regional level.
+                        </p>
+                    </div>
+                    <div>
+                        <h4 style="color: #8c9eff; font-size: 1rem; margin-bottom: 1rem; font-weight: 600;">Competitive Response Timing</h4>
+                        <p style="color: rgba(255,255,255,0.9); font-size: 0.95rem; line-height: 1.7;">
+                            Chinese competitors moving faster in ASEAN markets creates compressed decision timelines. Global transformation pace may be too slow for regional competitive realities, requiring different innovation governance at regional level.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -756,26 +1137,318 @@
     <!-- Quote Section -->
     <div class="quote-section">
         <div class="container">
-            <div class="quote-content">
-                <p class="quote-text">
-                    Bosch does not struggle with <span class="quote-highlight">invention</span>.<br>
-                    It struggles with <span class="quote-highlight">reinvention at software speed</span>.
-                </p>
+            <div class="quote-text">
+                "Bosch does not struggle with <span class="quote-highlight">invention</span>.<br>
+                It struggles with <span class="quote-highlight">reinvention at software speed</span>."
             </div>
         </div>
     </div>
+
+    <!-- Framework Connection -->
+    <section class="framework-connection">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Theta Framework Application</div>
+                <h2 class="section-title">Theta Framework Coverage for Bosch</h2>
+            </div>
+
+            <div class="framework-grid">
+                <div class="framework-card">
+                    <h3>Concepts Validated</h3>
+                    <div class="framework-list">
+                        <div class="framework-item">
+                            <strong>Dual S-curves:</strong> Managing hardware decline while building software future
+                        </div>
+                        <div class="framework-item">
+                            <strong>Zone transitions:</strong> Core→Edge needs culture change, not just cash
+                        </div>
+                        <div class="framework-item">
+                            <strong>Relativity:</strong> ADAS software = Core for Tesla, Edge for Bosch
+                        </div>
+                        <div class="framework-item">
+                            <strong>Stage mismatch:</strong> Corporate structure kills startup velocity
+                        </div>
+                    </div>
+                </div>
+
+                <div class="framework-card">
+                    <h3>Diagnostic Power</h3>
+                    <div class="framework-list">
+                        <div class="framework-item">
+                            <strong>Portfolio mapping:</strong> 65% Core overweight revealed
+                        </div>
+                        <div class="framework-item">
+                            <strong>Cultural assessment:</strong> Awareness-action gap identified
+                        </div>
+                        <div class="framework-item">
+                            <strong>Signal detection:</strong> IoT feedback not reaching teams
+                        </div>
+                        <div class="framework-item">
+                            <strong>Process analysis:</strong> "Corporate immune system" rejects innovation
+                        </div>
+                    </div>
+                </div>
+
+                <div class="framework-card">
+                    <h3>Prescriptive Insight</h3>
+                    <div class="framework-list">
+                        <div class="framework-item">
+                            Different governance per zone
+                        </div>
+                        <div class="framework-item">
+                            Protected pathways for cross-disciplinary talent
+                        </div>
+                        <div class="framework-item">
+                            Stage-appropriate metrics
+                        </div>
+                        <div class="framework-item">
+                            Scales from global to regional (Malaysia)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="framework-card">
+                    <h3>Framework Flexibility</h3>
+                    <div class="framework-list">
+                        <div class="framework-item">
+                            Works for conglomerates, not just startups
+                        </div>
+                        <div class="framework-item">
+                            Addresses culture, not just technology
+                        </div>
+                        <div class="framework-item">
+                            Respects engineering strengths while identifying gaps
+                        </div>
+                        <div class="framework-item">
+                            Adapts globally and locally
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 5rem; padding: 3rem; background: rgba(234, 0, 22, 0.1); border-left: 4px solid #EA0016; border-radius: 8px;">
+                <p style="color: rgba(255,255,255,0.9); font-size: 1.15rem; line-height: 1.8;">
+                    <strong>"Most companies don't die from lack of innovation. They die from innovating only in the Core."</strong><br><br>
+                    Bosch proves this thesis perfectly: 4,000 patents annually demonstrate exceptional Core innovation capability. Yet the company struggles because it applies Core-optimized processes (perfectionist hardware development, annual budget cycles, revenue-focused KPIs) to Edge and Beyond zones that require fundamentally different operating models. The Theta Framework provides both the diagnostic precision to identify this misalignment and the prescriptive clarity to correct it.
+                </p>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer>
         <div class="container">
             <div class="footer-content">
-                <p>Case Study: When Hardware Giants Need Software Souls</p>
+                <p>Strategic Case Study: When Hardware Giants Need Software Souls</p>
                 <p>How Bosch Is Rewiring an Industrial Titan for the Era of Intelligent Machines</p>
+                <p style="margin-top: 2rem; font-size: 0.8rem; opacity: 0.5;">
+                    Applying the Theta Framework to diagnose transformation challenges in industrial conglomerates
+                </p>
             </div>
             <div class="footer-author">
-                A case study by Christine Pamela
+                Analysis by Christine Pamela
             </div>
         </div>
     </footer>
+
+    <script>
+        // Portfolio Distribution Chart
+        const portfolioCtx = document.getElementById('portfolioChart').getContext('2d');
+        new Chart(portfolioCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Core', 'Edge', 'Beyond'],
+                datasets: [{
+                    label: 'Current Distribution',
+                    data: [65, 25, 10],
+                    backgroundColor: 'rgba(234, 0, 22, 0.7)',
+                    borderColor: '#EA0016',
+                    borderWidth: 2
+                }, {
+                    label: 'Target for Transformation',
+                    data: [55, 30, 15],
+                    backgroundColor: 'rgba(76, 175, 80, 0.7)',
+                    borderColor: '#4CAF50',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: { size: 12, family: 'Inter' }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) { return value + '%'; },
+                            font: { size: 11, family: 'Inter' }
+                        },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    x: {
+                        ticks: { font: { size: 12, family: 'Inter', weight: '600' } },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Competitive Threat Matrix
+        const competitiveCtx = document.getElementById('competitiveChart').getContext('2d');
+        new Chart(competitiveCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Platform Players (High Integration)',
+                    data: [{x: 6, y: 9}, {x: 7, y: 8.5}, {x: 5.5, y: 8}],
+                    backgroundColor: 'rgba(234, 0, 22, 0.7)',
+                    borderColor: '#EA0016',
+                    pointRadius: 10,
+                    pointHoverRadius: 12
+                }, {
+                    label: 'Niche Specialists (Focused)',
+                    data: [{x: 8, y: 6}, {x: 8.5, y: 5.5}, {x: 7.5, y: 6.5}],
+                    backgroundColor: 'rgba(255, 193, 7, 0.7)',
+                    borderColor: '#FFC107',
+                    pointRadius: 10,
+                    pointHoverRadius: 12
+                }, {
+                    label: 'Speed Disruptors (Fast Iteration)',
+                    data: [{x: 9.5, y: 7}, {x: 9, y: 6.5}, {x: 9.2, y: 7.5}],
+                    backgroundColor: 'rgba(156, 39, 176, 0.7)',
+                    borderColor: '#9C27B0',
+                    pointRadius: 10,
+                    pointHoverRadius: 12
+                }, {
+                    label: 'Bosch (Current Position)',
+                    data: [{x: 4, y: 7.5}],
+                    backgroundColor: 'rgba(76, 175, 80, 0.7)',
+                    borderColor: '#4CAF50',
+                    pointRadius: 15,
+                    pointHoverRadius: 17,
+                    pointStyle: 'star'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: { size: 11, family: 'Inter' },
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': Speed=' + context.parsed.x + ', Integration=' + context.parsed.y;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Development Speed (1=Slow, 10=Fast)',
+                            font: { size: 12, family: 'Inter', weight: '600' }
+                        },
+                        min: 0,
+                        max: 10,
+                        ticks: { font: { size: 11, family: 'Inter' } },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Platform Integration Depth (1=Low, 10=High)',
+                            font: { size: 12, family: 'Inter', weight: '600' }
+                        },
+                        min: 0,
+                        max: 10,
+                        ticks: { font: { size: 11, family: 'Inter' } },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    }
+                }
+            }
+        });
+
+        // Implementation Roadmap
+        const roadmapCtx = document.getElementById('roadmapChart').getContext('2d');
+        new Chart(roadmapCtx, {
+            type: 'line',
+            data: {
+                labels: ['Q1 2026', 'Q2 2026', 'Q3 2026', 'Q4 2026', 'Q1 2027', 'Q2 2027', 'Q3 2027', 'Q4 2027'],
+                datasets: [{
+                    label: 'Governance Model Adoption',
+                    data: [10, 30, 60, 80, 90, 95, 98, 100],
+                    borderColor: '#4CAF50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Platform Development Maturity',
+                    data: [0, 15, 35, 55, 70, 85, 92, 100],
+                    borderColor: '#FFC107',
+                    backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Talent Pipeline Development',
+                    data: [0, 0, 20, 45, 65, 80, 90, 100],
+                    borderColor: '#EA0016',
+                    backgroundColor: 'rgba(234, 0, 22, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: { size: 11, family: 'Inter' },
+                            usePointStyle: true
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) { return value + '%'; },
+                            font: { size: 11, family: 'Inter' }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Maturity Level',
+                            font: { size: 12, family: 'Inter', weight: '600' }
+                        },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    x: {
+                        ticks: { font: { size: 11, family: 'Inter' } },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
