@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategic Outreach Manager</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            --core-green: #2d5016;
+            --edge-yellow: #d4a574;
+            --beyond-red: #8b4513;
+            --priority-hot: #c41e3a;
+            --priority-medium: #f4a460;
+            --priority-low: #6b8e23;
+            --bg-primary: #fafaf8;
+            --bg-secondary: #f5f5f0;
+            --text-primary: #2a2a2a;
+            --text-secondary: #666666;
+            --border-color: #d4d4cc;
+            --card-bg: #ffffff;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-medium: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-elevated: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=Work+Sans:wght@300;400;500;600&display=swap');
+
+        body {
+            font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #fafaf8 0%, #f5f5f0 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 2rem;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            color: var(--core-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            color: var(--core-green);
+            border-bottom-color: var(--core-green);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.9rem;
+            background: var(--card-bg);
+            transition: all 0.2s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--core-green);
+            box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--bg-secondary);
+            border-color: var(--core-green);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .btn-primary {
+            background: var(--core-green);
+            color: white;
+            border-color: var(--core-green);
+        }
+
+        .btn-primary:hover {
+            background: #234010;
+            border-color: #234010;
+        }
+
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow-medium);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--bg-secondary);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            user-select: none;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th:hover {
+            background: #ebebde;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background: var(--bg-primary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        .priority-hot { background: rgba(196, 30, 58, 0.1); color: var(--priority-hot); }
+        .priority-medium { background: rgba(244, 164, 96, 0.1); color: var(--priority-medium); }
+        .priority-low { background: rgba(107, 142, 35, 0.1); color: var(--priority-low); }
+
+        .status-invited { background: rgba(212, 165, 116, 0.1); color: var(--edge-yellow); }
+        .status-connected { background: rgba(45, 80, 22, 0.1); color: var(--core-green); }
+        .status-responded { background: rgba(45, 80, 22, 0.15); color: var(--core-green); font-weight: 600; }
+        .status-ignored { background: rgba(139, 69, 19, 0.1); color: var(--beyond-red); }
+
+        .stage-awareness { background: rgba(212, 165, 116, 0.1); color: var(--edge-yellow); }
+        .stage-consideration { background: rgba(244, 164, 96, 0.15); color: #d4842f; }
+        .stage-engagement { background: rgba(45, 80, 22, 0.1); color: var(--core-green); }
+        .stage-conversion { background: rgba(45, 80, 22, 0.2); color: var(--core-green); font-weight: 600; }
+
+        .row-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-icon:hover {
+            color: var(--core-green);
+            transform: scale(1.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-elevated);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.8rem;
+            font-weight: 400;
+            color: var(--core-green);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.9rem;
+            background: var(--card-bg);
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--core-green);
+            box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .communication-log {
+            margin-top: 2rem;
+        }
+
+        .log-entry {
+            background: var(--bg-primary);
+            padding: 1rem;
+            border-left: 3px solid var(--core-green);
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+
+        .log-entry-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .log-entry-content {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .chart-card h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            color: var(--core-green);
+        }
+
+        .calendar-view {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.5rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-2px);
+        }
+
+        .calendar-day-number {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .calendar-day-tasks {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .calendar-day.urgent {
+            background: rgba(196, 30, 58, 0.05);
+            border-color: var(--priority-hot);
+        }
+
+        .calendar-day.upcoming {
+            background: rgba(244, 164, 96, 0.05);
+            border-color: var(--priority-medium);
+        }
+
+        .calendar-day.done {
+            background: rgba(107, 142, 35, 0.05);
+            border-color: var(--priority-low);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-medium);
+            border-left: 4px solid var(--core-green);
+        }
+
+        .stat-value {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--core-green);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.9rem;
+            background: var(--card-bg);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Strategic Outreach Manager</h1>
+            <p class="subtitle">High-Touch Relationship Intelligence</p>
+            
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
+                <button class="nav-tab" data-tab="analytics">Analytics</button>
+                <button class="nav-tab" data-tab="calendar">Calendar</button>
+                <button class="nav-tab" data-tab="insights">Insights</button>
+                <button class="nav-tab" data-tab="templates">Templates</button>
+            </div>
+        </header>
+
+        <!-- Dashboard Tab -->
+        <div class="tab-content active" id="dashboard">
+            <div class="toolbar">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search contacts, companies, or tags...">
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="app.openAddContactModal()">+ Add Contact</button>
+                    <button class="btn" onclick="app.exportCSV()">↓ Export CSV</button>
+                    <input type="file" id="csvImport" accept=".csv" style="display: none;" onchange="app.importCSV(event)">
+                    <button class="btn" onclick="document.getElementById('csvImport').click()">↑ Import CSV</button>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label>Priority</label>
+                    <select id="filterPriority" onchange="app.applyFilters()">
+                        <option value="">All Priorities</option>
+                        <option value="Hot">Hot</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Funnel Stage</label>
+                    <select id="filterStage" onchange="app.applyFilters()">
+                        <option value="">All Stages</option>
+                        <option value="Awareness">Awareness</option>
+                        <option value="Consideration">Consideration</option>
+                        <option value="Engagement">Engagement</option>
+                        <option value="Conversion">Conversion</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Connection Status</label>
+                    <select id="filterStatus" onchange="app.applyFilters()">
+                        <option value="">All Statuses</option>
+                        <option value="Invited">Invited</option>
+                        <option value="Connected">Connected</option>
+                        <option value="Responded">Responded</option>
+                        <option value="Ignored">Ignored</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="contactsTable">
+                    <thead>
+                        <tr>
+                            <th onclick="app.sortTable('company')">Company</th>
+                            <th onclick="app.sortTable('name')">Name</th>
+                            <th onclick="app.sortTable('tier')">Tier</th>
+                            <th onclick="app.sortTable('connectionMethod')">Method</th>
+                            <th onclick="app.sortTable('connectionStatus')">Status</th>
+                            <th onclick="app.sortTable('priority')">Priority</th>
+                            <th onclick="app.sortTable('funnelStage')">Stage</th>
+                            <th onclick="app.sortTable('nextActionDate')">Next Action</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contactsTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div class="tab-content" id="analytics">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalContacts">0</div>
+                    <div class="stat-label">Total Contacts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeOutreach">0</div>
+                    <div class="stat-label">Active Outreach</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="responseRate">0%</div>
+                    <div class="stat-label">Response Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="conversions">0</div>
+                    <div class="stat-label">Conversions</div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>Funnel Overview</h3>
+                    <canvas id="funnelChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Channel Effectiveness</h3>
+                    <canvas id="channelChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Tier Distribution</h3>
+                    <canvas id="tierChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Priority Distribution</h3>
+                    <canvas id="priorityChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar Tab -->
+        <div class="tab-content" id="calendar">
+            <h2 style="font-family: 'Crimson Pro', serif; font-size: 1.8rem; font-weight: 400; margin-bottom: 2rem; color: var(--core-green);">Upcoming Actions</h2>
+            <div id="calendarContainer">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Insights Tab -->
+        <div class="tab-content" id="insights">
+            <h2 style="font-family: 'Crimson Pro', serif; font-size: 1.8rem; font-weight: 400; margin-bottom: 2rem; color: var(--core-green);">Strategic Insights</h2>
+            <div id="insightsContainer">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Templates Tab -->
+        <div class="tab-content" id="templates">
+            <h2 style="font-family: 'Crimson Pro', serif; font-size: 1.8rem; font-weight: 400; margin-bottom: 2rem; color: var(--core-green);">Message Templates</h2>
+            <div class="toolbar">
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="app.openAddTemplateModal()">+ Add Template</button>
+                </div>
+            </div>
+            <div id="templatesContainer">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Contact Modal -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Contact</h2>
+            </div>
+            <div class="modal-body">
+                <form id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Company *</label>
+                            <input type="text" id="company" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Name *</label>
+                            <input type="text" id="contactName" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Role / Tier *</label>
+                            <select id="tier" required>
+                                <option value="">Select Tier</option>
+                                <option value="Decision-maker">Decision-maker</option>
+                                <option value="Introducer">Introducer</option>
+                                <option value="Influencer">Influencer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Connection Method *</label>
+                            <select id="connectionMethod" required>
+                                <option value="">Select Method</option>
+                                <option value="LinkedIn">LinkedIn</option>
+                                <option value="Email">Email</option>
+                                <option value="WhatsApp">WhatsApp</option>
+                                <option value="Personal Intro">Personal Intro</option>
+                                <option value="Old Contact">Old Contact</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Connection Status *</label>
+                            <select id="connectionStatus" required>
+                                <option value="">Select Status</option>
+                                <option value="Invited">Invited</option>
+                                <option value="Connected">Connected</option>
+                                <option value="Responded">Responded</option>
+                                <option value="Ignored">Ignored</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Priority *</label>
+                            <select id="priority" required>
+                                <option value="">Select Priority</option>
+                                <option value="Hot">Hot</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Opportunity Type *</label>
+                            <select id="opportunityType" required>
+                                <option value="">Select Type</option>
+                                <option value="Strategic fit">Strategic fit</option>
+                                <option value="Product interest">Product interest</option>
+                                <option value="Future potential">Future potential</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Funnel Stage *</label>
+                            <select id="funnelStage" required>
+                                <option value="">Select Stage</option>
+                                <option value="Awareness">Awareness</option>
+                                <option value="Consideration">Consideration</option>
+                                <option value="Engagement">Engagement</option>
+                                <option value="Conversion">Conversion</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Next Action Date</label>
+                        <input type="date" id="nextActionDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tags (comma-separated)</label>
+                        <input type="text" id="tags" placeholder="e.g., Portfolio innovation, Tech-ready, Luxury">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Notes / Insights</label>
+                        <textarea id="notes" placeholder="Key insights, objections, or context..."></textarea>
+                    </div>
+
+                    <input type="hidden" id="contactId">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="app.closeModal('contactModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="app.saveContact()">Save Contact</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Communication Log Modal -->
+    <div class="modal" id="logModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Communication Log</h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Channel</label>
+                    <select id="logChannel">
+                        <option value="LinkedIn">LinkedIn</option>
+                        <option value="Email">Email</option>
+                        <option value="WhatsApp">WhatsApp</option>
+                        <option value="Phone">Phone</option>
+                        <option value="In-person">In-person</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Message Sent</label>
+                    <textarea id="logMessage" placeholder="What did you communicate?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Response Received</label>
+                    <textarea id="logResponse" placeholder="How did they respond?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Sentiment / Insight</label>
+                    <input type="text" id="logSentiment" placeholder="e.g., Positive, Interested, Needs follow-up">
+                </div>
+
+                <div class="communication-log" id="existingLogs">
+                    <!-- Populated by JS -->
+                </div>
+
+                <input type="hidden" id="logContactId">
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="app.closeModal('logModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="app.saveLog()">Add Log Entry</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Modal -->
+    <div class="modal" id="templateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Message Template</h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Template Name</label>
+                    <input type="text" id="templateName" placeholder="e.g., Tier 1 First Contact">
+                </div>
+
+                <div class="form-group">
+                    <label>Template Category</label>
+                    <select id="templateCategory">
+                        <option value="Tier 1">Tier 1 (Decision-maker)</option>
+                        <option value="Tier 2">Tier 2 (Introducer)</option>
+                        <option value="Tier 3">Tier 3 (Influencer)</option>
+                        <option value="Follow-up">Follow-up</option>
+                        <option value="Re-engagement">Re-engagement</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Template Style</label>
+                    <select id="templateStyle">
+                        <option value="Short">Short</option>
+                        <option value="Data-heavy">Data-heavy</option>
+                        <option value="Insight-heavy">Insight-heavy</option>
+                        <option value="Casual">Casual</option>
+                        <option value="Formal">Formal</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Template Content</label>
+                    <textarea id="templateContent" placeholder="Dear {Name},
+
+{Your message here}
+
+Best regards,
+{Your name}" style="min-height: 200px;"></textarea>
+                </div>
+
+                <input type="hidden" id="templateId">
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="app.closeModal('templateModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="app.saveTemplate()">Save Template</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const app = {
+            contacts: [],
+            templates: [],
+            currentSort: { field: 'company', ascending: true },
+            filters: { priority: '', stage: '', status: '' },
+            charts: {},
+
+            init() {
+                this.loadData();
+                this.setupEventListeners();
+                this.renderContacts();
+                this.renderCharts();
+                this.renderInsights();
+                this.renderTemplates();
+                this.renderCalendar();
+                this.updateStats();
+            },
+
+            loadData() {
+                const savedContacts = localStorage.getItem('outreach_contacts');
+                const savedTemplates = localStorage.getItem('outreach_templates');
+                
+                if (savedContacts) {
+                    this.contacts = JSON.parse(savedContacts);
+                }
+                
+                if (savedTemplates) {
+                    this.templates = JSON.parse(savedTemplates);
+                } else {
+                    // Add default templates
+                    this.templates = [
+                        {
+                            id: Date.now(),
+                            name: 'Tier 1 - Initial Outreach',
+                            category: 'Tier 1',
+                            style: 'Formal',
+                            content: `Dear {Name},
+
+I hope this message finds you well. I've been following {Company}'s remarkable work in transforming the luxury/tech landscape, and I believe there's an interesting strategic alignment worth exploring.
+
+Would you be open to a brief conversation about how we might collaborate on {specific opportunity}?
+
+Best regards,
+{Your Name}`
+                        },
+                        {
+                            id: Date.now() + 1,
+                            name: 'Follow-up - No Response',
+                            category: 'Follow-up',
+                            style: 'Short',
+                            content: `Hi {Name},
+
+Following up on my previous message regarding {topic}. I understand your schedule is demanding—would a brief 15-minute call work better?
+
+Looking forward to connecting.
+
+Best,
+{Your Name}`
+                        }
+                    ];
+                    this.saveData();
+                }
+            },
+
+            saveData() {
+                localStorage.setItem('outreach_contacts', JSON.stringify(this.contacts));
+                localStorage.setItem('outreach_templates', JSON.stringify(this.templates));
+            },
+
+            setupEventListeners() {
+                // Tab navigation
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                        
+                        e.target.classList.add('active');
+                        document.getElementById(e.target.dataset.tab).classList.add('active');
+                        
+                        if (e.target.dataset.tab === 'analytics') {
+                            this.renderCharts();
+                        } else if (e.target.dataset.tab === 'calendar') {
+                            this.renderCalendar();
+                        } else if (e.target.dataset.tab === 'insights') {
+                            this.renderInsights();
+                        }
+                    });
+                });
+
+                // Search
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    this.renderContacts(e.target.value);
+                });
+
+                // Close modals on background click
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            this.closeModal(modal.id);
+                        }
+                    });
+                });
+            },
+
+            renderContacts(searchTerm = '') {
+                let filteredContacts = this.contacts;
+
+                // Apply search
+                if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    filteredContacts = filteredContacts.filter(c => 
+                        c.company.toLowerCase().includes(term) ||
+                        c.name.toLowerCase().includes(term) ||
+                        (c.tags && c.tags.some(tag => tag.toLowerCase().includes(term)))
+                    );
+                }
+
+                // Apply filters
+                if (this.filters.priority) {
+                    filteredContacts = filteredContacts.filter(c => c.priority === this.filters.priority);
+                }
+                if (this.filters.stage) {
+                    filteredContacts = filteredContacts.filter(c => c.funnelStage === this.filters.stage);
+                }
+                if (this.filters.status) {
+                    filteredContacts = filteredContacts.filter(c => c.connectionStatus === this.filters.status);
+                }
+
+                // Apply sorting
+                filteredContacts.sort((a, b) => {
+                    let aVal = a[this.currentSort.field] || '';
+                    let bVal = b[this.currentSort.field] || '';
+                    
+                    if (this.currentSort.field === 'nextActionDate') {
+                        aVal = new Date(aVal || '2099-12-31');
+                        bVal = new Date(bVal || '2099-12-31');
+                    }
+                    
+                    if (aVal < bVal) return this.currentSort.ascending ? -1 : 1;
+                    if (aVal > bVal) return this.currentSort.ascending ? 1 : -1;
+                    return 0;
+                });
+
+                const tbody = document.getElementById('contactsTableBody');
+                
+                if (filteredContacts.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="9" style="text-align: center; padding: 3rem;">
+                                <div class="empty-state">
+                                    <h3>No contacts found</h3>
+                                    <p>Start by adding your first contact</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = filteredContacts.map(contact => `
+                    <tr>
+                        <td><strong>${contact.company}</strong></td>
+                        <td>${contact.name}</td>
+                        <td>${contact.tier}</td>
+                        <td>${contact.connectionMethod}</td>
+                        <td><span class="badge status-${contact.connectionStatus.toLowerCase()}">${contact.connectionStatus}</span></td>
+                        <td><span class="badge priority-${contact.priority.toLowerCase()}">${contact.priority}</span></td>
+                        <td><span class="badge stage-${contact.funnelStage.toLowerCase()}">${contact.funnelStage}</span></td>
+                        <td>${contact.nextActionDate ? new Date(contact.nextActionDate).toLocaleDateString() : '—'}</td>
+                        <td>
+                            <div class="row-actions">
+                                <button class="btn-icon" onclick="app.openLogModal(${contact.id})" title="Add Communication">📝</button>
+                                <button class="btn-icon" onclick="app.editContact(${contact.id})" title="Edit">✏️</button>
+                                <button class="btn-icon" onclick="app.deleteContact(${contact.id})" title="Delete">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+
+                this.updateStats();
+            },
+
+            sortTable(field) {
+                if (this.currentSort.field === field) {
+                    this.currentSort.ascending = !this.currentSort.ascending;
+                } else {
+                    this.currentSort.field = field;
+                    this.currentSort.ascending = true;
+                }
+                this.renderContacts(document.getElementById('searchInput').value);
+            },
+
+            applyFilters() {
+                this.filters.priority = document.getElementById('filterPriority').value;
+                this.filters.stage = document.getElementById('filterStage').value;
+                this.filters.status = document.getElementById('filterStatus').value;
+                this.renderContacts(document.getElementById('searchInput').value);
+            },
+
+            openAddContactModal() {
+                document.getElementById('modalTitle').textContent = 'Add Contact';
+                document.getElementById('contactForm').reset();
+                document.getElementById('contactId').value = '';
+                this.openModal('contactModal');
+            },
+
+            editContact(id) {
+                const contact = this.contacts.find(c => c.id === id);
+                if (!contact) return;
+
+                document.getElementById('modalTitle').textContent = 'Edit Contact';
+                document.getElementById('company').value = contact.company;
+                document.getElementById('contactName').value = contact.name;
+                document.getElementById('tier').value = contact.tier;
+                document.getElementById('connectionMethod').value = contact.connectionMethod;
+                document.getElementById('connectionStatus').value = contact.connectionStatus;
+                document.getElementById('priority').value = contact.priority;
+                document.getElementById('opportunityType').value = contact.opportunityType;
+                document.getElementById('funnelStage').value = contact.funnelStage;
+                document.getElementById('nextActionDate').value = contact.nextActionDate || '';
+                document.getElementById('tags').value = contact.tags ? contact.tags.join(', ') : '';
+                document.getElementById('notes').value = contact.notes || '';
+                document.getElementById('contactId').value = contact.id;
+
+                this.openModal('contactModal');
+            },
+
+            saveContact() {
+                const id = document.getElementById('contactId').value;
+                const contactData = {
+                    company: document.getElementById('company').value,
+                    name: document.getElementById('contactName').value,
+                    tier: document.getElementById('tier').value,
+                    connectionMethod: document.getElementById('connectionMethod').value,
+                    connectionStatus: document.getElementById('connectionStatus').value,
+                    priority: document.getElementById('priority').value,
+                    opportunityType: document.getElementById('opportunityType').value,
+                    funnelStage: document.getElementById('funnelStage').value,
+                    nextActionDate: document.getElementById('nextActionDate').value,
+                    tags: document.getElementById('tags').value.split(',').map(t => t.trim()).filter(t => t),
+                    notes: document.getElementById('notes').value,
+                };
+
+                if (id) {
+                    // Edit existing
+                    const index = this.contacts.findIndex(c => c.id === parseInt(id));
+                    this.contacts[index] = { ...this.contacts[index], ...contactData };
+                } else {
+                    // Add new
+                    contactData.id = Date.now();
+                    contactData.communicationLog = [];
+                    contactData.lastMessage = '';
+                    this.contacts.push(contactData);
+                }
+
+                this.saveData();
+                this.renderContacts();
+                this.closeModal('contactModal');
+            },
+
+            deleteContact(id) {
+                if (confirm('Are you sure you want to delete this contact?')) {
+                    this.contacts = this.contacts.filter(c => c.id !== id);
+                    this.saveData();
+                    this.renderContacts();
+                }
+            },
+
+            openLogModal(contactId) {
+                const contact = this.contacts.find(c => c.id === contactId);
+                if (!contact) return;
+
+                document.getElementById('logContactId').value = contactId;
+                document.getElementById('logChannel').value = contact.connectionMethod;
+                document.getElementById('logMessage').value = '';
+                document.getElementById('logResponse').value = '';
+                document.getElementById('logSentiment').value = '';
+
+                // Show existing logs
+                const logsContainer = document.getElementById('existingLogs');
+                if (contact.communicationLog && contact.communicationLog.length > 0) {
+                    logsContainer.innerHTML = '<h4 style="margin-bottom: 1rem; font-family: Crimson Pro, serif;">Previous Communications</h4>' +
+                        contact.communicationLog.map(log => `
+                            <div class="log-entry">
+                                <div class="log-entry-header">
+                                    <span><strong>${log.channel}</strong> • ${new Date(log.date).toLocaleDateString()}</span>
+                                    ${log.sentiment ? `<span class="badge">${log.sentiment}</span>` : ''}
+                                </div>
+                                <div class="log-entry-content">
+                                    <p><strong>Message:</strong> ${log.message}</p>
+                                    ${log.response ? `<p><strong>Response:</strong> ${log.response}</p>` : ''}
+                                </div>
+                            </div>
+                        `).join('');
+                } else {
+                    logsContainer.innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">No previous communications logged.</p>';
+                }
+
+                this.openModal('logModal');
+            },
+
+            saveLog() {
+                const contactId = parseInt(document.getElementById('logContactId').value);
+                const contact = this.contacts.find(c => c.id === contactId);
+                
+                if (!contact) return;
+
+                const logEntry = {
+                    date: new Date().toISOString(),
+                    channel: document.getElementById('logChannel').value,
+                    message: document.getElementById('logMessage').value,
+                    response: document.getElementById('logResponse').value,
+                    sentiment: document.getElementById('logSentiment').value
+                };
+
+                if (!contact.communicationLog) {
+                    contact.communicationLog = [];
+                }
+                
+                contact.communicationLog.unshift(logEntry);
+                contact.lastMessage = logEntry.message.substring(0, 100);
+
+                this.saveData();
+                this.renderContacts();
+                this.closeModal('logModal');
+            },
+
+            openAddTemplateModal() {
+                document.getElementById('templateName').value = '';
+                document.getElementById('templateCategory').value = 'Tier 1';
+                document.getElementById('templateStyle').value = 'Formal';
+                document.getElementById('templateContent').value = '';
+                document.getElementById('templateId').value = '';
+                this.openModal('templateModal');
+            },
+
+            saveTemplate() {
+                const id = document.getElementById('templateId').value;
+                const templateData = {
+                    name: document.getElementById('templateName').value,
+                    category: document.getElementById('templateCategory').value,
+                    style: document.getElementById('templateStyle').value,
+                    content: document.getElementById('templateContent').value
+                };
+
+                if (id) {
+                    const index = this.templates.findIndex(t => t.id === parseInt(id));
+                    this.templates[index] = { ...this.templates[index], ...templateData };
+                } else {
+                    templateData.id = Date.now();
+                    this.templates.push(templateData);
+                }
+
+                this.saveData();
+                this.renderTemplates();
+                this.closeModal('templateModal');
+            },
+
+            renderTemplates() {
+                const container = document.getElementById('templatesContainer');
+                
+                if (this.templates.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><h3>No templates yet</h3><p>Create your first message template</p></div>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                        ${this.templates.map(template => `
+                            <div class="chart-card">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                    <div>
+                                        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">${template.name}</h3>
+                                        <div style="display: flex; gap: 0.5rem;">
+                                            <span class="badge">${template.category}</span>
+                                            <span class="badge">${template.style}</span>
+                                        </div>
+                                    </div>
+                                    <button class="btn-icon" onclick="app.deleteTemplate(${template.id})">🗑️</button>
+                                </div>
+                                <pre style="white-space: pre-wrap; font-family: 'Work Sans', sans-serif; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; background: var(--bg-primary); padding: 1rem; border-radius: 4px; max-height: 200px; overflow-y: auto;">${template.content}</pre>
+                                <button class="btn" style="width: 100%; margin-top: 1rem;" onclick="app.copyTemplate(${template.id})">Copy Template</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            },
+
+            copyTemplate(id) {
+                const template = this.templates.find(t => t.id === id);
+                if (!template) return;
+
+                navigator.clipboard.writeText(template.content).then(() => {
+                    alert('Template copied to clipboard!');
+                });
+            },
+
+            deleteTemplate(id) {
+                if (confirm('Delete this template?')) {
+                    this.templates = this.templates.filter(t => t.id !== id);
+                    this.saveData();
+                    this.renderTemplates();
+                }
+            },
+
+            renderCalendar() {
+                const container = document.getElementById('calendarContainer');
+                const today = new Date();
+                const upcomingActions = this.contacts
+                    .filter(c => c.nextActionDate)
+                    .map(c => ({
+                        ...c,
+                        date: new Date(c.nextActionDate)
+                    }))
+                    .sort((a, b) => a.date - b.date);
+
+                if (upcomingActions.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><h3>No upcoming actions</h3><p>Set next action dates for your contacts</p></div>';
+                    return;
+                }
+
+                const upcomingList = upcomingActions.slice(0, 20).map(contact => {
+                    const daysUntil = Math.floor((contact.date - today) / (1000 * 60 * 60 * 24));
+                    let urgencyClass = 'upcoming';
+                    let urgencyText = `${daysUntil} days`;
+                    
+                    if (daysUntil < 0) {
+                        urgencyClass = 'urgent';
+                        urgencyText = `${Math.abs(daysUntil)} days overdue`;
+                    } else if (daysUntil === 0) {
+                        urgencyClass = 'urgent';
+                        urgencyText = 'Today';
+                    } else if (daysUntil === 1) {
+                        urgencyClass = 'urgent';
+                        urgencyText = 'Tomorrow';
+                    } else if (daysUntil > 7) {
+                        urgencyClass = 'done';
+                    }
+
+                    return `
+                        <div class="chart-card" style="border-left: 4px solid var(--priority-${contact.priority.toLowerCase()});">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <h3 style="font-size: 1.2rem; margin-bottom: 0.25rem;">${contact.company}</h3>
+                                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">${contact.name} • ${contact.tier}</p>
+                                    <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+                                        <span class="badge priority-${contact.priority.toLowerCase()}">${contact.priority}</span>
+                                        <span class="badge stage-${contact.funnelStage.toLowerCase()}">${contact.funnelStage}</span>
+                                        <span class="badge ${urgencyClass}">${urgencyText}</span>
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-family: 'Crimson Pro', serif; font-size: 1.5rem; color: var(--core-green);">${contact.date.getDate()}</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">${contact.date.toLocaleDateString('en-US', { month: 'short' })}</div>
+                                </div>
+                            </div>
+                            ${contact.notes ? `<p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary); font-style: italic;">${contact.notes.substring(0, 150)}${contact.notes.length > 150 ? '...' : ''}</p>` : ''}
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML = `<div style="display: grid; gap: 1rem;">${upcomingList}</div>`;
+            },
+
+            renderInsights() {
+                const container = document.getElementById('insightsContainer');
+                
+                // Calculate insights
+                const insights = [];
+                
+                // Hot priority contacts without recent communication
+                const hotWithoutRecent = this.contacts.filter(c => 
+                    c.priority === 'Hot' && 
+                    (!c.communicationLog || c.communicationLog.length === 0 || 
+                     (new Date() - new Date(c.communicationLog[0].date)) > 7 * 24 * 60 * 60 * 1000)
+                );
+                
+                if (hotWithoutRecent.length > 0) {
+                    insights.push({
+                        type: 'urgent',
+                        title: 'Hot Contacts Need Attention',
+                        message: `${hotWithoutRecent.length} high-priority contact(s) haven't been contacted in over 7 days.`,
+                        contacts: hotWithoutRecent
+                    });
+                }
+
+                // Stuck in awareness stage
+                const stuckInAwareness = this.contacts.filter(c => 
+                    c.funnelStage === 'Awareness' && 
+                    c.communicationLog && 
+                    c.communicationLog.length >= 3
+                );
+                
+                if (stuckInAwareness.length > 0) {
+                    insights.push({
+                        type: 'warning',
+                        title: 'Multiple Touchpoints Without Progression',
+                        message: `${stuckInAwareness.length} contact(s) have 3+ communications but remain in Awareness stage. Consider a different approach or channel.`,
+                        contacts: stuckInAwareness
+                    });
+                }
+
+                // Best performing channel
+                const channelStats = {};
+                this.contacts.forEach(c => {
+                    if (c.communicationLog && c.communicationLog.length > 0) {
+                        c.communicationLog.forEach(log => {
+                            if (!channelStats[log.channel]) {
+                                channelStats[log.channel] = { total: 0, responses: 0 };
+                            }
+                            channelStats[log.channel].total++;
+                            if (log.response) channelStats[log.channel].responses++;
+                        });
+                    }
+                });
+
+                const channelPerformance = Object.entries(channelStats)
+                    .map(([channel, stats]) => ({
+                        channel,
+                        rate: stats.total > 0 ? (stats.responses / stats.total * 100).toFixed(0) : 0
+                    }))
+                    .sort((a, b) => b.rate - a.rate);
+
+                if (channelPerformance.length > 0 && channelPerformance[0].rate > 0) {
+                    insights.push({
+                        type: 'success',
+                        title: 'Best Performing Channel',
+                        message: `${channelPerformance[0].channel} has a ${channelPerformance[0].rate}% response rate—consider prioritizing this channel for new outreach.`,
+                        contacts: []
+                    });
+                }
+
+                // Overdue actions
+                const today = new Date();
+                const overdue = this.contacts.filter(c => 
+                    c.nextActionDate && new Date(c.nextActionDate) < today
+                );
+
+                if (overdue.length > 0) {
+                    insights.push({
+                        type: 'urgent',
+                        title: 'Overdue Actions',
+                        message: `${overdue.length} contact(s) have overdue follow-up actions.`,
+                        contacts: overdue
+                    });
+                }
+
+                if (insights.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><h3>No insights yet</h3><p>Add contacts and communications to generate strategic insights</p></div>';
+                    return;
+                }
+
+                container.innerHTML = insights.map(insight => {
+                    const colorMap = {
+                        urgent: 'var(--priority-hot)',
+                        warning: 'var(--priority-medium)',
+                        success: 'var(--priority-low)'
+                    };
+
+                    return `
+                        <div class="chart-card" style="border-left: 4px solid ${colorMap[insight.type]}; margin-bottom: 1.5rem;">
+                            <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">${insight.title}</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">${insight.message}</p>
+                            ${insight.contacts.length > 0 ? `
+                                <div style="margin-top: 1rem;">
+                                    <strong style="font-size: 0.9rem;">Affected contacts:</strong>
+                                    <div style="margin-top: 0.5rem;">
+                                        ${insight.contacts.slice(0, 5).map(c => 
+                                            `<span class="badge" style="margin-right: 0.5rem; margin-bottom: 0.5rem;">${c.company} - ${c.name}</span>`
+                                        ).join('')}
+                                        ${insight.contacts.length > 5 ? `<span style="color: var(--text-secondary); font-size: 0.85rem;">+${insight.contacts.length - 5} more</span>` : ''}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            updateStats() {
+                document.getElementById('totalContacts').textContent = this.contacts.length;
+                
+                const active = this.contacts.filter(c => 
+                    c.funnelStage !== 'Conversion' && c.connectionStatus !== 'Ignored'
+                ).length;
+                document.getElementById('activeOutreach').textContent = active;
+
+                const conversions = this.contacts.filter(c => c.funnelStage === 'Conversion').length;
+                document.getElementById('conversions').textContent = conversions;
+
+                // Calculate response rate
+                let totalCommunications = 0;
+                let totalResponses = 0;
+                this.contacts.forEach(c => {
+                    if (c.communicationLog) {
+                        totalCommunications += c.communicationLog.length;
+                        totalResponses += c.communicationLog.filter(log => log.response).length;
+                    }
+                });
+
+                const responseRate = totalCommunications > 0 
+                    ? Math.round(totalResponses / totalCommunications * 100)
+                    : 0;
+                document.getElementById('responseRate').textContent = responseRate + '%';
+            },
+
+            renderCharts() {
+                this.updateStats();
+
+                // Funnel Chart
+                const funnelData = {
+                    Awareness: this.contacts.filter(c => c.funnelStage === 'Awareness').length,
+                    Consideration: this.contacts.filter(c => c.funnelStage === 'Consideration').length,
+                    Engagement: this.contacts.filter(c => c.funnelStage === 'Engagement').length,
+                    Conversion: this.contacts.filter(c => c.funnelStage === 'Conversion').length
+                };
+
+                if (this.charts.funnel) this.charts.funnel.destroy();
+                this.charts.funnel = new Chart(document.getElementById('funnelChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Awareness', 'Consideration', 'Engagement', 'Conversion'],
+                        datasets: [{
+                            label: 'Contacts',
+                            data: Object.values(funnelData),
+                            backgroundColor: [
+                                'rgba(212, 165, 116, 0.7)',
+                                'rgba(244, 164, 96, 0.7)',
+                                'rgba(45, 80, 22, 0.7)',
+                                'rgba(45, 80, 22, 0.9)'
+                            ],
+                            borderColor: [
+                                'rgb(212, 165, 116)',
+                                'rgb(244, 164, 96)',
+                                'rgb(45, 80, 22)',
+                                'rgb(45, 80, 22)'
+                            ],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                        }
+                    }
+                });
+
+                // Channel Effectiveness
+                const channelData = {};
+                this.contacts.forEach(c => {
+                    if (c.communicationLog && c.communicationLog.length > 0) {
+                        c.communicationLog.forEach(log => {
+                            if (!channelData[log.channel]) {
+                                channelData[log.channel] = { total: 0, responses: 0 };
+                            }
+                            channelData[log.channel].total++;
+                            if (log.response) channelData[log.channel].responses++;
+                        });
+                    }
+                });
+
+                const channelLabels = Object.keys(channelData);
+                const channelRates = channelLabels.map(channel => 
+                    channelData[channel].total > 0 
+                        ? (channelData[channel].responses / channelData[channel].total * 100).toFixed(1)
+                        : 0
+                );
+
+                if (this.charts.channel) this.charts.channel.destroy();
+                this.charts.channel = new Chart(document.getElementById('channelChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: channelLabels,
+                        datasets: [{
+                            label: 'Response Rate (%)',
+                            data: channelRates,
+                            backgroundColor: 'rgba(45, 80, 22, 0.7)',
+                            borderColor: 'rgb(45, 80, 22)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, max: 100 }
+                        }
+                    }
+                });
+
+                // Tier Distribution
+                const tierData = {
+                    'Decision-maker': this.contacts.filter(c => c.tier === 'Decision-maker').length,
+                    'Introducer': this.contacts.filter(c => c.tier === 'Introducer').length,
+                    'Influencer': this.contacts.filter(c => c.tier === 'Influencer').length
+                };
+
+                if (this.charts.tier) this.charts.tier.destroy();
+                this.charts.tier = new Chart(document.getElementById('tierChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(tierData),
+                        datasets: [{
+                            data: Object.values(tierData),
+                            backgroundColor: [
+                                'rgba(45, 80, 22, 0.8)',
+                                'rgba(212, 165, 116, 0.8)',
+                                'rgba(139, 69, 19, 0.8)'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+
+                // Priority Distribution
+                const priorityData = {
+                    'Hot': this.contacts.filter(c => c.priority === 'Hot').length,
+                    'Medium': this.contacts.filter(c => c.priority === 'Medium').length,
+                    'Low': this.contacts.filter(c => c.priority === 'Low').length
+                };
+
+                if (this.charts.priority) this.charts.priority.destroy();
+                this.charts.priority = new Chart(document.getElementById('priorityChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(priorityData),
+                        datasets: [{
+                            data: Object.values(priorityData),
+                            backgroundColor: [
+                                'rgba(196, 30, 58, 0.8)',
+                                'rgba(244, 164, 96, 0.8)',
+                                'rgba(107, 142, 35, 0.8)'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            },
+
+            exportCSV() {
+                const csvData = this.contacts.map(contact => ({
+                    Company: contact.company,
+                    Name: contact.name,
+                    'Role/Tier': contact.tier,
+                    'Connection Method': contact.connectionMethod,
+                    'Connection Status': contact.connectionStatus,
+                    Priority: contact.priority,
+                    'Opportunity Type': contact.opportunityType,
+                    'Funnel Stage': contact.funnelStage,
+                    'Last Message': contact.lastMessage || '',
+                    'Next Action Date': contact.nextActionDate || '',
+                    Tags: contact.tags ? contact.tags.join('; ') : '',
+                    Notes: contact.notes || '',
+                    'Communication Log': JSON.stringify(contact.communicationLog || [])
+                }));
+
+                const csv = Papa.unparse(csvData);
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', `outreach-contacts-${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            },
+
+            importCSV(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                Papa.parse(file, {
+                    header: true,
+                    complete: (results) => {
+                        const importedContacts = results.data
+                            .filter(row => row.Company && row.Name)
+                            .map(row => ({
+                                id: Date.now() + Math.random(),
+                                company: row.Company,
+                                name: row.Name,
+                                tier: row['Role/Tier'] || '',
+                                connectionMethod: row['Connection Method'] || '',
+                                connectionStatus: row['Connection Status'] || '',
+                                priority: row.Priority || '',
+                                opportunityType: row['Opportunity Type'] || '',
+                                funnelStage: row['Funnel Stage'] || '',
+                                lastMessage: row['Last Message'] || '',
+                                nextActionDate: row['Next Action Date'] || '',
+                                tags: row.Tags ? row.Tags.split(';').map(t => t.trim()) : [],
+                                notes: row.Notes || '',
+                                communicationLog: row['Communication Log'] ? JSON.parse(row['Communication Log']) : []
+                            }));
+
+                        // Merge with existing contacts (overwrite based on company + name)
+                        importedContacts.forEach(imported => {
+                            const existingIndex = this.contacts.findIndex(c => 
+                                c.company === imported.company && c.name === imported.name
+                            );
+                            
+                            if (existingIndex >= 0) {
+                                this.contacts[existingIndex] = imported;
+                            } else {
+                                this.contacts.push(imported);
+                            }
+                        });
+
+                        this.saveData();
+                        this.renderContacts();
+                        alert(`Imported ${importedContacts.length} contact(s)`);
+                    }
+                });
+            },
+
+            openModal(modalId) {
+                document.getElementById(modalId).classList.add('active');
+            },
+
+            closeModal(modalId) {
+                document.getElementById(modalId).classList.remove('active');
+            }
+        };
+
+        // Initialize app when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+    </script>
+</body>
+</html>
