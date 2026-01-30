@@ -640,12 +640,40 @@
                         <option value="Ignored">Ignored</option>
                     </select>
                 </div>
+                <div class="filter-group">
+                    <label>Tags</label>
+                    <select id="filterTags" onchange="app.applyFilters()">
+                        <option value="">All Tags</option>
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Bulk Actions Bar -->
+            <div id="bulkActionsBar" class="hidden" style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong><span id="selectedCount">0</span> selected</strong>
+                </div>
+                <div style="display: flex; gap: 0.75rem;">
+                    <select id="bulkActionSelect" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Work Sans', sans-serif;">
+                        <option value="">Choose Action...</option>
+                        <option value="priority">Change Priority</option>
+                        <option value="stage">Change Stage</option>
+                        <option value="status">Change Status</option>
+                        <option value="delete">Delete Selected</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="app.executeBulkAction()">Apply</button>
+                    <button class="btn" onclick="app.clearSelection()">Clear Selection</button>
+                </div>
             </div>
 
             <div class="table-container">
                 <table id="contactsTable">
                     <thead>
                         <tr>
+                            <th style="width: 50px;">
+                                <input type="checkbox" id="selectAll" onchange="app.toggleSelectAll()" aria-label="Select all contacts">
+                            </th>
                             <th onclick="app.sortTable('company')">Company</th>
                             <th onclick="app.sortTable('name')">Name</th>
                             <th onclick="app.sortTable('tier')">Tier</th>
@@ -946,12 +974,37 @@ Best regards,
     </div>
 
     <script>
+        // UUID Generator (RFC4122 v4 compliant)
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // Date normalization and validation
+        function normalizeDate(dateStr) {
+            if (!dateStr) return null;
+            
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) {
+                console.warn(`Invalid date: ${dateStr}`);
+                return null;
+            }
+            
+            // Return ISO format date string (YYYY-MM-DD)
+            return date.toISOString().split('T')[0];
+        }
+
         const app = {
             contacts: [],
             templates: [],
             currentSort: { field: 'company', ascending: true },
-            filters: { priority: '', stage: '', status: '' },
+            filters: { priority: '', stage: '', status: '', tags: [] },
             charts: {},
+            searchTimeout: null,
+            selectedContacts: new Set(),
 
             init() {
                 this.loadData();
@@ -975,10 +1028,10 @@ Best regards,
                 if (savedTemplates) {
                     this.templates = JSON.parse(savedTemplates);
                 } else {
-                    // Add default templates
+                    // Add default templates with UUID
                     this.templates = [
                         {
-                            id: Date.now(),
+                            id: generateUUID(),
                             name: 'Tier 1 - Initial Outreach',
                             category: 'Tier 1',
                             style: 'Formal',
@@ -992,7 +1045,7 @@ Best regards,
 {Your Name}`
                         },
                         {
-                            id: Date.now() + 1,
+                            id: generateUUID(),
                             name: 'Follow-up - No Response',
                             category: 'Follow-up',
                             style: 'Short',
@@ -1035,9 +1088,12 @@ Best,
                     });
                 });
 
-                // Search
+                // Debounced search (300ms delay)
                 document.getElementById('searchInput').addEventListener('input', (e) => {
-                    this.renderContacts(e.target.value);
+                    clearTimeout(this.searchTimeout);
+                    this.searchTimeout = setTimeout(() => {
+                        this.renderContacts(e.target.value);
+                    }, 300);
                 });
 
                 // Close modals on background click
@@ -1048,6 +1104,30 @@ Best,
                         }
                     });
                 });
+
+                // Populate tag filter
+                this.populateTagFilter();
+            },
+
+            populateTagFilter() {
+                const allTags = new Set();
+                this.contacts.forEach(contact => {
+                    if (contact.tags && Array.isArray(contact.tags)) {
+                        contact.tags.forEach(tag => allTags.add(tag));
+                    }
+                });
+
+                const tagFilter = document.getElementById('filterTags');
+                const currentValue = tagFilter.value;
+                
+                tagFilter.innerHTML = '<option value="">All Tags</option>' +
+                    Array.from(allTags).sort().map(tag => 
+                        `<option value="${tag}">${tag}</option>`
+                    ).join('');
+                
+                if (currentValue && allTags.has(currentValue)) {
+                    tagFilter.value = currentValue;
+                }
             },
 
             renderContacts(searchTerm = '') {
@@ -1073,6 +1153,11 @@ Best,
                 if (this.filters.status) {
                     filteredContacts = filteredContacts.filter(c => c.connectionStatus === this.filters.status);
                 }
+                if (this.filters.tags && this.filters.tags.length > 0) {
+                    filteredContacts = filteredContacts.filter(c => 
+                        c.tags && c.tags.some(tag => this.filters.tags.includes(tag))
+                    );
+                }
 
                 // Apply sorting
                 filteredContacts.sort((a, b) => {
@@ -1094,7 +1179,7 @@ Best,
                 if (filteredContacts.length === 0) {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="9" style="text-align: center; padding: 3rem;">
+                            <td colspan="10" style="text-align: center; padding: 3rem;">
                                 <div class="empty-state">
                                     <h3>No contacts found</h3>
                                     <p>Start by adding your first contact</p>
@@ -1107,6 +1192,14 @@ Best,
 
                 tbody.innerHTML = filteredContacts.map(contact => `
                     <tr>
+                        <td>
+                            <input type="checkbox" 
+                                   class="contact-checkbox" 
+                                   data-id="${contact.id}"
+                                   ${this.selectedContacts.has(contact.id) ? 'checked' : ''}
+                                   onchange="app.toggleContactSelection('${contact.id}')"
+                                   aria-label="Select ${contact.name}">
+                        </td>
                         <td><strong>${contact.company}</strong></td>
                         <td>${contact.name}</td>
                         <td>${contact.tier}</td>
@@ -1117,15 +1210,25 @@ Best,
                         <td>${contact.nextActionDate ? new Date(contact.nextActionDate).toLocaleDateString() : '—'}</td>
                         <td>
                             <div class="row-actions">
-                                <button class="btn-icon" onclick="app.openLogModal(${contact.id})" title="Add Communication">📝</button>
-                                <button class="btn-icon" onclick="app.editContact(${contact.id})" title="Edit">✏️</button>
-                                <button class="btn-icon" onclick="app.deleteContact(${contact.id})" title="Delete">🗑️</button>
+                                <button class="btn-icon" 
+                                        onclick="app.openLogModal('${contact.id}')" 
+                                        title="Add Communication"
+                                        aria-label="Add communication log for ${contact.name}">📝</button>
+                                <button class="btn-icon" 
+                                        onclick="app.editContact('${contact.id}')" 
+                                        title="Edit"
+                                        aria-label="Edit ${contact.name}">✏️</button>
+                                <button class="btn-icon" 
+                                        onclick="app.deleteContact('${contact.id}')" 
+                                        title="Delete"
+                                        aria-label="Delete ${contact.name}">🗑️</button>
                             </div>
                         </td>
                     </tr>
                 `).join('');
 
                 this.updateStats();
+                this.updateBulkActionsBar();
             },
 
             sortTable(field) {
@@ -1142,7 +1245,127 @@ Best,
                 this.filters.priority = document.getElementById('filterPriority').value;
                 this.filters.stage = document.getElementById('filterStage').value;
                 this.filters.status = document.getElementById('filterStatus').value;
+                const selectedTag = document.getElementById('filterTags').value;
+                this.filters.tags = selectedTag ? [selectedTag] : [];
                 this.renderContacts(document.getElementById('searchInput').value);
+            },
+
+            toggleSelectAll() {
+                const selectAll = document.getElementById('selectAll');
+                const checkboxes = document.querySelectorAll('.contact-checkbox');
+                
+                if (selectAll.checked) {
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = true;
+                        this.selectedContacts.add(checkbox.dataset.id);
+                    });
+                } else {
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                    this.selectedContacts.clear();
+                }
+                
+                this.updateBulkActionsBar();
+            },
+
+            toggleContactSelection(id) {
+                if (this.selectedContacts.has(id)) {
+                    this.selectedContacts.delete(id);
+                } else {
+                    this.selectedContacts.add(id);
+                }
+                
+                // Update "select all" checkbox state
+                const totalCheckboxes = document.querySelectorAll('.contact-checkbox').length;
+                const selectAll = document.getElementById('selectAll');
+                selectAll.checked = this.selectedContacts.size === totalCheckboxes;
+                selectAll.indeterminate = this.selectedContacts.size > 0 && this.selectedContacts.size < totalCheckboxes;
+                
+                this.updateBulkActionsBar();
+            },
+
+            updateBulkActionsBar() {
+                const bar = document.getElementById('bulkActionsBar');
+                const count = document.getElementById('selectedCount');
+                
+                if (this.selectedContacts.size > 0) {
+                    bar.classList.remove('hidden');
+                    count.textContent = this.selectedContacts.size;
+                } else {
+                    bar.classList.add('hidden');
+                }
+            },
+
+            clearSelection() {
+                this.selectedContacts.clear();
+                document.querySelectorAll('.contact-checkbox').forEach(cb => cb.checked = false);
+                document.getElementById('selectAll').checked = false;
+                this.updateBulkActionsBar();
+            },
+
+            async executeBulkAction() {
+                const action = document.getElementById('bulkActionSelect').value;
+                
+                if (!action) {
+                    alert('Please select an action');
+                    return;
+                }
+                
+                if (this.selectedContacts.size === 0) {
+                    alert('Please select at least one contact');
+                    return;
+                }
+
+                const selectedIds = Array.from(this.selectedContacts);
+
+                if (action === 'delete') {
+                    if (!confirm(`Delete ${selectedIds.length} contact(s)?`)) return;
+                    
+                    this.contacts = this.contacts.filter(c => !selectedIds.includes(c.id));
+                    this.selectedContacts.clear();
+                    this.saveData();
+                    this.renderContacts();
+                    return;
+                }
+
+                // For other actions, prompt for new value
+                let newValue;
+                
+                if (action === 'priority') {
+                    newValue = prompt('Enter new priority (Hot/Medium/Low):');
+                    if (!['Hot', 'Medium', 'Low'].includes(newValue)) {
+                        alert('Invalid priority. Must be Hot, Medium, or Low');
+                        return;
+                    }
+                } else if (action === 'stage') {
+                    newValue = prompt('Enter new stage (Awareness/Consideration/Engagement/Conversion):');
+                    if (!['Awareness', 'Consideration', 'Engagement', 'Conversion'].includes(newValue)) {
+                        alert('Invalid stage');
+                        return;
+                    }
+                } else if (action === 'status') {
+                    newValue = prompt('Enter new status (Invited/Connected/Responded/Ignored):');
+                    if (!['Invited', 'Connected', 'Responded', 'Ignored'].includes(newValue)) {
+                        alert('Invalid status');
+                        return;
+                    }
+                }
+
+                // Apply the change
+                selectedIds.forEach(id => {
+                    const contact = this.contacts.find(c => c.id === id);
+                    if (contact) {
+                        if (action === 'priority') contact.priority = newValue;
+                        else if (action === 'stage') contact.funnelStage = newValue;
+                        else if (action === 'status') contact.connectionStatus = newValue;
+                    }
+                });
+
+                this.selectedContacts.clear();
+                this.saveData();
+                this.renderContacts();
+                alert(`Updated ${selectedIds.length} contact(s)`);
             },
 
             openAddContactModal() {
@@ -1175,6 +1398,8 @@ Best,
 
             saveContact() {
                 const id = document.getElementById('contactId').value;
+                const nextActionDateRaw = document.getElementById('nextActionDate').value;
+                
                 const contactData = {
                     company: document.getElementById('company').value,
                     name: document.getElementById('contactName').value,
@@ -1184,24 +1409,25 @@ Best,
                     priority: document.getElementById('priority').value,
                     opportunityType: document.getElementById('opportunityType').value,
                     funnelStage: document.getElementById('funnelStage').value,
-                    nextActionDate: document.getElementById('nextActionDate').value,
+                    nextActionDate: normalizeDate(nextActionDateRaw),
                     tags: document.getElementById('tags').value.split(',').map(t => t.trim()).filter(t => t),
                     notes: document.getElementById('notes').value,
                 };
 
                 if (id) {
                     // Edit existing
-                    const index = this.contacts.findIndex(c => c.id === parseInt(id));
+                    const index = this.contacts.findIndex(c => c.id === id);
                     this.contacts[index] = { ...this.contacts[index], ...contactData };
                 } else {
-                    // Add new
-                    contactData.id = Date.now();
+                    // Add new with UUID
+                    contactData.id = generateUUID();
                     contactData.communicationLog = [];
                     contactData.lastMessage = '';
                     this.contacts.push(contactData);
                 }
 
                 this.saveData();
+                this.populateTagFilter();
                 this.renderContacts();
                 this.closeModal('contactModal');
             },
@@ -1248,7 +1474,7 @@ Best,
             },
 
             saveLog() {
-                const contactId = parseInt(document.getElementById('logContactId').value);
+                const contactId = document.getElementById('logContactId').value;
                 const contact = this.contacts.find(c => c.id === contactId);
                 
                 if (!contact) return;
@@ -1292,10 +1518,10 @@ Best,
                 };
 
                 if (id) {
-                    const index = this.templates.findIndex(t => t.id === parseInt(id));
+                    const index = this.templates.findIndex(t => t.id === id);
                     this.templates[index] = { ...this.templates[index], ...templateData };
                 } else {
-                    templateData.id = Date.now();
+                    templateData.id = generateUUID();
                     this.templates.push(templateData);
                 }
 
@@ -1324,10 +1550,15 @@ Best,
                                             <span class="badge">${template.style}</span>
                                         </div>
                                     </div>
-                                    <button class="btn-icon" onclick="app.deleteTemplate(${template.id})">🗑️</button>
+                                    <button class="btn-icon" 
+                                            onclick="app.deleteTemplate('${template.id}')"
+                                            aria-label="Delete template ${template.name}">🗑️</button>
                                 </div>
                                 <pre style="white-space: pre-wrap; font-family: 'Work Sans', sans-serif; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; background: var(--bg-primary); padding: 1rem; border-radius: 4px; max-height: 200px; overflow-y: auto;">${template.content}</pre>
-                                <button class="btn" style="width: 100%; margin-top: 1rem;" onclick="app.copyTemplate(${template.id})">Copy Template</button>
+                                <button class="btn" 
+                                        style="width: 100%; margin-top: 1rem;" 
+                                        onclick="app.copyTemplate('${template.id}')"
+                                        aria-label="Copy template ${template.name}">Copy Template</button>
                             </div>
                         `).join('')}
                     </div>
@@ -1746,24 +1977,46 @@ Best,
                 Papa.parse(file, {
                     header: true,
                     complete: (results) => {
+                        let importedCount = 0;
+                        let errorCount = 0;
+                        
                         const importedContacts = results.data
                             .filter(row => row.Company && row.Name)
-                            .map(row => ({
-                                id: Date.now() + Math.random(),
-                                company: row.Company,
-                                name: row.Name,
-                                tier: row['Role/Tier'] || '',
-                                connectionMethod: row['Connection Method'] || '',
-                                connectionStatus: row['Connection Status'] || '',
-                                priority: row.Priority || '',
-                                opportunityType: row['Opportunity Type'] || '',
-                                funnelStage: row['Funnel Stage'] || '',
-                                lastMessage: row['Last Message'] || '',
-                                nextActionDate: row['Next Action Date'] || '',
-                                tags: row.Tags ? row.Tags.split(';').map(t => t.trim()) : [],
-                                notes: row.Notes || '',
-                                communicationLog: row['Communication Log'] ? JSON.parse(row['Communication Log']) : []
-                            }));
+                            .map(row => {
+                                try {
+                                    // Parse communication log safely
+                                    let communicationLog = [];
+                                    if (row['Communication Log']) {
+                                        try {
+                                            communicationLog = JSON.parse(row['Communication Log']);
+                                        } catch (e) {
+                                            console.warn(`Failed to parse communication log for ${row.Name}:`, e);
+                                        }
+                                    }
+
+                                    return {
+                                        id: generateUUID(), // Always generate new UUID on import
+                                        company: row.Company,
+                                        name: row.Name,
+                                        tier: row['Role/Tier'] || '',
+                                        connectionMethod: row['Connection Method'] || '',
+                                        connectionStatus: row['Connection Status'] || '',
+                                        priority: row.Priority || '',
+                                        opportunityType: row['Opportunity Type'] || '',
+                                        funnelStage: row['Funnel Stage'] || '',
+                                        lastMessage: row['Last Message'] || '',
+                                        nextActionDate: normalizeDate(row['Next Action Date']),
+                                        tags: row.Tags ? row.Tags.split(';').map(t => t.trim()).filter(t => t) : [],
+                                        notes: row.Notes || '',
+                                        communicationLog: communicationLog
+                                    };
+                                } catch (e) {
+                                    console.error(`Error importing contact ${row.Name}:`, e);
+                                    errorCount++;
+                                    return null;
+                                }
+                            })
+                            .filter(contact => contact !== null);
 
                         // Merge with existing contacts (overwrite based on company + name)
                         importedContacts.forEach(imported => {
@@ -1772,17 +2025,33 @@ Best,
                             );
                             
                             if (existingIndex >= 0) {
+                                // Preserve the existing ID when merging
+                                imported.id = this.contacts[existingIndex].id;
                                 this.contacts[existingIndex] = imported;
                             } else {
                                 this.contacts.push(imported);
                             }
+                            importedCount++;
                         });
 
                         this.saveData();
+                        this.populateTagFilter();
                         this.renderContacts();
-                        alert(`Imported ${importedContacts.length} contact(s)`);
+                        
+                        let message = `Imported ${importedCount} contact(s)`;
+                        if (errorCount > 0) {
+                            message += ` (${errorCount} row(s) had errors and were skipped)`;
+                        }
+                        alert(message);
+                    },
+                    error: (error) => {
+                        console.error('CSV parse error:', error);
+                        alert('Error reading CSV file. Please check the file format.');
                     }
                 });
+
+                // Reset the input so the same file can be imported again
+                event.target.value = '';
             },
 
             openModal(modalId) {
