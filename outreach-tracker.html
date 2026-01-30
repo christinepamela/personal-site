@@ -646,6 +646,13 @@
                     </select>
                 </div>
                 <div class="filter-group">
+                    <label>Industry Focus</label>
+                    <select id="filterIndustry" onchange="app.applyFilters()">
+                        <option value="">All Industries</option>
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+                <div class="filter-group">
                     <label>Tags</label>
                     <select id="filterTags" onchange="app.applyFilters()">
                         <option value="">All Tags</option>
@@ -681,6 +688,7 @@
                             </th>
                             <th onclick="app.sortTable('company')">Company</th>
                             <th onclick="app.sortTable('name')">Name</th>
+                            <th onclick="app.sortTable('industryFocus')">Industry</th>
                             <th onclick="app.sortTable('country')">Country</th>
                             <th onclick="app.sortTable('tier')">Tier</th>
                             <th onclick="app.sortTable('connectionMethod')">Method</th>
@@ -790,6 +798,17 @@
 
                     <div class="form-row">
                         <div class="form-group">
+                            <label>Industry Focus</label>
+                            <input type="text" id="industryFocus" placeholder="e.g., Luxury, Tech, Finance, Industrial">
+                        </div>
+                        <div class="form-group">
+                            <label>Country / Region</label>
+                            <input type="text" id="country" placeholder="e.g., France, USA, Singapore">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
                             <label>Role / Tier *</label>
                             <select id="tier" required>
                                 <option value="">Select Tier</option>
@@ -800,15 +819,21 @@
                         </div>
                         <div class="form-group">
                             <label>Connection Method *</label>
-                            <select id="connectionMethod" required>
+                            <select id="connectionMethod" required onchange="app.toggleOtherMethod()">
                                 <option value="">Select Method</option>
                                 <option value="LinkedIn">LinkedIn</option>
                                 <option value="Email">Email</option>
                                 <option value="WhatsApp">WhatsApp</option>
                                 <option value="Personal Intro">Personal Intro</option>
                                 <option value="Old Contact">Old Contact</option>
+                                <option value="Other">Other</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div class="form-group hidden" id="otherMethodGroup">
+                        <label>Specify Other Method</label>
+                        <input type="text" id="otherMethod" placeholder="e.g., Conference, Cold call, Referral">
                     </div>
 
                     <div class="form-row">
@@ -857,15 +882,9 @@
                         </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Country / Region</label>
-                            <input type="text" id="country" placeholder="e.g., France, USA, Singapore">
-                        </div>
-                        <div class="form-group">
-                            <label>Next Action Date</label>
-                            <input type="date" id="nextActionDate">
-                        </div>
+                    <div class="form-group">
+                        <label>Next Action Date</label>
+                        <input type="date" id="nextActionDate">
                     </div>
 
                     <div class="form-group">
@@ -1015,7 +1034,7 @@ Best regards,
             contacts: [],
             templates: [],
             currentSort: { field: 'company', ascending: true },
-            filters: { priority: '', stage: '', status: '', tags: [] },
+            filters: { priority: '', stage: '', status: '', industry: '', tags: [] },
             charts: {},
             searchTimeout: null,
             selectedContacts: new Set(),
@@ -1121,6 +1140,18 @@ Best,
 
                 // Populate tag filter
                 this.populateTagFilter();
+                this.populateIndustryFilter();
+            },
+
+            toggleOtherMethod() {
+                const methodSelect = document.getElementById('connectionMethod');
+                const otherGroup = document.getElementById('otherMethodGroup');
+                
+                if (methodSelect.value === 'Other') {
+                    otherGroup.classList.remove('hidden');
+                } else {
+                    otherGroup.classList.add('hidden');
+                }
             },
 
             populateTagFilter() {
@@ -1144,6 +1175,27 @@ Best,
                 }
             },
 
+            populateIndustryFilter() {
+                const allIndustries = new Set();
+                this.contacts.forEach(contact => {
+                    if (contact.industryFocus) {
+                        allIndustries.add(contact.industryFocus);
+                    }
+                });
+
+                const industryFilter = document.getElementById('filterIndustry');
+                const currentValue = industryFilter.value;
+                
+                industryFilter.innerHTML = '<option value="">All Industries</option>' +
+                    Array.from(allIndustries).sort().map(industry => 
+                        `<option value="${industry}">${industry}</option>`
+                    ).join('');
+                
+                if (currentValue && allIndustries.has(currentValue)) {
+                    industryFilter.value = currentValue;
+                }
+            },
+
             renderContacts(searchTerm = '') {
                 let filteredContacts = this.contacts;
 
@@ -1153,6 +1205,7 @@ Best,
                     filteredContacts = filteredContacts.filter(c => 
                         c.company.toLowerCase().includes(term) ||
                         c.name.toLowerCase().includes(term) ||
+                        (c.industryFocus && c.industryFocus.toLowerCase().includes(term)) ||
                         (c.tags && c.tags.some(tag => tag.toLowerCase().includes(term)))
                     );
                 }
@@ -1166,6 +1219,9 @@ Best,
                 }
                 if (this.filters.status) {
                     filteredContacts = filteredContacts.filter(c => c.connectionStatus === this.filters.status);
+                }
+                if (this.filters.industry) {
+                    filteredContacts = filteredContacts.filter(c => c.industryFocus === this.filters.industry);
                 }
                 if (this.filters.tags && this.filters.tags.length > 0) {
                     filteredContacts = filteredContacts.filter(c => 
@@ -1193,7 +1249,7 @@ Best,
                 if (filteredContacts.length === 0) {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="11" style="text-align: center; padding: 3rem;">
+                            <td colspan="12" style="text-align: center; padding: 3rem;">
                                 <div class="empty-state">
                                     <h3>No contacts found</h3>
                                     <p>Start by adding your first contact</p>
@@ -1216,6 +1272,7 @@ Best,
                         </td>
                         <td><strong>${contact.company}</strong></td>
                         <td>${contact.name}</td>
+                        <td>${contact.industryFocus || '—'}</td>
                         <td>${contact.country || '—'}</td>
                         <td>${contact.tier}</td>
                         <td>${contact.connectionMethod}</td>
@@ -1260,6 +1317,7 @@ Best,
                 this.filters.priority = document.getElementById('filterPriority').value;
                 this.filters.stage = document.getElementById('filterStage').value;
                 this.filters.status = document.getElementById('filterStatus').value;
+                this.filters.industry = document.getElementById('filterIndustry').value;
                 const selectedTag = document.getElementById('filterTags').value;
                 this.filters.tags = selectedTag ? [selectedTag] : [];
                 this.renderContacts(document.getElementById('searchInput').value);
@@ -1397,9 +1455,21 @@ Best,
                 document.getElementById('modalTitle').textContent = 'Edit Contact';
                 document.getElementById('company').value = contact.company;
                 document.getElementById('contactName').value = contact.name;
+                document.getElementById('industryFocus').value = contact.industryFocus || '';
                 document.getElementById('country').value = contact.country || '';
                 document.getElementById('tier').value = contact.tier;
-                document.getElementById('connectionMethod').value = contact.connectionMethod;
+                
+                // Handle connection method - check if it's a custom "Other" value
+                const standardMethods = ['LinkedIn', 'Email', 'WhatsApp', 'Personal Intro', 'Old Contact'];
+                if (standardMethods.includes(contact.connectionMethod)) {
+                    document.getElementById('connectionMethod').value = contact.connectionMethod;
+                    document.getElementById('otherMethodGroup').classList.add('hidden');
+                } else {
+                    document.getElementById('connectionMethod').value = 'Other';
+                    document.getElementById('otherMethod').value = contact.connectionMethod;
+                    document.getElementById('otherMethodGroup').classList.remove('hidden');
+                }
+                
                 document.getElementById('connectionStatus').value = contact.connectionStatus;
                 document.getElementById('priority').value = contact.priority;
                 document.getElementById('opportunityType').value = contact.opportunityType;
@@ -1416,12 +1486,19 @@ Best,
                 const id = document.getElementById('contactId').value;
                 const nextActionDateRaw = document.getElementById('nextActionDate').value;
                 
+                // Handle connection method - use custom text if "Other" is selected
+                let connectionMethod = document.getElementById('connectionMethod').value;
+                if (connectionMethod === 'Other') {
+                    connectionMethod = document.getElementById('otherMethod').value || 'Other';
+                }
+                
                 const contactData = {
                     company: document.getElementById('company').value,
                     name: document.getElementById('contactName').value,
+                    industryFocus: document.getElementById('industryFocus').value,
                     country: document.getElementById('country').value,
                     tier: document.getElementById('tier').value,
-                    connectionMethod: document.getElementById('connectionMethod').value,
+                    connectionMethod: connectionMethod,
                     connectionStatus: document.getElementById('connectionStatus').value,
                     priority: document.getElementById('priority').value,
                     opportunityType: document.getElementById('opportunityType').value,
@@ -1445,6 +1522,7 @@ Best,
 
                 this.saveData();
                 this.populateTagFilter();
+                this.populateIndustryFilter();
                 this.renderContacts();
                 this.closeModal('contactModal');
             },
@@ -1967,6 +2045,7 @@ Best,
                 const csvData = this.contacts.map(contact => ({
                     Company: contact.company,
                     Name: contact.name,
+                    'Industry Focus': contact.industryFocus || '',
                     'Country': contact.country || '',
                     'Role/Tier': contact.tier,
                     'Connection Method': contact.connectionMethod,
@@ -2022,6 +2101,7 @@ Best,
                                         id: generateUUID(), // Always generate new UUID on import
                                         company: row.Company,
                                         name: row.Name,
+                                        industryFocus: row['Industry Focus'] || '',
                                         country: row.Country || '',
                                         tier: row['Role/Tier'] || '',
                                         connectionMethod: row['Connection Method'] || '',
@@ -2061,6 +2141,7 @@ Best,
 
                         this.saveData();
                         this.populateTagFilter();
+                        this.populateIndustryFilter();
                         this.renderContacts();
                         
                         let message = `Imported ${importedCount} contact(s)`;
