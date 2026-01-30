@@ -245,9 +245,12 @@
         .status-responded { background: rgba(45, 80, 22, 0.15); color: var(--core-green); font-weight: 600; }
         .status-ignored { background: rgba(139, 69, 19, 0.1); color: var(--beyond-red); }
 
+        .stage-unaware { background: rgba(200, 200, 200, 0.1); color: #666666; }
         .stage-awareness { background: rgba(212, 165, 116, 0.1); color: var(--edge-yellow); }
-        .stage-consideration { background: rgba(244, 164, 96, 0.15); color: #d4842f; }
-        .stage-engagement { background: rgba(45, 80, 22, 0.1); color: var(--core-green); }
+        .stage-engaged { background: rgba(244, 164, 96, 0.15); color: #d4842f; }
+        .stage-consideration { background: rgba(107, 142, 35, 0.1); color: var(--priority-low); }
+        .stage-active { background: rgba(45, 80, 22, 0.1); color: var(--core-green); }
+        .stage-active-conversation { background: rgba(45, 80, 22, 0.1); color: var(--core-green); }
         .stage-conversion { background: rgba(45, 80, 22, 0.2); color: var(--core-green); font-weight: 600; }
 
         .row-actions {
@@ -624,9 +627,11 @@
                     <label>Funnel Stage</label>
                     <select id="filterStage" onchange="app.applyFilters()">
                         <option value="">All Stages</option>
+                        <option value="Unaware">Unaware</option>
                         <option value="Awareness">Awareness</option>
+                        <option value="Engaged">Engaged</option>
                         <option value="Consideration">Consideration</option>
-                        <option value="Engagement">Engagement</option>
+                        <option value="Active Conversation">Active Conversation</option>
                         <option value="Conversion">Conversion</option>
                     </select>
                 </div>
@@ -676,6 +681,7 @@
                             </th>
                             <th onclick="app.sortTable('company')">Company</th>
                             <th onclick="app.sortTable('name')">Name</th>
+                            <th onclick="app.sortTable('country')">Country</th>
                             <th onclick="app.sortTable('tier')">Tier</th>
                             <th onclick="app.sortTable('connectionMethod')">Method</th>
                             <th onclick="app.sortTable('connectionStatus')">Status</th>
@@ -841,17 +847,25 @@
                             <label>Funnel Stage *</label>
                             <select id="funnelStage" required>
                                 <option value="">Select Stage</option>
+                                <option value="Unaware">Unaware (Pre-funnel)</option>
                                 <option value="Awareness">Awareness</option>
+                                <option value="Engaged">Engaged</option>
                                 <option value="Consideration">Consideration</option>
-                                <option value="Engagement">Engagement</option>
+                                <option value="Active Conversation">Active Conversation</option>
                                 <option value="Conversion">Conversion</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Next Action Date</label>
-                        <input type="date" id="nextActionDate">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Country / Region</label>
+                            <input type="text" id="country" placeholder="e.g., France, USA, Singapore">
+                        </div>
+                        <div class="form-group">
+                            <label>Next Action Date</label>
+                            <input type="date" id="nextActionDate">
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -1179,7 +1193,7 @@ Best,
                 if (filteredContacts.length === 0) {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="10" style="text-align: center; padding: 3rem;">
+                            <td colspan="11" style="text-align: center; padding: 3rem;">
                                 <div class="empty-state">
                                     <h3>No contacts found</h3>
                                     <p>Start by adding your first contact</p>
@@ -1202,11 +1216,12 @@ Best,
                         </td>
                         <td><strong>${contact.company}</strong></td>
                         <td>${contact.name}</td>
+                        <td>${contact.country || '—'}</td>
                         <td>${contact.tier}</td>
                         <td>${contact.connectionMethod}</td>
                         <td><span class="badge status-${contact.connectionStatus.toLowerCase()}">${contact.connectionStatus}</span></td>
                         <td><span class="badge priority-${contact.priority.toLowerCase()}">${contact.priority}</span></td>
-                        <td><span class="badge stage-${contact.funnelStage.toLowerCase()}">${contact.funnelStage}</span></td>
+                        <td><span class="badge stage-${contact.funnelStage.toLowerCase().replace(/ /g, '-')}">${contact.funnelStage}</span></td>
                         <td>${contact.nextActionDate ? new Date(contact.nextActionDate).toLocaleDateString() : '—'}</td>
                         <td>
                             <div class="row-actions">
@@ -1339,8 +1354,8 @@ Best,
                         return;
                     }
                 } else if (action === 'stage') {
-                    newValue = prompt('Enter new stage (Awareness/Consideration/Engagement/Conversion):');
-                    if (!['Awareness', 'Consideration', 'Engagement', 'Conversion'].includes(newValue)) {
+                    newValue = prompt('Enter new stage (Unaware/Awareness/Engaged/Consideration/Active Conversation/Conversion):');
+                    if (!['Unaware', 'Awareness', 'Engaged', 'Consideration', 'Active Conversation', 'Conversion'].includes(newValue)) {
                         alert('Invalid stage');
                         return;
                     }
@@ -1382,6 +1397,7 @@ Best,
                 document.getElementById('modalTitle').textContent = 'Edit Contact';
                 document.getElementById('company').value = contact.company;
                 document.getElementById('contactName').value = contact.name;
+                document.getElementById('country').value = contact.country || '';
                 document.getElementById('tier').value = contact.tier;
                 document.getElementById('connectionMethod').value = contact.connectionMethod;
                 document.getElementById('connectionStatus').value = contact.connectionStatus;
@@ -1403,6 +1419,7 @@ Best,
                 const contactData = {
                     company: document.getElementById('company').value,
                     name: document.getElementById('contactName').value,
+                    country: document.getElementById('country').value,
                     tier: document.getElementById('tier').value,
                     connectionMethod: document.getElementById('connectionMethod').value,
                     connectionStatus: document.getElementById('connectionStatus').value,
@@ -1663,19 +1680,19 @@ Best,
                     });
                 }
 
-                // Stuck in awareness stage
-                const stuckInAwareness = this.contacts.filter(c => 
-                    c.funnelStage === 'Awareness' && 
+                // Stuck in awareness/unaware stage
+                const stuckInEarlyStage = this.contacts.filter(c => 
+                    (c.funnelStage === 'Unaware' || c.funnelStage === 'Awareness') && 
                     c.communicationLog && 
                     c.communicationLog.length >= 3
                 );
                 
-                if (stuckInAwareness.length > 0) {
+                if (stuckInEarlyStage.length > 0) {
                     insights.push({
                         type: 'warning',
                         title: 'Multiple Touchpoints Without Progression',
-                        message: `${stuckInAwareness.length} contact(s) have 3+ communications but remain in Awareness stage. Consider a different approach or channel.`,
-                        contacts: stuckInAwareness
+                        message: `${stuckInEarlyStage.length} contact(s) have 3+ communications but remain in early stages. Consider a different approach or channel.`,
+                        contacts: stuckInEarlyStage
                     });
                 }
 
@@ -1786,11 +1803,13 @@ Best,
             renderCharts() {
                 this.updateStats();
 
-                // Funnel Chart
+                // Funnel Chart - 6 stages
                 const funnelData = {
+                    Unaware: this.contacts.filter(c => c.funnelStage === 'Unaware').length,
                     Awareness: this.contacts.filter(c => c.funnelStage === 'Awareness').length,
+                    Engaged: this.contacts.filter(c => c.funnelStage === 'Engaged').length,
                     Consideration: this.contacts.filter(c => c.funnelStage === 'Consideration').length,
-                    Engagement: this.contacts.filter(c => c.funnelStage === 'Engagement').length,
+                    'Active Conversation': this.contacts.filter(c => c.funnelStage === 'Active Conversation').length,
                     Conversion: this.contacts.filter(c => c.funnelStage === 'Conversion').length
                 };
 
@@ -1798,19 +1817,23 @@ Best,
                 this.charts.funnel = new Chart(document.getElementById('funnelChart'), {
                     type: 'bar',
                     data: {
-                        labels: ['Awareness', 'Consideration', 'Engagement', 'Conversion'],
+                        labels: ['Unaware', 'Awareness', 'Engaged', 'Consideration', 'Active Conv.', 'Conversion'],
                         datasets: [{
                             label: 'Contacts',
                             data: Object.values(funnelData),
                             backgroundColor: [
+                                'rgba(200, 200, 200, 0.6)',
                                 'rgba(212, 165, 116, 0.7)',
                                 'rgba(244, 164, 96, 0.7)',
+                                'rgba(107, 142, 35, 0.7)',
                                 'rgba(45, 80, 22, 0.7)',
                                 'rgba(45, 80, 22, 0.9)'
                             ],
                             borderColor: [
+                                'rgb(200, 200, 200)',
                                 'rgb(212, 165, 116)',
                                 'rgb(244, 164, 96)',
+                                'rgb(107, 142, 35)',
                                 'rgb(45, 80, 22)',
                                 'rgb(45, 80, 22)'
                             ],
@@ -1944,6 +1967,7 @@ Best,
                 const csvData = this.contacts.map(contact => ({
                     Company: contact.company,
                     Name: contact.name,
+                    'Country': contact.country || '',
                     'Role/Tier': contact.tier,
                     'Connection Method': contact.connectionMethod,
                     'Connection Status': contact.connectionStatus,
@@ -1998,6 +2022,7 @@ Best,
                                         id: generateUUID(), // Always generate new UUID on import
                                         company: row.Company,
                                         name: row.Name,
+                                        country: row.Country || '',
                                         tier: row['Role/Tier'] || '',
                                         connectionMethod: row['Connection Method'] || '',
                                         connectionStatus: row['Connection Status'] || '',
