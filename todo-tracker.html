@@ -1,8 +1,4 @@
-<!-- Stats Tab -->
-            <div class="history-section active" id="stats-section">
-                <p style="color: var(--text-light); margin-bottom: 20px;">Your productivity calendar - hover to see details</p>
-                <div id="history-stats"></div>
-            </div><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -969,6 +965,7 @@
             
             <div class="history-tabs">
                 <button class="history-tab active" onclick="switchHistoryTab('stats')">📊 Stats</button>
+                <button class="history-tab" onclick="switchHistoryTab('agenda')">📅 Task Agenda</button>
                 <button class="history-tab" onclick="switchHistoryTab('completed')">✅ Completed Tasks</button>
                 <button class="history-tab" onclick="switchHistoryTab('incomplete')">⏳ Incomplete Tasks</button>
                 <button class="history-tab" onclick="switchHistoryTab('time')">⏱️ Time Analysis</button>
@@ -978,6 +975,11 @@
             <!-- Stats Tab -->
             <div class="history-section active" id="stats-section">
                 <div id="history-stats"></div>
+            </div>
+
+            <!-- Agenda Tab -->
+            <div class="history-section" id="agenda-section">
+                <div id="task-agenda"></div>
             </div>
 
             <!-- Completed Tasks Tab -->
@@ -998,6 +1000,7 @@
             <div class="history-section" id="goals-section">
                  <div id="goals-dashboard"></div>
             </div>
+            </div> 
 
         <div class="analytics-grid">
             <div class="stat-card">
@@ -2074,6 +2077,7 @@ function archiveCompletedGoals(type) {
         function switchHistoryTab(tab) {
                 // Hide all sections
                 document.getElementById('stats-section').classList.remove('active');
+                document.getElementById('agenda-section').classList.remove('active');
                 document.getElementById('completed-section').classList.remove('active');
                 document.getElementById('incomplete-section').classList.remove('active');
                 document.getElementById('time-section').classList.remove('active');
@@ -2087,6 +2091,10 @@ function archiveCompletedGoals(type) {
                     document.getElementById('stats-section').classList.add('active');
                     event.target.classList.add('active');
                     renderHistoryStats();
+                } else if (tab === 'agenda') {
+                    document.getElementById('agenda-section').classList.add('active');
+                    event.target.classList.add('active');
+                    renderTaskAgenda();
                 } else if (tab === 'completed') {
                     document.getElementById('completed-section').classList.add('active');
                     event.target.classList.add('active');
@@ -2099,7 +2107,7 @@ function archiveCompletedGoals(type) {
                     document.getElementById('time-section').classList.add('active');
                     event.target.classList.add('active');
                     renderTimeAnalysis();
-                } else if (tab === 'goals') {  // ADD THIS BLOCK
+                } else if (tab === 'goals') {
                     document.getElementById('goals-section').classList.add('active');
                     event.target.classList.add('active');
                     renderGoalsDashboard();
@@ -2490,6 +2498,187 @@ function archiveCompletedGoals(type) {
                         alert('✅ Task rescheduled to ' + selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }));
                     }
                 }
+            }
+
+            function renderTaskAgenda() {
+                const container = document.getElementById('task-agenda');
+                
+                if (state.tasks.length === 0) {
+                    container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:20px;">No tasks yet. Add some tasks to see your agenda!</p>';
+                    return;
+                }
+                
+                // Create view selector
+                const viewSelector = `
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px; justify-content: center;">
+                        <button class="btn btn-primary" onclick="renderAgendaView('week')" style="padding: 10px 20px;">This Week</button>
+                        <button class="btn btn-secondary" onclick="renderAgendaView('month')" style="padding: 10px 20px;">This Month</button>
+                        <button class="btn btn-secondary" onclick="renderAgendaView('year')" style="padding: 10px 20px;">This Year</button>
+                        <button class="btn btn-secondary" onclick="renderAgendaView('all')" style="padding: 10px 20px;">All Tasks</button>
+                    </div>
+                    <div id="agenda-content"></div>
+                `;
+                
+                container.innerHTML = viewSelector;
+                renderAgendaView('week');
+            }
+            
+            function renderAgendaView(view) {
+                const container = document.getElementById('agenda-content');
+                const now = state.currentDate;
+                let filteredTasks = [];
+                let title = '';
+                
+                if (view === 'week') {
+                    const weekStart = getWeekStartDate(now);
+                    const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
+                    filteredTasks = state.tasks.filter(t => {
+                        const taskDate = new Date(t.date);
+                        return taskDate >= weekStart && taskDate < weekEnd;
+                    });
+                    title = `This Week (${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })})`;
+                } else if (view === 'month') {
+                    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+                    const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                    filteredTasks = state.tasks.filter(t => {
+                        const taskDate = new Date(t.date);
+                        return taskDate >= monthStart && taskDate <= monthEnd;
+                    });
+                    title = `${now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`;
+                } else if (view === 'year') {
+                    const yearStart = new Date(now.getFullYear(), 0, 1);
+                    const yearEnd = new Date(now.getFullYear(), 11, 31);
+                    filteredTasks = state.tasks.filter(t => {
+                        const taskDate = new Date(t.date);
+                        return taskDate >= yearStart && taskDate <= yearEnd;
+                    });
+                    title = `${now.getFullYear()}`;
+                } else {
+                    filteredTasks = [...state.tasks];
+                    title = 'All Tasks';
+                }
+                
+                // Update button styles
+                document.querySelectorAll('#task-agenda .btn').forEach(btn => {
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-secondary');
+                });
+                event.target.classList.remove('btn-secondary');
+                event.target.classList.add('btn-primary');
+                
+                if (filteredTasks.length === 0) {
+                    container.innerHTML = `<p style="text-align:center;color:var(--text-light);padding:20px;">No tasks for ${title.toLowerCase()}</p>`;
+                    return;
+                }
+                
+                // Group tasks by date
+                const tasksByDate = {};
+                filteredTasks.forEach(task => {
+                    if (!tasksByDate[task.date]) {
+                        tasksByDate[task.date] = [];
+                    }
+                    tasksByDate[task.date].push(task);
+                });
+                
+                // Sort dates
+                const sortedDates = Object.keys(tasksByDate).sort();
+                
+                // Calculate stats
+                const totalTasks = filteredTasks.length;
+                const completedTasks = filteredTasks.filter(t => t.completed).length;
+                const pendingTasks = totalTasks - completedTasks;
+                const totalEstimatedTime = filteredTasks.reduce((sum, t) => sum + t.estimatedTime, 0);
+                const estHours = Math.floor(totalEstimatedTime / 60);
+                const estMins = totalEstimatedTime % 60;
+                
+                // Build HTML
+                const statsHtml = `
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: var(--primary); margin-bottom: 20px;">${title}</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                            <div class="completed-task" style="border-left-color: var(--primary);">
+                                <div class="completed-task-name">📋 Total Tasks</div>
+                                <div class="completed-task-meta">${totalTasks} tasks</div>
+                            </div>
+                            <div class="completed-task" style="border-left-color: var(--success);">
+                                <div class="completed-task-name">✅ Completed</div>
+                                <div class="completed-task-meta">${completedTasks} tasks (${Math.round((completedTasks/totalTasks)*100)}%)</div>
+                            </div>
+                            <div class="completed-task" style="border-left-color: var(--accent);">
+                                <div class="completed-task-name">⏳ Pending</div>
+                                <div class="completed-task-meta">${pendingTasks} tasks</div>
+                            </div>
+                            <div class="completed-task" style="border-left-color: var(--secondary);">
+                                <div class="completed-task-name">⏱️ Total Time</div>
+                                <div class="completed-task-meta">${estHours}h ${estMins}m estimated</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                const datesHtml = sortedDates.map(date => {
+                    const dateObj = new Date(date);
+                    const isToday = date === state.currentDate.toISOString().split('T')[0];
+                    const isPast = dateObj < state.currentDate && !isToday;
+                    const isFuture = dateObj > state.currentDate;
+                    
+                    let dateLabel = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+                    if (isToday) dateLabel += ' (Today)';
+                    
+                    const tasks = tasksByDate[date];
+                    const dayCompleted = tasks.filter(t => t.completed).length;
+                    const dayTotal = tasks.length;
+                    const dayEstTime = tasks.reduce((sum, t) => sum + t.estimatedTime, 0);
+                    const dayHours = Math.floor(dayEstTime / 60);
+                    const dayMins = dayEstTime % 60;
+                    
+                    let dateColor = 'var(--primary)';
+                    if (isPast && dayCompleted < dayTotal) {
+                        dateColor = 'var(--coral)';
+                    } else if (isToday) {
+                        dateColor = 'var(--accent)';
+                    } else if (isFuture) {
+                        dateColor = 'var(--secondary)';
+                    }
+                    
+                    const tasksHtml = tasks.map(task => {
+                        const goal = task.goalId ? state.goals.find(g => g.id === task.goalId) : null;
+                        const goalTag = goal ? `<span class="goal-tag">${goal.text}</span>` : '';
+                        
+                        let statusIcon = task.completed ? '✅' : '⏳';
+                        let taskStyle = task.completed ? 'opacity: 0.7;' : '';
+                        
+                        return `
+                            <div class="completed-task" style="border-left-color: ${task.completed ? 'var(--success)' : 'var(--primary)'}; ${taskStyle}">
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="flex: 1;">
+                                        <span style="font-size: 1.2em; margin-right: 8px;">${statusIcon}</span>
+                                        <span style="font-weight: 600; ${task.completed ? 'text-decoration: line-through;' : ''}">${task.text}</span>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 6px; font-size: 0.85em; color: var(--text-light);">
+                                    ⏱️ ${task.estimatedTime}min
+                                    ${task.completed && task.actualTime ? ` → ${task.actualTime}min (${Math.round((task.estimatedTime / task.actualTime) * 100)}%)` : ''}
+                                    ${goalTag}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    return `
+                        <div class="history-completed-tasks" style="margin-bottom: 25px;">
+                            <div style="font-weight: 700; color: ${dateColor}; margin-bottom: 12px; font-size: 1.1em;">
+                                ${dateLabel}
+                                <span style="font-weight: 500; font-size: 0.9em; margin-left: 10px;">
+                                    (${dayCompleted}/${dayTotal} completed • ${dayHours}h ${dayMins}m)
+                                </span>
+                            </div>
+                            ${tasksHtml}
+                        </div>
+                    `;
+                }).join('');
+                
+                container.innerHTML = statsHtml + datesHtml;
             }
 
 
