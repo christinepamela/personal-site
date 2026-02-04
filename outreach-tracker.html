@@ -898,6 +898,7 @@
                 <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
                 <button class="nav-tab" data-tab="analytics">Analytics</button>
                 <button class="nav-tab" data-tab="calendar">Calendar</button>
+                <button class="nav-tab" data-tab="learnings">Learnings</button>
                 <button class="nav-tab" data-tab="insights">Insights</button>
                 <button class="nav-tab" data-tab="templates">Templates</button>
             </div>
@@ -1091,6 +1092,42 @@
             </div>
         </div>
 
+        <!-- Learnings Tab -->
+        <div class="tab-content" id="learnings">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                <h2 style="font-family: 'Crimson Pro', serif; font-size: 1.8rem; font-weight: 400; color: var(--core-green); margin: 0;">Account Learnings</h2>
+                <button class="btn btn-primary" onclick="app.openWeeklyLearningPrompt()">+ Log This Week's Learnings</button>
+            </div>
+
+            <!-- Monthly Goals Card -->
+            <div id="monthlyGoalsCard" style="margin-bottom: 2rem;">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- This Week Section -->
+            <div id="thisWeekLearnings" style="margin-bottom: 2rem;">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Pattern Detection -->
+            <div id="patternDetection" style="margin-bottom: 2rem;">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Past Learnings Archive -->
+            <div>
+                <h3 style="font-family: 'Crimson Pro', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 1.5rem; color: var(--core-green);">Past Learnings</h3>
+                
+                <div style="margin-bottom: 1rem;">
+                    <input type="text" id="learningSearchInput" placeholder="Search learnings by company, signal, or insights..." style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Work Sans', sans-serif;">
+                </div>
+
+                <div id="pastLearnings">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
         <!-- Insights Tab -->
         <div class="tab-content" id="insights">
             <h2 style="font-family: 'Crimson Pro', serif; font-size: 1.8rem; font-weight: 400; margin-bottom: 2rem; color: var(--core-green);">Strategic Insights</h2>
@@ -1274,6 +1311,190 @@
         </div>
     </div>
 
+    <!-- Learning Log Modal -->
+    <div class="modal" id="learningModal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2>Account Learning Log</h2>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Week of <span id="learningWeekLabel"></span></p>
+            </div>
+            <div class="modal-body">
+                <form id="learningForm">
+                    <!-- Company Selection -->
+                    <div class="form-group">
+                        <label>Company *</label>
+                        <select id="learningCompanySelect" onchange="app.loadCompanyDataForLearning()" required>
+                            <option value="">Select company...</option>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <!-- Auto-filled Company Info -->
+                    <div id="companyInfoSection" class="hidden" style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; font-size: 0.9rem;">
+                            <div>
+                                <strong>Tier:</strong> <span id="learningTier"></span>
+                            </div>
+                            <div>
+                                <strong>Industry:</strong> <span id="learningIndustry"></span>
+                            </div>
+                            <div>
+                                <strong>Geography:</strong> <span id="learningGeography"></span>
+                            </div>
+                            <div>
+                                <strong>Current Stage:</strong> <span id="learningStage"></span>
+                            </div>
+                            <div>
+                                <strong>Engagement Score:</strong> <span id="learningEngagement"></span>
+                            </div>
+                        </div>
+                        
+                        <div id="weekActivitySection" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                            <strong style="display: block; margin-bottom: 0.5rem;">This Week's Activity:</strong>
+                            <div id="weekActivity" style="font-size: 0.85rem; color: var(--text-secondary);"></div>
+                        </div>
+                    </div>
+
+                    <!-- 1. Strategic Thesis -->
+                    <div class="form-group">
+                        <label>1. Why This Company Matters</label>
+                        <textarea id="learningThesis" placeholder="Your strategic thesis - why you're interested in this company (2-3 lines)" rows="3"></textarea>
+                    </div>
+
+                    <!-- 2. Organizational Reality -->
+                    <div class="form-group">
+                        <label>2. Organizational Reality</label>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">What you learned about how they actually work:</p>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Where P&L sits</label>
+                            <input type="text" id="learningPL" placeholder="e.g., CFO, Business Unit Head">
+                        </div>
+                        <div class="form-group">
+                            <label>Innovation ownership</label>
+                            <input type="text" id="learningInnovation" placeholder="e.g., CTO, Separate innovation lab">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>How decisions get made</label>
+                        <textarea id="learningDecisions" placeholder="Power dynamics, approval chains, who really decides" rows="2"></textarea>
+                    </div>
+
+                    <!-- 3. Engagement Attempts -->
+                    <div class="form-group">
+                        <label>3. Engagement Attempt(s)</label>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Who you contacted</label>
+                            <input type="text" id="learningWhoContacted" placeholder="Name and title">
+                        </div>
+                        <div class="form-group">
+                            <label>Channel</label>
+                            <select id="learningChannel">
+                                <option value="Direct">Direct</option>
+                                <option value="Referral">Referral</option>
+                                <option value="Advisory">Advisory</option>
+                                <option value="Content">Content</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Outcome</label>
+                        <textarea id="learningOutcome" placeholder="What actually happened" rows="3"></textarea>
+                    </div>
+
+                    <!-- 4. Signal Strength -->
+                    <div class="form-group">
+                        <label>4. Signal Strength</label>
+                        <div style="display: flex; gap: 2rem; margin-top: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="signalStrength" value="Weak" id="signalWeak">
+                                <span>Weak</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="signalStrength" value="Moderate" id="signalModerate">
+                                <span>Moderate</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="signalStrength" value="Strong" id="signalStrong">
+                                <span>Strong</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Evidence (why you picked this signal strength)</label>
+                        <textarea id="learningEvidence" placeholder="Be specific about what makes you think this" rows="2"></textarea>
+                    </div>
+
+                    <!-- 5. Positioning Insight -->
+                    <div class="form-group">
+                        <label>5. What This Tells Me About My Positioning</label>
+                        <textarea id="learningPositioning" placeholder="Brutal honesty. What's working? What's not? What needs to change?" rows="3"></textarea>
+                    </div>
+
+                    <!-- 6. Next Logical Move -->
+                    <div class="form-group">
+                        <label>6. Next Logical Move</label>
+                        <div style="display: flex; gap: 2rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="nextMove" value="Advance" id="moveAdvance">
+                                <span>Advance</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="nextMove" value="Wait" id="moveWait">
+                                <span>Wait</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="nextMove" value="Reroute" id="moveReroute">
+                                <span>Reroute</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="radio" name="nextMove" value="Disengage" id="moveDisengage">
+                                <span>Disengage</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Specific action (not "try harder")</label>
+                        <textarea id="learningAction" placeholder="What specifically will you do?" rows="2"></textarea>
+                    </div>
+
+                    <!-- 7. Timing Note -->
+                    <div class="form-group">
+                        <label>7. Re-engagement Timing</label>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Re-engage on</label>
+                            <input type="date" id="learningReengageDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Rationale</label>
+                            <input type="text" id="learningTimingRationale" placeholder="Why this timing makes sense">
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="learningId">
+                    <input type="hidden" id="learningWeekStart">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="app.closeModal('learningModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="app.saveLearning()">Save Learning</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Template Modal -->
     <div class="modal" id="templateModal">
         <div class="modal-content">
@@ -1436,6 +1657,14 @@ Best regards,
         const app = {
             contacts: [],
             templates: [],
+            learnings: [],
+            monthlyGoals: {
+                seniorOutreaches: { target: 30, current: 0 },
+                realConversations: { target: 6, current: 0 },
+                publishedArticles: { target: 2, current: 0 },
+                caseStudies: { target: 1, current: 0 },
+                partnershipLeads: { target: 1, current: 0 }
+            },
             currentSort: { field: 'company', ascending: true },
             filters: { priority: '', stage: '', status: '', industry: '', tags: [] },
             charts: {},
@@ -1459,6 +1688,8 @@ Best regards,
             loadData() {
                 const savedContacts = localStorage.getItem('outreach_contacts');
                 const savedTemplates = localStorage.getItem('outreach_templates');
+                const savedLearnings = localStorage.getItem('outreach_learnings');
+                const savedGoals = localStorage.getItem('outreach_monthly_goals');
                 
                 if (savedContacts) {
                     this.contacts = JSON.parse(savedContacts);
@@ -1500,11 +1731,24 @@ Best,
                     ];
                     this.saveData();
                 }
+
+                if (savedLearnings) {
+                    this.learnings = JSON.parse(savedLearnings);
+                }
+
+                if (savedGoals) {
+                    this.monthlyGoals = JSON.parse(savedGoals);
+                }
+
+                // Calculate current progress for monthly goals
+                this.updateMonthlyGoalsProgress();
             },
 
             saveData() {
                 localStorage.setItem('outreach_contacts', JSON.stringify(this.contacts));
                 localStorage.setItem('outreach_templates', JSON.stringify(this.templates));
+                localStorage.setItem('outreach_learnings', JSON.stringify(this.learnings));
+                localStorage.setItem('outreach_monthly_goals', JSON.stringify(this.monthlyGoals));
             },
 
             setupEventListeners() {
@@ -1521,6 +1765,8 @@ Best,
                             this.renderCharts();
                         } else if (e.target.dataset.tab === 'calendar') {
                             this.renderCalendar();
+                        } else if (e.target.dataset.tab === 'learnings') {
+                            this.renderLearnings();
                         } else if (e.target.dataset.tab === 'insights') {
                             this.renderInsights();
                         }
@@ -1547,6 +1793,20 @@ Best,
                 // Populate tag filter
                 this.populateTagFilter();
                 this.populateIndustryFilter();
+
+                // Set up Friday 5 PM learning reminder
+                this.setupFridayReminder();
+
+                // Learning search with debounce
+                const learningSearchInput = document.getElementById('learningSearchInput');
+                if (learningSearchInput) {
+                    learningSearchInput.addEventListener('input', (e) => {
+                        clearTimeout(this.searchTimeout);
+                        this.searchTimeout = setTimeout(() => {
+                            this.renderPastLearnings(e.target.value);
+                        }, 300);
+                    });
+                }
             },
 
             toggleOtherMethod() {
@@ -1930,6 +2190,7 @@ Best,
                 this.populateTagFilter();
                 this.populateIndustryFilter();
                 this.renderContacts();
+                this.renderCalendar(); // Fix: Update calendar when contact dates change
                 this.closeModal('contactModal');
             },
 
@@ -3149,6 +3410,644 @@ Best,
 
                 // Reset the input so the same file can be imported again
                 event.target.value = '';
+            },
+
+            setupFridayReminder() {
+                // Check every hour if it's Friday 5 PM
+                setInterval(() => {
+                    const now = new Date();
+                    const isFriday = now.getDay() === 5;
+                    const hour = now.getHours();
+                    const minute = now.getMinutes();
+                    
+                    // Friday at 5 PM (between 17:00 and 17:05)
+                    if (isFriday && hour === 17 && minute < 5) {
+                        const lastPrompt = localStorage.getItem('last_learning_prompt');
+                        const today = now.toDateString();
+                        
+                        // Only prompt once per Friday
+                        if (lastPrompt !== today) {
+                            this.showFridayLearningNotification();
+                            localStorage.setItem('last_learning_prompt', today);
+                        }
+                    }
+                }, 60000); // Check every minute
+            },
+
+            showFridayLearningNotification() {
+                const companiesThisWeek = this.getCompaniesWithActivityThisWeek();
+                
+                if (companiesThisWeek.length === 0) return;
+
+                if (confirm(`📚 Weekly Learning Check-in\n\nYou had activity with ${companiesThisWeek.length} companies this week.\n\nReady to log your learnings?`)) {
+                    this.openWeeklyLearningPrompt();
+                }
+            },
+
+            getCompaniesWithActivityThisWeek() {
+                const weekStart = this.getWeekStart();
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 7);
+
+                return this.contacts.filter(contact => {
+                    if (!contact.communicationLog || contact.communicationLog.length === 0) return false;
+                    
+                    return contact.communicationLog.some(log => {
+                        const logDate = new Date(log.date);
+                        return logDate >= weekStart && logDate < weekEnd;
+                    });
+                });
+            },
+
+            getWeekStart(date = new Date()) {
+                const d = new Date(date);
+                const day = d.getDay();
+                const diff = d.getDate() - day; // Get Monday
+                const monday = new Date(d.setDate(diff));
+                monday.setHours(0, 0, 0, 0);
+                return monday;
+            },
+
+            openWeeklyLearningPrompt() {
+                // Switch to learnings tab
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.querySelector('[data-tab="learnings"]').classList.add('active');
+                document.getElementById('learnings').classList.add('active');
+                
+                this.renderLearnings();
+            },
+
+            renderLearnings() {
+                this.renderMonthlyGoals();
+                this.renderThisWeekLearnings();
+                this.renderPatternDetection();
+                this.renderPastLearnings();
+            },
+
+            renderMonthlyGoals() {
+                const container = document.getElementById('monthlyGoalsCard');
+                const now = new Date();
+                const monthName = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+                const goals = this.monthlyGoals;
+                const tractionDensity = goals.seniorOutreaches.current > 0 
+                    ? ((goals.realConversations.current / goals.seniorOutreaches.current) * 100).toFixed(1)
+                    : 0;
+
+                const getStatus = (current, target) => {
+                    const percent = (current / target) * 100;
+                    if (percent >= 100) return '✅';
+                    if (percent >= 70) return '🟡';
+                    return '⏳';
+                };
+
+                container.innerHTML = `
+                    <div class="chart-card">
+                        <h3 style="margin-bottom: 1.5rem;">Monthly Goals - ${monthName}</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.9rem; color: var(--text-secondary);">Senior Outreaches</span>
+                                    <span>${getStatus(goals.seniorOutreaches.current, goals.seniorOutreaches.target)}</span>
+                                </div>
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--core-green);">
+                                    ${goals.seniorOutreaches.current}/${goals.seniorOutreaches.target}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.9rem; color: var(--text-secondary);">Real Conversations</span>
+                                    <span>${getStatus(goals.realConversations.current, goals.realConversations.target)}</span>
+                                </div>
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--core-green);">
+                                    ${goals.realConversations.current}/${goals.realConversations.target}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.9rem; color: var(--text-secondary);">Published Articles</span>
+                                    <span>${getStatus(goals.publishedArticles.current, goals.publishedArticles.target)}</span>
+                                </div>
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--core-green);">
+                                    ${goals.publishedArticles.current}/${goals.publishedArticles.target}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.9rem; color: var(--text-secondary);">Case Studies</span>
+                                    <span>${getStatus(goals.caseStudies.current, goals.caseStudies.target)}</span>
+                                </div>
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--core-green);">
+                                    ${goals.caseStudies.current}/${goals.caseStudies.target}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.9rem; color: var(--text-secondary);">Partnership Leads</span>
+                                    <span>${getStatus(goals.partnershipLeads.current, goals.partnershipLeads.target)}</span>
+                                </div>
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--core-green);">
+                                    ${goals.partnershipLeads.current}/${goals.partnershipLeads.target}
+                                </div>
+                            </div>
+                            <div style="border-left: 2px solid var(--border-color); padding-left: 1rem;">
+                                <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.25rem;">Traction Density</div>
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--priority-${tractionDensity >= 15 ? 'low' : tractionDensity >= 10 ? 'medium' : 'hot'};">
+                                    ${tractionDensity}%
+                                </div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                                    (conversations / outreaches)
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); text-align: center;">
+                            <button class="btn" onclick="app.editMonthlyGoals()" style="font-size: 0.85rem;">⚙️ Edit Goals</button>
+                        </div>
+                    </div>
+                `;
+            },
+
+            updateMonthlyGoalsProgress() {
+                // Calculate current month progress
+                const thisMonth = new Date();
+                thisMonth.setDate(1);
+                thisMonth.setHours(0, 0, 0, 0);
+
+                // Count senior outreaches (contacts added this month)
+                this.monthlyGoals.seniorOutreaches.current = this.contacts.filter(c => {
+                    // Assuming we track when contact was added (we don't currently, so counting all)
+                    // For now, just count all contacts
+                    return true;
+                }).length;
+
+                // Count real conversations (Engaged or higher)
+                this.monthlyGoals.realConversations.current = this.contacts.filter(c => {
+                    return ['Engaged', 'Consideration', 'Active Conversation', 'Conversion'].includes(c.funnelStage);
+                }).length;
+
+                // Articles, case studies, partnerships need manual input (can't auto-calculate)
+                // These stay as manually set
+            },
+
+            editMonthlyGoals() {
+                const newTargets = prompt(
+                    `Edit Monthly Goals (comma-separated):\n\n` +
+                    `Current: ${this.monthlyGoals.seniorOutreaches.target}, ${this.monthlyGoals.realConversations.target}, ${this.monthlyGoals.publishedArticles.target}, ${this.monthlyGoals.caseStudies.target}, ${this.monthlyGoals.partnershipLeads.target}\n\n` +
+                    `Enter: Outreaches, Conversations, Articles, Case Studies, Partnerships`,
+                    `${this.monthlyGoals.seniorOutreaches.target},${this.monthlyGoals.realConversations.target},${this.monthlyGoals.publishedArticles.target},${this.monthlyGoals.caseStudies.target},${this.monthlyGoals.partnershipLeads.target}`
+                );
+
+                if (newTargets) {
+                    const values = newTargets.split(',').map(v => parseInt(v.trim()));
+                    if (values.length === 5 && values.every(v => !isNaN(v))) {
+                        this.monthlyGoals.seniorOutreaches.target = values[0];
+                        this.monthlyGoals.realConversations.target = values[1];
+                        this.monthlyGoals.publishedArticles.target = values[2];
+                        this.monthlyGoals.caseStudies.target = values[3];
+                        this.monthlyGoals.partnershipLeads.target = values[4];
+                        
+                        this.saveData();
+                        this.renderMonthlyGoals();
+                    } else {
+                        alert('Invalid format. Please enter 5 numbers separated by commas.');
+                    }
+                }
+            },
+
+            renderThisWeekLearnings() {
+                const container = document.getElementById('thisWeekLearnings');
+                const weekStart = this.getWeekStart();
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 7);
+
+                const companiesThisWeek = this.getCompaniesWithActivityThisWeek();
+                const learningsThisWeek = this.learnings.filter(l => l.weekStart === weekStart.toISOString().split('T')[0]);
+
+                const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+
+                container.innerHTML = `
+                    <div class="chart-card">
+                        <h3>📅 This Week (${weekLabel})</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 1.5rem 0; padding: 1rem; background: var(--bg-primary); border-radius: 8px;">
+                            <div>
+                                <div style="font-size: 1.3rem; font-weight: 600; color: var(--core-green);">
+                                    ${companiesThisWeek.length} companies with activity
+                                </div>
+                                <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                                    ${learningsThisWeek.length} learnings logged | ${companiesThisWeek.length - learningsThisWeek.length} pending
+                                </div>
+                            </div>
+                        </div>
+
+                        ${companiesThisWeek.length === 0 ? `
+                            <div class="empty-state">
+                                <p>No activity this week yet</p>
+                            </div>
+                        ` : `
+                            <div style="display: grid; gap: 1rem;">
+                                ${companiesThisWeek.map(contact => {
+                                    const hasLearning = learningsThisWeek.find(l => l.contactId === contact.id);
+                                    const weekActivity = contact.communicationLog.filter(log => {
+                                        const logDate = new Date(log.date);
+                                        return logDate >= weekStart && logDate < weekEnd;
+                                    });
+
+                                    return `
+                                        <div style="padding: 1rem; background: var(--bg-primary); border-radius: 8px; border-left: 4px solid ${hasLearning ? 'var(--core-green)' : 'var(--priority-medium)'};">
+                                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                                <div style="flex: 1;">
+                                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                                        <span style="font-size: 1.1rem; font-weight: 600;">${hasLearning ? '✅' : '⏳'} ${contact.company}</span>
+                                                        <span class="badge">${contact.tier}</span>
+                                                        <span class="badge stage-${contact.funnelStage.toLowerCase().replace(/ /g, '-')}">${contact.funnelStage}</span>
+                                                    </div>
+                                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                                        ${weekActivity.length} communication${weekActivity.length !== 1 ? 's' : ''} this week
+                                                    </div>
+                                                </div>
+                                                <button class="btn" onclick="app.openLearningModal('${contact.id}', '${weekStart.toISOString().split('T')[0]}')" style="font-size: 0.85rem;">
+                                                    ${hasLearning ? '📖 View Learning' : '📝 Log Learning'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `}
+                    </div>
+                `;
+            },
+
+            renderPatternDetection() {
+                const container = document.getElementById('patternDetection');
+                
+                if (this.learnings.length < 3) {
+                    container.innerHTML = '';
+                    return;
+                }
+
+                // Analyze patterns
+                const patterns = [];
+
+                // Reroute pattern
+                const reroutes = this.learnings.filter(l => l.nextMove === 'Reroute');
+                if (reroutes.length >= 3) {
+                    const reasons = {};
+                    reroutes.forEach(l => {
+                        const key = l.positioningInsight.substring(0, 50);
+                        reasons[key] = (reasons[key] || 0) + 1;
+                    });
+                    const topReason = Object.entries(reasons).sort((a, b) => b[1] - a[1])[0];
+                    patterns.push({
+                        type: 'warning',
+                        title: `${reroutes.length} companies marked "Reroute"`,
+                        message: `Common pattern: ${topReason[0]}... (${topReason[1]} companies)`
+                    });
+                }
+
+                // Signal strength trend
+                const recentLearnings = this.learnings.slice(-10);
+                const strongSignals = recentLearnings.filter(l => l.signalStrength === 'Strong').length;
+                const moderateSignals = recentLearnings.filter(l => l.signalStrength === 'Moderate').length;
+                const signalPercent = ((strongSignals + moderateSignals) / recentLearnings.length * 100).toFixed(0);
+                
+                if (signalPercent >= 60) {
+                    patterns.push({
+                        type: 'success',
+                        title: 'Signal Strength Improving',
+                        message: `${signalPercent}% of recent engagements showing Moderate/Strong signals`
+                    });
+                }
+
+                // Channel effectiveness
+                const channelSignals = {};
+                this.learnings.forEach(l => {
+                    if (!channelSignals[l.channel]) {
+                        channelSignals[l.channel] = { weak: 0, moderate: 0, strong: 0 };
+                    }
+                    channelSignals[l.channel][l.signalStrength.toLowerCase()]++;
+                });
+
+                Object.entries(channelSignals).forEach(([channel, signals]) => {
+                    const total = signals.weak + signals.moderate + signals.strong;
+                    const strongPercent = ((signals.strong + signals.moderate) / total * 100).toFixed(0);
+                    
+                    if (total >= 3) {
+                        if (strongPercent >= 70) {
+                            patterns.push({
+                                type: 'success',
+                                title: `${channel} Channel Performing Well`,
+                                message: `${strongPercent}% positive signals from ${channel} outreach`
+                            });
+                        } else if (strongPercent < 30) {
+                            patterns.push({
+                                type: 'warning',
+                                title: `${channel} Channel Underperforming`,
+                                message: `Only ${strongPercent}% positive signals. Consider different approach.`
+                            });
+                        }
+                    }
+                });
+
+                if (patterns.length === 0) {
+                    container.innerHTML = '';
+                    return;
+                }
+
+                const colorMap = {
+                    success: 'var(--priority-low)',
+                    warning: 'var(--priority-medium)',
+                    urgent: 'var(--priority-hot)'
+                };
+
+                container.innerHTML = `
+                    <div class="chart-card">
+                        <h3>📊 Pattern Detection</h3>
+                        <div style="display: grid; gap: 1rem; margin-top: 1.5rem;">
+                            ${patterns.map(pattern => `
+                                <div style="padding: 1rem; background: var(--bg-primary); border-radius: 8px; border-left: 4px solid ${colorMap[pattern.type]};">
+                                    <div style="font-weight: 600; margin-bottom: 0.5rem;">${pattern.title}</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-secondary);">${pattern.message}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderPastLearnings(searchTerm = '') {
+                const container = document.getElementById('pastLearnings');
+                
+                let filteredLearnings = this.learnings.filter(l => {
+                    // Don't show current week's learnings here
+                    const weekStart = this.getWeekStart();
+                    return l.weekStart !== weekStart.toISOString().split('T')[0];
+                });
+
+                if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    filteredLearnings = filteredLearnings.filter(l => 
+                        l.company.toLowerCase().includes(term) ||
+                        l.signalStrength.toLowerCase().includes(term) ||
+                        l.nextMove.toLowerCase().includes(term) ||
+                        l.positioningInsight.toLowerCase().includes(term)
+                    );
+                }
+
+                if (filteredLearnings.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><p>No past learnings yet. Start logging to build your strategic knowledge base.</p></div>';
+                    return;
+                }
+
+                // Group by week
+                const groupedByWeek = {};
+                filteredLearnings.forEach(learning => {
+                    if (!groupedByWeek[learning.weekStart]) {
+                        groupedByWeek[learning.weekStart] = [];
+                    }
+                    groupedByWeek[learning.weekStart].push(learning);
+                });
+
+                const sortedWeeks = Object.keys(groupedByWeek).sort().reverse();
+
+                container.innerHTML = sortedWeeks.map(weekStart => {
+                    const weekEnd = new Date(weekStart);
+                    weekEnd.setDate(weekEnd.getDate() + 6);
+                    const weekLabel = `${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+                    const learnings = groupedByWeek[weekStart];
+
+                    return `
+                        <div style="margin-bottom: 2rem;">
+                            <h4 style="font-family: 'Crimson Pro', serif; font-size: 1.1rem; margin-bottom: 1rem; color: var(--text-secondary);">
+                                Week of ${weekLabel} (${learnings.length} learning${learnings.length !== 1 ? 's' : ''})
+                            </h4>
+                            <div style="display: grid; gap: 1rem;">
+                                ${learnings.map(learning => `
+                                    <div class="chart-card" style="cursor: pointer;" onclick="app.viewLearningDetail('${learning.id}')">
+                                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                            <div>
+                                                <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">${learning.company}</h4>
+                                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                                    <span class="badge">Tier ${learning.tier}</span>
+                                                    <span class="badge">${learning.industry}</span>
+                                                    <span class="badge priority-${learning.signalStrength === 'Strong' ? 'low' : learning.signalStrength === 'Moderate' ? 'medium' : 'hot'}">
+                                                        ${learning.signalStrength}
+                                                    </span>
+                                                    <span class="badge">${learning.nextMove}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                                            ${learning.positioningInsight.substring(0, 150)}${learning.positioningInsight.length > 150 ? '...' : ''}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            openLearningModal(contactId, weekStart) {
+                const contact = this.contacts.find(c => c.id === contactId);
+                if (!contact) return;
+
+                // Check if learning already exists
+                const existingLearning = this.learnings.find(l => 
+                    l.contactId === contactId && l.weekStart === weekStart
+                );
+
+                if (existingLearning) {
+                    this.loadLearningForEdit(existingLearning);
+                } else {
+                    // New learning
+                    document.getElementById('learningForm').reset();
+                    document.getElementById('learningId').value = '';
+                    document.getElementById('learningWeekStart').value = weekStart;
+                    
+                    const weekStartDate = new Date(weekStart);
+                    const weekEndDate = new Date(weekStart);
+                    weekEndDate.setDate(weekEndDate.getDate() + 6);
+                    document.getElementById('learningWeekLabel').textContent = 
+                        `${weekStartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+
+                    // Populate company select
+                    const companiesThisWeek = this.getCompaniesWithActivityThisWeek();
+                    const companySelect = document.getElementById('learningCompanySelect');
+                    companySelect.innerHTML = '<option value="">Select company...</option>' +
+                        companiesThisWeek.map(c => 
+                            `<option value="${c.id}" ${c.id === contactId ? 'selected' : ''}>${c.company}</option>`
+                        ).join('');
+
+                    this.loadCompanyDataForLearning();
+                }
+
+                this.openModal('learningModal');
+            },
+
+            loadCompanyDataForLearning() {
+                const contactId = document.getElementById('learningCompanySelect').value;
+                
+                if (!contactId) {
+                    document.getElementById('companyInfoSection').classList.add('hidden');
+                    return;
+                }
+
+                const contact = this.contacts.find(c => c.id === contactId);
+                if (!contact) return;
+
+                // Show company info
+                document.getElementById('companyInfoSection').classList.remove('hidden');
+                document.getElementById('learningTier').textContent = contact.tier;
+                document.getElementById('learningIndustry').textContent = contact.industryFocus || '—';
+                document.getElementById('learningGeography').textContent = contact.country || '—';
+                document.getElementById('learningStage').textContent = contact.funnelStage;
+                
+                const engagementLevel = getEngagementLevel(contact);
+                const highTouchCount = countHighTouchInteractions(contact);
+                document.getElementById('learningEngagement').textContent = 
+                    `${engagementLevel}/10 (${highTouchCount} face-to-face)`;
+
+                // Show this week's activity
+                const weekStart = new Date(document.getElementById('learningWeekStart').value);
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 7);
+
+                const weekActivity = contact.communicationLog.filter(log => {
+                    const logDate = new Date(log.date);
+                    return logDate >= weekStart && logDate < weekEnd;
+                });
+
+                if (weekActivity.length > 0) {
+                    document.getElementById('weekActivity').innerHTML = weekActivity.map(log => {
+                        const icon = ['Face-to-face meeting', 'Lunch/Dinner', 'Event together', 'Office visit'].includes(log.engagementType) ? '🤝' :
+                                     ['Video call', 'Phone call', 'Voice message'].includes(log.engagementType) ? '📹' : '📧';
+                        return `
+                            <div style="margin-bottom: 0.5rem;">
+                                ${icon} ${new Date(log.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}: ${log.engagementType}
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    document.getElementById('weekActivity').innerHTML = '<em>No communications this week</em>';
+                }
+
+                // Pre-fill "Who contacted" if there's a contact name
+                document.getElementById('learningWhoContacted').value = contact.name;
+            },
+
+            loadLearningForEdit(learning) {
+                document.getElementById('learningId').value = learning.id;
+                document.getElementById('learningWeekStart').value = learning.weekStart;
+                
+                const weekStartDate = new Date(learning.weekStart);
+                const weekEndDate = new Date(learning.weekStart);
+                weekEndDate.setDate(weekEndDate.getDate() + 6);
+                document.getElementById('learningWeekLabel').textContent = 
+                    `${weekStartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+
+                // Populate company select
+                const companiesThisWeek = this.getCompaniesWithActivityThisWeek();
+                const companySelect = document.getElementById('learningCompanySelect');
+                companySelect.innerHTML = '<option value="">Select company...</option>' +
+                    companiesThisWeek.map(c => 
+                        `<option value="${c.id}" ${c.id === learning.contactId ? 'selected' : ''}>${c.company}</option>`
+                    ).join('');
+
+                // Load all fields
+                this.loadCompanyDataForLearning();
+                
+                document.getElementById('learningThesis').value = learning.strategicThesis || '';
+                document.getElementById('learningPL').value = learning.plOwnership || '';
+                document.getElementById('learningInnovation').value = learning.innovationOwnership || '';
+                document.getElementById('learningDecisions').value = learning.decisionMaking || '';
+                document.getElementById('learningWhoContacted').value = learning.whoContacted || '';
+                document.getElementById('learningChannel').value = learning.channel || 'Direct';
+                document.getElementById('learningOutcome').value = learning.outcome || '';
+                
+                if (learning.signalStrength === 'Weak') document.getElementById('signalWeak').checked = true;
+                else if (learning.signalStrength === 'Moderate') document.getElementById('signalModerate').checked = true;
+                else if (learning.signalStrength === 'Strong') document.getElementById('signalStrong').checked = true;
+                
+                document.getElementById('learningEvidence').value = learning.evidence || '';
+                document.getElementById('learningPositioning').value = learning.positioningInsight || '';
+                
+                if (learning.nextMove === 'Advance') document.getElementById('moveAdvance').checked = true;
+                else if (learning.nextMove === 'Wait') document.getElementById('moveWait').checked = true;
+                else if (learning.nextMove === 'Reroute') document.getElementById('moveReroute').checked = true;
+                else if (learning.nextMove === 'Disengage') document.getElementById('moveDisengage').checked = true;
+                
+                document.getElementById('learningAction').value = learning.specificAction || '';
+                document.getElementById('learningReengageDate').value = learning.reengageDate || '';
+                document.getElementById('learningTimingRationale').value = learning.timingRationale || '';
+            },
+
+            saveLearning() {
+                const contactId = document.getElementById('learningCompanySelect').value;
+                
+                if (!contactId) {
+                    alert('Please select a company');
+                    return;
+                }
+
+                const contact = this.contacts.find(c => c.id === contactId);
+                const signalStrength = document.querySelector('input[name="signalStrength"]:checked');
+                const nextMove = document.querySelector('input[name="nextMove"]:checked');
+
+                if (!signalStrength || !nextMove) {
+                    alert('Please select Signal Strength and Next Move');
+                    return;
+                }
+
+                const learningData = {
+                    contactId: contactId,
+                    company: contact.company,
+                    tier: contact.tier,
+                    industry: contact.industryFocus || '',
+                    geography: contact.country || '',
+                    weekStart: document.getElementById('learningWeekStart').value,
+                    strategicThesis: document.getElementById('learningThesis').value,
+                    plOwnership: document.getElementById('learningPL').value,
+                    innovationOwnership: document.getElementById('learningInnovation').value,
+                    decisionMaking: document.getElementById('learningDecisions').value,
+                    whoContacted: document.getElementById('learningWhoContacted').value,
+                    channel: document.getElementById('learningChannel').value,
+                    outcome: document.getElementById('learningOutcome').value,
+                    signalStrength: signalStrength.value,
+                    evidence: document.getElementById('learningEvidence').value,
+                    positioningInsight: document.getElementById('learningPositioning').value,
+                    nextMove: nextMove.value,
+                    specificAction: document.getElementById('learningAction').value,
+                    reengageDate: document.getElementById('learningReengageDate').value,
+                    timingRationale: document.getElementById('learningTimingRationale').value,
+                    createdAt: new Date().toISOString()
+                };
+
+                const existingId = document.getElementById('learningId').value;
+                
+                if (existingId) {
+                    // Update existing
+                    const index = this.learnings.findIndex(l => l.id === existingId);
+                    this.learnings[index] = { ...this.learnings[index], ...learningData };
+                } else {
+                    // Create new
+                    learningData.id = generateUUID();
+                    this.learnings.push(learningData);
+                }
+
+                this.saveData();
+                this.renderLearnings();
+                this.closeModal('learningModal');
+                alert('✅ Learning saved successfully!');
+            },
+
+            viewLearningDetail(learningId) {
+                const learning = this.learnings.find(l => l.id === learningId);
+                if (!learning) return;
+
+                this.loadLearningForEdit(learning);
+                this.openModal('learningModal');
             },
 
             openModal(modalId) {
