@@ -993,7 +993,6 @@
                             </th>
                             <th onclick="app.sortTable('company')">Company</th>
                             <th onclick="app.sortTable('name')">Name</th>
-                            <th onclick="app.sortTable('jobTitle')">Job Title</th>
                             <th onclick="app.sortTable('industryFocus')">Industry</th>
                             <th onclick="app.sortTable('country')">Country</th>
                             <th onclick="app.sortTable('tier')">Tier</th>
@@ -1172,22 +1171,6 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Job Title / Position</label>
-                            <input type="text" id="jobTitle" placeholder="e.g., CEO, Chief Innovation Officer, Board Advisor">
-                        </div>
-                        <div class="form-group">
-                            <label>Role / Tier *</label>
-                            <select id="tier" required>
-                                <option value="">Select Tier</option>
-                                <option value="Decision-maker">Decision-maker</option>
-                                <option value="Introducer">Introducer</option>
-                                <option value="Influencer">Influencer</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
                             <label>Industry Focus</label>
                             <input type="text" id="industryFocus" placeholder="e.g., Luxury, Tech, Finance, Industrial">
                         </div>
@@ -1198,6 +1181,15 @@
                     </div>
 
                     <div class="form-row">
+                        <div class="form-group">
+                            <label>Role / Tier *</label>
+                            <select id="tier" required>
+                                <option value="">Select Tier</option>
+                                <option value="Decision-maker">Decision-maker</option>
+                                <option value="Introducer">Introducer</option>
+                                <option value="Influencer">Influencer</option>
+                            </select>
+                        </div>
                         <div class="form-group">
                             <label>Connection Method *</label>
                             <select id="connectionMethod" required onchange="app.toggleOtherMethod()">
@@ -1210,6 +1202,14 @@
                                 <option value="Other">Other</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div class="form-group hidden" id="otherMethodGroup">
+                        <label>Specify Other Method</label>
+                        <input type="text" id="otherMethod" placeholder="e.g., Conference, Cold call, Referral">
+                    </div>
+
+                    <div class="form-row">
                         <div class="form-group">
                             <label>Connection Status *</label>
                             <select id="connectionStatus" required>
@@ -1220,15 +1220,6 @@
                                 <option value="Ignored">Ignored</option>
                             </select>
                         </div>
-                    </div>
-
-
-                    <div class="form-group hidden" id="otherMethodGroup">
-                        <label>Specify Other Method</label>
-                        <input type="text" id="otherMethod" placeholder="e.g., Conference, Cold call, Referral">
-                    </div>
-
-                    <div class="form-row">
                         <div class="form-group">
                             <label>Priority *</label>
                             <select id="priority" required>
@@ -1238,6 +1229,9 @@
                                 <option value="Low">Low</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div class="form-row">
                         <div class="form-group">
                             <label>Opportunity Type *</label>
                             <select id="opportunityType" required>
@@ -1247,9 +1241,6 @@
                                 <option value="Future potential">Future potential</option>
                             </select>
                         </div>
-                    </div>
-
-                    <div class="form-row">
                         <div class="form-group">
                             <label>Funnel Stage *</label>
                             <select id="funnelStage" required>
@@ -1262,10 +1253,11 @@
                                 <option value="Conversion">Conversion</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Next Action Date</label>
-                            <input type="date" id="nextActionDate">
-                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Next Action Date</label>
+                        <input type="date" id="nextActionDate">
                     </div>
 
                     <div class="form-group">
@@ -1667,11 +1659,11 @@ Best regards,
             templates: [],
             learnings: [],
             monthlyGoals: {
-                goal1: { label: 'New Contacts Added', target: 30, current: 0 },
-                goal2: { label: 'Meaningful Conversations', target: 6, current: 0 },
-                goal3: { label: 'Content/Deliverables', target: 2, current: 0 },
-                goal4: { label: 'Proof Assets', target: 1, current: 0 },
-                goal5: { label: 'Strategic Partnerships', target: 1, current: 0 }
+                seniorOutreaches: { target: 30, current: 0 },
+                realConversations: { target: 6, current: 0 },
+                publishedArticles: { target: 2, current: 0 },
+                caseStudies: { target: 1, current: 0 },
+                partnershipLeads: { target: 1, current: 0 }
             },
             currentSort: { field: 'company', ascending: true },
             filters: { priority: '', stage: '', status: '', industry: '', tags: [] },
@@ -1923,7 +1915,7 @@ Best,
                 if (filteredContacts.length === 0) {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="13" style="text-align: center; padding: 3rem;">
+                            <td colspan="12" style="text-align: center; padding: 3rem;">
                                 <div class="empty-state">
                                     <h3>No contacts found</h3>
                                     <p>Start by adding your first contact</p>
@@ -1946,7 +1938,6 @@ Best,
                         </td>
                         <td><strong>${contact.company}</strong></td>
                         <td>${contact.name}</td>
-                        <td style="color: var(--text-secondary); font-size: 0.85rem;">${contact.jobTitle || '—'}</td>
                         <td>${contact.industryFocus || '—'}</td>
                         <td>${contact.country || '—'}</td>
                         <td>${contact.tier}</td>
@@ -2130,7 +2121,6 @@ Best,
                 document.getElementById('modalTitle').textContent = 'Edit Contact';
                 document.getElementById('company').value = contact.company;
                 document.getElementById('contactName').value = contact.name;
-                document.getElementById('jobTitle').value = contact.jobTitle || '';
                 document.getElementById('industryFocus').value = contact.industryFocus || '';
                 document.getElementById('country').value = contact.country || '';
                 document.getElementById('tier').value = contact.tier;
@@ -2171,7 +2161,6 @@ Best,
                 const contactData = {
                     company: document.getElementById('company').value,
                     name: document.getElementById('contactName').value,
-                    jobTitle: document.getElementById('jobTitle').value,
                     industryFocus: document.getElementById('industryFocus').value,
                     country: document.getElementById('country').value,
                     tier: document.getElementById('tier').value,
@@ -2819,7 +2808,7 @@ Best,
                                                     ${contact.company}
                                                 </h3>
                                                 <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
-                                                    ${contact.name}${contact.jobTitle ? ` • ${contact.jobTitle}` : ''} • ${contact.tier}
+                                                    ${contact.name} • ${contact.tier}
                                                     ${contact.industryFocus ? ` • ${contact.industryFocus}` : ''}
                                                     ${contact.country ? ` • ${contact.country}` : ''}
                                                 </p>
@@ -3308,7 +3297,6 @@ Best,
                 const csvData = this.contacts.map(contact => ({
                     Company: contact.company,
                     Name: contact.name,
-                    'Job Title': contact.jobTitle || '',
                     'Industry Focus': contact.industryFocus || '',
                     'Country': contact.country || '',
                     'Role/Tier': contact.tier,
@@ -3365,7 +3353,6 @@ Best,
                                         id: generateUUID(), // Always generate new UUID on import
                                         company: row.Company,
                                         name: row.Name,
-                                        jobTitle: row['Job Title'] || '',
                                         industryFocus: row['Industry Focus'] || '',
                                         country: row.Country || '',
                                         tier: row['Role/Tier'] || '',
@@ -3504,10 +3491,8 @@ Best,
                 const monthName = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
                 const goals = this.monthlyGoals;
-                
-                // Calculate traction density (goal2 / goal1)
-                const tractionDensity = goals.goal1.current > 0 
-                    ? ((goals.goal2.current / goals.goal1.current) * 100).toFixed(1)
+                const tractionDensity = goals.seniorOutreaches.current > 0 
+                    ? ((goals.realConversations.current / goals.seniorOutreaches.current) * 100).toFixed(1)
                     : 0;
 
                 const getStatus = (current, target) => {
@@ -3521,142 +3506,111 @@ Best,
                     <div class="chart-card">
                         <h3 style="margin-bottom: 1.5rem;">Monthly Goals - ${monthName}</h3>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                            ${Object.keys(goals).map(key => {
-                                const goal = goals[key];
-                                return `
-                                    <div>
-                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
-                                            <span style="font-size: 0.9rem; color: var(--text-secondary);">${goal.label}</span>
-                                            <span>${getStatus(goal.current, goal.target)}</span>
-                                        </div>
-                                        <div style="font-size: 1.5rem; font-weight: 600; color: var(--core-green);">
-                                            ${goal.current}/${goal.target}
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.9rem; color: var(--text-secondary);">Senior Outreaches</span>
+                                    <span>${getStatus(goals.seniorOutreaches.current, goals.seniorOutreaches.target)}</span>
+                                </div>
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--core-green);">
+                                    ${goals.seniorOutreaches.current}/${goals.seniorOutreaches.target}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.9rem; color: var(--text-secondary);">Real Conversations</span>
+                                    <span>${getStatus(goals.realConversations.current, goals.realConversations.target)}</span>
+                                </div>
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--core-green);">
+                                    ${goals.realConversations.current}/${goals.realConversations.target}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.9rem; color: var(--text-secondary);">Published Articles</span>
+                                    <span>${getStatus(goals.publishedArticles.current, goals.publishedArticles.target)}</span>
+                                </div>
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--core-green);">
+                                    ${goals.publishedArticles.current}/${goals.publishedArticles.target}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.9rem; color: var(--text-secondary);">Case Studies</span>
+                                    <span>${getStatus(goals.caseStudies.current, goals.caseStudies.target)}</span>
+                                </div>
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--core-green);">
+                                    ${goals.caseStudies.current}/${goals.caseStudies.target}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.9rem; color: var(--text-secondary);">Partnership Leads</span>
+                                    <span>${getStatus(goals.partnershipLeads.current, goals.partnershipLeads.target)}</span>
+                                </div>
+                                <div style="font-size: 1.5rem; font-weight: 600; color: var(--core-green);">
+                                    ${goals.partnershipLeads.current}/${goals.partnershipLeads.target}
+                                </div>
+                            </div>
                             <div style="border-left: 2px solid var(--border-color); padding-left: 1rem;">
                                 <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.25rem;">Traction Density</div>
                                 <div style="font-size: 1.5rem; font-weight: 600; color: var(--priority-${tractionDensity >= 15 ? 'low' : tractionDensity >= 10 ? 'medium' : 'hot'};">
                                     ${tractionDensity}%
                                 </div>
                                 <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
-                                    (${goals.goal2.label} / ${goals.goal1.label})
+                                    (conversations / outreaches)
                                 </div>
                             </div>
                         </div>
-                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); display: flex; gap: 1rem; justify-content: center;">
-                            <button class="btn" onclick="app.editGoalLabels()" style="font-size: 0.85rem;">✏️ Edit Labels</button>
-                            <button class="btn" onclick="app.editGoalTargets()" style="font-size: 0.85rem;">🎯 Edit Targets</button>
-                            <button class="btn" onclick="app.editGoalProgress()" style="font-size: 0.85rem;">📊 Update Progress</button>
+                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); text-align: center;">
+                            <button class="btn" onclick="app.editMonthlyGoals()" style="font-size: 0.85rem;">⚙️ Edit Goals</button>
                         </div>
                     </div>
                 `;
             },
 
             updateMonthlyGoalsProgress() {
-                // Auto-calculate goal1 and goal2
+                // Calculate current month progress
                 const thisMonth = new Date();
                 thisMonth.setDate(1);
                 thisMonth.setHours(0, 0, 0, 0);
 
-                // Goal 1: New contacts (all contacts for now - ideally track creation date)
-                this.monthlyGoals.goal1.current = this.contacts.length;
+                // Count senior outreaches (contacts added this month)
+                this.monthlyGoals.seniorOutreaches.current = this.contacts.filter(c => {
+                    // Assuming we track when contact was added (we don't currently, so counting all)
+                    // For now, just count all contacts
+                    return true;
+                }).length;
 
-                // Goal 2: Meaningful conversations (Engaged or higher)
-                this.monthlyGoals.goal2.current = this.contacts.filter(c => {
+                // Count real conversations (Engaged or higher)
+                this.monthlyGoals.realConversations.current = this.contacts.filter(c => {
                     return ['Engaged', 'Consideration', 'Active Conversation', 'Conversion'].includes(c.funnelStage);
                 }).length;
 
-                // Goals 3, 4, 5 remain manual (articles, case studies, partnerships)
+                // Articles, case studies, partnerships need manual input (can't auto-calculate)
+                // These stay as manually set
             },
 
-            editGoalLabels() {
-                const goals = this.monthlyGoals;
-                const newLabels = prompt(
-                    `Edit Goal Labels (one per line):\n\n` +
-                    `Current labels:\n` +
-                    `1. ${goals.goal1.label}\n` +
-                    `2. ${goals.goal2.label}\n` +
-                    `3. ${goals.goal3.label}\n` +
-                    `4. ${goals.goal4.label}\n` +
-                    `5. ${goals.goal5.label}\n\n` +
-                    `Enter new labels (comma-separated):`,
-                    `${goals.goal1.label},${goals.goal2.label},${goals.goal3.label},${goals.goal4.label},${goals.goal5.label}`
-                );
-
-                if (newLabels) {
-                    const labels = newLabels.split(',').map(l => l.trim());
-                    if (labels.length === 5) {
-                        goals.goal1.label = labels[0];
-                        goals.goal2.label = labels[1];
-                        goals.goal3.label = labels[2];
-                        goals.goal4.label = labels[3];
-                        goals.goal5.label = labels[4];
-                        
-                        this.saveData();
-                        this.renderMonthlyGoals();
-                    } else {
-                        alert('Please enter exactly 5 labels separated by commas.');
-                    }
-                }
-            },
-
-            editGoalTargets() {
-                const goals = this.monthlyGoals;
+            editMonthlyGoals() {
                 const newTargets = prompt(
-                    `Edit Monthly Targets (one per line):\n\n` +
-                    `Current:\n` +
-                    `1. ${goals.goal1.label}: ${goals.goal1.target}\n` +
-                    `2. ${goals.goal2.label}: ${goals.goal2.target}\n` +
-                    `3. ${goals.goal3.label}: ${goals.goal3.target}\n` +
-                    `4. ${goals.goal4.label}: ${goals.goal4.target}\n` +
-                    `5. ${goals.goal5.label}: ${goals.goal5.target}\n\n` +
-                    `Enter new targets (comma-separated numbers):`,
-                    `${goals.goal1.target},${goals.goal2.target},${goals.goal3.target},${goals.goal4.target},${goals.goal5.target}`
+                    `Edit Monthly Goals (comma-separated):\n\n` +
+                    `Current: ${this.monthlyGoals.seniorOutreaches.target}, ${this.monthlyGoals.realConversations.target}, ${this.monthlyGoals.publishedArticles.target}, ${this.monthlyGoals.caseStudies.target}, ${this.monthlyGoals.partnershipLeads.target}\n\n` +
+                    `Enter: Outreaches, Conversations, Articles, Case Studies, Partnerships`,
+                    `${this.monthlyGoals.seniorOutreaches.target},${this.monthlyGoals.realConversations.target},${this.monthlyGoals.publishedArticles.target},${this.monthlyGoals.caseStudies.target},${this.monthlyGoals.partnershipLeads.target}`
                 );
 
                 if (newTargets) {
-                    const targets = newTargets.split(',').map(t => parseInt(t.trim()));
-                    if (targets.length === 5 && targets.every(t => !isNaN(t) && t > 0)) {
-                        goals.goal1.target = targets[0];
-                        goals.goal2.target = targets[1];
-                        goals.goal3.target = targets[2];
-                        goals.goal4.target = targets[3];
-                        goals.goal5.target = targets[4];
+                    const values = newTargets.split(',').map(v => parseInt(v.trim()));
+                    if (values.length === 5 && values.every(v => !isNaN(v))) {
+                        this.monthlyGoals.seniorOutreaches.target = values[0];
+                        this.monthlyGoals.realConversations.target = values[1];
+                        this.monthlyGoals.publishedArticles.target = values[2];
+                        this.monthlyGoals.caseStudies.target = values[3];
+                        this.monthlyGoals.partnershipLeads.target = values[4];
                         
                         this.saveData();
                         this.renderMonthlyGoals();
                     } else {
-                        alert('Please enter 5 valid positive numbers separated by commas.');
-                    }
-                }
-            },
-
-            editGoalProgress() {
-                const goals = this.monthlyGoals;
-                const newProgress = prompt(
-                    `Update Current Progress:\n\n` +
-                    `Note: Goal 1 & 2 auto-calculate from contacts.\n` +
-                    `Manually update Goals 3, 4, 5:\n\n` +
-                    `3. ${goals.goal3.label}: ${goals.goal3.current}/${goals.goal3.target}\n` +
-                    `4. ${goals.goal4.label}: ${goals.goal4.current}/${goals.goal4.target}\n` +
-                    `5. ${goals.goal5.label}: ${goals.goal5.current}/${goals.goal5.target}\n\n` +
-                    `Enter current progress for goals 3, 4, 5 (comma-separated):`,
-                    `${goals.goal3.current},${goals.goal4.current},${goals.goal5.current}`
-                );
-
-                if (newProgress) {
-                    const progress = newProgress.split(',').map(p => parseInt(p.trim()));
-                    if (progress.length === 3 && progress.every(p => !isNaN(p) && p >= 0)) {
-                        goals.goal3.current = progress[0];
-                        goals.goal4.current = progress[1];
-                        goals.goal5.current = progress[2];
-                        
-                        this.saveData();
-                        this.renderMonthlyGoals();
-                    } else {
-                        alert('Please enter 3 valid numbers (0 or greater) separated by commas.');
+                        alert('Invalid format. Please enter 5 numbers separated by commas.');
                     }
                 }
             },
