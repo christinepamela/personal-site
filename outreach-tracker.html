@@ -3670,9 +3670,12 @@ Best,
             
                 container.innerHTML = `
                     <div class="chart-card">
-                        <h3>📅 This Week (${weekLabel})</h3>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 1.5rem 0; padding: 1rem; background: var(--bg-primary); border-radius: 8px;">
-                            <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h3>📅 This Week (${weekLabel})</h3>
+                            <button class="btn" onclick="app.showPastWeeksSelector()" style="font-size: 0.85rem;">
+                                📅 View Past Weeks
+                            </button>
+                        </div>
                                 <div style="font-size: 1.3rem; font-weight: 600; color: var(--core-green);">
                                     ${companies.reduce((sum, c) => sum + c.people.length, 0)} people from ${companies.length} companies with activity
                                 </div>
@@ -4079,13 +4082,220 @@ Best,
                 this.openModal('learningModal');
             },
 
+            // ADD these new functions after viewLearningDetail()
+
+            showPastWeeksSelector() {
+                // Generate list of past 12 weeks
+                const weeks = [];
+                for (let i = 1; i <= 12; i++) {
+                    const weekDate = new Date();
+                    weekDate.setDate(weekDate.getDate() - (i * 7));
+                    const weekStart = this.getWeekStart(weekDate);
+                    const weekEnd = new Date(weekStart);
+                    weekEnd.setDate(weekEnd.getDate() + 6);
+                    
+                    const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+                    
+                    weeks.push({
+                        weekStart: weekStart.toISOString().split('T')[0],
+                        label: weekLabel
+                    });
+                }
+                
+                // Create modal content
+                const modalHTML = `
+                    <div class="modal active" id="pastWeeksModal" style="z-index: 1001;">
+                        <div class="modal-content" style="max-width: 600px;">
+                            <div class="modal-header">
+                                <h2>Select a Past Week</h2>
+                            </div>
+                            <div class="modal-body">
+                                <div style="display: grid; gap: 0.75rem;">
+                                    ${weeks.map(week => {
+                                        const learningsInWeek = this.learnings.filter(l => l.weekStart === week.weekStart);
+                                        const companiesInWeek = this.getCompaniesInWeek(week.weekStart);
+                                        
+                                        return `
+                                            <div class="chart-card" style="cursor: pointer; padding: 1.25rem; margin: 0;" 
+                                                 onclick="app.viewPastWeek('${week.weekStart}')">
+                                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                    <div>
+                                                        <div style="font-weight: 600; margin-bottom: 0.25rem;">${week.label}</div>
+                                                        <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                                            ${companiesInWeek.length} companies • ${learningsInWeek.length} learning${learningsInWeek.length !== 1 ? 's' : ''} logged
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        ${learningsInWeek.length === companiesInWeek.length ? '✅' : 
+                                                          learningsInWeek.length > 0 ? '🟡' : '⏳'}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn" onclick="app.closePastWeeksModal()">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add to body
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+            },
+            
+            getCompaniesInWeek(weekStartStr) {
+                const weekStart = new Date(weekStartStr);
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 7);
+                
+                const companiesMap = {};
+                
+                this.contacts.forEach(contact => {
+                    if (!contact.communicationLog) return;
+                    
+                    const weekActivity = contact.communicationLog.filter(log => {
+                        const logDate = new Date(log.date);
+                        return logDate >= weekStart && logDate < weekEnd;
+                    });
+                    
+                    if (weekActivity.length > 0) {
+                        if (!companiesMap[contact.company]) {
+                            companiesMap[contact.company] = {
+                                company: contact.company,
+                                people: []
+                            };
+                        }
+                        
+                        companiesMap[contact.company].people.push({
+                            name: contact.name,
+                            tier: contact.tier,
+                            activity: weekActivity,
+                            contactId: contact.id
+                        });
+                    }
+                });
+                
+                return Object.values(companiesMap);
+            },
+            
+            viewPastWeek(weekStartStr) {
+                this.closePastWeeksModal();
+                
+                const weekStart = new Date(weekStartStr);
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 6);
+                
+                const companies = this.getCompaniesInWeek(weekStartStr);
+                const learningsThisWeek = this.learnings.filter(l => l.weekStart === weekStartStr);
+                
+                const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+                
+                // Create modal for past week view
+                const modalHTML = `
+                    <div class="modal active" id="pastWeekViewModal" style="z-index: 1001;">
+                        <div class="modal-content" style="max-width: 900px;">
+                            <div class="modal-header">
+                                <h2>Week of ${weekLabel}</h2>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">
+                                    ${companies.reduce((sum, c) => sum + c.people.length, 0)} people from ${companies.length} companies • 
+                                    ${learningsThisWeek.length} learning${learningsThisWeek.length !== 1 ? 's' : ''} logged
+                                </p>
+                            </div>
+                            <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+                                ${companies.length === 0 ? `
+                                    <div class="empty-state">
+                                        <p>No activity this week</p>
+                                    </div>
+                                ` : `
+                                    <div style="display: grid; gap: 1rem;">
+                                        ${companies.map(companyData => {
+                                            const hasLearning = learningsThisWeek.find(l => l.company === companyData.company);
+                                            const sortedPeople = companyData.people.sort((a, b) => 
+                                                b.activity.length - a.activity.length
+                                            );
+                                            const topPeople = sortedPeople.slice(0, 3);
+                                            const remainingCount = sortedPeople.length - 3;
+            
+                                            return `
+                                                <div style="padding: 1.5rem; background: var(--bg-primary); border-radius: 8px; border-left: 4px solid ${hasLearning ? 'var(--core-green)' : 'var(--priority-medium)'};">
+                                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                                        <div style="flex: 1;">
+                                                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                                                                <span style="font-size: 1.3rem;">${hasLearning ? '✅' : '⏳'}</span>
+                                                                <h4 style="font-size: 1.2rem; font-weight: 600; margin: 0;">${companyData.company}</h4>
+                                                            </div>
+                                                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                                                                Spoke with: <strong>${companyData.people.length} person${companyData.people.length !== 1 ? 's' : ''}</strong>
+                                                            </div>
+                                                            
+                                                            <div style="margin-left: 1rem; font-size: 0.9rem; line-height: 1.8;">
+                                                                ${topPeople.map(person => {
+                                                                    const latestActivity = person.activity.sort((a, b) => 
+                                                                        new Date(b.date) - new Date(a.date)
+                                                                    )[0];
+                                                                    const activityDate = new Date(latestActivity.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                                                    return `
+                                                                        <div>• ${person.name} <span class="badge" style="font-size: 0.75rem;">${person.tier}</span> - ${latestActivity.channel}, ${activityDate}</div>
+                                                                    `;
+                                                                }).join('')}
+                                                                ${remainingCount > 0 ? `
+                                                                    <div style="color: var(--text-secondary); font-style: italic; margin-top: 0.25rem;">
+                                                                        (+ ${remainingCount} more)
+                                                                    </div>
+                                                                ` : ''}
+                                                            </div>
+                                                        </div>
+                                                        <button class="btn" onclick="app.openLearningModalForCompany('${companyData.company}', '${weekStartStr}')" style="font-size: 0.85rem; flex-shrink: 0;">
+                                                            ${hasLearning ? '📖 View' : '📝 Log Learning'}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                `}
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn" onclick="app.closePastWeekViewModal()">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+            },
+            
+            closePastWeeksModal() {
+                const modal = document.getElementById('pastWeeksModal');
+                if (modal) {
+                    modal.remove();
+                }
+            },
+            
+            closePastWeekViewModal() {
+                const modal = document.getElementById('pastWeekViewModal');
+                if (modal) {
+                    modal.remove();
+                }
+            },
+
             openModal(modalId) {
                 document.getElementById(modalId).classList.add('active');
             },
 
             closeModal(modalId) {
-                document.getElementById(modalId).classList.remove('active');
-            }
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove('active');
+                }
+                
+                // Also close any dynamically created modals
+                this.closePastWeeksModal();
+                this.closePastWeekViewModal();
+            },
         };
 
         // Initialize app when DOM is ready
