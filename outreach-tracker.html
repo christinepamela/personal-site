@@ -1129,6 +1129,53 @@
             </div>
         </div>
 
+        <!-- Edit Reply Modal -->
+        <div class="modal" id="replyModal">
+            <div class="modal-content" style="max-width: 600px;">
+                <div class="modal-header">
+                    <h2>Add/Edit Reply</h2>
+                </div>
+                <div class="modal-body">
+                    <div style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <strong>Your message:</strong>
+                        <p id="replyOriginalMessage" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);"></p>
+                    </div>
+        
+                    <div class="form-group">
+                        <label>Reply Date & Time</label>
+                        <div class="time-input-group">
+                            <input type="date" id="replyDate">
+                            <input type="time" id="replyTime">
+                        </div>
+                    </div>
+        
+                    <div class="form-group">
+                        <label>Their Reply</label>
+                        <textarea id="replyMessage" rows="5" placeholder="What did they say?"></textarea>
+                    </div>
+        
+                    <div class="form-group">
+                        <label>Reply Sentiment</label>
+                        <select id="replySentiment">
+                            <option value="">Select sentiment...</option>
+                            <option value="Very positive">Very positive</option>
+                            <option value="Positive">Positive</option>
+                            <option value="Neutral">Neutral</option>
+                            <option value="Needs follow-up">Needs follow-up</option>
+                            <option value="Not interested">Not interested</option>
+                        </select>
+                    </div>
+        
+                    <input type="hidden" id="replyLogId">
+                    <input type="hidden" id="replyContactId">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" onclick="app.closeModal('replyModal')">Cancel</button>
+                    <button class="btn btn-primary" onclick="app.saveReply()">Save Reply</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Insights Tab -->
         <div class="tab-content" id="insights">
             <h2 style="font-family: 'Crimson Pro', serif; font-size: 1.8rem; font-weight: 400; margin-bottom: 2rem; color: var(--core-green);">Strategic Insights</h2>
@@ -1518,6 +1565,46 @@ Best regards,
             });
         }
 
+        // Migration: Convert old communication log format to new format
+        function migrateOldCommunicationLogs() {
+            let migrationNeeded = false;
+            
+            app.contacts.forEach(contact => {
+                if (!contact.communicationLog || contact.communicationLog.length === 0) return;
+                
+                contact.communicationLog = contact.communicationLog.map(log => {
+                    // Check if already in new format (has outbound object)
+                    if (log.outbound) return log;
+                    
+                    migrationNeeded = true;
+                    
+                    // Convert old format to new format
+                    return {
+                        id: generateUUID(),
+                        outbound: {
+                            date: log.date,
+                            channel: log.channel || 'Email',
+                            engagementType: log.engagementType || 'Email exchange',
+                            duration: log.duration || '',
+                            location: log.location || '',
+                            message: log.message || '',
+                            sentiment: log.sentiment || ''
+                        },
+                        inbound: log.response ? {
+                            date: log.date, // Use same date initially (user can edit)
+                            message: log.response,
+                            sentiment: '' // Can be added later
+                        } : null
+                    };
+                });
+            });
+            
+            if (migrationNeeded) {
+                console.log('✅ Communication logs migrated to new format');
+                app.saveData();
+            }
+        }
+
         // Date normalization and validation
         function normalizeDate(dateStr) {
             if (!dateStr) return null;
@@ -1532,7 +1619,7 @@ Best regards,
             return date.toISOString().split('T')[0];
         }
 
-        // Engagement type weighting
+       // Engagement type weighting
         function getEngagementWeight(engagementType) {
             const weights = {
                 // High-touch
@@ -1551,6 +1638,65 @@ Best regards,
                 'Text message': 1
             };
             return weights[engagementType] || 1;
+        }
+        
+        // Calculate total engagement score for a contact
+        function calculateEngagementScore(contact) {
+            if (!contact.communicationLog || contact.communicationLog.length === 0) return 0;
+            
+            return contact.communicationLog.reduce((total, log) => {
+                const engagementType = log.outbound?.engagementType || log.engagementType || 'Email exchange';
+                return total + getEngagementWeight(engagementType);
+            }, 0);
+        }
+        
+        // Count high-touch interactions
+        function countHighTouchInteractions(contact) {
+            if (!contact.communicationLog) return 0;
+            
+            const highTouchTypes = ['Face-to-face meeting', 'Lunch/Dinner', 'Event together', 'Office visit'];
+            return contact.communicationLog.filter(log => {
+                const engagementType = log.outbound?.engagementType || log.engagementType;
+                return highTouchTypes.includes(engagementType);
+            }).length;
+        }
+        
+        // Get last high-touch date
+        function getLastHighTouchDate(contact) {
+            if (!contact.communicationLog) return null;
+            
+            const highTouchTypes = ['Face-to-face meeting', 'Lunch/Dinner', 'Event together', 'Office visit'];
+            const highTouchLogs = contact.communicationLog
+                .filter(log => {
+                    const engagementType = log.outbound?.engagementType || log.engagementType;
+                    return highTouchTypes.includes(engagementType);
+                })
+                .sort((a, b) => {
+                    const dateA = new Date(a.outbound?.date || a.date);
+                    const dateB = new Date(b.outbound?.date || b.date);
+                    return dateB - dateA;
+                });
+            
+            return highTouchLogs.length > 0 ? new Date(highTouchLogs[0].outbound?.date || highTouchLogs[0].date) : null;
+        }
+        
+        // Auto-upgrade priority based on engagement
+        function autoUpgradePriority(contact) {
+            const highTouchCount = countHighTouchInteractions(contact);
+            
+            // 2+ face-to-face meetings → upgrade to Hot
+            if (highTouchCount >= 2 && contact.priority !== 'Hot') {
+                contact.priority = 'Hot';
+                return true;
+            }
+            
+            // 1 face-to-face and 5+ total communications → upgrade to Medium
+            if (highTouchCount >= 1 && contact.communicationLog.length >= 5 && contact.priority === 'Low') {
+                contact.priority = 'Medium';
+                return true;
+            }
+            
+            return false;
         }
 
         // Calculate total engagement score for a contact
@@ -1635,6 +1781,7 @@ Best regards,
             communicationEntryCount: 0,
 
             init() {
+                migrateOldCommunicationLogs(); 
                 this.loadData();
                 this.setupEventListeners();
                 this.renderContacts();
@@ -2165,126 +2312,144 @@ Best,
             },
 
             openLogModal(contactId) {
-                const contact = this.contacts.find(c => c.id === contactId);
-                if (!contact) return;
-
-                document.getElementById('logContactId').value = contactId;
+            const contact = this.contacts.find(c => c.id === contactId);
+            if (!contact) return;
+        
+            document.getElementById('logContactId').value = contactId;
+            
+            // Reset entry counter and create first entry
+            this.communicationEntryCount = 0;
+            document.getElementById('communicationEntries').innerHTML = '';
+            this.addCommunicationEntry(contact.connectionMethod);
+            
+            this.updateSaveButtonText();
+        
+            // Show existing logs with engagement summary
+            const logsContainer = document.getElementById('existingLogs');
+            
+            if (contact.communicationLog && contact.communicationLog.length > 0) {
+                const engagementScore = calculateEngagementScore(contact);
+                const engagementLevel = getEngagementLevel(contact);
+                const lastHighTouch = getLastHighTouchDate(contact);
+                const totalTouchpoints = contact.communicationLog.length;
+                const highTouchCount = countHighTouchInteractions(contact);
                 
-                // Reset entry counter and create first entry
-                this.communicationEntryCount = 0;
-                document.getElementById('communicationEntries').innerHTML = '';
-                this.addCommunicationEntry(contact.connectionMethod);
+                const lastHighTouchText = lastHighTouch 
+                    ? `${Math.floor((new Date() - lastHighTouch) / (1000 * 60 * 60 * 24))} days ago`
+                    : 'Never';
                 
-                this.updateSaveButtonText();
-
-                // Show existing logs with engagement summary
-                const logsContainer = document.getElementById('existingLogs');
-                
-                if (contact.communicationLog && contact.communicationLog.length > 0) {
-                    const engagementScore = calculateEngagementScore(contact);
-                    const engagementLevel = getEngagementLevel(contact);
-                    const lastHighTouch = getLastHighTouchDate(contact);
-                    const totalTouchpoints = contact.communicationLog.length;
-                    const highTouchCount = countHighTouchInteractions(contact);
+                const getEngagementIcon = (type) => {
+                    if (['Face-to-face meeting', 'Lunch/Dinner', 'Event together', 'Office visit'].includes(type)) return '🤝';
+                    if (['Video call', 'Phone call', 'Voice message'].includes(type)) return '📹';
+                    return '📧';
+                };
+        
+                // Group communications by date to show bursts
+                const groupedByDate = {};
+                contact.communicationLog.forEach(log => {
+                    const outboundDate = new Date(log.outbound?.date || log.date);
+                    const dateKey = outboundDate.toLocaleDateString();
+                    if (!groupedByDate[dateKey]) {
+                        groupedByDate[dateKey] = [];
+                    }
+                    groupedByDate[dateKey].push(log);
+                });
+        
+                logsContainer.innerHTML = `
+                    <h4 style="margin-bottom: 1rem; font-family: Crimson Pro, serif; color: var(--core-green);">Communication Timeline</h4>
                     
-                    const lastHighTouchText = lastHighTouch 
-                        ? `${Math.floor((new Date() - lastHighTouch) / (1000 * 60 * 60 * 24))} days ago`
-                        : 'Never';
-                    
-                    const getEngagementIcon = (type) => {
-                        if (['Face-to-face meeting', 'Lunch/Dinner', 'Event together', 'Office visit'].includes(type)) return '🤝';
-                        if (['Video call', 'Phone call', 'Voice message'].includes(type)) return '📹';
-                        return '📧';
-                    };
-
-                    // Group communications by date to show bursts
-                    const groupedByDate = {};
-                    contact.communicationLog.forEach(log => {
-                        const dateKey = new Date(log.date).toLocaleDateString();
-                        if (!groupedByDate[dateKey]) {
-                            groupedByDate[dateKey] = [];
-                        }
-                        groupedByDate[dateKey].push(log);
-                    });
-
-                    logsContainer.innerHTML = `
-                        <h4 style="margin-bottom: 1rem; font-family: Crimson Pro, serif; color: var(--core-green);">Communication Timeline</h4>
-                        
-                        <div class="engagement-summary">
-                            <div class="engagement-metric">
-                                <div class="engagement-metric-value">${engagementLevel}/10</div>
-                                <div class="engagement-metric-label">Engagement</div>
-                                <div class="engagement-bar">
-                                    <div class="engagement-bar-fill" style="width: ${engagementLevel * 10}%"></div>
-                                </div>
-                            </div>
-                            <div class="engagement-metric">
-                                <div class="engagement-metric-value">${lastHighTouchText}</div>
-                                <div class="engagement-metric-label">Last High-Touch</div>
-                            </div>
-                            <div class="engagement-metric">
-                                <div class="engagement-metric-value">${totalTouchpoints}</div>
-                                <div class="engagement-metric-label">Total Touchpoints</div>
-                            </div>
-                            <div class="engagement-metric">
-                                <div class="engagement-metric-value">${highTouchCount}</div>
-                                <div class="engagement-metric-label">Face-to-Face</div>
+                    <div class="engagement-summary">
+                        <div class="engagement-metric">
+                            <div class="engagement-metric-value">${engagementLevel}/10</div>
+                            <div class="engagement-metric-label">Engagement</div>
+                            <div class="engagement-bar">
+                                <div class="engagement-bar-fill" style="width: ${engagementLevel * 10}%"></div>
                             </div>
                         </div>
-                        
-                        <div class="communication-timeline">
-                            ${Object.keys(groupedByDate).map(dateKey => {
-                                const logs = groupedByDate[dateKey];
-                                const showBurst = logs.length > 1;
+                        <div class="engagement-metric">
+                            <div class="engagement-metric-value">${lastHighTouchText}</div>
+                            <div class="engagement-metric-label">Last High-Touch</div>
+                        </div>
+                        <div class="engagement-metric">
+                            <div class="engagement-metric-value">${totalTouchpoints}</div>
+                            <div class="engagement-metric-label">Total Touchpoints</div>
+                        </div>
+                        <div class="engagement-metric">
+                            <div class="engagement-metric-value">${highTouchCount}</div>
+                            <div class="engagement-metric-label">Face-to-Face</div>
+                        </div>
+                    </div>
+                    
+                    <div class="communication-timeline">
+                        ${Object.keys(groupedByDate).sort((a, b) => new Date(b) - new Date(a)).map(dateKey => {
+                            const logs = groupedByDate[dateKey];
+                            const showBurst = logs.length > 1;
+                            
+                            return logs.map((log, idx) => {
+                                const outbound = log.outbound || { date: log.date, message: log.message, engagementType: log.engagementType };
+                                const inbound = log.inbound;
                                 
-                                return logs.map((log, idx) => {
-                                    const weight = getEngagementWeight(log.engagementType || 'Email exchange');
-                                    const engagementClass = weight >= 10 ? 'engagement-type-high' : 
-                                                           weight >= 5 ? 'engagement-type-medium' : 
-                                                           'engagement-type-low';
-                                    const icon = getEngagementIcon(log.engagementType);
-                                    const logTime = new Date(log.date);
-                                    const timeStr = logTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                                    
-                                    return `
-                                        <div class="timeline-entry">
-                                            <div class="timeline-date">
-                                                ${idx === 0 ? dateKey : ''}
-                                                ${showBurst && idx === 0 ? `<div class="communication-burst-indicator"><span class="burst-dot"></span><span class="burst-dot"></span><span class="burst-dot"></span> ${logs.length} interactions</div>` : ''}
+                                const engagementType = outbound.engagementType || 'Email exchange';
+                                const weight = getEngagementWeight(engagementType);
+                                const engagementClass = weight >= 10 ? 'engagement-type-high' : 
+                                                       weight >= 5 ? 'engagement-type-medium' : 
+                                                       'engagement-type-low';
+                                const icon = getEngagementIcon(engagementType);
+                                const logTime = new Date(outbound.date);
+                                const timeStr = logTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                                
+                                return `
+                                    <div class="timeline-entry">
+                                        <div class="timeline-date">
+                                            ${idx === 0 ? dateKey : ''}
+                                            ${showBurst && idx === 0 ? `<div class="communication-burst-indicator"><span class="burst-dot"></span><span class="burst-dot"></span><span class="burst-dot"></span> ${logs.length} interactions</div>` : ''}
+                                        </div>
+                                        <div class="timeline-content">
+                                            <div class="timeline-type ${engagementClass}">
+                                                ${icon} ${engagementType}
+                                                ${timeStr !== 'Invalid Date' ? ` • ${timeStr}` : ''}
+                                                ${outbound.duration ? ` • ${outbound.duration}` : ''}
+                                                ${outbound.location ? ` • ${outbound.location}` : ''}
+                                                ${!inbound ? ' <span style="color: var(--priority-medium);">• Awaiting reply</span>' : ''}
                                             </div>
-                                            <div class="timeline-content">
-                                                <div class="timeline-type ${engagementClass}">
-                                                    ${icon} ${log.engagementType || 'Email exchange'}
-                                                    ${timeStr !== 'Invalid Date' ? ` • ${timeStr}` : ''}
-                                                    ${log.duration ? ` • ${log.duration}` : ''}
-                                                    ${log.location ? ` • ${log.location}` : ''}
+                                            <div class="timeline-details">
+                                                <strong>You:</strong> ${outbound.message.length > 80 ? outbound.message.substring(0, 80) + '...' : outbound.message}
+                                            </div>
+                                            ${inbound ? `
+                                                <div class="timeline-details" style="margin-top: 0.5rem; padding-left: 1rem; border-left: 3px solid var(--core-green);">
+                                                    <strong>Reply (${new Date(inbound.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}):</strong> 
+                                                    ${inbound.message.length > 80 ? inbound.message.substring(0, 80) + '...' : inbound.message}
                                                 </div>
-                                                <div class="timeline-details">
-                                                    ${log.message.length > 80 ? log.message.substring(0, 80) + '...' : log.message}
-                                                </div>
-                                                ${log.message.length > 80 || log.response ? `
-                                                    <div class="timeline-expand" onclick="this.nextElementSibling.classList.toggle('hidden')">
-                                                        View details ▼
-                                                    </div>
+                                            ` : ''}
+                                            <div style="margin-top: 0.5rem; display: flex; gap: 0.75rem;">
+                                                <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="app.editCommunicationReply('${log.id}')">
+                                                    ${inbound ? '✏️ Edit Reply' : '➕ Add Reply'}
+                                                </button>
+                                                ${outbound.message.length > 80 || inbound?.message.length > 80 ? `
+                                                    <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                                        📖 View Full
+                                                    </button>
                                                     <div class="timeline-expanded-content hidden">
-                                                        <strong>Message:</strong> ${log.message}<br>
-                                                        ${log.response ? `<strong>Response:</strong> ${log.response}<br>` : ''}
-                                                        ${log.sentiment ? `<strong>Sentiment:</strong> <span class="badge">${log.sentiment}</span>` : ''}
+                                                        <strong>Your message:</strong> ${outbound.message}<br>
+                                                        ${inbound ? `<strong>Their reply:</strong> ${inbound.message}<br>` : ''}
+                                                        ${outbound.sentiment ? `<strong>Your sentiment:</strong> <span class="badge">${outbound.sentiment}</span><br>` : ''}
+                                                        ${inbound?.sentiment ? `<strong>Their sentiment:</strong> <span class="badge">${inbound.sentiment}</span>` : ''}
                                                     </div>
                                                 ` : ''}
                                             </div>
                                         </div>
-                                    `;
-                                }).join('');
-                            }).join('')}
-                        </div>
-                    `;
-                } else {
-                    logsContainer.innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">No previous communications logged.</p>';
-                }
-
-                this.openModal('logModal');
-            },
+                                    </div>
+                                `;
+                            }).join('');
+                        }).join('')}
+                    </div>
+                `;
+            } else {
+                logsContainer.innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">No previous communications logged.</p>';
+            }
+        
+            this.openModal('logModal');
+        },
 
             addCommunicationEntry(defaultChannel = 'Email') {
                 this.communicationEntryCount++;
@@ -2407,71 +2572,156 @@ Best,
             },
 
             saveAllLogs() {
-                const contactId = document.getElementById('logContactId').value;
-                const contact = this.contacts.find(c => c.id === contactId);
+            const contactId = document.getElementById('logContactId').value;
+            const contact = this.contacts.find(c => c.id === contactId);
+            
+            if (!contact) return;
+        
+            const entries = document.querySelectorAll('.communication-entry-card');
+            const logEntries = [];
+        
+            entries.forEach((entry, index) => {
+                const entryId = entry.id.split('-')[1];
                 
-                if (!contact) return;
-
-                const entries = document.querySelectorAll('.communication-entry-card');
-                const logEntries = [];
-
-                entries.forEach((entry, index) => {
-                    const entryId = entry.id.split('-')[1];
-                    
-                    const date = document.getElementById(`entryDate-${entryId}`).value;
-                    const time = document.getElementById(`entryTime-${entryId}`).value;
-                    const datetime = new Date(`${date}T${time}`);
-
-                    const logEntry = {
+                const date = document.getElementById(`entryDate-${entryId}`).value;
+                const time = document.getElementById(`entryTime-${entryId}`).value;
+                const datetime = new Date(`${date}T${time}`);
+                const message = document.getElementById(`entryMessage-${entryId}`).value;
+        
+                // Only add if message is not empty
+                if (!message.trim()) return;
+        
+                const response = document.getElementById(`entryResponse-${entryId}`).value.trim();
+        
+                const logEntry = {
+                    id: generateUUID(),
+                    outbound: {
                         date: datetime.toISOString(),
                         channel: document.getElementById(`entryChannel-${entryId}`).value,
                         engagementType: document.getElementById(`entryEngagementType-${entryId}`).value,
                         duration: document.getElementById(`entryDuration-${entryId}`).value,
                         location: document.getElementById(`entryLocation-${entryId}`).value,
-                        message: document.getElementById(`entryMessage-${entryId}`).value,
-                        response: document.getElementById(`entryResponse-${entryId}`).value,
+                        message: message,
                         sentiment: document.getElementById(`entrySentiment-${entryId}`).value
-                    };
+                    },
+                    inbound: response ? {
+                        date: datetime.toISOString(), // Same date initially, can be edited later
+                        message: response,
+                        sentiment: '' // Can be added when editing
+                    } : null
+                };
+        
+                logEntries.push(logEntry);
+            });
+        
+            if (logEntries.length === 0) {
+                alert('Please add at least one communication with a message.');
+                return;
+            }
+        
+            if (!contact.communicationLog) {
+                contact.communicationLog = [];
+            }
+            
+            // Add all entries
+            logEntries.forEach(entry => {
+                contact.communicationLog.unshift(entry);
+            });
+        
+            // Sort communication log by date (most recent first)
+            contact.communicationLog.sort((a, b) => {
+                const dateA = new Date(a.outbound?.date || a.date);
+                const dateB = new Date(b.outbound?.date || b.date);
+                return dateB - dateA;
+            });
+        
+            // Update last message to most recent
+            contact.lastMessage = logEntries[0].outbound.message.substring(0, 100);
+        
+            // Auto-upgrade priority based on engagement
+            const upgraded = autoUpgradePriority(contact);
+            
+            this.saveData();
+            this.renderContacts();
+            this.closeModal('logModal');
+            
+            if (upgraded) {
+                alert(`🎉 Priority automatically upgraded to ${contact.priority} due to high engagement!`);
+            } else if (logEntries.length > 1) {
+                alert(`✅ ${logEntries.length} communications logged successfully!`);
+            }
+        },
 
-                    // Only add if message is not empty
-                    if (logEntry.message.trim()) {
-                        logEntries.push(logEntry);
-                    }
-                });
-
-                if (logEntries.length === 0) {
-                    alert('Please add at least one communication with a message.');
-                    return;
-                }
-
-                if (!contact.communicationLog) {
-                    contact.communicationLog = [];
-                }
-                
-                // Add all entries (they'll be sorted by date in the display)
-                logEntries.forEach(entry => {
-                    contact.communicationLog.unshift(entry);
-                });
-
-                // Sort communication log by date (most recent first)
-                contact.communicationLog.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-                // Update last message to most recent
-                contact.lastMessage = logEntries[0].message.substring(0, 100);
-
-                // Auto-upgrade priority based on engagement
-                const upgraded = autoUpgradePriority(contact);
-                
-                this.saveData();
-                this.renderContacts();
-                this.closeModal('logModal');
-                
-                if (upgraded) {
-                    alert(`🎉 Priority automatically upgraded to ${contact.priority} due to high engagement!`);
-                } else if (logEntries.length > 1) {
-                    alert(`✅ ${logEntries.length} communications logged successfully!`);
-                }
-            },
+            editCommunicationReply(logId) {
+            const contactId = document.getElementById('logContactId').value;
+            const contact = this.contacts.find(c => c.id === contactId);
+            if (!contact) return;
+        
+            const log = contact.communicationLog.find(l => l.id === logId);
+            if (!log) return;
+        
+            // Show original message
+            const outbound = log.outbound || { message: log.message };
+            document.getElementById('replyOriginalMessage').textContent = outbound.message;
+        
+            // Pre-fill reply if exists
+            if (log.inbound) {
+                const replyDate = new Date(log.inbound.date);
+                document.getElementById('replyDate').value = replyDate.toISOString().split('T')[0];
+                document.getElementById('replyTime').value = replyDate.toTimeString().slice(0, 5);
+                document.getElementById('replyMessage').value = log.inbound.message;
+                document.getElementById('replySentiment').value = log.inbound.sentiment || '';
+            } else {
+                // Default to current date/time
+                const now = new Date();
+                document.getElementById('replyDate').value = now.toISOString().split('T')[0];
+                document.getElementById('replyTime').value = now.toTimeString().slice(0, 5);
+                document.getElementById('replyMessage').value = '';
+                document.getElementById('replySentiment').value = '';
+            }
+        
+            document.getElementById('replyLogId').value = logId;
+            document.getElementById('replyContactId').value = contactId;
+        
+            this.openModal('replyModal');
+        },
+        
+        saveReply() {
+            const contactId = document.getElementById('replyContactId').value;
+            const logId = document.getElementById('replyLogId').value;
+            const contact = this.contacts.find(c => c.id === contactId);
+            
+            if (!contact) return;
+        
+            const log = contact.communicationLog.find(l => l.id === logId);
+            if (!log) return;
+        
+            const date = document.getElementById('replyDate').value;
+            const time = document.getElementById('replyTime').value;
+            const message = document.getElementById('replyMessage').value.trim();
+        
+            if (!message) {
+                alert('Please enter the reply message');
+                return;
+            }
+        
+            const datetime = new Date(`${date}T${time}`);
+        
+            // Add or update inbound
+            log.inbound = {
+                date: datetime.toISOString(),
+                message: message,
+                sentiment: document.getElementById('replySentiment').value
+            };
+        
+            this.saveData();
+            this.closeModal('replyModal');
+            
+            // Refresh the log modal
+            this.openLogModal(contactId);
+            
+            alert('✅ Reply saved!');
+        },
 
             openAddTemplateModal() {
                 document.getElementById('templateName').value = '';
