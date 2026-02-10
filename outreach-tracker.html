@@ -1913,6 +1913,19 @@ Best,
                         }, 300);
                     });
                 }
+
+                // Add reply button event delegation
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.reply-btn')) {
+                        const button = e.target.closest('.reply-btn');
+                        const logId = button.getAttribute('data-log-id');
+                        if (logId) {
+                            app.editCommunicationReply(logId);
+                        }
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                });
             },
 
             toggleOtherMethod() {
@@ -2422,18 +2435,18 @@ Best,
                                                 </div>
                                             ` : ''}
                                             <div style="margin-top: 0.5rem; display: flex; gap: 0.75rem;">
-                                                <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" data-log-id="${log.id}" onclick="app.editCommunicationReply(this.dataset.logId); return false;">
+                                                <button class="btn reply-btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" data-log-id="${log.id}">
                                                     ${inbound ? '✏️ Edit Reply' : '➕ Add Reply'}
                                                 </button>
-                                                ${outbound.message.length > 80 || inbound?.message.length > 80 ? `
-                                                    <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                                ${(outbound.message && outbound.message.length > 80) || (inbound && inbound.message && inbound.message.length > 80) ? `
+                                                    <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="this.nextElementSibling.classList.toggle('hidden'); return false;">
                                                         📖 View Full
                                                     </button>
                                                     <div class="timeline-expanded-content hidden">
-                                                        <strong>Your message:</strong> ${outbound.message}<br>
-                                                        ${inbound ? `<strong>Their reply:</strong> ${inbound.message}<br>` : ''}
-                                                        ${outbound.sentiment ? `<strong>Your sentiment:</strong> <span class="badge">${outbound.sentiment}</span><br>` : ''}
-                                                        ${inbound?.sentiment ? `<strong>Their sentiment:</strong> <span class="badge">${inbound.sentiment}</span>` : ''}
+                                                        <strong>Your message:</strong> ${outbound.message || 'N/A'}<br>
+                                                        ${inbound && inbound.message ? `<br><strong>Their reply:</strong> ${inbound.message}<br>` : ''}
+                                                        ${outbound.sentiment ? `<br><strong>Your sentiment:</strong> <span class="badge">${outbound.sentiment}</span><br>` : ''}
+                                                        ${inbound && inbound.sentiment ? `<br><strong>Their sentiment:</strong> <span class="badge">${inbound.sentiment}</span>` : ''}
                                                     </div>
                                                 ` : ''}
                                             </div>
