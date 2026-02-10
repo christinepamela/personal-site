@@ -1456,6 +1456,57 @@
         </div>
     </div>
 
+    <!-- Reply Modal -->
+    <div class="modal" id="replyModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Edit Reply</h2>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Update contact's response</p>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Original Message</label>
+                    <div id="replyOriginalMessage" style="background: var(--bg-primary); padding: 1rem; border-radius: 4px; font-size: 0.9rem; margin-bottom: 1.5rem; max-height: 150px; overflow-y: auto;"></div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Reply Date</label>
+                        <input type="date" id="replyDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Reply Time</label>
+                        <input type="time" id="replyTime">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Reply Message</label>
+                    <textarea id="replyMessage" rows="4" placeholder="Paste their response here..." style="font-family: 'Work Sans', sans-serif;"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Response Sentiment</label>
+                    <select id="replySentiment">
+                        <option value="">Select sentiment...</option>
+                        <option value="Very positive">Very positive</option>
+                        <option value="Positive">Positive</option>
+                        <option value="Neutral">Neutral</option>
+                        <option value="Needs follow-up">Needs follow-up</option>
+                        <option value="Not interested">Not interested</option>
+                    </select>
+                </div>
+                
+                <input type="hidden" id="replyLogId">
+                <input type="hidden" id="replyContactId">
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="app.closeModal('replyModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="app.saveReply()">Save Reply</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Template Modal -->
     <div class="modal" id="templateModal">
         <div class="modal-content">
@@ -2389,10 +2440,14 @@ Best,
                                                     </div>
                                                 ` : ''}
                                                 <div style="margin-top: 0.5rem; display: flex; gap: 0.75rem;">
-                                                    <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" 
+                                                    `<button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" 
                                                             onclick="app.editCommunicationLog('${log.id}'); return false;">
-                                                        ✏️ Edit
+                                                        ✏️ Edit Log
                                                     </button>
+                                                    <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; background: rgba(45, 80, 22, 0.1); color: var(--core-green);" 
+                                                            onclick="app.editCommunicationReply('${log.id}'); return false;">
+                                                        📝 ${log.inbound ? 'Edit' : 'Add'} Reply
+                                                    </button>`
                                                     <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; background: rgba(196, 30, 58, 0.1); color: var(--priority-hot);" 
                                                             onclick="app.deleteCommunicationLog('${log.id}'); return false;">
                                                         🗑️ Delete
@@ -2771,11 +2826,12 @@ Best,
             const datetime = new Date(`${date}T${time}`);
         
             // Add or update inbound
-            log.inbound = {
-                date: datetime.toISOString(),
-                message: message,
-                sentiment: document.getElementById('replySentiment').value
-            };
+            if (!log.inbound) {
+                log.inbound = {};
+            }
+            log.inbound.date = datetime.toISOString();
+            log.inbound.message = message;
+            log.inbound.sentiment = document.getElementById('replySentiment').value;
         
             this.saveData();
             this.closeModal('replyModal');
@@ -2784,64 +2840,47 @@ Best,
             this.openLogModal(contactId);
             
             alert('✅ Reply saved!');
-        },
+        }
 
-        editCommunicationLog(logId) {
-                const contactId = document.getElementById('logContactId').value;
-                const contact = this.contacts.find(c => c.id === contactId);
-                if (!contact) return;
-                
-                const log = contact.communicationLog.find(l => l.id === logId);
-                if (!log) return;
-                
-                // Close current modal
-                this.closeModal('logModal');
-                
-                // Open edit modal with pre-filled data
-                const outbound = log.outbound || { date: log.date, message: log.message };
-                const inbound = log.inbound;
-                
-                // Reset and add single entry
-                this.communicationEntryCount = 0;
-                document.getElementById('communicationEntries').innerHTML = '';
-                this.addCommunicationEntry(outbound.channel || 'Email');
-                
-                // Pre-fill form
-                const entryId = this.communicationEntryCount;
-                const logDate = new Date(outbound.date);
-                
-                document.getElementById(`entryDate-${entryId}`).value = logDate.toISOString().split('T')[0];
-                document.getElementById(`entryTime-${entryId}`).value = logDate.toTimeString().slice(0, 5);
-                document.getElementById(`entryChannel-${entryId}`).value = outbound.channel || 'Email';
-                document.getElementById(`entryEngagementType-${entryId}`).value = outbound.engagementType || 'Email exchange';
-                document.getElementById(`entryDuration-${entryId}`).value = outbound.duration || '';
-                document.getElementById(`entryLocation-${entryId}`).value = outbound.location || '';
-                document.getElementById(`entryMessage-${entryId}`).value = outbound.message || '';
-                document.getElementById(`entrySentiment-${entryId}`).value = outbound.sentiment || '';
-                
-                // Pre-fill response if exists
-                if (inbound) {
-                    document.getElementById(`entryResponse-${entryId}`).value = inbound.message || '';
-                    
-                    // Trigger response date/time fields to show
-                    const responseGroup = document.getElementById(`responseDetailsGroup-${entryId}`);
-                    if (responseGroup) {
-                        responseGroup.style.display = 'block';
-                        const replyDate = new Date(inbound.date);
-                        document.getElementById(`entryResponseDate-${entryId}`).value = replyDate.toISOString().split('T')[0];
-                        document.getElementById(`entryResponseTime-${entryId}`).value = replyDate.toTimeString().slice(0, 5);
-                    }
-                }
-                
-                // Store log ID for update
-                document.getElementById('logContactId').value = contactId;
-                document.getElementById('logContactId').setAttribute('data-edit-log-id', logId);
-                
-                // Update save button text
-                document.getElementById('saveLogButtonText').textContent = 'Update Communication';
-                
-                this.openModal('logModal');
-            },
+        editCommunicationReply(logId) {
+            const contactId = document.getElementById('logContactId').value;
+            const contact = this.contacts.find(c => c.id === contactId);
+            if (!contact) return;
+        
+            const log = contact.communicationLog.find(l => l.id === logId);
+            if (!log) return;
+        
+            // Show original message
+            const outbound = log.outbound || { message: log.message };
+            document.getElementById('replyOriginalMessage').textContent = outbound.message;
+        
+            // Pre-fill reply if exists
+            if (log.inbound) {
+                const replyDate = new Date(log.inbound.date);
+                document.getElementById('replyDate').value = replyDate.toISOString().split('T')[0];
+                document.getElementById('replyTime').value = replyDate.toTimeString().slice(0, 5);
+                document.getElementById('replyMessage').value = log.inbound.message;
+                document.getElementById('replySentiment').value = log.inbound.sentiment || '';
+            } else {
+                // Default to current date/time
+                const now = new Date();
+                document.getElementById('replyDate').value = now.toISOString().split('T')[0];
+                document.getElementById('replyTime').value = now.toTimeString().slice(0, 5);
+                document.getElementById('replyMessage').value = '';
+                document.getElementById('replySentiment').value = '';
+            }
+        
+            document.getElementById('replyLogId').value = logId;
+            document.getElementById('replyContactId').value = contactId;
+        
+            // Close the log modal first
+            this.closeModal('logModal');
+            
+            // Short delay to ensure modal closes
+            setTimeout(() => {
+                this.openModal('replyModal');
+            }, 100);
+        }
             
             deleteCommunicationLog(logId) {
                 if (!confirm('Delete this communication log?')) return;
