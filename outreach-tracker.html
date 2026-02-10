@@ -1129,7 +1129,6 @@
             </div>
         </div>
 
-        <!-- Edit Reply Modal -->
         <!-- Insights Tab -->
         <div class="tab-content" id="insights">
             <h2 style="font-family: 'Crimson Pro', serif; font-size: 1.8rem; font-weight: 400; margin-bottom: 2rem; color: var(--core-green);">Strategic Insights</h2>
@@ -1456,57 +1455,6 @@
         </div>
     </div>
 
-    <!-- Reply Modal -->
-    <div class="modal" id="replyModal">
-        <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">
-                <h2>Edit Reply</h2>
-                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Update contact's response</p>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Original Message</label>
-                    <div id="replyOriginalMessage" style="background: var(--bg-primary); padding: 1rem; border-radius: 4px; font-size: 0.9rem; margin-bottom: 1.5rem; max-height: 150px; overflow-y: auto;"></div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Reply Date</label>
-                        <input type="date" id="replyDate">
-                    </div>
-                    <div class="form-group">
-                        <label>Reply Time</label>
-                        <input type="time" id="replyTime">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Reply Message</label>
-                    <textarea id="replyMessage" rows="4" placeholder="Paste their response here..." style="font-family: 'Work Sans', sans-serif;"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label>Response Sentiment</label>
-                    <select id="replySentiment">
-                        <option value="">Select sentiment...</option>
-                        <option value="Very positive">Very positive</option>
-                        <option value="Positive">Positive</option>
-                        <option value="Neutral">Neutral</option>
-                        <option value="Needs follow-up">Needs follow-up</option>
-                        <option value="Not interested">Not interested</option>
-                    </select>
-                </div>
-                
-                <input type="hidden" id="replyLogId">
-                <input type="hidden" id="replyContactId">
-            </div>
-            <div class="modal-footer">
-                <button class="btn" onclick="app.closeModal('replyModal')">Cancel</button>
-                <button class="btn btn-primary" onclick="app.saveReply()">Save Reply</button>
-            </div>
-        </div>
-    </div>
-    
     <!-- Template Modal -->
     <div class="modal" id="templateModal">
         <div class="modal-content">
@@ -1570,46 +1518,6 @@ Best regards,
             });
         }
 
-        // Migration: Convert old communication log format to new format
-        function migrateOldCommunicationLogs() {
-            let migrationNeeded = false;
-            
-            app.contacts.forEach(contact => {
-                if (!contact.communicationLog || contact.communicationLog.length === 0) return;
-                
-                contact.communicationLog = contact.communicationLog.map(log => {
-                    // Check if already in new format (has outbound object)
-                    if (log.outbound) return log;
-                    
-                    migrationNeeded = true;
-                    
-                    // Convert old format to new format
-                    return {
-                        id: generateUUID(),
-                        outbound: {
-                            date: log.date,
-                            channel: log.channel || 'Email',
-                            engagementType: log.engagementType || 'Email exchange',
-                            duration: log.duration || '',
-                            location: log.location || '',
-                            message: log.message || '',
-                            sentiment: log.sentiment || ''
-                        },
-                        inbound: log.response ? {
-                            date: log.date, // Use same date initially (user can edit)
-                            message: log.response,
-                            sentiment: '' // Can be added later
-                        } : null
-                    };
-                });
-            });
-            
-            if (migrationNeeded) {
-                console.log('✅ Communication logs migrated to new format');
-                app.saveData();
-            }
-        }
-
         // Date normalization and validation
         function normalizeDate(dateStr) {
             if (!dateStr) return null;
@@ -1624,7 +1532,7 @@ Best regards,
             return date.toISOString().split('T')[0];
         }
 
-       // Engagement type weighting
+        // Engagement type weighting
         function getEngagementWeight(engagementType) {
             const weights = {
                 // High-touch
@@ -1643,65 +1551,6 @@ Best regards,
                 'Text message': 1
             };
             return weights[engagementType] || 1;
-        }
-        
-        // Calculate total engagement score for a contact
-        function calculateEngagementScore(contact) {
-            if (!contact.communicationLog || contact.communicationLog.length === 0) return 0;
-            
-            return contact.communicationLog.reduce((total, log) => {
-                const engagementType = log.outbound?.engagementType || log.engagementType || 'Email exchange';
-                return total + getEngagementWeight(engagementType);
-            }, 0);
-        }
-        
-        // Count high-touch interactions
-        function countHighTouchInteractions(contact) {
-            if (!contact.communicationLog) return 0;
-            
-            const highTouchTypes = ['Face-to-face meeting', 'Lunch/Dinner', 'Event together', 'Office visit'];
-            return contact.communicationLog.filter(log => {
-                const engagementType = log.outbound?.engagementType || log.engagementType;
-                return highTouchTypes.includes(engagementType);
-            }).length;
-        }
-        
-        // Get last high-touch date
-        function getLastHighTouchDate(contact) {
-            if (!contact.communicationLog) return null;
-            
-            const highTouchTypes = ['Face-to-face meeting', 'Lunch/Dinner', 'Event together', 'Office visit'];
-            const highTouchLogs = contact.communicationLog
-                .filter(log => {
-                    const engagementType = log.outbound?.engagementType || log.engagementType;
-                    return highTouchTypes.includes(engagementType);
-                })
-                .sort((a, b) => {
-                    const dateA = new Date(a.outbound?.date || a.date);
-                    const dateB = new Date(b.outbound?.date || b.date);
-                    return dateB - dateA;
-                });
-            
-            return highTouchLogs.length > 0 ? new Date(highTouchLogs[0].outbound?.date || highTouchLogs[0].date) : null;
-        }
-        
-        // Auto-upgrade priority based on engagement
-        function autoUpgradePriority(contact) {
-            const highTouchCount = countHighTouchInteractions(contact);
-            
-            // 2+ face-to-face meetings → upgrade to Hot
-            if (highTouchCount >= 2 && contact.priority !== 'Hot') {
-                contact.priority = 'Hot';
-                return true;
-            }
-            
-            // 1 face-to-face and 5+ total communications → upgrade to Medium
-            if (highTouchCount >= 1 && contact.communicationLog.length >= 5 && contact.priority === 'Low') {
-                contact.priority = 'Medium';
-                return true;
-            }
-            
-            return false;
         }
 
         // Calculate total engagement score for a contact
@@ -1786,7 +1635,6 @@ Best regards,
             communicationEntryCount: 0,
 
             init() {
-                migrateOldCommunicationLogs(); 
                 this.loadData();
                 this.setupEventListeners();
                 this.renderContacts();
@@ -1918,19 +1766,6 @@ Best,
                         }, 300);
                     });
                 }
-
-                // Add reply button event delegation
-                document.addEventListener('click', (e) => {
-                    if (e.target.closest('.reply-btn')) {
-                        const button = e.target.closest('.reply-btn');
-                        const logId = button.getAttribute('data-log-id');
-                        if (logId) {
-                            app.editCommunicationReply(logId);
-                        }
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
-                });
             },
 
             toggleOtherMethod() {
@@ -2332,7 +2167,7 @@ Best,
             openLogModal(contactId) {
                 const contact = this.contacts.find(c => c.id === contactId);
                 if (!contact) return;
-            
+
                 document.getElementById('logContactId').value = contactId;
                 
                 // Reset entry counter and create first entry
@@ -2341,7 +2176,7 @@ Best,
                 this.addCommunicationEntry(contact.connectionMethod);
                 
                 this.updateSaveButtonText();
-            
+
                 // Show existing logs with engagement summary
                 const logsContainer = document.getElementById('existingLogs');
                 
@@ -2361,18 +2196,17 @@ Best,
                         if (['Video call', 'Phone call', 'Voice message'].includes(type)) return '📹';
                         return '📧';
                     };
-            
+
                     // Group communications by date to show bursts
                     const groupedByDate = {};
                     contact.communicationLog.forEach(log => {
-                        const outboundDate = new Date(log.outbound?.date || log.date);
-                        const dateKey = outboundDate.toLocaleDateString();
+                        const dateKey = new Date(log.date).toLocaleDateString();
                         if (!groupedByDate[dateKey]) {
                             groupedByDate[dateKey] = [];
                         }
                         groupedByDate[dateKey].push(log);
                     });
-            
+
                     logsContainer.innerHTML = `
                         <h4 style="margin-bottom: 1rem; font-family: Crimson Pro, serif; color: var(--core-green);">Communication Timeline</h4>
                         
@@ -2399,21 +2233,17 @@ Best,
                         </div>
                         
                         <div class="communication-timeline">
-                            ${Object.keys(groupedByDate).sort((a, b) => new Date(b) - new Date(a)).map(dateKey => {
+                            ${Object.keys(groupedByDate).map(dateKey => {
                                 const logs = groupedByDate[dateKey];
                                 const showBurst = logs.length > 1;
                                 
                                 return logs.map((log, idx) => {
-                                    const outbound = log.outbound || { date: log.date, message: log.message, engagementType: log.engagementType };
-                                    const inbound = log.inbound;
-                                    
-                                    const engagementType = outbound.engagementType || 'Email exchange';
-                                    const weight = getEngagementWeight(engagementType);
+                                    const weight = getEngagementWeight(log.engagementType || 'Email exchange');
                                     const engagementClass = weight >= 10 ? 'engagement-type-high' : 
                                                            weight >= 5 ? 'engagement-type-medium' : 
                                                            'engagement-type-low';
-                                    const icon = getEngagementIcon(engagementType);
-                                    const logTime = new Date(outbound.date);
+                                    const icon = getEngagementIcon(log.engagementType);
+                                    const logTime = new Date(log.date);
                                     const timeStr = logTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
                                     
                                     return `
@@ -2424,35 +2254,24 @@ Best,
                                             </div>
                                             <div class="timeline-content">
                                                 <div class="timeline-type ${engagementClass}">
-                                                    ${icon} ${engagementType}
+                                                    ${icon} ${log.engagementType || 'Email exchange'}
                                                     ${timeStr !== 'Invalid Date' ? ` • ${timeStr}` : ''}
-                                                    ${outbound.duration ? ` • ${outbound.duration}` : ''}
-                                                    ${outbound.location ? ` • ${outbound.location}` : ''}
-                                                    ${!inbound ? ' <span style="color: var(--priority-medium);">• Awaiting reply</span>' : ''}
+                                                    ${log.duration ? ` • ${log.duration}` : ''}
+                                                    ${log.location ? ` • ${log.location}` : ''}
                                                 </div>
                                                 <div class="timeline-details">
-                                                    <strong>You:</strong> ${outbound.message.length > 80 ? outbound.message.substring(0, 80) + '...' : outbound.message}
+                                                    ${log.message.length > 80 ? log.message.substring(0, 80) + '...' : log.message}
                                                 </div>
-                                                ${inbound ? `
-                                                    <div class="timeline-details" style="margin-top: 0.5rem; padding-left: 1rem; border-left: 3px solid var(--core-green);">
-                                                        <strong>Reply (${new Date(inbound.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}):</strong> 
-                                                        ${inbound.message.length > 80 ? inbound.message.substring(0, 80) + '...' : inbound.message}
+                                                ${log.message.length > 80 || log.response ? `
+                                                    <div class="timeline-expand" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                                        View details ▼
+                                                    </div>
+                                                    <div class="timeline-expanded-content hidden">
+                                                        <strong>Message:</strong> ${log.message}<br>
+                                                        ${log.response ? `<strong>Response:</strong> ${log.response}<br>` : ''}
+                                                        ${log.sentiment ? `<strong>Sentiment:</strong> <span class="badge">${log.sentiment}</span>` : ''}
                                                     </div>
                                                 ` : ''}
-                                                <div style="margin-top: 0.5rem; display: flex; gap: 0.75rem;">
-                                                    <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" 
-                                                            onclick="app.editCommunicationLog('${log.id}'); return false;">
-                                                        ✏️ Edit Log
-                                                    </button>
-                                                    <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; background: rgba(45, 80, 22, 0.1); color: var(--core-green);" 
-                                                            onclick="app.editCommunicationReply('${log.id}'); return false;">
-                                                        📝 ${log.inbound ? 'Edit' : 'Add'} Reply
-                                                    </button>
-                                                    <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; background: rgba(196, 30, 58, 0.1); color: var(--priority-hot);" 
-                                                            onclick="app.deleteCommunicationLog('${log.id}'); return false;">
-                                                        🗑️ Delete
-                                                    </button>
-                                                </div>
                                             </div>
                                         </div>
                                     `;
@@ -2463,7 +2282,7 @@ Best,
                 } else {
                     logsContainer.innerHTML = '<p style="color: var(--text-secondary); font-style: italic;">No previous communications logged.</p>';
                 }
-            
+
                 this.openModal('logModal');
             },
 
@@ -2552,14 +2371,6 @@ Best,
                             <label>Response Received (optional)</label>
                             <textarea id="entryResponse-${entryId}" placeholder="How did they respond?" rows="2"></textarea>
                         </div>
-                        
-                        <div class="form-group" id="responseDetailsGroup-${entryId}" style="display: none;">
-                            <label>Response Date & Time</label>
-                            <div class="time-input-group">
-                                <input type="date" id="entryResponseDate-${entryId}">
-                                <input type="time" id="entryResponseTime-${entryId}">
-                            </div>
-                        </div>
 
                         <div class="form-group">
                             <label>Sentiment / Insight</label>
@@ -2577,24 +2388,6 @@ Best,
 
                 container.insertAdjacentHTML('beforeend', entryHTML);
                 this.updateSaveButtonText();
-
-                // Show response date/time when user enters a response
-                document.getElementById(`entryResponse-${entryId}`).addEventListener('input', function() {
-                    const responseGroup = document.getElementById(`responseDetailsGroup-${entryId}`);
-                    if (this.value.trim()) {
-                        responseGroup.style.display = 'block';
-                        // Auto-fill with current date/time if empty
-                        const dateInput = document.getElementById(`entryResponseDate-${entryId}`);
-                        const timeInput = document.getElementById(`entryResponseTime-${entryId}`);
-                        if (!dateInput.value) {
-                            const now = new Date();
-                            dateInput.value = now.toISOString().split('T')[0];
-                            timeInput.value = now.toTimeString().slice(0, 5);
-                        }
-                    } else {
-                        responseGroup.style.display = 'none';
-                    }
-                });
             },
 
             removeCommunicationEntry(entryId) {
@@ -2618,144 +2411,54 @@ Best,
                 const contact = this.contacts.find(c => c.id === contactId);
                 
                 if (!contact) return;
-                
-                // Check if this is an edit
-                const editLogId = document.getElementById('logContactId').getAttribute('data-edit-log-id');
-                
-                if (editLogId) {
-                    // EDIT MODE - update existing log
-                    const entries = document.querySelectorAll('.communication-entry-card');
-                    if (entries.length !== 1) {
-                        alert('Edit mode should have exactly one entry');
-                        return;
-                    }
-                    
-                    const entry = entries[0];
-                    const entryId = entry.id.split('-')[1];
-                    
-                    const date = document.getElementById(`entryDate-${entryId}`).value;
-                    const time = document.getElementById(`entryTime-${entryId}`).value;
-                    const datetime = new Date(`${date}T${time}`);
-                    const message = document.getElementById(`entryMessage-${entryId}`).value;
-                    
-                    if (!message.trim()) {
-                        alert('Message cannot be empty');
-                        return;
-                    }
-                    
-                    const response = document.getElementById(`entryResponse-${entryId}`).value.trim();
-                    
-                    const logEntry = {
-                        id: editLogId,
-                        outbound: {
-                            date: datetime.toISOString(),
-                            channel: document.getElementById(`entryChannel-${entryId}`).value,
-                            engagementType: document.getElementById(`entryEngagementType-${entryId}`).value,
-                            duration: document.getElementById(`entryDuration-${entryId}`).value,
-                            location: document.getElementById(`entryLocation-${entryId}`).value,
-                            message: message,
-                            sentiment: document.getElementById(`entrySentiment-${entryId}`).value
-                        },
-                        inbound: response ? {
-                            date: (() => {
-                                const responseDate = document.getElementById(`entryResponseDate-${entryId}`).value;
-                                const responseTime = document.getElementById(`entryResponseTime-${entryId}`).value;
-                                if (responseDate && responseTime) {
-                                    return new Date(`${responseDate}T${responseTime}`).toISOString();
-                                }
-                                return datetime.toISOString();
-                            })(),
-                            message: response,
-                            sentiment: ''
-                        } : null
-                    };
-                    
-                    // Replace existing log
-                    const logIndex = contact.communicationLog.findIndex(l => l.id === editLogId);
-                    if (logIndex >= 0) {
-                        contact.communicationLog[logIndex] = logEntry;
-                    }
-                    
-                    // Clear edit mode
-                    document.getElementById('logContactId').removeAttribute('data-edit-log-id');
-                    document.getElementById('saveLogButtonText').textContent = 'Save Communication';
-                    
-                    this.saveData();
-                    this.renderContacts();
-                    this.closeModal('logModal');
-                    alert('✅ Communication updated');
-                    return;
-                }
-            
-                // If not edit mode, process multiple entries
+
                 const entries = document.querySelectorAll('.communication-entry-card');
                 const logEntries = [];
-            
+
                 entries.forEach((entry, index) => {
                     const entryId = entry.id.split('-')[1];
                     
                     const date = document.getElementById(`entryDate-${entryId}`).value;
                     const time = document.getElementById(`entryTime-${entryId}`).value;
                     const datetime = new Date(`${date}T${time}`);
-                    const message = document.getElementById(`entryMessage-${entryId}`).value;
-            
-                    // Only add if message is not empty
-                    if (!message.trim()) return;
-            
-                    const response = document.getElementById(`entryResponse-${entryId}`).value.trim();
-            
+
                     const logEntry = {
-                        id: generateUUID(),
-                        outbound: {
-                            date: datetime.toISOString(),
-                            channel: document.getElementById(`entryChannel-${entryId}`).value,
-                            engagementType: document.getElementById(`entryEngagementType-${entryId}`).value,
-                            duration: document.getElementById(`entryDuration-${entryId}`).value,
-                            location: document.getElementById(`entryLocation-${entryId}`).value,
-                            message: message,
-                            sentiment: document.getElementById(`entrySentiment-${entryId}`).value
-                        },
-                        inbound: response ? {
-                            date: (() => {
-                                const responseDate = document.getElementById(`entryResponseDate-${entryId}`).value;
-                                const responseTime = document.getElementById(`entryResponseTime-${entryId}`).value;
-                                if (responseDate && responseTime) {
-                                    return new Date(`${responseDate}T${responseTime}`).toISOString();
-                                }
-                                return datetime.toISOString(); // Fallback to outbound date
-                            })(),
-                            message: response,
-                            sentiment: '' // Can be added when editing
-                        } : null
-                    }; // <-- ADDED THIS CLOSING BRACE THAT WAS MISSING
-            
-                    logEntries.push(logEntry);
+                        date: datetime.toISOString(),
+                        channel: document.getElementById(`entryChannel-${entryId}`).value,
+                        engagementType: document.getElementById(`entryEngagementType-${entryId}`).value,
+                        duration: document.getElementById(`entryDuration-${entryId}`).value,
+                        location: document.getElementById(`entryLocation-${entryId}`).value,
+                        message: document.getElementById(`entryMessage-${entryId}`).value,
+                        response: document.getElementById(`entryResponse-${entryId}`).value,
+                        sentiment: document.getElementById(`entrySentiment-${entryId}`).value
+                    };
+
+                    // Only add if message is not empty
+                    if (logEntry.message.trim()) {
+                        logEntries.push(logEntry);
+                    }
                 });
-            
+
                 if (logEntries.length === 0) {
                     alert('Please add at least one communication with a message.');
                     return;
                 }
-            
+
                 if (!contact.communicationLog) {
                     contact.communicationLog = [];
                 }
                 
-                // Add all entries
+                // Add all entries (they'll be sorted by date in the display)
                 logEntries.forEach(entry => {
                     contact.communicationLog.unshift(entry);
                 });
-            
+
                 // Sort communication log by date (most recent first)
-                contact.communicationLog.sort((a, b) => {
-                    const dateA = new Date(a.outbound?.date || a.date);
-                    const dateB = new Date(b.outbound?.date || b.date);
-                    return dateB - dateA;
-                });
-            
+                contact.communicationLog.sort((a, b) => new Date(b.date) - new Date(a.date));
+
                 // Update last message to most recent
-                contact.lastMessage = logEntries[0].outbound.message.substring(0, 100);
-            
+                contact.lastMessage = logEntries[0].message.substring(0, 100);
+
                 // Auto-upgrade priority based on engagement
                 const upgraded = autoUpgradePriority(contact);
                 
@@ -2768,132 +2471,6 @@ Best,
                 } else if (logEntries.length > 1) {
                     alert(`✅ ${logEntries.length} communications logged successfully!`);
                 }
-            },
-
-            editCommunicationReply(logId) {
-            const contactId = document.getElementById('logContactId').value;
-            const contact = this.contacts.find(c => c.id === contactId);
-            if (!contact) return;
-        
-            const log = contact.communicationLog.find(l => l.id === logId);
-            if (!log) return;
-        
-            // Show original message
-            const outbound = log.outbound || { message: log.message };
-            document.getElementById('replyOriginalMessage').textContent = outbound.message;
-        
-            // Pre-fill reply if exists
-            if (log.inbound) {
-                const replyDate = new Date(log.inbound.date);
-                document.getElementById('replyDate').value = replyDate.toISOString().split('T')[0];
-                document.getElementById('replyTime').value = replyDate.toTimeString().slice(0, 5);
-                document.getElementById('replyMessage').value = log.inbound.message;
-                document.getElementById('replySentiment').value = log.inbound.sentiment || '';
-            } else {
-                // Default to current date/time
-                const now = new Date();
-                document.getElementById('replyDate').value = now.toISOString().split('T')[0];
-                document.getElementById('replyTime').value = now.toTimeString().slice(0, 5);
-                document.getElementById('replyMessage').value = '';
-                document.getElementById('replySentiment').value = '';
-            }
-        
-            document.getElementById('replyLogId').value = logId;
-            document.getElementById('replyContactId').value = contactId;
-        
-            this.openModal('replyModal');
-        },
-        
-        saveReply() {
-            const contactId = document.getElementById('replyContactId').value;
-            const logId = document.getElementById('replyLogId').value;
-            const contact = this.contacts.find(c => c.id === contactId);
-            
-            if (!contact) return;
-        
-            const log = contact.communicationLog.find(l => l.id === logId);
-            if (!log) return;
-        
-            const date = document.getElementById('replyDate').value;
-            const time = document.getElementById('replyTime').value;
-            const message = document.getElementById('replyMessage').value.trim();
-        
-            if (!message) {
-                alert('Please enter the reply message');
-                return;
-            }
-        
-            const datetime = new Date(`${date}T${time}`);
-        
-            // Add or update inbound
-            if (!log.inbound) {
-                log.inbound = {};
-            }
-            log.inbound.date = datetime.toISOString();
-            log.inbound.message = message;
-            log.inbound.sentiment = document.getElementById('replySentiment').value;
-        
-            this.saveData();
-            this.closeModal('replyModal');
-            
-            // Refresh the log modal
-            this.openLogModal(contactId);
-            
-            alert('✅ Reply saved!');
-        }
-
-        editCommunicationReply(logId) {
-            const contactId = document.getElementById('logContactId').value;
-            const contact = this.contacts.find(c => c.id === contactId);
-            if (!contact) return;
-        
-            const log = contact.communicationLog.find(l => l.id === logId);
-            if (!log) return;
-        
-            // Show original message
-            const outbound = log.outbound || { message: log.message };
-            document.getElementById('replyOriginalMessage').textContent = outbound.message;
-        
-            // Pre-fill reply if exists
-            if (log.inbound) {
-                const replyDate = new Date(log.inbound.date);
-                document.getElementById('replyDate').value = replyDate.toISOString().split('T')[0];
-                document.getElementById('replyTime').value = replyDate.toTimeString().slice(0, 5);
-                document.getElementById('replyMessage').value = log.inbound.message;
-                document.getElementById('replySentiment').value = log.inbound.sentiment || '';
-            } else {
-                // Default to current date/time
-                const now = new Date();
-                document.getElementById('replyDate').value = now.toISOString().split('T')[0];
-                document.getElementById('replyTime').value = now.toTimeString().slice(0, 5);
-                document.getElementById('replyMessage').value = '';
-                document.getElementById('replySentiment').value = '';
-            }
-        
-            document.getElementById('replyLogId').value = logId;
-            document.getElementById('replyContactId').value = contactId;
-        
-            // Close the log modal first
-            this.closeModal('logModal');
-            
-            // Short delay to ensure modal closes
-            setTimeout(() => {
-                this.openModal('replyModal');
-            }, 100);
-        }
-            
-            deleteCommunicationLog(logId) {
-                if (!confirm('Delete this communication log?')) return;
-                
-                const contactId = document.getElementById('logContactId').value;
-                const contact = this.contacts.find(c => c.id === contactId);
-                if (!contact) return;
-                
-                contact.communicationLog = contact.communicationLog.filter(l => l.id !== logId);
-                
-                this.saveData();
-                this.openLogModal(contactId); // Refresh
-                alert('✅ Communication deleted');
             },
 
             openAddTemplateModal() {
