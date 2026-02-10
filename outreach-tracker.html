@@ -2633,93 +2633,89 @@ Best,
                     alert('✅ Communication updated');
                     return;
                 }
-    
-
-            const contactId = document.getElementById('logContactId').value;
-            const contact = this.contacts.find(c => c.id === contactId);
             
-            if (!contact) return;
-        
-            const entries = document.querySelectorAll('.communication-entry-card');
-            const logEntries = [];
-        
-            entries.forEach((entry, index) => {
-                const entryId = entry.id.split('-')[1];
+                // If not edit mode, process multiple entries
+                const entries = document.querySelectorAll('.communication-entry-card');
+                const logEntries = [];
+            
+                entries.forEach((entry, index) => {
+                    const entryId = entry.id.split('-')[1];
+                    
+                    const date = document.getElementById(`entryDate-${entryId}`).value;
+                    const time = document.getElementById(`entryTime-${entryId}`).value;
+                    const datetime = new Date(`${date}T${time}`);
+                    const message = document.getElementById(`entryMessage-${entryId}`).value;
+            
+                    // Only add if message is not empty
+                    if (!message.trim()) return;
+            
+                    const response = document.getElementById(`entryResponse-${entryId}`).value.trim();
+            
+                    const logEntry = {
+                        id: generateUUID(),
+                        outbound: {
+                            date: datetime.toISOString(),
+                            channel: document.getElementById(`entryChannel-${entryId}`).value,
+                            engagementType: document.getElementById(`entryEngagementType-${entryId}`).value,
+                            duration: document.getElementById(`entryDuration-${entryId}`).value,
+                            location: document.getElementById(`entryLocation-${entryId}`).value,
+                            message: message,
+                            sentiment: document.getElementById(`entrySentiment-${entryId}`).value
+                        },
+                        inbound: response ? {
+                            date: (() => {
+                                const responseDate = document.getElementById(`entryResponseDate-${entryId}`).value;
+                                const responseTime = document.getElementById(`entryResponseTime-${entryId}`).value;
+                                if (responseDate && responseTime) {
+                                    return new Date(`${responseDate}T${responseTime}`).toISOString();
+                                }
+                                return datetime.toISOString(); // Fallback to outbound date
+                            })(),
+                            message: response,
+                            sentiment: '' // Can be added when editing
+                        } : null
+                    }; // <-- ADDED THIS CLOSING BRACE THAT WAS MISSING
+            
+                    logEntries.push(logEntry);
+                });
+            
+                if (logEntries.length === 0) {
+                    alert('Please add at least one communication with a message.');
+                    return;
+                }
+            
+                if (!contact.communicationLog) {
+                    contact.communicationLog = [];
+                }
                 
-                const date = document.getElementById(`entryDate-${entryId}`).value;
-                const time = document.getElementById(`entryTime-${entryId}`).value;
-                const datetime = new Date(`${date}T${time}`);
-                const message = document.getElementById(`entryMessage-${entryId}`).value;
-        
-                // Only add if message is not empty
-                if (!message.trim()) return;
-        
-                const response = document.getElementById(`entryResponse-${entryId}`).value.trim();
-        
-                const logEntry = {
-                    id: generateUUID(),
-                    outbound: {
-                        date: datetime.toISOString(),
-                        channel: document.getElementById(`entryChannel-${entryId}`).value,
-                        engagementType: document.getElementById(`entryEngagementType-${entryId}`).value,
-                        duration: document.getElementById(`entryDuration-${entryId}`).value,
-                        location: document.getElementById(`entryLocation-${entryId}`).value,
-                        message: message,
-                        sentiment: document.getElementById(`entrySentiment-${entryId}`).value
-                    },
-                    inbound: response ? {
-                        date: (() => {
-                            const responseDate = document.getElementById(`entryResponseDate-${entryId}`).value;
-                            const responseTime = document.getElementById(`entryResponseTime-${entryId}`).value;
-                            if (responseDate && responseTime) {
-                                return new Date(`${responseDate}T${responseTime}`).toISOString();
-                            }
-                            return datetime.toISOString(); // Fallback to outbound date
-                        })(),
-                        message: response,
-                        sentiment: '' // Can be added when editing
-                    } : null
-        
-                logEntries.push(logEntry);
-            });
-        
-            if (logEntries.length === 0) {
-                alert('Please add at least one communication with a message.');
-                return;
-            }
-        
-            if (!contact.communicationLog) {
-                contact.communicationLog = [];
-            }
+                // Add all entries
+                logEntries.forEach(entry => {
+                    contact.communicationLog.unshift(entry);
+                });
             
-            // Add all entries
-            logEntries.forEach(entry => {
-                contact.communicationLog.unshift(entry);
-            });
-        
-            // Sort communication log by date (most recent first)
-            contact.communicationLog.sort((a, b) => {
-                const dateA = new Date(a.outbound?.date || a.date);
-                const dateB = new Date(b.outbound?.date || b.date);
-                return dateB - dateA;
-            });
-        
-            // Update last message to most recent
-            contact.lastMessage = logEntries[0].outbound.message.substring(0, 100);
-        
-            // Auto-upgrade priority based on engagement
-            const upgraded = autoUpgradePriority(contact);
+                // Sort communication log by date (most recent first)
+                contact.communicationLog.sort((a, b) => {
+                    const dateA = new Date(a.outbound?.date || a.date);
+                    const dateB = new Date(b.outbound?.date || b.date);
+                    return dateB - dateA;
+                });
             
-            this.saveData();
-            this.renderContacts();
-            this.closeModal('logModal');
+                // Update last message to most recent
+                contact.lastMessage = logEntries[0].outbound.message.substring(0, 100);
             
-            if (upgraded) {
-                alert(`🎉 Priority automatically upgraded to ${contact.priority} due to high engagement!`);
-            } else if (logEntries.length > 1) {
-                alert(`✅ ${logEntries.length} communications logged successfully!`);
-            }
-        },
+                // Auto-upgrade priority based on engagement
+                const upgraded = autoUpgradePriority(contact);
+                
+                this.saveData();
+                this.renderContacts();
+                this.closeModal('logModal');
+                
+                if (upgraded) {
+                    alert(`🎉 Priority automatically upgraded to ${contact.priority} due to high engagement!`);
+                } else if (logEntries.length > 1) {
+                    alert(`✅ ${logEntries.length} communications logged successfully!`);
+                }
+            },
 
             editCommunicationReply(logId) {
             const contactId = document.getElementById('logContactId').value;
