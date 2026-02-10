@@ -1130,52 +1130,6 @@
         </div>
 
         <!-- Edit Reply Modal -->
-        <div class="modal" id="replyModal">
-            <div class="modal-content" style="max-width: 600px;">
-                <div class="modal-header">
-                    <h2>Add/Edit Reply</h2>
-                </div>
-                <div class="modal-body">
-                    <div style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <strong>Your message:</strong>
-                        <p id="replyOriginalMessage" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);"></p>
-                    </div>
-        
-                    <div class="form-group">
-                        <label>Reply Date & Time</label>
-                        <div class="time-input-group">
-                            <input type="date" id="replyDate">
-                            <input type="time" id="replyTime">
-                        </div>
-                    </div>
-        
-                    <div class="form-group">
-                        <label>Their Reply</label>
-                        <textarea id="replyMessage" rows="5" placeholder="What did they say?"></textarea>
-                    </div>
-        
-                    <div class="form-group">
-                        <label>Reply Sentiment</label>
-                        <select id="replySentiment">
-                            <option value="">Select sentiment...</option>
-                            <option value="Very positive">Very positive</option>
-                            <option value="Positive">Positive</option>
-                            <option value="Neutral">Neutral</option>
-                            <option value="Needs follow-up">Needs follow-up</option>
-                            <option value="Not interested">Not interested</option>
-                        </select>
-                    </div>
-        
-                    <input type="hidden" id="replyLogId">
-                    <input type="hidden" id="replyContactId">
-                </div>
-                <div class="modal-footer">
-                    <button class="btn" onclick="app.closeModal('replyModal')">Cancel</button>
-                    <button class="btn btn-primary" onclick="app.saveReply()">Save Reply</button>
-                </div>
-            </div>
-        </div>
-
         <!-- Insights Tab -->
         <div class="tab-content" id="insights">
             <h2 style="font-family: 'Crimson Pro', serif; font-size: 1.8rem; font-weight: 400; margin-bottom: 2rem; color: var(--core-green);">Strategic Insights</h2>
@@ -2435,19 +2389,15 @@ Best,
                                                 </div>
                                             ` : ''}
                                             <div style="margin-top: 0.5rem; display: flex; gap: 0.75rem;">
-                                                <button class="btn reply-btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" data-log-id="${log.id}">
-                                                    ${inbound ? '✏️ Edit Reply' : '➕ Add Reply'}
+                                                <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" 
+                                                        onclick="app.editCommunicationLog('${log.id}'); return false;">
+                                                    ✏️ Edit
                                                 </button>
-                                                ${(outbound.message && outbound.message.length > 80) || (inbound && inbound.message && inbound.message.length > 80) ? `
-                                                    <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="this.nextElementSibling.classList.toggle('hidden'); return false;">
-                                                        📖 View Full
-                                                    </button>
-                                                    <div class="timeline-expanded-content hidden">
-                                                        <strong>Your message:</strong> ${outbound.message || 'N/A'}<br>
-                                                        ${inbound && inbound.message ? `<br><strong>Their reply:</strong> ${inbound.message}<br>` : ''}
-                                                        ${outbound.sentiment ? `<br><strong>Your sentiment:</strong> <span class="badge">${outbound.sentiment}</span><br>` : ''}
-                                                        ${inbound && inbound.sentiment ? `<br><strong>Their sentiment:</strong> <span class="badge">${inbound.sentiment}</span>` : ''}
-                                                    </div>
+                                                <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; background: rgba(196, 30, 58, 0.1); color: var(--priority-hot);" 
+                                                        onclick="app.deleteCommunicationLog('${log.id}'); return false;">
+                                                    🗑️ Delete
+                                                </button>
+                                            </div>
                                                 ` : ''}
                                             </div>
                                         </div>
@@ -2549,6 +2499,14 @@ Best,
                             <label>Response Received (optional)</label>
                             <textarea id="entryResponse-${entryId}" placeholder="How did they respond?" rows="2"></textarea>
                         </div>
+                        
+                        <div class="form-group" id="responseDetailsGroup-${entryId}" style="display: none;">
+                            <label>Response Date & Time</label>
+                            <div class="time-input-group">
+                                <input type="date" id="entryResponseDate-${entryId}">
+                                <input type="time" id="entryResponseTime-${entryId}">
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label>Sentiment / Insight</label>
@@ -2566,6 +2524,24 @@ Best,
 
                 container.insertAdjacentHTML('beforeend', entryHTML);
                 this.updateSaveButtonText();
+
+                // Show response date/time when user enters a response
+                document.getElementById(`entryResponse-${entryId}`).addEventListener('input', function() {
+                    const responseGroup = document.getElementById(`responseDetailsGroup-${entryId}`);
+                    if (this.value.trim()) {
+                        responseGroup.style.display = 'block';
+                        // Auto-fill with current date/time if empty
+                        const dateInput = document.getElementById(`entryResponseDate-${entryId}`);
+                        const timeInput = document.getElementById(`entryResponseTime-${entryId}`);
+                        if (!dateInput.value) {
+                            const now = new Date();
+                            dateInput.value = now.toISOString().split('T')[0];
+                            timeInput.value = now.toTimeString().slice(0, 5);
+                        }
+                    } else {
+                        responseGroup.style.display = 'none';
+                    }
+                });
             },
 
             removeCommunicationEntry(entryId) {
@@ -2585,6 +2561,80 @@ Best,
             },
 
             saveAllLogs() {
+                const contactId = document.getElementById('logContactId').value;
+                const contact = this.contacts.find(c => c.id === contactId);
+                
+                if (!contact) return;
+                
+                // Check if this is an edit
+                const editLogId = document.getElementById('logContactId').getAttribute('data-edit-log-id');
+                
+                if (editLogId) {
+                    // EDIT MODE - update existing log
+                    const entries = document.querySelectorAll('.communication-entry-card');
+                    if (entries.length !== 1) {
+                        alert('Edit mode should have exactly one entry');
+                        return;
+                    }
+                    
+                    const entry = entries[0];
+                    const entryId = entry.id.split('-')[1];
+                    
+                    const date = document.getElementById(`entryDate-${entryId}`).value;
+                    const time = document.getElementById(`entryTime-${entryId}`).value;
+                    const datetime = new Date(`${date}T${time}`);
+                    const message = document.getElementById(`entryMessage-${entryId}`).value;
+                    
+                    if (!message.trim()) {
+                        alert('Message cannot be empty');
+                        return;
+                    }
+                    
+                    const response = document.getElementById(`entryResponse-${entryId}`).value.trim();
+                    
+                    const logEntry = {
+                        id: editLogId,
+                        outbound: {
+                            date: datetime.toISOString(),
+                            channel: document.getElementById(`entryChannel-${entryId}`).value,
+                            engagementType: document.getElementById(`entryEngagementType-${entryId}`).value,
+                            duration: document.getElementById(`entryDuration-${entryId}`).value,
+                            location: document.getElementById(`entryLocation-${entryId}`).value,
+                            message: message,
+                            sentiment: document.getElementById(`entrySentiment-${entryId}`).value
+                        },
+                        inbound: response ? {
+                            date: (() => {
+                                const responseDate = document.getElementById(`entryResponseDate-${entryId}`).value;
+                                const responseTime = document.getElementById(`entryResponseTime-${entryId}`).value;
+                                if (responseDate && responseTime) {
+                                    return new Date(`${responseDate}T${responseTime}`).toISOString();
+                                }
+                                return datetime.toISOString();
+                            })(),
+                            message: response,
+                            sentiment: ''
+                        } : null
+                    };
+                    
+                    // Replace existing log
+                    const logIndex = contact.communicationLog.findIndex(l => l.id === editLogId);
+                    if (logIndex >= 0) {
+                        contact.communicationLog[logIndex] = logEntry;
+                    }
+                    
+                    // Clear edit mode
+                    document.getElementById('logContactId').removeAttribute('data-edit-log-id');
+                    document.getElementById('saveLogButtonText').textContent = 'Save Communication';
+                    
+                    this.saveData();
+                    this.renderContacts();
+                    this.closeModal('logModal');
+                    alert('✅ Communication updated');
+                    return;
+                }
+    
+
             const contactId = document.getElementById('logContactId').value;
             const contact = this.contacts.find(c => c.id === contactId);
             
@@ -2618,11 +2668,17 @@ Best,
                         sentiment: document.getElementById(`entrySentiment-${entryId}`).value
                     },
                     inbound: response ? {
-                        date: datetime.toISOString(), // Same date initially, can be edited later
+                        date: (() => {
+                            const responseDate = document.getElementById(`entryResponseDate-${entryId}`).value;
+                            const responseTime = document.getElementById(`entryResponseTime-${entryId}`).value;
+                            if (responseDate && responseTime) {
+                                return new Date(`${responseDate}T${responseTime}`).toISOString();
+                            }
+                            return datetime.toISOString(); // Fallback to outbound date
+                        })(),
                         message: response,
                         sentiment: '' // Can be added when editing
                     } : null
-                };
         
                 logEntries.push(logEntry);
             });
@@ -2735,6 +2791,77 @@ Best,
             
             alert('✅ Reply saved!');
         },
+
+        editCommunicationLog(logId) {
+                const contactId = document.getElementById('logContactId').value;
+                const contact = this.contacts.find(c => c.id === contactId);
+                if (!contact) return;
+                
+                const log = contact.communicationLog.find(l => l.id === logId);
+                if (!log) return;
+                
+                // Close current modal
+                this.closeModal('logModal');
+                
+                // Open edit modal with pre-filled data
+                const outbound = log.outbound || { date: log.date, message: log.message };
+                const inbound = log.inbound;
+                
+                // Reset and add single entry
+                this.communicationEntryCount = 0;
+                document.getElementById('communicationEntries').innerHTML = '';
+                this.addCommunicationEntry(outbound.channel || 'Email');
+                
+                // Pre-fill form
+                const entryId = this.communicationEntryCount;
+                const logDate = new Date(outbound.date);
+                
+                document.getElementById(`entryDate-${entryId}`).value = logDate.toISOString().split('T')[0];
+                document.getElementById(`entryTime-${entryId}`).value = logDate.toTimeString().slice(0, 5);
+                document.getElementById(`entryChannel-${entryId}`).value = outbound.channel || 'Email';
+                document.getElementById(`entryEngagementType-${entryId}`).value = outbound.engagementType || 'Email exchange';
+                document.getElementById(`entryDuration-${entryId}`).value = outbound.duration || '';
+                document.getElementById(`entryLocation-${entryId}`).value = outbound.location || '';
+                document.getElementById(`entryMessage-${entryId}`).value = outbound.message || '';
+                document.getElementById(`entrySentiment-${entryId}`).value = outbound.sentiment || '';
+                
+                // Pre-fill response if exists
+                if (inbound) {
+                    document.getElementById(`entryResponse-${entryId}`).value = inbound.message || '';
+                    
+                    // Trigger response date/time fields to show
+                    const responseGroup = document.getElementById(`responseDetailsGroup-${entryId}`);
+                    if (responseGroup) {
+                        responseGroup.style.display = 'block';
+                        const replyDate = new Date(inbound.date);
+                        document.getElementById(`entryResponseDate-${entryId}`).value = replyDate.toISOString().split('T')[0];
+                        document.getElementById(`entryResponseTime-${entryId}`).value = replyDate.toTimeString().slice(0, 5);
+                    }
+                }
+                
+                // Store log ID for update
+                document.getElementById('logContactId').value = contactId;
+                document.getElementById('logContactId').setAttribute('data-edit-log-id', logId);
+                
+                // Update save button text
+                document.getElementById('saveLogButtonText').textContent = 'Update Communication';
+                
+                this.openModal('logModal');
+            },
+            
+            deleteCommunicationLog(logId) {
+                if (!confirm('Delete this communication log?')) return;
+                
+                const contactId = document.getElementById('logContactId').value;
+                const contact = this.contacts.find(c => c.id === contactId);
+                if (!contact) return;
+                
+                contact.communicationLog = contact.communicationLog.filter(l => l.id !== logId);
+                
+                this.saveData();
+                this.openLogModal(contactId); // Refresh
+                alert('✅ Communication deleted');
+            },
 
             openAddTemplateModal() {
                 document.getElementById('templateName').value = '';
