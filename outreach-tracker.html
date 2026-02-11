@@ -923,11 +923,18 @@
                 </div>
                 <div class="action-buttons">
                     <button class="btn btn-primary" onclick="app.openAddContactModal()">+ Add Contact</button>
-                    <button class="btn" onclick="app.exportCSV()">↓ Export CSV</button>
+                    <div class="btn-group" style="display: flex; gap: 0.5rem;">
+                        <button class="btn" onclick="app.exportCSV('contacts')">↓ Export Contacts</button>
+                        <button class="btn" onclick="app.exportCSV('learnings')">↓ Export Learnings</button>
+                    </div>
                     <input type="file" id="csvImport" accept=".csv" style="display: none;" onchange="app.importCSV(event)">
-                    <button class="btn" onclick="document.getElementById('csvImport').click()">↑ Import CSV</button>
+                    <input type="file" id="learningsImport" accept=".csv" style="display: none;" onchange="app.importLearningsCSV(event)">
+                    <div class="btn-group" style="display: flex; gap: 0.5rem;">
+                        <button class="btn" onclick="document.getElementById('csvImport').click()">↑ Import Contacts</button>
+                        <button class="btn" onclick="document.getElementById('learningsImport').click()">↑ Import Learnings</button>
+                    </div>
                 </div>
-            </div>
+            
 
             <div class="filter-section">
                 <div class="filter-group">
@@ -3506,37 +3513,120 @@ Best regards,
                 });
             },
 
-            exportCSV() {
-                const csvData = this.contacts.map(contact => ({
-                    Company: contact.company,
-                    Name: contact.name,
-                    'Job Title': contact.jobTitle || '',
-                    'Industry Focus': contact.industryFocus || '',
-                    'Country': contact.country || '',
-                    'Role/Tier': contact.tier,
-                    'Connection Method': contact.connectionMethod,
-                    'Connection Status': contact.connectionStatus,
-                    Priority: contact.priority,
-                    'Opportunity Type': contact.opportunityType,
-                    'Funnel Stage': contact.funnelStage,
-                    'Last Message': contact.lastMessage || '',
-                    'Next Action Date': contact.nextActionDate || '',
-                    Tags: contact.tags ? contact.tags.join('; ') : '',
-                    Notes: contact.notes || '',
-                    'Communication Log': JSON.stringify(contact.communicationLog || [])
-                }));
-
-                const csv = Papa.unparse(csvData);
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                const url = URL.createObjectURL(blob);
-                
-                link.setAttribute('href', url);
-                link.setAttribute('download', `outreach-contacts-${new Date().toISOString().split('T')[0]}.csv`);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+            exportCSV(type = 'contacts') {
+                if (type === 'contacts') {
+                    const csvData = this.contacts.map(contact => ({
+                        Company: contact.company,
+                        Name: contact.name,
+                        'Job Title': contact.jobTitle || '',
+                        'Industry Focus': contact.industryFocus || '',
+                        'Country': contact.country || '',
+                        'Role/Tier': contact.tier,
+                        'Connection Method': contact.connectionMethod,
+                        'Connection Status': contact.connectionStatus,
+                        Priority: contact.priority,
+                        'Opportunity Type': contact.opportunityType,
+                        'Funnel Stage': contact.funnelStage,
+                        'Last Message': contact.lastMessage || '',
+                        'Next Action Date': contact.nextActionDate || '',
+                        Tags: contact.tags ? contact.tags.join('; ') : '',
+                        Notes: contact.notes || '',
+                        'Communication Log': JSON.stringify(contact.communicationLog || [])
+                    }));
+            
+                    const csv = Papa.unparse(csvData);
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', `outreach-contacts-${new Date().toISOString().split('T')[0]}.csv`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } 
+                else if (type === 'learnings') {
+                    // Export all learnings with complete data
+                    const csvData = this.learnings.map(learning => ({
+                        'Company': learning.company || '',
+                        'Week Start': learning.weekStart || '',
+                        'Takeaway': learning.takeaway || '',
+                        'Signal Strength': learning.signal || '',
+                        'Next Move': learning.nextMove || '',
+                        'Follow-up Date': learning.followUpDate || '',
+                        'Contact ID': learning.contactId || '',
+                        'Deep Dive - Strategic Thesis': learning.deepDive?.strategicThesis || '',
+                        'Deep Dive - P&L Ownership': learning.deepDive?.plOwnership || '',
+                        'Deep Dive - Innovation Ownership': learning.deepDive?.innovationOwnership || '',
+                        'Deep Dive - Decision Making': learning.deepDive?.decisionMaking || '',
+                        'Deep Dive - Evidence': learning.deepDive?.evidence || '',
+                        'Deep Dive - Positioning Insight': learning.deepDive?.positioningInsight || '',
+                        'Created At': learning.createdAt || ''
+                    }));
+            
+                    // Export weekly goals
+                    const weeklyGoalsData = [{
+                        'Type': 'Weekly Goals',
+                        'Current Week': this.weeklyGoals.currentWeek || '',
+                        'Goal 1 Label': this.weeklyGoals.goal1.label,
+                        'Goal 1 Target': this.weeklyGoals.goal1.target,
+                        'Goal 1 Current': this.weeklyGoals.goal1.current,
+                        'Goal 2 Label': this.weeklyGoals.goal2.label,
+                        'Goal 2 Target': this.weeklyGoals.goal2.target,
+                        'Goal 2 Current': this.weeklyGoals.goal2.current,
+                        'Goal 3 Label': this.weeklyGoals.goal3.label,
+                        'Goal 3 Target': this.weeklyGoals.goal3.target,
+                        'Goal 3 Current': this.weeklyGoals.goal3.current,
+                        'Goal 4 Label': this.weeklyGoals.goal4.label,
+                        'Goal 4 Target': this.weeklyGoals.goal4.target,
+                        'Goal 4 Current': this.weeklyGoals.goal4.current,
+                        'Goal 5 Label': this.weeklyGoals.goal5.label,
+                        'Goal 5 Target': this.weeklyGoals.goal5.target,
+                        'Goal 5 Current': this.weeklyGoals.goal5.current
+                    }];
+            
+                    // Export monthly goals
+                    const monthlyGoalsData = [{
+                        'Type': 'Monthly Goals',
+                        'Goal 1 Label': this.monthlyGoals.goal1.label,
+                        'Goal 1 Target': this.monthlyGoals.goal1.target,
+                        'Goal 1 Current': this.monthlyGoals.goal1.current,
+                        'Goal 2 Label': this.monthlyGoals.goal2.label,
+                        'Goal 2 Target': this.monthlyGoals.goal2.target,
+                        'Goal 2 Current': this.monthlyGoals.goal2.current,
+                        'Goal 3 Label': this.monthlyGoals.goal3.label,
+                        'Goal 3 Target': this.monthlyGoals.goal3.target,
+                        'Goal 3 Current': this.monthlyGoals.goal3.current,
+                        'Goal 4 Label': this.monthlyGoals.goal4.label,
+                        'Goal 4 Target': this.monthlyGoals.goal4.target,
+                        'Goal 4 Current': this.monthlyGoals.goal4.current,
+                        'Goal 5 Label': this.monthlyGoals.goal5.label,
+                        'Goal 5 Target': this.monthlyGoals.goal5.target,
+                        'Goal 5 Current': this.monthlyGoals.goal5.current
+                    }];
+            
+                    // Combine all data with blank rows between sections
+                    const allData = [
+                        ...csvData,
+                        {}, // blank row
+                        ...weeklyGoalsData,
+                        {}, // blank row
+                        ...monthlyGoalsData
+                    ];
+            
+                    const csv = Papa.unparse(allData);
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', `outreach-learnings-${new Date().toISOString().split('T')[0]}.csv`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
             },
 
             importCSV(event) {
@@ -3624,6 +3714,149 @@ Best regards,
                 });
 
                 // Reset the input so the same file can be imported again
+                event.target.value = '';
+            },
+
+            importLearningsCSV(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+            
+                Papa.parse(file, {
+                    header: true,
+                    complete: (results) => {
+                        let importedLearnings = 0;
+                        let importedWeeklyGoals = false;
+                        let importedMonthlyGoals = false;
+                        
+                        // First, look for goals data
+                        results.data.forEach(row => {
+                            if (row.Type === 'Weekly Goals' && row['Goal 1 Label']) {
+                                // Import weekly goals
+                                this.weeklyGoals.currentWeek = row['Current Week'] || this.getWeekStart().toISOString().split('T')[0];
+                                this.weeklyGoals.goal1 = { 
+                                    label: row['Goal 1 Label'], 
+                                    target: parseInt(row['Goal 1 Target']) || 8, 
+                                    current: parseInt(row['Goal 1 Current']) || 0 
+                                };
+                                this.weeklyGoals.goal2 = { 
+                                    label: row['Goal 2 Label'], 
+                                    target: parseInt(row['Goal 2 Target']) || 2, 
+                                    current: parseInt(row['Goal 2 Current']) || 0 
+                                };
+                                this.weeklyGoals.goal3 = { 
+                                    label: row['Goal 3 Label'], 
+                                    target: parseInt(row['Goal 3 Target']) || 1, 
+                                    current: parseInt(row['Goal 3 Current']) || 0 
+                                };
+                                this.weeklyGoals.goal4 = { 
+                                    label: row['Goal 4 Label'], 
+                                    target: parseInt(row['Goal 4 Target']) || 0, 
+                                    current: parseInt(row['Goal 4 Current']) || 0 
+                                };
+                                this.weeklyGoals.goal5 = { 
+                                    label: row['Goal 5 Label'], 
+                                    target: parseInt(row['Goal 5 Target']) || 0, 
+                                    current: parseInt(row['Goal 5 Current']) || 0 
+                                };
+                                importedWeeklyGoals = true;
+                            }
+                            
+                            if (row.Type === 'Monthly Goals' && row['Goal 1 Label']) {
+                                // Import monthly goals
+                                this.monthlyGoals.goal1 = { 
+                                    label: row['Goal 1 Label'], 
+                                    target: parseInt(row['Goal 1 Target']) || 30, 
+                                    current: parseInt(row['Goal 1 Current']) || 0 
+                                };
+                                this.monthlyGoals.goal2 = { 
+                                    label: row['Goal 2 Label'], 
+                                    target: parseInt(row['Goal 2 Target']) || 6, 
+                                    current: parseInt(row['Goal 2 Current']) || 0 
+                                };
+                                this.monthlyGoals.goal3 = { 
+                                    label: row['Goal 3 Label'], 
+                                    target: parseInt(row['Goal 3 Target']) || 2, 
+                                    current: parseInt(row['Goal 3 Current']) || 0 
+                                };
+                                this.monthlyGoals.goal4 = { 
+                                    label: row['Goal 4 Label'], 
+                                    target: parseInt(row['Goal 4 Target']) || 1, 
+                                    current: parseInt(row['Goal 4 Current']) || 0 
+                                };
+                                this.monthlyGoals.goal5 = { 
+                                    label: row['Goal 5 Label'], 
+                                    target: parseInt(row['Goal 5 Target']) || 1, 
+                                    current: parseInt(row['Goal 5 Current']) || 0 
+                                };
+                                importedMonthlyGoals = true;
+                            }
+                        });
+                        
+                        // Then import learnings (skip rows that are goals or blank)
+                        results.data.forEach(row => {
+                            if (row.Company && row['Week Start'] && row.Takeaway) {
+                                const learningData = {
+                                    id: generateUUID(),
+                                    company: row.Company,
+                                    weekStart: row['Week Start'],
+                                    takeaway: row.Takeaway,
+                                    signal: row['Signal Strength'] || 'Moderate',
+                                    nextMove: row['Next Move'] || 'Keep pushing',
+                                    followUpDate: row['Follow-up Date'] || '',
+                                    contactId: row['Contact ID'] || '',
+                                    createdAt: row['Created At'] || new Date().toISOString()
+                                };
+                                
+                                // Check if deep dive data exists
+                                if (row['Deep Dive - Strategic Thesis']) {
+                                    learningData.deepDive = {
+                                        strategicThesis: row['Deep Dive - Strategic Thesis'],
+                                        plOwnership: row['Deep Dive - P&L Ownership'] || '',
+                                        innovationOwnership: row['Deep Dive - Innovation Ownership'] || '',
+                                        decisionMaking: row['Deep Dive - Decision Making'] || '',
+                                        evidence: row['Deep Dive - Evidence'] || '',
+                                        positioningInsight: row['Deep Dive - Positioning Insight'] || ''
+                                    };
+                                }
+                                
+                                // Check if learning already exists
+                                const existingIndex = this.learnings.findIndex(l => 
+                                    l.company === learningData.company && l.weekStart === learningData.weekStart
+                                );
+                                
+                                if (existingIndex >= 0) {
+                                    // Preserve existing ID when updating
+                                    learningData.id = this.learnings[existingIndex].id;
+                                    this.learnings[existingIndex] = learningData;
+                                } else {
+                                    this.learnings.push(learningData);
+                                }
+                                importedLearnings++;
+                            }
+                        });
+            
+                        this.saveData();
+                        
+                        // Refresh the learnings tab
+                        if (document.getElementById('learnings').classList.contains('active')) {
+                            this.renderLearnings();
+                        }
+                        
+                        let message = '';
+                        if (importedLearnings > 0) message += `Imported ${importedLearnings} learning(s). `;
+                        if (importedWeeklyGoals) message += `Imported weekly goals. `;
+                        if (importedMonthlyGoals) message += `Imported monthly goals. `;
+                        if (message === '') message = 'No valid learnings data found.';
+                        
+                        alert(message);
+                    },
+                    error: (error) => {
+                        console.error('CSV parse error:', error);
+                        alert('Error reading CSV file. Please check the file format.');
+                    }
+                });
+            
+                // Reset the input
                 event.target.value = '';
             },
 
