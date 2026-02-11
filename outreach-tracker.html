@@ -3700,12 +3700,38 @@ Best,
                 this.renderLearnings();
             },
 
-            renderLearnings() {
-                this.renderWeeklyGoals();
-                this.renderMonthlyGoals();
-                this.renderThisWeekLearnings();
-                this.renderPatternDetection();
-                this.renderPastLearnings();
+            openWeeklyLearningPrompt() {
+                // Switch to learnings tab
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.querySelector('[data-tab="learnings"]').classList.add('active');
+                document.getElementById('learnings').classList.add('active');
+                
+                this.renderLearnings();
+                
+                // Now actually open the learning modal for the first company with activity this week
+                const weekStart = this.getWeekStart();
+                const weekStartStr = weekStart.toISOString().split('T')[0];
+                
+                // Get companies with activity this week
+                const companiesWithActivity = this.getCompaniesWithActivityThisWeek();
+                
+                if (companiesWithActivity.length > 0) {
+                    // Open modal for the first company that doesn't have learnings yet, or the first one if all have learnings
+                    const companiesWithoutLearnings = companiesWithActivity.filter(contact => {
+                        return !this.learnings.some(l => 
+                            l.company === contact.company && l.weekStart === weekStartStr
+                        );
+                    });
+                    
+                    const targetCompany = companiesWithoutLearnings.length > 0 
+                        ? companiesWithoutLearnings[0].company 
+                        : companiesWithActivity[0].company;
+                    
+                    this.openLearningModalForCompany(targetCompany, weekStartStr);
+                } else {
+                    alert('No activity logged this week yet. Add communications first to log learnings.');
+                }
             },
 
             renderWeeklyGoals() {
