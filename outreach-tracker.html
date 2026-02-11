@@ -4218,7 +4218,7 @@ Best regards,
                 }
             },
 
-            // REPLACE renderThisWeekLearnings() entirely
+            // REPLACE renderThisWeekLearnings() entirely (around line 1600)
             renderThisWeekLearnings() {
                 const container = document.getElementById('thisWeekLearnings');
                 const weekStart = this.getWeekStart();
@@ -4274,8 +4274,7 @@ Best regards,
                                     ${companies.reduce((sum, c) => sum + c.people.length, 0)} people from ${companies.length} companies with activity
                                 </div>
                                 <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">
-                                    ${learningsThisWeek.length} learning${learningsThisWeek.length !== 1 ? 's' : ''} logged | 
-                                    ${companies.length - learningsThisWeek.length} companies pending
+                                    ${learningsThisWeek.length} learnings logged | ${companies.length - learningsThisWeek.length} companies pending
                                 </div>
                             </div>
                         </div>
@@ -4406,288 +4405,82 @@ Best regards,
             `;
         },
 
-            // REPLACE renderPastLearnings() with this visual calendar view
-                renderPastLearnings(searchTerm = '') {
-                    const container = document.getElementById('pastLearnings');
-                    
-                    // Get all learnings except current week
-                    let filteredLearnings = this.learnings.filter(l => {
-                        const weekStart = this.getWeekStart();
-                        return l.weekStart !== weekStart.toISOString().split('T')[0];
-                    });
-                    
-                    // Apply search if any
-                    if (searchTerm) {
-                        const term = searchTerm.toLowerCase();
-                        filteredLearnings = filteredLearnings.filter(l => 
-                            l.company.toLowerCase().includes(term) ||
-                            l.signal.toLowerCase().includes(term) ||
-                            l.nextMove.toLowerCase().includes(term) ||
-                            l.takeaway.toLowerCase().includes(term)
-                        );
+            // REPLACE renderPastLearnings()
+            renderPastLearnings(searchTerm = '') {
+                const container = document.getElementById('pastLearnings');
+                
+                let filteredLearnings = this.learnings.filter(l => {
+                    const weekStart = this.getWeekStart();
+                    return l.weekStart !== weekStart.toISOString().split('T')[0];
+                });
+            
+                if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    filteredLearnings = filteredLearnings.filter(l => 
+                        l.company.toLowerCase().includes(term) ||
+                        l.signal.toLowerCase().includes(term) ||
+                        l.nextMove.toLowerCase().includes(term) ||
+                        l.takeaway.toLowerCase().includes(term)
+                    );
+                }
+            
+                if (filteredLearnings.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><p>No past learnings yet.</p></div>';
+                    return;
+                }
+            
+                // Group by week
+                const groupedByWeek = {};
+                filteredLearnings.forEach(learning => {
+                    if (!groupedByWeek[learning.weekStart]) {
+                        groupedByWeek[learning.weekStart] = [];
                     }
-                    
-                    if (filteredLearnings.length === 0) {
-                        container.innerHTML = '<div class="empty-state"><p>No past learnings yet.</p></div>';
-                        return;
-                    }
-                    
-                    // Group by year and month
-                    const learningsByMonth = {};
-                    filteredLearnings.forEach(learning => {
-                        const date = new Date(learning.weekStart);
-                        const yearMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-                        const monthName = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-                        
-                        if (!learningsByMonth[yearMonth]) {
-                            learningsByMonth[yearMonth] = {
-                                monthName: monthName,
-                                year: date.getFullYear(),
-                                month: date.getMonth(),
-                                learnings: []
-                            };
-                        }
-                        learningsByMonth[yearMonth].learnings.push(learning);
-                    });
-                    
-                    // Sort months descending (newest first)
-                    const sortedMonths = Object.keys(learningsByMonth).sort().reverse();
-                    
-                    // Generate color based on signal strength and next move
-                    const getCompanyColor = (learning) => {
-                        if (learning.signal === 'Strong') return '#2d5016'; // core green
-                        if (learning.signal === 'Moderate') return '#f4a460'; // medium orange
-                        if (learning.signal === 'Weak') return '#c41e3a'; // hot red
-                        return '#666666'; // default gray
-                    };
-                    
-                    const getNextMoveIcon = (nextMove) => {
-                        const icons = {
-                            'Keep pushing': '⚡',
-                            'Reroute': '🔄',
-                            'Wait': '⏳',
-                            'Drop it': '🛑'
-                        };
-                        return icons[nextMove] || '•';
-                    };
-                    
-                    let html = `
-                        <div style="margin-top: 1rem;">
-                            <!-- Year/Month navigation tabs -->
-                            <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.5rem;">
-                                ${sortedMonths.map((yearMonth, index) => {
-                                    const isActive = index === 0 ? 'active' : '';
+                    groupedByWeek[learning.weekStart].push(learning);
+                });
+            
+                const sortedWeeks = Object.keys(groupedByWeek).sort().reverse();
+            
+                container.innerHTML = sortedWeeks.map(weekStart => {
+                    const weekEnd = new Date(weekStart);
+                    weekEnd.setDate(weekEnd.getDate() + 6);
+                    const weekLabel = `${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+                    const learnings = groupedByWeek[weekStart];
+            
+                    return `
+                        <div style="margin-bottom: 2rem;">
+                            <h4 style="font-family: 'Crimson Pro', serif; font-size: 1.1rem; margin-bottom: 1rem; color: var(--text-secondary);">
+                                Week of ${weekLabel} (${learnings.length} learning${learnings.length !== 1 ? 's' : ''})
+                            </h4>
+                            <div style="display: grid; gap: 1rem;">
+                                ${learnings.map(learning => {
+                                    const signalColor = learning.signal === 'Strong' ? 'low' : learning.signal === 'Moderate' ? 'medium' : 'hot';
                                     return `
-                                        <button class="nav-tab month-tab ${isActive}" 
-                                                data-month="${yearMonth}"
-                                                style="flex-shrink: 0; padding: 0.5rem 1rem; font-size: 0.85rem;">
-                                            ${learningsByMonth[yearMonth].monthName}
-                                        </button>
+                                        <div class="chart-card" style="cursor: pointer;" onclick="app.viewLearningDetail('${learning.id}')">
+                                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                                <div>
+                                                    <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">${learning.company}</h4>
+                                                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                                        <span class="badge priority-${signalColor}">
+                                                            ${learning.signal === 'Strong' ? '🟢' : learning.signal === 'Moderate' ? '🟡' : '🔴'} ${learning.signal}
+                                                        </span>
+                                                        <span class="badge">${learning.nextMove}</span>
+                                                        <span class="badge" style="background: var(--bg-secondary);">
+                                                            Follow-up: ${new Date(learning.followUpDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                                                ${learning.takeaway.substring(0, 150)}${learning.takeaway.length > 150 ? '...' : ''}
+                                            </div>
+                                        </div>
                                     `;
                                 }).join('')}
                             </div>
+                        </div>
                     `;
-                    
-                    // Create a calendar grid for each month
-                    sortedMonths.forEach((yearMonth, monthIndex) => {
-                        const monthData = learningsByMonth[yearMonth];
-                        const displayStyle = monthIndex === 0 ? 'block' : 'none';
-                        
-                        // Group learnings by week for this month
-                        const weeksInMonth = {};
-                        monthData.learnings.forEach(learning => {
-                            if (!weeksInMonth[learning.weekStart]) {
-                                weeksInMonth[learning.weekStart] = [];
-                            }
-                            weeksInMonth[learning.weekStart].push(learning);
-                        });
-
-                        // ✅ ADD OPTIONAL ENHANCEMENT HERE - Monthly Stats Summary
-                        const strongCount = monthData.learnings.filter(l => l.signal === 'Strong').length;
-                        const moderateCount = monthData.learnings.filter(l => l.signal === 'Moderate').length;
-                        const weakCount = monthData.learnings.filter(l => l.signal === 'Weak').length;
-                        
-                        const monthlyStatsHTML = `
-                            <div style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem; padding: 1rem; background: var(--bg-primary); border-radius: 8px; border-left: 4px solid var(--core-green);">
-                                <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
-                                    <div>
-                                        <span style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Strong</span>
-                                        <div style="display: flex; align-items: baseline; gap: 0.25rem;">
-                                            <span style="font-size: 1.5rem; font-weight: 600; color: #2d5016;">${strongCount}</span>
-                                            <span style="font-size: 0.85rem; color: var(--text-secondary);">companies</span>
-                                        </div>
-                                    </div>
-                                    <div style="width: 1px; height: 30px; background: var(--border-color);"></div>
-                                    <div>
-                                        <span style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Moderate</span>
-                                        <div style="display: flex; align-items: baseline; gap: 0.25rem;">
-                                            <span style="font-size: 1.5rem; font-weight: 600; color: #f4a460;">${moderateCount}</span>
-                                            <span style="font-size: 0.85rem; color: var(--text-secondary);">companies</span>
-                                        </div>
-                                    </div>
-                                    <div style="width: 1px; height: 30px; background: var(--border-color);"></div>
-                                    <div>
-                                        <span style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Weak</span>
-                                        <div style="display: flex; align-items: baseline; gap: 0.25rem;">
-                                            <span style="font-size: 1.5rem; font-weight: 600; color: #c41e3a;">${weakCount}</span>
-                                            <span style="font-size: 0.85rem; color: var(--text-secondary);">companies</span>
-                                        </div>
-                                    </div>
-                                    <div style="width: 1px; height: 30px; background: var(--border-color);"></div>
-                                    <div>
-                                        <span style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Total</span>
-                                        <div style="display: flex; align-items: baseline; gap: 0.25rem;">
-                                            <span style="font-size: 1.5rem; font-weight: 600; color: var(--core-green);">${monthData.learnings.length}</span>
-                                            <span style="font-size: 0.85rem; color: var(--text-secondary);">learnings</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        
-                        // Sort weeks chronologically
-                        const sortedWeeks = Object.keys(weeksInMonth).sort();
-                        
-                        html += `
-                            <div class="month-calendar" data-month="${yearMonth}" style="display: ${displayStyle};">
-                                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                                    ${sortedWeeks.map(weekStart => {
-                                        const weekLearnings = weeksInMonth[weekStart];
-                                        const weekDate = new Date(weekStart);
-                                        const weekEnd = new Date(weekStart);
-                                        weekEnd.setDate(weekEnd.getDate() + 6);
-                                        const weekLabel = `${weekDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-                                        
-                                        return `
-                                            <div class="week-group">
-                                                <div style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1rem;">
-                                                    <h4 style="font-family: 'Crimson Pro', serif; font-size: 1rem; color: var(--text-secondary); margin: 0;">
-                                                        Week of ${weekLabel}
-                                                    </h4>
-                                                    <span style="font-size: 0.85rem; color: var(--text-secondary);">
-                                                        ${weekLearnings.length} learning${weekLearnings.length !== 1 ? 's' : ''}
-                                                    </span>
-                                                </div>
-                                                
-                                                <!-- Company dots grid -->
-                                                <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
-                                                    ${weekLearnings.map(learning => {
-                                                        const bgColor = getCompanyColor(learning);
-                                                        const nextMoveIcon = getNextMoveIcon(learning.nextMove);
-                                                        
-                                                        return `
-                                                            <div class="company-learning-dot" 
-                                                                 onclick="app.viewLearningDetail('${learning.id}')"
-                                                                 style="
-                                                                    display: flex;
-                                                                    flex-direction: column;
-                                                                    align-items: center;
-                                                                    width: 100px;
-                                                                    cursor: pointer;
-                                                                    transition: transform 0.2s ease;
-                                                                 "
-                                                                 onmouseover="this.style.transform='scale(1.05)'"
-                                                                 onmouseout="this.style.transform='scale(1)'">
-                                                                <!-- Main dot with company initial -->
-                                                                <div style="
-                                                                    width: 48px;
-                                                                    height: 48px;
-                                                                    border-radius: 50%;
-                                                                    background: ${bgColor};
-                                                                    display: flex;
-                                                                    align-items: center;
-                                                                    justify-content: center;
-                                                                    color: white;
-                                                                    font-weight: 600;
-                                                                    font-size: 1.2rem;
-                                                                    margin-bottom: 0.5rem;
-                                                                    box-shadow: var(--shadow-subtle);
-                                                                    position: relative;
-                                                                ">
-                                                                    ${learning.company.charAt(0).toUpperCase()}
-                                                                    <span style="
-                                                                        position: absolute;
-                                                                        bottom: -4px;
-                                                                        right: -4px;
-                                                                        background: white;
-                                                                        border-radius: 50%;
-                                                                        width: 20px;
-                                                                        height: 20px;
-                                                                        display: flex;
-                                                                        align-items: center;
-                                                                        justify-content: center;
-                                                                        font-size: 0.8rem;
-                                                                        box-shadow: var(--shadow-subtle);
-                                                                    ">${nextMoveIcon}</span>
-                                                                </div>
-                                                                
-                                                                <!-- Company name (truncated) -->
-                                                                <span style="
-                                                                    font-size: 0.8rem;
-                                                                    text-align: center;
-                                                                    color: var(--text-primary);
-                                                                    font-weight: 500;
-                                                                    max-width: 100px;
-                                                                    overflow: hidden;
-                                                                    text-overflow: ellipsis;
-                                                                    white-space: nowrap;
-                                                                " title="${learning.company}">
-                                                                    ${learning.company}
-                                                                </span>
-                                                                
-                                                                <!-- Signal indicator (tiny) -->
-                                                                <span style="
-                                                                    font-size: 0.7rem;
-                                                                    color: ${bgColor};
-                                                                    margin-top: 0.15rem;
-                                                                ">
-                                                                    ${learning.signal}
-                                                                </span>
-                                                            </div>
-                                                        `;
-                                                    }).join('')}
-                                                </div>
-                                            </div>
-                                        `;
-                                    }).join('')}
-                                </div>
-                            </div>
-                        `;
-                    });
-                    
-                    html += `</div>`;
-                    
-                    // Add click handlers for month tabs
-                    html += `
-                        <script>
-                            (function() {
-                                setTimeout(() => {
-                                    document.querySelectorAll('.month-tab').forEach(tab => {
-                                        tab.addEventListener('click', function(e) {
-                                            // Remove active class from all tabs
-                                            document.querySelectorAll('.month-tab').forEach(t => t.classList.remove('active'));
-                                            // Add active class to clicked tab
-                                            this.classList.add('active');
-                                            
-                                            // Hide all month calendars
-                                            document.querySelectorAll('.month-calendar').forEach(cal => {
-                                                cal.style.display = 'none';
-                                            });
-                                            
-                                            // Show selected month calendar
-                                            const monthToShow = document.querySelector(\`.month-calendar[data-month="\${this.dataset.month}"]\`);
-                                            if (monthToShow) {
-                                                monthToShow.style.display = 'block';
-                                            }
-                                        });
-                                    });
-                                }, 0);
-                            })();
-                        </script>
-                    `;
-                    
-                    container.innerHTML = html;
-                },
+                }).join('');
+            },
 
             // REPLACE openLearningModal() and add new openLearningModalForCompany()
             openLearningModalForCompany(companyName, weekStart) {
