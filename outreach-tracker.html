@@ -1140,6 +1140,16 @@
             </div>
         </div>
 
+        <!-- Weekly Goals Card -->
+        <div id="weeklyGoalsCard" style="margin-bottom: 2rem;">
+            <!-- Populated by JS -->
+        </div>
+        
+        <!-- Monthly Goals Card -->
+        <div id="monthlyGoalsCard" style="margin-bottom: 2rem;">
+            <!-- Populated by JS -->
+        </div>
+
         <!-- Insights Tab -->
         <div class="tab-content" id="insights">
             <h2 style="font-family: 'Crimson Pro', serif; font-size: 1.8rem; font-weight: 400; margin-bottom: 2rem; color: var(--core-green);">Strategic Insights</h2>
@@ -1636,6 +1646,14 @@ Best regards,
                 goal4: { label: 'Proof Assets', target: 1, current: 0 },
                 goal5: { label: 'Strategic Partnerships', target: 1, current: 0 }
             },
+            weeklyGoals: {
+                currentWeek: null,
+                goal1: { label: 'New Contacts', target: 8, current: 0 },
+                goal2: { label: 'Meaningful Conversations', target: 2, current: 0 },
+                goal3: { label: 'Content Pieces', target: 1, current: 0 },
+                goal4: { label: 'Proof Assets', target: 0, current: 0 },
+                goal5: { label: 'Partnership Discussions', target: 0, current: 0 }
+            },
             currentSort: { field: 'company', ascending: true },
             filters: { priority: '', stage: '', status: '', industry: '', tags: [] },
             charts: {},
@@ -1703,15 +1721,29 @@ Best,
                     this.saveData();
                 }
 
-                // REPLACE the learnings initialization
-                if (savedLearnings) {
-                    this.learnings = JSON.parse(savedLearnings);
-                } else {
-                    this.learnings = []; // Simple array, no default template
-                }
+                
+                    if (savedGoals) {
+                        this.monthlyGoals = JSON.parse(savedGoals);
+                    }
+                    
+                    const savedWeeklyGoals = localStorage.getItem('outreach_weekly_goals');
+                    if (savedWeeklyGoals) {
+                        this.weeklyGoals = JSON.parse(savedWeeklyGoals);
+                    }
+                    
+                    // REPLACE the learnings initialization
+                    if (savedLearnings) {
+                        this.learnings = JSON.parse(savedLearnings);
+                    } else {
+                        this.learnings = []; // Simple array, no default template
+                    }
+                    
+                    // Check if it's a new week and reset if needed
+                    this.checkAndResetWeeklyGoals();
+                    
+                    // Calculate current progress for monthly goals
+                    this.updateMonthlyGoalsProgress();
 
-                // Calculate current progress for monthly goals
-                this.updateMonthlyGoalsProgress();
             },
 
             saveData() {
@@ -1719,6 +1751,23 @@ Best,
                 localStorage.setItem('outreach_templates', JSON.stringify(this.templates));
                 localStorage.setItem('outreach_learnings', JSON.stringify(this.learnings));
                 localStorage.setItem('outreach_monthly_goals', JSON.stringify(this.monthlyGoals));
+                localStorage.setItem('outreach_weekly_goals', JSON.stringify(this.weeklyGoals));
+            },
+
+            checkAndResetWeeklyGoals() {
+                const weekStart = this.getWeekStart();
+                const weekStartStr = weekStart.toISOString().split('T')[0];
+                
+                if (this.weeklyGoals.currentWeek !== weekStartStr) {
+                    // Reset weekly goals for new week
+                    this.weeklyGoals.currentWeek = weekStartStr;
+                    this.weeklyGoals.goal1.current = 0;
+                    this.weeklyGoals.goal2.current = 0;
+                    this.weeklyGoals.goal3.current = 0;
+                    this.weeklyGoals.goal4.current = 0;
+                    this.weeklyGoals.goal5.current = 0;
+                    this.saveData();
+                }
             },
 
             setupEventListeners() {
@@ -3652,10 +3701,58 @@ Best,
             },
 
             renderLearnings() {
+                this.renderWeeklyGoals();
                 this.renderMonthlyGoals();
                 this.renderThisWeekLearnings();
                 this.renderPatternDetection();
                 this.renderPastLearnings();
+            },
+
+            renderWeeklyGoals() {
+                const container = document.getElementById('weeklyGoalsCard');
+                if (!container) return;
+                
+                this.checkAndResetWeeklyGoals();
+                
+                const weekStart = new Date(this.weeklyGoals.currentWeek);
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 6);
+                const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+                
+                const goals = this.weeklyGoals;
+                
+                const getStatus = (current, target) => {
+                    const percent = (current / target) * 100;
+                    if (percent >= 100) return '✅';
+                    if (percent >= 70) return '🟡';
+                    return '⏳';
+                };
+                
+                container.innerHTML = `
+                    <div class="chart-card">
+                        <h3 style="margin-bottom: 1.5rem;">Weekly Goals - ${weekLabel}</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            ${Object.keys(goals).filter(k => k.startsWith('goal')).map(key => {
+                                const goal = goals[key];
+                                return `
+                                    <div>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                            <span style="font-size: 0.9rem; color: var(--text-secondary);">${goal.label}</span>
+                                            <span>${getStatus(goal.current, goal.target)}</span>
+                                        </div>
+                                        <div style="font-size: 1.5rem; font-weight: 600; color: var(--core-green);">
+                                            ${goal.current}/${goal.target}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); display: flex; gap: 1rem; justify-content: center;">
+                            <button class="btn" onclick="app.editWeeklyTargets()" style="font-size: 0.85rem;">🎯 Edit Targets</button>
+                            <button class="btn" onclick="app.editWeeklyProgress()" style="font-size: 0.85rem;">📊 Update Progress</button>
+                        </div>
+                    </div>
+                `;
             },
 
             renderMonthlyGoals() {
@@ -3817,6 +3914,66 @@ Best,
                         this.renderMonthlyGoals();
                     } else {
                         alert('Please enter 3 valid numbers (0 or greater) separated by commas.');
+                    }
+                }
+            },
+
+            editWeeklyTargets() {
+                const goals = this.weeklyGoals;
+                const newTargets = prompt(
+                    `Edit Weekly Targets:\n\n` +
+                    `1. ${goals.goal1.label}: ${goals.goal1.target}\n` +
+                    `2. ${goals.goal2.label}: ${goals.goal2.target}\n` +
+                    `3. ${goals.goal3.label}: ${goals.goal3.target}\n` +
+                    `4. ${goals.goal4.label}: ${goals.goal4.target}\n` +
+                    `5. ${goals.goal5.label}: ${goals.goal5.target}\n\n` +
+                    `Enter new targets (comma-separated):`,
+                    `${goals.goal1.target},${goals.goal2.target},${goals.goal3.target},${goals.goal4.target},${goals.goal5.target}`
+                );
+            
+                if (newTargets) {
+                    const targets = newTargets.split(',').map(t => parseInt(t.trim()));
+                    if (targets.length === 5 && targets.every(t => !isNaN(t) && t >= 0)) {
+                        goals.goal1.target = targets[0];
+                        goals.goal2.target = targets[1];
+                        goals.goal3.target = targets[2];
+                        goals.goal4.target = targets[3];
+                        goals.goal5.target = targets[4];
+                        
+                        this.saveData();
+                        this.renderWeeklyGoals();
+                    } else {
+                        alert('Please enter 5 valid numbers (0 or greater) separated by commas.');
+                    }
+                }
+            },
+            
+            editWeeklyProgress() {
+                const goals = this.weeklyGoals;
+                const newProgress = prompt(
+                    `Update Weekly Progress:\n\n` +
+                    `1. ${goals.goal1.label}: ${goals.goal1.current}/${goals.goal1.target}\n` +
+                    `2. ${goals.goal2.label}: ${goals.goal2.current}/${goals.goal2.target}\n` +
+                    `3. ${goals.goal3.label}: ${goals.goal3.current}/${goals.goal3.target}\n` +
+                    `4. ${goals.goal4.label}: ${goals.goal4.current}/${goals.goal4.target}\n` +
+                    `5. ${goals.goal5.label}: ${goals.goal5.current}/${goals.goal5.target}\n\n` +
+                    `Enter current progress (comma-separated):`,
+                    `${goals.goal1.current},${goals.goal2.current},${goals.goal3.current},${goals.goal4.current},${goals.goal5.current}`
+                );
+            
+                if (newProgress) {
+                    const progress = newProgress.split(',').map(p => parseInt(p.trim()));
+                    if (progress.length === 5 && progress.every(p => !isNaN(p) && p >= 0)) {
+                        goals.goal1.current = progress[0];
+                        goals.goal2.current = progress[1];
+                        goals.goal3.current = progress[2];
+                        goals.goal4.current = progress[3];
+                        goals.goal5.current = progress[4];
+                        
+                        this.saveData();
+                        this.renderWeeklyGoals();
+                    } else {
+                        alert('Please enter 5 valid numbers (0 or greater) separated by commas.');
                     }
                 }
             },
