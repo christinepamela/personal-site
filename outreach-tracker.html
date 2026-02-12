@@ -1759,6 +1759,7 @@ Best regards,
                     this.weeklyGoals.goal3.current = 0;
                     this.weeklyGoals.goal4.current = 0;
                     this.weeklyGoals.goal5.current = 0;
+                    this.weeklyGoals.insight = ''; // Reset insight for new week
                     this.saveData();
                 }
             },
@@ -3740,9 +3741,16 @@ Best regards,
                                 `;
                             }).join('')}
                         </div>
+                        ${goals.insight ? `
+                            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(45, 80, 22, 0.05); border-left: 3px solid var(--core-green); border-radius: 4px;">
+                                <strong style="font-size: 0.9rem; color: var(--core-green);">💡 This Week's Insight:</strong>
+                                <div style="font-size: 0.9rem; color: var(--text-primary); margin-top: 0.5rem; line-height: 1.6;">${goals.insight}</div>
+                            </div>
+                        ` : ''}
                         <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); display: flex; gap: 1rem; justify-content: center;">
                             <button class="btn" onclick="app.editWeeklyTargets()" style="font-size: 0.85rem;">🎯 Edit Targets</button>
                             <button class="btn" onclick="app.editWeeklyProgress()" style="font-size: 0.85rem;">📊 Update Progress</button>
+                            <button class="btn btn-primary" onclick="app.addWeeklyInsight()" style="font-size: 0.85rem;">💡 Add Insight</button>
                         </div>
                     </div>
                 `;
@@ -3968,6 +3976,28 @@ Best regards,
                     } else {
                         alert('Please enter 5 valid numbers (0 or greater) separated by commas.');
                     }
+                }
+            },
+
+            addWeeklyInsight() {
+                const weekStart = new Date(this.weeklyGoals.currentWeek);
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 6);
+                const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+                
+                const currentInsight = this.weeklyGoals.insight || '';
+                
+                const newInsight = prompt(
+                    `Weekly Insight (${weekLabel}):\n\n` +
+                    `What's the key pattern or realization from this week?\n\n` +
+                    `Current insight:`,
+                    currentInsight
+                );
+                
+                if (newInsight !== null) {
+                    this.weeklyGoals.insight = newInsight.trim();
+                    this.saveData();
+                    this.renderWeeklyGoals();
                 }
             },
 
