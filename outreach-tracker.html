@@ -3663,7 +3663,7 @@ Best regards,
             getCompaniesWithActivityThisWeek() {
                 const weekStart = this.getWeekStart();
                 const weekEnd = new Date(weekStart);
-                weekEnd.setDate(weekEnd.getDate() + 7);
+                weekEnd.setDate(weekEnd.getDate() + 5); // Monday to Friday
 
                 return this.contacts.filter(contact => {
                     if (!contact.communicationLog || contact.communicationLog.length === 0) return false;
@@ -3678,10 +3678,18 @@ Best regards,
             getWeekStart(date = new Date()) {
                 const d = new Date(date);
                 const day = d.getDay();
-                const diff = d.getDate() - day; // Get Monday
-                const monday = new Date(d.setDate(diff));
-                monday.setHours(0, 0, 0, 0);
-                return monday;
+                // If it's Saturday (6) or Sunday (0), go back to previous Monday
+                if (day === 0) { // Sunday
+                    d.setDate(d.getDate() - 6);
+                } else if (day === 6) { // Saturday
+                    d.setDate(d.getDate() - 5);
+                } else {
+                    // Weekday - go back to Monday
+                    const diff = d.getDate() - day + 1; // +1 because Monday is 1
+                    d.setDate(diff);
+                }
+                d.setHours(0, 0, 0, 0);
+                return d;
             },
 
             openWeeklyLearningPrompt() {
@@ -3710,8 +3718,8 @@ Best regards,
                 
                 const weekStart = new Date(this.weeklyGoals.currentWeek);
                 const weekEnd = new Date(weekStart);
-                weekEnd.setDate(weekEnd.getDate() + 6);
-                const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+                weekEnd.setDate(weekEnd.getDate() + 4); // Monday to Friday = 4 days difference
+                const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} (Mon-Fri)`;
                 
                 const goals = this.weeklyGoals;
                 
@@ -3982,7 +3990,7 @@ Best regards,
             addWeeklyInsight() {
                 const weekStart = new Date(this.weeklyGoals.currentWeek);
                 const weekEnd = new Date(weekStart);
-                weekEnd.setDate(weekEnd.getDate() + 6);
+                weekEnd.setDate(weekEnd.getDate() + 4);
                 const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
                 
                 const currentInsight = this.weeklyGoals.insight || '';
@@ -4020,7 +4028,7 @@ Best regards,
                 const container = document.getElementById('thisWeekLearnings');
                 const weekStart = this.getWeekStart();
                 const weekEnd = new Date(weekStart);
-                weekEnd.setDate(weekEnd.getDate() + 7);
+                weekEnd.setDate(weekEnd.getDate() + 5); // Monday to Friday = 5 days (inclusive)
             
                 // Group contacts by company that had activity this week
                 const companiesMap = {};
@@ -4055,7 +4063,9 @@ Best regards,
                 const companies = Object.values(companiesMap);
                 const learningsThisWeek = this.learnings.filter(l => l.weekStart === weekStart.toISOString().split('T')[0]);
                 
-                const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 4); // For display: Mon to Fri
+                const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} (Mon-Fri)`;
             
                 container.innerHTML = `
                     <div class="chart-card">
@@ -4239,7 +4249,7 @@ Best regards,
             
                 container.innerHTML = sortedWeeks.map(weekStart => {
                     const weekEnd = new Date(weekStart);
-                    weekEnd.setDate(weekEnd.getDate() + 6);
+                    weekEnd.setDate(weekEnd.getDate() + 4);
                     const weekLabel = `${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
                     const learnings = groupedByWeek[weekStart];
             
@@ -4301,7 +4311,7 @@ Best regards,
                     
                     const weekStartDate = new Date(weekStart);
                     const weekEndDate = new Date(weekStart);
-                    weekEndDate.setDate(weekEndDate.getDate() + 6);
+                    weekEndDate.setDate(weekEndDate.getDate() + 4);
                     document.getElementById('learningWeekLabel').textContent = 
                         `${weekStartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
             
@@ -4317,7 +4327,7 @@ Best regards,
                 
                 const weekStartDate = new Date(weekStart);
                 const weekEndDate = new Date(weekStart);
-                weekEndDate.setDate(weekEndDate.getDate() + 7);
+                weekEndDate.setDate(weekEndDate.getDate() + 5);
             
                 // Get all people from this company with activity this week
                 const companyContacts = this.contacts.filter(c => c.company === companyName);
@@ -4370,7 +4380,7 @@ Best regards,
                 
                 const weekStartDate = new Date(learning.weekStart);
                 const weekEndDate = new Date(learning.weekStart);
-                weekEndDate.setDate(weekEndDate.getDate() + 6);
+                weekEndDate.setDate(weekEndDate.getDate() + 4);
                 document.getElementById('learningWeekLabel').textContent = 
                     `${weekStartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
             
@@ -4483,7 +4493,7 @@ Best regards,
                     weekDate.setDate(weekDate.getDate() - (i * 7));
                     const weekStart = this.getWeekStart(weekDate);
                     const weekEnd = new Date(weekStart);
-                    weekEnd.setDate(weekEnd.getDate() + 6);
+                    weekEnd.setDate(weekEnd.getDate() + 4);
                     
                     const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
                     
@@ -4540,7 +4550,7 @@ Best regards,
             getCompaniesInWeek(weekStartStr) {
                 const weekStart = new Date(weekStartStr);
                 const weekEnd = new Date(weekStart);
-                weekEnd.setDate(weekEnd.getDate() + 7);
+                weekEnd.setDate(weekEnd.getDate() + 5); // Monday to Friday
                 
                 const companiesMap = {};
                 
@@ -4577,7 +4587,7 @@ Best regards,
                 
                 const weekStart = new Date(weekStartStr);
                 const weekEnd = new Date(weekStart);
-                weekEnd.setDate(weekEnd.getDate() + 6);
+                weekEnd.setDate(weekEnd.getDate() + 4); // For display: Mon to Fri
                 
                 const companies = this.getCompaniesInWeek(weekStartStr);
                 const learningsThisWeek = this.learnings.filter(l => l.weekStart === weekStartStr);
