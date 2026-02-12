@@ -4063,9 +4063,10 @@ Best regards,
                 const companies = Object.values(companiesMap);
                 const learningsThisWeek = this.learnings.filter(l => l.weekStart === weekStart.toISOString().split('T')[0]);
                 
-                const weekEnd = new Date(weekStart);
-                weekEnd.setDate(weekEnd.getDate() + 4); // For display: Mon to Fri
-                const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} (Mon-Fri)`;
+                // weekEnd already declared earlier in function - just reuse it
+                const weekEndDisplay = new Date(weekStart);
+                weekEndDisplay.setDate(weekEndDisplay.getDate() + 4); // For display: Mon to Fri
+                const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEndDisplay.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} (Mon-Fri)`;
             
                 container.innerHTML = `
                     <div class="chart-card">
