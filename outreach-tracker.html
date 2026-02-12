@@ -1139,7 +1139,7 @@
                     <input type="text" id="learningSearchInput" placeholder="Search learnings by company, signal, or insights..." style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Work Sans', sans-serif;">
                 </div>
 
-                <div id="pastLearnings">
+                <div id="">
                     <!-- Populated by JS -->
                 </div>
             </div>
@@ -1815,7 +1815,7 @@ Best regards,
                     learningSearchInput.addEventListener('input', (e) => {
                         clearTimeout(this.searchTimeout);
                         this.searchTimeout = setTimeout(() => {
-                            this.renderPastLearnings(e.target.value);
+                            this.render(e.target.value);
                         }, 300);
                     });
                 }
@@ -3698,7 +3698,7 @@ Best regards,
                 this.renderMonthlyGoals();
                 this.renderThisWeekLearnings();
                 this.renderPatternDetection();
-                this.renderPastLearnings();
+                this.render();
             },
 
             renderWeeklyGoals() {
@@ -3724,7 +3724,7 @@ Best regards,
                 container.innerHTML = `
                     <div class="chart-card">
                         <h3 style="margin-bottom: 1.5rem;">Weekly Goals - ${weekLabel}</h3>
-                        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem;">
+                        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.25rem;">
                             ${Object.keys(goals).filter(k => k.startsWith('goal')).map(key => {
                                 const goal = goals[key];
                                 return `
