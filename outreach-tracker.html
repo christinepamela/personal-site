@@ -4409,7 +4409,6 @@ Best regards,
             `;
         },
 
-            // REPLACE renderPastLearnings()
             renderPastLearnings(searchTerm = '') {
                 const container = document.getElementById('pastLearnings');
                 
@@ -4444,46 +4443,140 @@ Best regards,
             
                 const sortedWeeks = Object.keys(groupedByWeek).sort().reverse();
             
-                container.innerHTML = sortedWeeks.map(weekStart => {
-                    const weekEnd = new Date(weekStart);
-                    weekEnd.setDate(weekEnd.getDate() + 4);
-                    const weekLabel = `${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
-                    const learnings = groupedByWeek[weekStart];
-            
-                    return `
-                        <div style="margin-bottom: 2rem;">
-                            <h4 style="font-family: 'Crimson Pro', serif; font-size: 1.1rem; margin-bottom: 1rem; color: var(--text-secondary);">
-                                Week of ${weekLabel} (${learnings.length} learning${learnings.length !== 1 ? 's' : ''})
-                            </h4>
-                            <div style="display: grid; gap: 1rem;">
-                                ${learnings.map(learning => {
-                                    const signalColor = learning.signal === 'Strong' ? 'low' : learning.signal === 'Moderate' ? 'medium' : 'hot';
+                // Compact table view
+                container.innerHTML = `
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 180px;">Week</th>
+                                    <th style="width: 100px; text-align: center;">Companies</th>
+                                    <th style="width: 120px; text-align: center;">Signals</th>
+                                    <th style="width: 150px; text-align: center;">Next Moves</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${sortedWeeks.map(weekStart => {
+                                    const weekEnd = new Date(weekStart);
+                                    weekEnd.setDate(weekEnd.getDate() + 4);
+                                    const weekLabel = `${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+                                    const learnings = groupedByWeek[weekStart];
+                                    
+                                    // Count signals
+                                    const signals = {
+                                        strong: learnings.filter(l => l.signal === 'Strong').length,
+                                        moderate: learnings.filter(l => l.signal === 'Moderate').length,
+                                        weak: learnings.filter(l => l.signal === 'Weak').length
+                                    };
+                                    
+                                    // Count next moves
+                                    const moves = {
+                                        push: learnings.filter(l => l.nextMove === 'Keep pushing').length,
+                                        reroute: learnings.filter(l => l.nextMove === 'Reroute').length,
+                                        wait: learnings.filter(l => l.nextMove === 'Wait').length,
+                                        drop: learnings.filter(l => l.nextMove === 'Drop it').length
+                                    };
+                                    
                                     return `
-                                        <div class="chart-card" style="cursor: pointer;" onclick="app.viewLearningDetail('${learning.id}')">
-                                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-                                                <div>
-                                                    <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">${learning.company}</h4>
-                                                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                                        <span class="badge priority-${signalColor}">
-                                                            ${learning.signal === 'Strong' ? '🟢' : learning.signal === 'Moderate' ? '🟡' : '🔴'} ${learning.signal}
-                                                        </span>
-                                                        <span class="badge">${learning.nextMove}</span>
-                                                        <span class="badge" style="background: var(--bg-secondary);">
-                                                            Follow-up: ${new Date(learning.followUpDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
-                                                ${learning.takeaway.substring(0, 150)}${learning.takeaway.length > 150 ? '...' : ''}
-                                            </div>
-                                        </div>
+                                        <tr style="cursor: pointer;" onclick="app.expandWeekLearnings('${weekStart}')">
+                                            <td><strong>${weekLabel}</strong></td>
+                                            <td style="text-align: center;">
+                                                <span class="badge">${learnings.length} ${learnings.length === 1 ? 'company' : 'companies'}</span>
+                                            </td>
+                                            <td style="text-align: center;">
+                                                ${signals.strong > 0 ? `<span style="font-size: 1.1rem;" title="${signals.strong} Strong">🟢${signals.strong}</span> ` : ''}
+                                                ${signals.moderate > 0 ? `<span style="font-size: 1.1rem;" title="${signals.moderate} Moderate">🟡${signals.moderate}</span> ` : ''}
+                                                ${signals.weak > 0 ? `<span style="font-size: 1.1rem;" title="${signals.weak} Weak">🔴${signals.weak}</span>` : ''}
+                                            </td>
+                                            <td style="text-align: center; font-size: 0.85rem;">
+                                                ${moves.push > 0 ? `Push: ${moves.push} ` : ''}
+                                                ${moves.reroute > 0 ? `Reroute: ${moves.reroute} ` : ''}
+                                                ${moves.wait > 0 ? `Wait: ${moves.wait} ` : ''}
+                                                ${moves.drop > 0 ? `Drop: ${moves.drop}` : ''}
+                                            </td>
+                                            <td style="text-align: right;">
+                                                <button class="btn" style="font-size: 0.85rem; padding: 0.5rem 1rem;" onclick="event.stopPropagation(); app.expandWeekLearnings('${weekStart}')">
+                                                    View Details →
+                                                </button>
+                                            </td>
+                                        </tr>
                                     `;
                                 }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            },
+
+            expandWeekLearnings(weekStart) {
+                const learnings = this.learnings.filter(l => l.weekStart === weekStart);
+                
+                if (learnings.length === 0) return;
+                
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 4);
+                const weekLabel = `${new Date(weekStart).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+                
+                const modalHTML = `
+                    <div class="modal active" id="weekLearningsModal" style="z-index: 1001;">
+                        <div class="modal-content" style="max-width: 900px;">
+                            <div class="modal-header">
+                                <h2>Week of ${weekLabel}</h2>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">
+                                    ${learnings.length} learning${learnings.length !== 1 ? 's' : ''} logged
+                                </p>
+                            </div>
+                            <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+                                <div style="display: grid; gap: 1rem;">
+                                    ${learnings.map(learning => {
+                                        const signalColor = learning.signal === 'Strong' ? 'low' : learning.signal === 'Moderate' ? 'medium' : 'hot';
+                                        return `
+                                            <div class="chart-card" style="margin: 0; cursor: pointer;" onclick="app.viewLearningDetail('${learning.id}'); app.closeWeekLearningsModal();">
+                                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                                    <div>
+                                                        <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">${learning.company}</h4>
+                                                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                                            <span class="badge priority-${signalColor}">
+                                                                ${learning.signal === 'Strong' ? '🟢' : learning.signal === 'Moderate' ? '🟡' : '🔴'} ${learning.signal}
+                                                            </span>
+                                                            <span class="badge">${learning.nextMove}</span>
+                                                            <span class="badge" style="background: var(--bg-secondary);">
+                                                                Follow-up: ${new Date(learning.followUpDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                                                    ${learning.takeaway.substring(0, 200)}${learning.takeaway.length > 200 ? '...' : ''}
+                                                </div>
+                                                ${learning.weeklyInsight ? `
+                                                    <div style="margin-top: 0.75rem; padding: 0.75rem; background: rgba(45, 80, 22, 0.05); border-left: 3px solid var(--core-green); border-radius: 4px;">
+                                                        <strong style="font-size: 0.85rem; color: var(--core-green);">💡 Weekly Insight:</strong>
+                                                        <div style="font-size: 0.85rem; color: var(--text-primary); margin-top: 0.25rem;">${learning.weeklyInsight}</div>
+                                                    </div>
+                                                ` : ''}
+                                                <div style="margin-top: 0.75rem; text-align: right;">
+                                                    <span style="font-size: 0.85rem; color: var(--core-green);">Click to edit →</span>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn" onclick="app.closeWeekLearningsModal()">Close</button>
                             </div>
                         </div>
-                    `;
-                }).join('');
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+            },
+            
+            closeWeekLearningsModal() {
+                const modal = document.getElementById('weekLearningsModal');
+                if (modal) modal.remove();
             },
 
             // REPLACE openLearningModal() and add new openLearningModalForCompany()
