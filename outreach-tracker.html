@@ -1295,7 +1295,7 @@
 
                     <input type="hidden" id="contactId">
                 </form>
-            </div>
+            
             <div class="modal-footer">
                 <button class="btn" onclick="app.closeModal('contactModal')">Cancel</button>
                 <button class="btn btn-primary" onclick="app.saveContact()">Save Contact</button>
@@ -3910,6 +3910,7 @@ Best regards,
                 // Goals 3, 4, 5 remain manual (articles, case studies, partnerships)
             },
 
+            // Replace the existing updateWeeklyGoalsProgress function (around line 1740)
             updateWeeklyGoalsProgress() {
                 const weekStart = this.getWeekStart();
                 const weekEnd = new Date(weekStart);
@@ -3919,7 +3920,7 @@ Best regards,
                 const newContactsThisWeek = this.contacts.filter(c => {
                     if (!c.createdAt) return false; // If no createdAt, assume old contact
                     const createdDate = new Date(c.createdAt);
-                    return createdDate >= weekStart && createdDate < weekEnd;
+                    return createdDate >= weekStart && createdDate <= weekEnd; // FIXED: Use <= instead of <
                 });
                 this.weeklyGoals.goal1.current = newContactsThisWeek.length;
                 
@@ -3934,13 +3935,13 @@ Best regards,
                     
                     return c.communicationLog.some(log => {
                         const logDate = new Date(log.date);
-                        return logDate >= weekStart && logDate < weekEnd;
+                        return logDate >= weekStart && logDate <= weekEnd; // FIXED: Use <= instead of <
                     });
                 });
                 this.weeklyGoals.goal2.current = meaningfulConvosThisWeek.length;
                 
                 // Goals 3, 4, 5 remain manual
-            },
+            }
             
 
             editGoalLabels() {
@@ -4399,7 +4400,7 @@ Best regards,
                                                         ` : ''}
                                                     </div>
                                                 </div>
-                                                <button class="btn" onclick="app.openLearningModalForCompany('${companyData.company.replace(/'/g, "\\'")}', '${weekStart.toISOString().split('T')[0]}')" style="font-size: 0.85rem; flex-shrink: 0;">
+                                                <button class="btn" onclick="app.openLearningModalForCompany('${companyData.company.replace(/'/g, "\\\\'")}', '${weekStart.toISOString().split('T')[0]}')" style="font-size: 0.85rem; flex-shrink: 0;">
                                                     ${hasLearning ? '📖 View' : '📝 Log Learning'}
                                                 </button>
                                             </div>
