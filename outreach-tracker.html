@@ -3537,123 +3537,194 @@ Best regards,
             },
 
             exportCSV() {
-                const csvData = this.contacts.map(contact => ({
-                    Company: contact.company,
-                    Name: contact.name,
-                    'Job Title': contact.jobTitle || '',
-                    'Industry Focus': contact.industryFocus || '',
-                    'Country': contact.country || '',
-                    'Role/Tier': contact.tier,
-                    'Connection Method': contact.connectionMethod,
-                    'Connection Status': contact.connectionStatus,
-                    Priority: contact.priority,
-                    'Opportunity Type': contact.opportunityType,
-                    'Funnel Stage': contact.funnelStage,
-                    'Last Message': contact.lastMessage || '',
-                    'Next Action Date': contact.nextActionDate || '',
-                    Tags: contact.tags ? contact.tags.join('; ') : '',
-                    Notes: contact.notes || '',
-                    'Communication Log': JSON.stringify(contact.communicationLog || [])
-                }));
-
-                const csv = Papa.unparse(csvData);
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const exportData = {
+                    version: '1.0',
+                    exportDate: new Date().toISOString(),
+                    contacts: this.contacts,
+                    learnings: this.learnings,
+                    templates: this.templates,
+                    weeklyGoals: this.weeklyGoals,
+                    weeklyGoalsHistory: this.weeklyGoalsHistory,
+                    monthlyGoals: this.monthlyGoals,
+                    monthlyGoalsHistory: this.monthlyGoalsHistory
+                };
+            
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8;' });
                 const link = document.createElement('a');
                 const url = URL.createObjectURL(blob);
                 
+                const filename = `outreach-backup-${new Date().toISOString().split('T')[0]}.json`;
+                
                 link.setAttribute('href', url);
-                link.setAttribute('download', `outreach-contacts-${new Date().toISOString().split('T')[0]}.csv`);
+                link.setAttribute('download', filename);
                 link.style.visibility = 'hidden';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+                
+                alert(`✅ Exported:\n• ${this.contacts.length} contacts\n• ${this.learnings.length} learnings\n• ${this.templates.length} templates`);
             },
-
+            
             importCSV(event) {
                 const file = event.target.files[0];
                 if (!file) return;
-
-                Papa.parse(file, {
-                    header: true,
-                    complete: (results) => {
-                        let importedCount = 0;
-                        let errorCount = 0;
+            
+                // Check file type
+                if (!file.name.endsWith('.json')) {
+                    alert('Please select a JSON backup file');
+                    event.target.value = '';
+                    return;
+                }
+            
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    try {
+                        const importData = JSON.parse(e.target.result);
                         
-                        const importedContacts = results.data
-                            .filter(row => row.Company && row.Name)
-                            .map(row => {
-                                try {
-                                    // Parse communication log safely
-                                    let communicationLog = [];
-                                    if (row['Communication Log']) {
-                                        try {
-                                            communicationLog = JSON.parse(row['Communication Log']);
-                                        } catch (e) {
-                                            console.warn(`Failed to parse communication log for ${row.Name}:`, e);
-                                        }
-                                    }
-
-                                    return {
-                                        id: generateUUID(), // Always generate new UUID on import
-                                        company: row.Company,
-                                        name: row.Name,
-                                        jobTitle: row['Job Title'] || '',
-                                        industryFocus: row['Industry Focus'] || '',
-                                        country: row.Country || '',
-                                        tier: row['Role/Tier'] || '',
-                                        connectionMethod: row['Connection Method'] || '',
-                                        connectionStatus: row['Connection Status'] || '',
-                                        priority: row.Priority || '',
-                                        opportunityType: row['Opportunity Type'] || '',
-                                        funnelStage: row['Funnel Stage'] || '',
-                                        lastMessage: row['Last Message'] || '',
-                                        nextActionDate: normalizeDate(row['Next Action Date']),
-                                        tags: row.Tags ? row.Tags.split(';').map(t => t.trim()).filter(t => t) : [],
-                                        notes: row.Notes || '',
-                                        communicationLog: communicationLog
-                                    };
-                                } catch (e) {
-                                    console.error(`Error importing contact ${row.Name}:`, e);
-                                    errorCount++;
-                                    return null;
+                        // Validate
+                        if (!importData.contacts || !Array.isArray(importData.contacts)) {
+                            throw new Error('Invalid backup file');
+                        }
+            
+                        const confirmMsg = `Import backup?\n\n` +
+                            `• ${importData.contacts?.length || 0} contacts\n` +
+                            `• ${importData.learnings?.length || 0} learnings\n` +
+                            `• ${importData.templates?.length || 0} templates\n\n` +
+                            `This will merge with existing data.\nContinue?`;
+                        
+                        if (!confirm(confirmMsg)) {
+                            event.target.value = '';
+                            return;
+                        }
+            
+                        let stats = {
+                            contactsAdded: 0,
+                            contactsUpdated: 0,
+                            learningsAdded: 0,
+                            learningsUpdated: 0,
+                            templatesAdded: 0
+                        };
+            
+                        // Import contacts
+                        if (importData.contacts && Array.isArray(importData.contacts)) {
+                            importData.contacts.forEach(imported => {
+                                const existingIndex = this.contacts.findIndex(c => 
+                                    c.company === imported.company && c.name === imported.name
+                                );
+                                
+                                if (existingIndex >= 0) {
+                                    imported.id = this.contacts[existingIndex].id;
+                                    this.contacts[existingIndex] = imported;
+                                    stats.contactsUpdated++;
+                                } else {
+                                    if (!imported.id) imported.id = generateUUID();
+                                    this.contacts.push(imported);
+                                    stats.contactsAdded++;
                                 }
-                            })
-                            .filter(contact => contact !== null);
-
-                        // Merge with existing contacts (overwrite based on company + name)
-                        importedContacts.forEach(imported => {
-                            const existingIndex = this.contacts.findIndex(c => 
-                                c.company === imported.company && c.name === imported.name
-                            );
+                            });
+                        }
+            
+                        // Import learnings
+                        if (importData.learnings && Array.isArray(importData.learnings)) {
+                            importData.learnings.forEach(imported => {
+                                const existingIndex = this.learnings.findIndex(l => 
+                                    l.company === imported.company && l.weekStart === imported.weekStart
+                                );
+                                
+                                if (existingIndex >= 0) {
+                                    imported.id = this.learnings[existingIndex].id;
+                                    this.learnings[existingIndex] = imported;
+                                    stats.learningsUpdated++;
+                                } else {
+                                    if (!imported.id) imported.id = generateUUID();
+                                    this.learnings.push(imported);
+                                    stats.learningsAdded++;
+                                }
+                            });
+                        }
+            
+                        // Import templates
+                        if (importData.templates && Array.isArray(importData.templates)) {
+                            importData.templates.forEach(imported => {
+                                const exists = this.templates.some(t => t.name === imported.name);
+                                if (!exists) {
+                                    if (!imported.id) imported.id = generateUUID();
+                                    this.templates.push(imported);
+                                    stats.templatesAdded++;
+                                }
+                            });
+                        }
+            
+                        // Import weekly goals
+                        if (importData.weeklyGoals) {
+                            const importWeekStart = new Date(importData.weeklyGoals.currentWeek);
+                            const currentWeekStart = new Date(this.weeklyGoals.currentWeek);
                             
-                            if (existingIndex >= 0) {
-                                // Preserve the existing ID when merging
-                                imported.id = this.contacts[existingIndex].id;
-                                this.contacts[existingIndex] = imported;
-                            } else {
-                                this.contacts.push(imported);
+                            if (importWeekStart >= currentWeekStart) {
+                                this.weeklyGoals = importData.weeklyGoals;
                             }
-                            importedCount++;
-                        });
-
+                        }
+            
+                        // Import weekly goals history
+                        if (importData.weeklyGoalsHistory && Array.isArray(importData.weeklyGoalsHistory)) {
+                            importData.weeklyGoalsHistory.forEach(imported => {
+                                const exists = this.weeklyGoalsHistory.some(h => h.weekStart === imported.weekStart);
+                                if (!exists) {
+                                    this.weeklyGoalsHistory.push(imported);
+                                }
+                            });
+                            this.weeklyGoalsHistory.sort((a, b) => new Date(b.weekStart) - new Date(a.weekStart));
+                            this.weeklyGoalsHistory = this.weeklyGoalsHistory.slice(0, 12);
+                        }
+            
+                        // Import monthly goals
+                        if (importData.monthlyGoals) {
+                            this.monthlyGoals = importData.monthlyGoals;
+                        }
+            
+                        // Import monthly goals history
+                        if (importData.monthlyGoalsHistory && Array.isArray(importData.monthlyGoalsHistory)) {
+                            importData.monthlyGoalsHistory.forEach(imported => {
+                                const exists = this.monthlyGoalsHistory.some(h => h.month === imported.month);
+                                if (!exists) {
+                                    this.monthlyGoalsHistory.push(imported);
+                                }
+                            });
+                            this.monthlyGoalsHistory.sort((a, b) => new Date(b.month) - new Date(a.month));
+                            this.monthlyGoalsHistory = this.monthlyGoalsHistory.slice(0, 12);
+                        }
+            
+                        // Save and refresh
                         this.saveData();
                         this.populateTagFilter();
                         this.populateIndustryFilter();
                         this.renderContacts();
+                        this.renderLearnings();
+                        this.renderTemplates();
+                        this.renderCalendar();
+                        this.renderCharts();
+                        this.renderInsights();
                         
-                        let message = `Imported ${importedCount} contact(s)`;
-                        if (errorCount > 0) {
-                            message += ` (${errorCount} row(s) had errors and were skipped)`;
-                        }
-                        alert(message);
-                    },
-                    error: (error) => {
-                        console.error('CSV parse error:', error);
-                        alert('Error reading CSV file. Please check the file format.');
+                        const resultMsg = `✅ Import complete!\n\n` +
+                            `Contacts: ${stats.contactsAdded} added, ${stats.contactsUpdated} updated\n` +
+                            `Learnings: ${stats.learningsAdded} added, ${stats.learningsUpdated} updated\n` +
+                            `Templates: ${stats.templatesAdded} added`;
+                        
+                        alert(resultMsg);
+                        
+                    } catch (error) {
+                        console.error('Import error:', error);
+                        alert(`Error importing file: ${error.message}`);
                     }
-                });
-
-                // Reset the input so the same file can be imported again
+                };
+                
+                reader.onerror = () => {
+                    alert('Error reading file');
+                };
+                
+                reader.readAsText(file);
                 event.target.value = '';
             },
 
