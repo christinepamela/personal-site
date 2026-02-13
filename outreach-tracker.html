@@ -2228,6 +2228,7 @@ Best regards,
                     contactData.id = generateUUID();
                     contactData.communicationLog = [];
                     contactData.lastMessage = '';
+                    contactData.createdAt = new Date().toISOString(); // ADD THIS LINE
                     this.contacts.push(contactData);
                 }
 
@@ -3815,6 +3816,7 @@ Best regards,
                 if (!container) return;
                 
                 this.checkAndResetWeeklyGoals();
+                this.updateWeeklyGoalsProgress();
                 
                 const weekStart = new Date(this.weeklyGoals.currentWeek);
                 const weekEnd = new Date(weekStart);
@@ -3857,7 +3859,7 @@ Best regards,
                         ` : ''}
                         <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                             <button class="btn" onclick="app.editWeeklyTargets()" style="font-size: 0.85rem;">🎯 Edit Targets</button>
-                            <button class="btn" onclick="app.editWeeklyProgress()" style="font-size: 0.85rem;">📊 Update Progress</button>
+                            <button class="btn" onclick="app.editWeeklyProgress()" style="font-size: 0.85rem;">📊 Update Progress (Goals 3-5)</button>
                             <button class="btn btn-primary" onclick="app.addWeeklyInsight()" style="font-size: 0.85rem;">💡 Add Insight</button>
                             <button class="btn" onclick="app.viewWeeklyGoalsHistory()" style="font-size: 0.85rem;">📊 View History</button>
                         </div>
@@ -3938,6 +3940,39 @@ Best regards,
 
                 // Goals 3, 4, 5 remain manual (articles, case studies, partnerships)
             },
+
+            updateWeeklyGoalsProgress() {
+                const weekStart = this.getWeekStart();
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 5); // Monday to Friday
+                
+                // Goal 1: New Contacts added this week
+                const newContactsThisWeek = this.contacts.filter(c => {
+                    if (!c.createdAt) return false; // If no createdAt, assume old contact
+                    const createdDate = new Date(c.createdAt);
+                    return createdDate >= weekStart && createdDate < weekEnd;
+                });
+                this.weeklyGoals.goal1.current = newContactsThisWeek.length;
+                
+                // Goal 2: Meaningful Conversations (Engaged or higher with activity this week)
+                const meaningfulConvosThisWeek = this.contacts.filter(c => {
+                    if (!['Engaged', 'Consideration', 'Active Conversation', 'Conversion'].includes(c.funnelStage)) {
+                        return false;
+                    }
+                    
+                    // Check if they had communication this week
+                    if (!c.communicationLog || c.communicationLog.length === 0) return false;
+                    
+                    return c.communicationLog.some(log => {
+                        const logDate = new Date(log.date);
+                        return logDate >= weekStart && logDate < weekEnd;
+                    });
+                });
+                this.weeklyGoals.goal2.current = meaningfulConvosThisWeek.length;
+                
+                // Goals 3, 4, 5 remain manual
+            },
+            
 
             editGoalLabels() {
                 const goals = this.monthlyGoals;
@@ -4156,28 +4191,26 @@ Best regards,
                 const goals = this.weeklyGoals;
                 const newProgress = prompt(
                     `Update Weekly Progress:\n\n` +
-                    `1. ${goals.goal1.label}: ${goals.goal1.current}/${goals.goal1.target}\n` +
-                    `2. ${goals.goal2.label}: ${goals.goal2.current}/${goals.goal2.target}\n` +
+                    `Note: Goals 1 & 2 auto-calculate from contacts.\n` +
+                    `Manually update Goals 3, 4, 5:\n\n` +
                     `3. ${goals.goal3.label}: ${goals.goal3.current}/${goals.goal3.target}\n` +
                     `4. ${goals.goal4.label}: ${goals.goal4.current}/${goals.goal4.target}\n` +
                     `5. ${goals.goal5.label}: ${goals.goal5.current}/${goals.goal5.target}\n\n` +
-                    `Enter current progress (comma-separated):`,
-                    `${goals.goal1.current},${goals.goal2.current},${goals.goal3.current},${goals.goal4.current},${goals.goal5.current}`
+                    `Enter current progress for goals 3, 4, 5 (comma-separated):`,
+                    `${goals.goal3.current},${goals.goal4.current},${goals.goal5.current}`
                 );
             
                 if (newProgress) {
                     const progress = newProgress.split(',').map(p => parseInt(p.trim()));
-                    if (progress.length === 5 && progress.every(p => !isNaN(p) && p >= 0)) {
-                        goals.goal1.current = progress[0];
-                        goals.goal2.current = progress[1];
-                        goals.goal3.current = progress[2];
-                        goals.goal4.current = progress[3];
-                        goals.goal5.current = progress[4];
+                    if (progress.length === 3 && progress.every(p => !isNaN(p) && p >= 0)) {
+                        goals.goal3.current = progress[0];
+                        goals.goal4.current = progress[1];
+                        goals.goal5.current = progress[2];
                         
                         this.saveData();
                         this.renderWeeklyGoals();
                     } else {
-                        alert('Please enter 5 valid numbers (0 or greater) separated by commas.');
+                        alert('Please enter 3 valid numbers (0 or greater) separated by commas.');
                     }
                 }
             },
