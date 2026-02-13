@@ -1640,6 +1640,14 @@ Best regards,
                 
                 if (savedContacts) {
                     this.contacts = JSON.parse(savedContacts);
+                    
+                    // ADD THIS: Migrate old contacts without createdAt
+                    this.contacts.forEach(contact => {
+                        if (!contact.createdAt) {
+                            // Assign a past date for existing contacts so they don't count as "this week"
+                            contact.createdAt = '2024-01-01T00:00:00.000Z';
+                        }
+                    });
                 }
                 
                 if (savedTemplates) {
@@ -3820,7 +3828,7 @@ Best regards,
                         ` : ''}
                         <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                             <button class="btn" onclick="app.editWeeklyTargets()" style="font-size: 0.85rem;">🎯 Edit Targets</button>
-                            <button class="btn" onclick="app.editWeeklyProgress()" style="font-size: 0.85rem;">📊 Update Progress (Goals 3-5)</button>
+                            <button class="btn" onclick="app.editWeeklyProgress()" style="font-size: 0.85rem;">📊 Update Progress</button>
                             <button class="btn btn-primary" onclick="app.addWeeklyInsight()" style="font-size: 0.85rem;">💡 Add Insight</button>
                             <button class="btn" onclick="app.viewWeeklyGoalsHistory()" style="font-size: 0.85rem;">📊 View History</button>
                         </div>
@@ -4391,7 +4399,7 @@ Best regards,
                                                         ` : ''}
                                                     </div>
                                                 </div>
-                                                <button class="btn" onclick="app.openLearningModalForCompany('${companyData.company}', '${weekStart.toISOString().split('T')[0]}')" style="font-size: 0.85rem; flex-shrink: 0;">
+                                                <button class="btn" onclick="app.openLearningModalForCompany('${companyData.company.replace(/'/g, "\\'")}', '${weekStart.toISOString().split('T')[0]}')" style="font-size: 0.85rem; flex-shrink: 0;">
                                                     ${hasLearning ? '📖 View' : '📝 Log Learning'}
                                                 </button>
                                             </div>
