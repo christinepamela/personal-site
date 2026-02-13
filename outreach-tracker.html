@@ -1645,11 +1645,13 @@ Best regards,
                 if (savedContacts) {
                     this.contacts = JSON.parse(savedContacts);
                     
-                    // ADD THIS: Migrate old contacts without createdAt
+                    // Migrate old contacts without createdAt - set to THIS WEEK so they count
+                    const now = new Date();
                     this.contacts.forEach(contact => {
-                        if (!contact.createdAt) {
-                            // Assign a past date for existing contacts so they don't count as "this week"
-                            contact.createdAt = '2024-01-01T00:00:00.000Z';
+                        if (!contact.createdAt || contact.createdAt === '2024-01-01T00:00:00.000Z') {
+                            // Set to current week Monday so they count toward this week
+                            const weekStart = this.getWeekStart(now);
+                            contact.createdAt = weekStart.toISOString();
                         }
                     });
                 }
@@ -3781,7 +3783,7 @@ Best regards,
                 this.renderMonthlyGoals();
                 this.renderThisWeekLearnings();
                 this.renderPatternDetection();
-                this.render();
+                this.renderPastLearnings();
             },
 
             renderWeeklyGoals() {
