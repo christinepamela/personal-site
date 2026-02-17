@@ -873,6 +873,13 @@
         <div class="header">
             <h1>Let's Crush Today! 🚀</h1>
             <p>Your personal productivity companion</p>
+            <div style="margin-top: 12px; display: flex; gap: 10px; justify-content: center;">
+                <button class="btn btn-secondary" onclick="exportData()" style="font-size: 0.85em; padding: 8px 16px;">⬇️ Export Data</button>
+                <label class="btn btn-secondary" style="font-size: 0.85em; padding: 8px 16px; cursor: pointer;">
+                    ⬆️ Import Data
+                    <input type="file" accept=".json" onchange="importData(event)" style="display: none;">
+                </label>
+            </div>
         </div>
 
         <div class="progress-hero">
@@ -1476,223 +1483,223 @@
             return Math.min(100, (est / act) * 100);
         }
 
-            // ============================================================
-// 5. ADD STRATEGIC GOAL FUNCTIONS
-// ============================================================
+        // ============================================================
+        // 5. ADD STRATEGIC GOAL FUNCTIONS
+        // ============================================================
+                    
+        function addStrategicGoal(type) {
+            const text = prompt(`Enter your ${type} goal:`);
+            if (!text || !text.trim()) return;
             
-function addStrategicGoal(type) {
-    const text = prompt(`Enter your ${type} goal:`);
-    if (!text || !text.trim()) return;
-    
-    const categories = [...new Set(state.goals.map(g => g.text))];
-    let categoryGoalId = null;
-    
-    if (categories.length > 0) {
-        const categoryChoice = prompt(
-            `Link to category? (optional)\n${categories.map((c, i) => `${i}: ${c}`).join('\n')}\n\nLeave blank for none`
-        );
-        if (categoryChoice !== null && categoryChoice !== '') {
-            const idx = parseInt(categoryChoice);
-            if (!isNaN(idx) && categories[idx]) {
-                const categoryGoal = state.goals.find(g => g.text === categories[idx]);
-                categoryGoalId = categoryGoal ? categoryGoal.id : null;
-            }
-        }
-    }
-    
-    // NEW: Select period
-    let period;
-    if (type === 'quarterly') {
-        const quarterChoice = prompt('Select Quarter:\n0: Q1\n1: Q2\n2: Q3\n3: Q4\n\nOr leave blank for current quarter');
-        if (quarterChoice !== null && quarterChoice !== '') {
-            const q = parseInt(quarterChoice);
-            if (!isNaN(q) && q >= 0 && q <= 3) {
-                period = `${state.currentDate.getFullYear()}-Q${q + 1}`;
-            } else {
-                period = getCurrentQuarterString();
-            }
-        } else {
-            period = getCurrentQuarterString();
-        }
-    } else if (type === 'monthly') {
-        const monthChoice = prompt('Select Month (1-12) or leave blank for current month:');
-        if (monthChoice !== null && monthChoice !== '') {
-            const m = parseInt(monthChoice);
-            if (!isNaN(m) && m >= 1 && m <= 12) {
-                period = `${state.currentDate.getFullYear()}-${String(m).padStart(2, '0')}`;
-            } else {
-                period = getCurrentMonthString();
-            }
-        } else {
-            period = getCurrentMonthString();
-        }
-    } else if (type === 'weekly') {
-        const weekChoice = prompt('Select Week (1-52) or leave blank for current week:');
-        if (weekChoice !== null && weekChoice !== '') {
-            const w = parseInt(weekChoice);
-            if (!isNaN(w) && w >= 1 && w <= 52) {
-                period = `${state.currentDate.getFullYear()}-W${String(w).padStart(2, '0')}`;
-            } else {
-                period = getCurrentWeekString();
-            }
-        } else {
-            period = getCurrentWeekString();
-        }
-    }
-    
-    const goal = {
-        id: Date.now(),
-        text: text.trim(),
-        categoryGoalId: categoryGoalId,
-        done: false,
-        created: new Date().toISOString(),
-        period: period
-    };
-    
-    if (type === 'weekly') {
-        goal.autoCount = true;
-        goal.taskCount = 0;
-    }
-    
-    state.strategicGoals[type].push(goal);
-    saveData();
-    renderGoalsDashboard();
-}
-
-function toggleStrategicGoal(type, goalId) {
-    const goal = state.strategicGoals[type].find(g => g.id === goalId);
-    if (!goal) return;
-    
-    if (goal.done) {
-        // Untoggle
-        goal.done = false;
-        goal.completedDate = null;
-    } else {
-        // Check completion
-        let message = `Mark "${goal.text}" as complete?`;
-        
-        if (type === 'weekly' && goal.categoryGoalId) {
-            // Count tasks completed this week in this category
-            const weekStart = getWeekStartDate(state.currentDate);
-            const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
+            const categories = [...new Set(state.goals.map(g => g.text))];
+            let categoryGoalId = null;
             
-            const tasksInCategory = state.tasks.filter(t => {
-                const taskDate = new Date(t.date);
-                return t.completed && 
-                       t.goalId === goal.categoryGoalId &&
-                       taskDate >= weekStart && 
-                       taskDate < weekEnd;
-            });
-            
-            message = `You completed ${tasksInCategory.length} tasks in this category this week.\n\n${message}`;
-        }
-        
-        if (confirm(message)) {
-            goal.done = true;
-            goal.completedDate = new Date().toISOString();
-        }
-    }
-    
-    saveData();
-    renderGoalsDashboard();
-}
-
-function getWeekStartDate(date) {
-    const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Monday as start
-    return new Date(d.setDate(diff));
-}
-
-function editStrategicGoal(type, goalId) {
-    const goal = state.strategicGoals[type].find(g => g.id === goalId);
-    if (!goal) return;
-    
-    const newText = prompt('Edit goal text:', goal.text);
-    if (newText !== null && newText.trim()) {
-        goal.text = newText.trim();
-    }
-    
-    const categories = [...new Set(state.goals.map(g => g.text))];
-    if (categories.length > 0) {
-        const currentCategory = goal.categoryGoalId ? 
-            state.goals.find(g => g.id === goal.categoryGoalId)?.text : 'None';
-        
-        const categoryChoice = prompt(
-            `Link to category?\n${categories.map((c, i) => `${i}: ${c}`).join('\n')}\n\nCurrent: ${currentCategory}\nLeave blank to remove category`
-        );
-        
-        if (categoryChoice !== null) {
-            if (categoryChoice === '') {
-                goal.categoryGoalId = null;
-            } else {
-                const idx = parseInt(categoryChoice);
-                if (!isNaN(idx) && categories[idx]) {
-                    const categoryGoal = state.goals.find(g => g.text === categories[idx]);
-                    goal.categoryGoalId = categoryGoal ? categoryGoal.id : null;
+            if (categories.length > 0) {
+                const categoryChoice = prompt(
+                    `Link to category? (optional)\n${categories.map((c, i) => `${i}: ${c}`).join('\n')}\n\nLeave blank for none`
+                );
+                if (categoryChoice !== null && categoryChoice !== '') {
+                    const idx = parseInt(categoryChoice);
+                    if (!isNaN(idx) && categories[idx]) {
+                        const categoryGoal = state.goals.find(g => g.text === categories[idx]);
+                        categoryGoalId = categoryGoal ? categoryGoal.id : null;
+                    }
                 }
             }
-        }
-    }
-    
-    if (type === 'quarterly') {
-        const currentQ = goal.period.split('-Q')[1];
-        const quarterChoice = prompt(`Select Quarter (current: Q${currentQ}):\n0: Q1\n1: Q2\n2: Q3\n3: Q4\n\nLeave blank to keep current`);
-        if (quarterChoice !== null && quarterChoice !== '') {
-            const q = parseInt(quarterChoice);
-            if (!isNaN(q) && q >= 0 && q <= 3) {
-                const year = goal.period.split('-')[0];
-                goal.period = `${year}-Q${q + 1}`;
-            }
-        }
-    } else if (type === 'monthly') {
-        const currentMonth = parseInt(goal.period.split('-')[1]);
-        const monthChoice = prompt(`Select Month (current: ${currentMonth}):\n1-12\n\nLeave blank to keep current`);
-        if (monthChoice !== null && monthChoice !== '') {
-            const m = parseInt(monthChoice);
-            if (!isNaN(m) && m >= 1 && m <= 12) {
-                const year = goal.period.split('-')[0];
-                goal.period = `${year}-${String(m).padStart(2, '0')}`;
-            }
-        }
-    } else if (type === 'weekly') {
-        const currentWeek = parseInt(goal.period.split('-W')[1]);
-        const weekChoice = prompt(`Select Week (current: ${currentWeek}):\n1-52\n\nLeave blank to keep current`);
-        if (weekChoice !== null && weekChoice !== '') {
-            const w = parseInt(weekChoice);
-            if (!isNaN(w) && w >= 1 && w <= 52) {
-                const year = goal.period.split('-')[0];
-                goal.period = `${year}-W${String(w).padStart(2, '0')}`;
-            }
-        }
-    }
-    
-    saveData();
-    renderGoalsDashboard();
-}
+        
+                // NEW: Select period
+                let period;
+                if (type === 'quarterly') {
+                    const quarterChoice = prompt('Select Quarter:\n0: Q1\n1: Q2\n2: Q3\n3: Q4\n\nOr leave blank for current quarter');
+                    if (quarterChoice !== null && quarterChoice !== '') {
+                        const q = parseInt(quarterChoice);
+                        if (!isNaN(q) && q >= 0 && q <= 3) {
+                            period = `${state.currentDate.getFullYear()}-Q${q + 1}`;
+                        } else {
+                            period = getCurrentQuarterString();
+                        }
+                    } else {
+                        period = getCurrentQuarterString();
+                    }
+                } else if (type === 'monthly') {
+                    const monthChoice = prompt('Select Month (1-12) or leave blank for current month:');
+                    if (monthChoice !== null && monthChoice !== '') {
+                        const m = parseInt(monthChoice);
+                        if (!isNaN(m) && m >= 1 && m <= 12) {
+                            period = `${state.currentDate.getFullYear()}-${String(m).padStart(2, '0')}`;
+                        } else {
+                            period = getCurrentMonthString();
+                        }
+                    } else {
+                        period = getCurrentMonthString();
+                    }
+                } else if (type === 'weekly') {
+                    const weekChoice = prompt('Select Week (1-52) or leave blank for current week:');
+                    if (weekChoice !== null && weekChoice !== '') {
+                        const w = parseInt(weekChoice);
+                        if (!isNaN(w) && w >= 1 && w <= 52) {
+                            period = `${state.currentDate.getFullYear()}-W${String(w).padStart(2, '0')}`;
+                        } else {
+                            period = getCurrentWeekString();
+                        }
+                    } else {
+                        period = getCurrentWeekString();
+                    }
+                }
                 
-function deleteStrategicGoal(type, goalId) {
-    if (confirm('Delete this goal?')) {
-        state.strategicGoals[type] = state.strategicGoals[type].filter(g => g.id !== goalId);
-        saveData();
-        renderGoalsDashboard();
-    }
-}
+                const goal = {
+                    id: Date.now(),
+                    text: text.trim(),
+                    categoryGoalId: categoryGoalId,
+                    done: false,
+                    created: new Date().toISOString(),
+                    period: period
+                };
+                
+                if (type === 'weekly') {
+                    goal.autoCount = true;
+                    goal.taskCount = 0;
+                }
+                
+                state.strategicGoals[type].push(goal);
+                saveData();
+                renderGoalsDashboard();
+            }
 
-function archiveCompletedGoals(type) {
-    const completed = state.strategicGoals[type].filter(g => g.done);
-    if (completed.length === 0) {
-        alert('No completed goals to archive!');
-        return;
-    }
-    
-    if (confirm(`Archive ${completed.length} completed ${type} goals?`)) {
-        state.strategicGoals[type] = state.strategicGoals[type].filter(g => !g.done);
-        saveData();
-        renderGoalsDashboard();
-        alert(`Archived ${completed.length} goals!`);
-    }
-}
+            function toggleStrategicGoal(type, goalId) {
+                const goal = state.strategicGoals[type].find(g => g.id === goalId);
+                if (!goal) return;
+                
+                if (goal.done) {
+                    // Untoggle
+                    goal.done = false;
+                    goal.completedDate = null;
+                } else {
+                    // Check completion
+                    let message = `Mark "${goal.text}" as complete?`;
+                    
+                    if (type === 'weekly' && goal.categoryGoalId) {
+                        // Count tasks completed this week in this category
+                        const weekStart = getWeekStartDate(state.currentDate);
+                        const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
+                        
+                        const tasksInCategory = state.tasks.filter(t => {
+                            const taskDate = new Date(t.date);
+                            return t.completed && 
+                                   t.goalId === goal.categoryGoalId &&
+                                   taskDate >= weekStart && 
+                                   taskDate < weekEnd;
+                        });
+                        
+                        message = `You completed ${tasksInCategory.length} tasks in this category this week.\n\n${message}`;
+                    }
+                    
+                    if (confirm(message)) {
+                        goal.done = true;
+                        goal.completedDate = new Date().toISOString();
+                    }
+                }
+                
+                saveData();
+                renderGoalsDashboard();
+            }
+            
+            function getWeekStartDate(date) {
+                const d = new Date(date);
+                const day = d.getDay();
+                const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Monday as start
+                return new Date(d.setDate(diff));
+            }
+            
+            function editStrategicGoal(type, goalId) {
+                const goal = state.strategicGoals[type].find(g => g.id === goalId);
+                if (!goal) return;
+                
+                const newText = prompt('Edit goal text:', goal.text);
+                if (newText !== null && newText.trim()) {
+                    goal.text = newText.trim();
+                }
+                
+                const categories = [...new Set(state.goals.map(g => g.text))];
+                if (categories.length > 0) {
+                    const currentCategory = goal.categoryGoalId ? 
+                        state.goals.find(g => g.id === goal.categoryGoalId)?.text : 'None';
+                    
+                    const categoryChoice = prompt(
+                        `Link to category?\n${categories.map((c, i) => `${i}: ${c}`).join('\n')}\n\nCurrent: ${currentCategory}\nLeave blank to remove category`
+                    );
+                    
+                    if (categoryChoice !== null) {
+                        if (categoryChoice === '') {
+                            goal.categoryGoalId = null;
+                        } else {
+                            const idx = parseInt(categoryChoice);
+                            if (!isNaN(idx) && categories[idx]) {
+                                const categoryGoal = state.goals.find(g => g.text === categories[idx]);
+                                goal.categoryGoalId = categoryGoal ? categoryGoal.id : null;
+                            }
+                        }
+                    }
+                }
+                
+                if (type === 'quarterly') {
+                    const currentQ = goal.period.split('-Q')[1];
+                    const quarterChoice = prompt(`Select Quarter (current: Q${currentQ}):\n0: Q1\n1: Q2\n2: Q3\n3: Q4\n\nLeave blank to keep current`);
+                    if (quarterChoice !== null && quarterChoice !== '') {
+                        const q = parseInt(quarterChoice);
+                        if (!isNaN(q) && q >= 0 && q <= 3) {
+                            const year = goal.period.split('-')[0];
+                            goal.period = `${year}-Q${q + 1}`;
+                        }
+                    }
+                } else if (type === 'monthly') {
+                    const currentMonth = parseInt(goal.period.split('-')[1]);
+                    const monthChoice = prompt(`Select Month (current: ${currentMonth}):\n1-12\n\nLeave blank to keep current`);
+                    if (monthChoice !== null && monthChoice !== '') {
+                        const m = parseInt(monthChoice);
+                        if (!isNaN(m) && m >= 1 && m <= 12) {
+                            const year = goal.period.split('-')[0];
+                            goal.period = `${year}-${String(m).padStart(2, '0')}`;
+                        }
+                    }
+                } else if (type === 'weekly') {
+                    const currentWeek = parseInt(goal.period.split('-W')[1]);
+                    const weekChoice = prompt(`Select Week (current: ${currentWeek}):\n1-52\n\nLeave blank to keep current`);
+                    if (weekChoice !== null && weekChoice !== '') {
+                        const w = parseInt(weekChoice);
+                        if (!isNaN(w) && w >= 1 && w <= 52) {
+                            const year = goal.period.split('-')[0];
+                            goal.period = `${year}-W${String(w).padStart(2, '0')}`;
+                        }
+                    }
+                }
+                
+                saveData();
+                renderGoalsDashboard();
+            }
+                            
+            function deleteStrategicGoal(type, goalId) {
+                if (confirm('Delete this goal?')) {
+                    state.strategicGoals[type] = state.strategicGoals[type].filter(g => g.id !== goalId);
+                    saveData();
+                    renderGoalsDashboard();
+                }
+            }
+            
+            function archiveCompletedGoals(type) {
+                const completed = state.strategicGoals[type].filter(g => g.done);
+                if (completed.length === 0) {
+                    alert('No completed goals to archive!');
+                    return;
+                }
+                
+                if (confirm(`Archive ${completed.length} completed ${type} goals?`)) {
+                    state.strategicGoals[type] = state.strategicGoals[type].filter(g => !g.done);
+                    saveData();
+                    renderGoalsDashboard();
+                    alert(`Archived ${completed.length} goals!`);
+                }
+            }
 
             function autoArchiveWeeklyGoals() {
                 // Check if it's Sunday and auto-archive weekly goals
@@ -1878,6 +1885,7 @@ function archiveCompletedGoals(type) {
                             </div>
                         </div>
                         <button class="task-edit-btn" onclick="editTask(${task.id})" title="Edit task">✏️</button>
+                        <button class="task-edit-btn" onclick="quickReschedule(${task.id})" title="Reschedule task">📅</button>
                         <button class="delete-btn" onclick="deleteTask(${task.id})">×</button>
                     </div>
                 `;
@@ -2473,6 +2481,50 @@ function archiveCompletedGoals(type) {
                 
                 container.innerHTML = html;
             }
+
+            function quickReschedule(taskId) {
+                const task = state.tasks.find(t => t.id === taskId);
+                if (!task) return;
+            
+                const today = state.currentDate.toISOString().split('T')[0];
+                const tomorrow = new Date(state.currentDate.getTime() + 24*60*60*1000).toISOString().split('T')[0];
+                const dayAfter = new Date(state.currentDate.getTime() + 48*60*60*1000).toISOString().split('T')[0];
+                const nextWeek = new Date(state.currentDate.getTime() + 7*24*60*60*1000).toISOString().split('T')[0];
+            
+                const choice = prompt(
+                    `📅 Reschedule: "${task.text}"\nCurrent date: ${task.date}\n\n` +
+                    `0: Today (${today})\n` +
+                    `1: Tomorrow (${tomorrow})\n` +
+                    `2: Day after tomorrow (${dayAfter})\n` +
+                    `3: Next week (${nextWeek})\n` +
+                    `4: Enter custom date\n\n` +
+                    `Enter 0-4:`
+                );
+            
+                if (choice === null) return;
+            
+                const dateMap = { '0': today, '1': tomorrow, '2': dayAfter, '3': nextWeek };
+            
+                let newDate;
+                if (choice === '4') {
+                    newDate = prompt('Enter date (YYYY-MM-DD):', tomorrow);
+                    if (!newDate) return;
+                    if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)) {
+                        alert('❌ Invalid format. Use YYYY-MM-DD');
+                        return;
+                    }
+                } else if (dateMap[choice] !== undefined) {
+                    newDate = dateMap[choice];
+                } else {
+                    alert('❌ Invalid choice');
+                    return;
+                }
+            
+                task.date = newDate;
+                saveData();
+                renderEverything();
+                alert(`✅ Rescheduled to ${new Date(newDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}`);
+            }
             
             function rescheduleTask(taskId) {
                 const task = state.tasks.find(t => t.id === taskId);
@@ -2654,6 +2706,10 @@ function archiveCompletedGoals(type) {
                                     <div style="flex: 1;">
                                         <span style="font-size: 1.2em; margin-right: 8px;">${statusIcon}</span>
                                         <span style="font-weight: 600; ${task.completed ? 'text-decoration: line-through;' : ''}">${task.text}</span>
+                                    </div>
+                                    <div style="display: flex; gap: 4px;">
+                                        <button onclick="quickReschedule(${task.id})" title="Reschedule" style="background: none; border: none; cursor: pointer; font-size: 1em; color: var(--text-light); padding: 4px 6px;">📅</button>
+                                        <button onclick="deleteTask(${task.id})" title="Delete" style="background: none; border: none; cursor: pointer; font-size: 1.2em; color: var(--text-light); padding: 4px 6px;">×</button>
                                     </div>
                                 </div>
                                 <div style="margin-top: 6px; font-size: 0.85em; color: var(--text-light);">
@@ -2897,7 +2953,56 @@ function archiveCompletedGoals(type) {
                 `;
             }
                           
-
+            function exportData() {
+                const dataStr = JSON.stringify(state, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const date = new Date().toISOString().split('T')[0];
+                a.href = url;
+                a.download = `todo-backup-${date}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+            
+            function importData(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+            
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+            
+                        // Basic validation
+                        if (!imported.tasks || !imported.goals) {
+                            alert('❌ Invalid backup file. Make sure you are importing a valid todo-backup file.');
+                            return;
+                        }
+            
+                        if (!confirm(`Import data?\n\nThis will REPLACE all current data:\n• ${imported.tasks.length} tasks\n• ${imported.goals.length} goals\n• ${imported.history?.length || 0} history entries\n\nThis cannot be undone!`)) {
+                            return;
+                        }
+            
+                        state = imported;
+                        state.currentDate = new Date(state.currentDate);
+                        if (!state.strategicGoals) {
+                            state.strategicGoals = { quarterly: [], monthly: [], weekly: [] };
+                        }
+            
+                        saveData();
+                        renderEverything();
+                        calculateStreak();
+                        updateCurrentDate();
+                        alert('✅ Data imported successfully!');
+                    } catch (err) {
+                        alert('❌ Failed to read file. Make sure it is a valid JSON backup.');
+                    }
+                };
+                reader.readAsText(file);
+                // Reset input so same file can be re-imported if needed
+                event.target.value = '';
+            }
             
             init();
     </script>
