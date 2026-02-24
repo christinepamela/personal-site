@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Infineon Technologies — Theta Framework Case Study</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --ifx-teal: #006B5E;
+      --ifx-teal-light: #00897B;
+      --ifx-gold: #C9A84C;
+      --ifx-gold-light: #E4C880;
+      --ink: #0E1A18;
+      --ink-soft: #1E2D2A;
+      --paper: #F7F5F0;
+      --paper-warm: #EFEBE2;
+      --muted: #8A9490;
+      --white: #FFFFFF;
+      --core-green: #2D6A4F;
+      --edge-amber: #B5841A;
+      --beyond-crimson: #8B1A1A;
+      --border: rgba(0,107,94,0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ──────── NAV ──────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.2rem 4rem;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(247,245,240,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--ifx-teal);
+    }
+    .nav-links { display: flex; gap: 2.5rem; }
+    .nav-links a {
+      font-size: 0.78rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--ifx-teal); }
+
+    /* ──────── HERO ──────── */
+    .hero {
+      min-height: 100vh;
+      background: var(--ink);
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 4rem 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-grid-bg {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,107,94,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,107,94,0.08) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-noise {
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      opacity: 0.4;
+    }
+    .hero-accent {
+      position: absolute; top: -20%; right: -10%;
+      width: 60vw; height: 60vw;
+      background: radial-gradient(circle, rgba(0,137,123,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-accent-2 {
+      position: absolute; bottom: -10%; left: -5%;
+      width: 40vw; height: 40vw;
+      background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-kicker {
+      font-size: 0.75rem; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--ifx-gold);
+      margin-bottom: 2rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .hero-kicker::before {
+      content: ''; display: block;
+      width: 2.5rem; height: 1px; background: var(--ifx-gold);
+    }
+    .hero-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 8vw, 7.5rem);
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1.0;
+      max-width: 900px;
+      margin-bottom: 2rem;
+    }
+    .hero-headline em {
+      font-style: italic; color: var(--ifx-gold-light);
+    }
+    .hero-sub {
+      font-size: 1rem; color: rgba(255,255,255,0.5);
+      max-width: 480px;
+      line-height: 1.8;
+      margin-bottom: 3rem;
+    }
+    .hero-meta {
+      display: flex; gap: 3rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 2rem;
+    }
+    .hero-meta-item label {
+      display: block;
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+    .hero-meta-item span {
+      font-size: 0.9rem; color: rgba(255,255,255,0.75);
+    }
+    .hero-scroll {
+      position: absolute; right: 4rem; bottom: 6rem;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0.75rem;
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .hero-scroll-line {
+      width: 1px; height: 4rem;
+      background: linear-gradient(to bottom, transparent, var(--muted));
+      animation: scrollLine 2s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0%, 100% { opacity: 0.3; transform: scaleY(0.7); }
+      50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    /* ──────── SECTIONS ──────── */
+    section { padding: 7rem 4rem; }
+
+    .section-label {
+      font-size: 0.7rem; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--ifx-teal);
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-label::after {
+      content: ''; flex: 0 0 2rem; height: 1px; background: var(--ifx-teal);
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 300; line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    .section-body {
+      font-size: 1rem; color: #4A5550;
+      max-width: 640px; line-height: 1.85;
+    }
+
+    /* ──────── ABOUT ──────── */
+    .about-section { background: var(--white); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+      margin-top: 4rem;
+    }
+    .about-stat-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.5rem; margin-top: 3rem;
+    }
+    .about-stat {
+      padding: 1.75rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+    .about-stat .num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem; font-weight: 300;
+      color: var(--ifx-teal); line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .about-stat .desc {
+      font-size: 0.78rem; color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .fact-card {
+      background: var(--ink);
+      padding: 2.5rem;
+      border-radius: 2px;
+      margin-top: 2rem;
+    }
+    .fact-card .label {
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--ifx-gold);
+      margin-bottom: 1rem;
+    }
+    .fact-card p {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.8;
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+    }
+    .belief-strip {
+      background: var(--ifx-teal);
+      padding: 3rem 4rem;
+      display: flex; align-items: center;
+      gap: 4rem;
+    }
+    .belief-strip blockquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 300;
+      color: var(--white); line-height: 1.5;
+      font-style: italic;
+      max-width: 700px;
+    }
+    .belief-strip cite {
+      font-size: 0.8rem; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      white-space: nowrap;
+      font-style: normal;
+    }
+
+    /* ──────── TIMELINE ──────── */
+    .timeline-section { background: var(--paper-warm); }
+    .timeline-track {
+      margin-top: 4rem;
+      position: relative;
+    }
+    .timeline-line {
+      position: absolute; left: 9rem; top: 0; bottom: 0;
+      width: 1px; background: var(--border);
+    }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 9rem 1fr;
+      gap: 2.5rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .timeline-item:last-child { border-bottom: none; }
+    .timeline-year {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 300;
+      color: var(--muted);
+      text-align: right;
+      padding-top: 0.1rem;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: calc(9rem - 5px);
+      top: 2.4rem;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--paper-warm);
+      border: 2px solid var(--ifx-teal);
+    }
+    .timeline-dot.highlight {
+      background: var(--ifx-teal);
+      box-shadow: 0 0 0 4px rgba(0,107,94,0.12);
+    }
+    .timeline-content {}
+    .timeline-phase {
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--ifx-gold);
+      margin-bottom: 0.3rem;
+    }
+    .timeline-title {
+      font-weight: 500; font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
+    .timeline-desc {
+      font-size: 0.88rem; color: var(--muted); line-height: 1.7;
+    }
+
+    /* ──────── THETA MAP ──────── */
+    .theta-section { background: var(--white); }
+    .theta-intro-grid {
+      display: grid; grid-template-columns: 1fr 2fr;
+      gap: 5rem; align-items: start; margin-top: 4rem;
+    }
+    .theta-zone-legend { display: flex; flex-direction: column; gap: 1.5rem; }
+    .theta-zone-chip {
+      display: flex; gap: 1rem; align-items: flex-start;
+    }
+    .zone-pill {
+      flex-shrink: 0;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.7rem; letter-spacing: 0.1em;
+      text-transform: uppercase; font-weight: 500;
+    }
+    .zone-pill.core { background: rgba(45,106,79,0.12); color: var(--core-green); }
+    .zone-pill.edge { background: rgba(181,132,26,0.12); color: var(--edge-amber); }
+    .zone-pill.beyond { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+    .zone-chip-text { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+    .theta-chart-wrap {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem;
+    }
+    .theta-chart-title {
+      font-size: 0.7rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Scatter canvas */
+    .scatter-canvas-wrap { position: relative; width: 100%; aspect-ratio: 1/1; }
+
+    /* ──────── ALLOCATION ──────── */
+    .allocation-section { background: var(--paper-warm); }
+    .alloc-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; align-items: center; margin-top: 4rem;
+    }
+    .donut-wrap { position: relative; max-width: 340px; margin: 0 auto; }
+    .donut-center {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center; pointer-events: none;
+    }
+    .donut-center .num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem; font-weight: 300; color: var(--ink);
+    }
+    .donut-center .label {
+      font-size: 0.7rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .alloc-bars { display: flex; flex-direction: column; gap: 2rem; }
+    .bar-item {}
+    .bar-meta {
+      display: flex; justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .bar-name { font-size: 0.85rem; font-weight: 500; }
+    .bar-pct { font-size: 0.85rem; color: var(--muted); }
+    .bar-track {
+      height: 6px; background: rgba(0,0,0,0.06);
+      border-radius: 3px; overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%; border-radius: 3px;
+      transition: width 1s ease;
+    }
+    .bar-fill.core { background: var(--core-green); }
+    .bar-fill.edge { background: var(--edge-amber); }
+    .bar-fill.beyond { background: var(--beyond-crimson); }
+    .bar-compare {
+      margin-top: 0.35rem;
+      display: flex; gap: 0.5rem; align-items: center;
+    }
+    .bar-compare-track {
+      flex: 1; height: 3px; background: rgba(0,0,0,0.06); border-radius: 2px; overflow: hidden;
+    }
+    .bar-compare-fill { height: 100%; border-radius: 2px; opacity: 0.35; }
+    .bar-compare-label {
+      font-size: 0.68rem; color: var(--muted); white-space: nowrap;
+    }
+
+    /* ──────── COMPETITORS ──────── */
+    .competitor-section { background: var(--white); }
+    .competitor-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.5rem;
+      margin-top: 4rem;
+    }
+    .comp-card {
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 1.75rem 1.5rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .comp-card:hover {
+      border-color: var(--ifx-teal);
+      box-shadow: 0 4px 24px rgba(0,107,94,0.08);
+    }
+    .comp-card.featured {
+      border-color: var(--ifx-teal);
+      background: linear-gradient(135deg, rgba(0,107,94,0.03), transparent);
+    }
+    .comp-name {
+      font-weight: 500; font-size: 0.92rem;
+      margin-bottom: 0.25rem;
+    }
+    .comp-tag {
+      font-size: 0.68rem; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+    .comp-zones { display: flex; flex-direction: column; gap: 0.5rem; }
+    .comp-zone-row {
+      display: flex; align-items: center;
+      gap: 0.6rem; font-size: 0.8rem;
+    }
+    .comp-zone-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .cz-core { background: var(--core-green); }
+    .cz-edge { background: var(--edge-amber); }
+    .cz-beyond { background: var(--beyond-crimson); }
+    .comp-zone-text { color: #555; line-height: 1.4; }
+    .comp-verdict {
+      margin-top: 1.25rem;
+      padding: 0.75rem;
+      background: var(--paper);
+      border-radius: 2px;
+      font-size: 0.75rem;
+      color: var(--ifx-teal);
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+
+    /* Radar chart */
+    .radar-wrap {
+      max-width: 500px; margin: 4rem auto 0;
+    }
+
+    /* ──────── SW ──────── */
+    .sw-section { background: var(--paper-warm); }
+    .sw-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 3rem; margin-top: 4rem;
+    }
+    .sw-panel { padding: 2.5rem; border-radius: 2px; }
+    .sw-panel.strengths { background: rgba(45,106,79,0.06); border: 1px solid rgba(45,106,79,0.2); }
+    .sw-panel.weaknesses { background: rgba(139,26,26,0.04); border: 1px solid rgba(139,26,26,0.15); }
+    .sw-panel-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 400;
+      margin-bottom: 1.75rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .sw-icon { font-size: 1.2rem; }
+    .sw-list { list-style: none; display: flex; flex-direction: column; gap: 1.1rem; }
+    .sw-list li {
+      display: flex; gap: 0.75rem;
+      font-size: 0.9rem; line-height: 1.6; color: #3A4A46;
+    }
+    .sw-marker {
+      flex-shrink: 0; width: 18px; height: 18px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 700;
+      margin-top: 0.15rem;
+    }
+    .sw-marker.s { background: rgba(45,106,79,0.15); color: var(--core-green); }
+    .sw-marker.w { background: rgba(139,26,26,0.12); color: var(--beyond-crimson); }
+
+    /* ──────── DIAGNOSTIC ──────── */
+    .diagnostic-section { background: var(--ink); color: var(--white); }
+    .diagnostic-section .section-label { color: var(--ifx-gold); }
+    .diagnostic-section .section-label::after { background: var(--ifx-gold); }
+    .diagnostic-section .section-title { color: var(--white); }
+    .diag-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; margin-top: 4rem;
+    }
+    .diag-column {}
+    .diag-block {
+      margin-bottom: 2.5rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .diag-block:last-child { border-bottom: none; }
+    .diag-block-title {
+      font-size: 0.7rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--ifx-gold);
+      margin-bottom: 1rem;
+    }
+    .diag-block p {
+      font-size: 0.9rem; line-height: 1.8;
+      color: rgba(255,255,255,0.65);
+    }
+    .verdict-chip {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid var(--ifx-gold);
+      border-radius: 20px;
+      font-size: 0.75rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--ifx-gold);
+      margin-top: 1rem;
+    }
+    .archetype-row {
+      display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;
+    }
+    .arch-box {
+      padding: 0.4rem 0.8rem;
+      border-radius: 2px;
+      font-size: 0.72rem; letter-spacing: 0.1em;
+      text-transform: uppercase; font-weight: 500;
+    }
+    .arch-box.ok { background: rgba(45,106,79,0.2); color: #6FCF97; }
+    .arch-box.mid { background: rgba(181,132,26,0.2); color: #F2C94C; }
+    .arch-box.low { background: rgba(139,26,26,0.2); color: #EB5757; }
+
+    /* Bar chart */
+    .diag-bar-chart { margin-top: 2rem; }
+    .diag-bar-row {
+      display: flex; align-items: center;
+      gap: 1rem; margin-bottom: 1rem;
+    }
+    .diag-bar-label {
+      font-size: 0.75rem; color: rgba(255,255,255,0.5);
+      width: 7rem; flex-shrink: 0;
+    }
+    .diag-bar-track {
+      flex: 1; height: 4px;
+      background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden;
+    }
+    .diag-bar-fill {
+      height: 100%; border-radius: 2px;
+    }
+    .diag-bar-pct {
+      font-size: 0.75rem; color: rgba(255,255,255,0.4);
+      width: 3rem; text-align: right;
+    }
+
+    /* ──────── FOOTER ──────── */
+    footer {
+      background: var(--ink-soft);
+      padding: 3rem 4rem;
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-left {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; color: rgba(255,255,255,0.4);
+    }
+    .footer-right {
+      font-size: 0.75rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3);
+    }
+
+    /* ──────── RESPONSIVE ──────── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 5rem 1.5rem; }
+      .hero { padding: 0 1.5rem 5rem; }
+      .about-grid, .theta-intro-grid, .alloc-grid,
+      .diag-grid, .sw-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .competitor-grid { grid-template-columns: 1fr 1fr; }
+      .belief-strip { flex-direction: column; gap: 1.5rem; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+
+    /* animations */
+    .fade-up {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    canvas { max-width: 100%; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Infineon — Theta Study</div>
+  <div class="nav-links">
+    <a href="#about">Overview</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#theta">Innovation Map</a>
+    <a href="#allocation">Allocation</a>
+    <a href="#competitors">Competitors</a>
+    <a href="#sw">Strengths</a>
+    <a href="#diagnostic">Diagnosis</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-accent"></div>
+  <div class="hero-accent-2"></div>
+
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+
+  <div style="position:relative; z-index:1;">
+    <div class="hero-kicker fade-up">Theta Framework — Strategic Case Study</div>
+    <h1 class="hero-headline fade-up" style="transition-delay:0.1s">
+      The Company<br/>That Powers <em>Everything</em><br/>You Don't See
+    </h1>
+    <p class="hero-sub fade-up" style="transition-delay:0.2s">
+      From the chip that starts your car to the silicon cooling the AI data centers 
+      redefining computing — Infineon Technologies operates at the invisible heart 
+      of modern civilization.
+    </p>
+    <div class="hero-meta fade-up" style="transition-delay:0.3s">
+      <div class="hero-meta-item">
+        <label>Founded</label>
+        <span>1999 · Neubiberg, Germany</span>
+      </div>
+      <div class="hero-meta-item">
+        <label>Employees</label>
+        <span>~57,000 globally</span>
+      </div>
+      <div class="hero-meta-item">
+        <label>Market Cap</label>
+        <span>~€63 billion</span>
+      </div>
+      <div class="hero-meta-item">
+        <label>Framework</label>
+        <span>Theta Innovation Analysis</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="section-label">What They Do</div>
+  <h2 class="section-title">Semiconductors as<br/>Civilizational Infrastructure</h2>
+  <div class="about-grid fade-up">
+    <div>
+      <p class="section-body">
+        Infineon Technologies AG is one of the world's leading semiconductor manufacturers — 
+        ranked #1 globally in automotive chips, power semiconductors, and security ICs. 
+        Where Nvidia makes AI think, Infineon makes it run. Where Tesla builds the car, 
+        Infineon controls its power.
+      </p>
+      <p class="section-body" style="margin-top:1.5rem;">
+        The company was spun out of Siemens in 1999 and has since defined what it means 
+        to be an "invisible essential" — the microelectronic layer beneath decarbonization, 
+        digitalization, and now the AI revolution.
+      </p>
+      <div class="fact-card">
+        <div class="label">✦ The Fact Most People Miss</div>
+        <p>"Infineon began as a Siemens semiconductor division in 1952 — meaning this company 
+        helped wire post-war Germany before most of Silicon Valley existed. Its DNA is 
+        older than the internet itself."</p>
+      </div>
+    </div>
+    <div>
+      <div class="about-stat-row">
+        <div class="about-stat">
+          <div class="num">#1</div>
+          <div class="desc">Global automotive semiconductor supplier since 2020</div>
+        </div>
+        <div class="about-stat">
+          <div class="num">€3.66B</div>
+          <div class="desc">Q1 FY2026 revenue — up 7% year-over-year</div>
+        </div>
+        <div class="about-stat">
+          <div class="num">€21B</div>
+          <div class="desc">Order backlog — 6 consecutive months of growth</div>
+        </div>
+        <div class="about-stat">
+          <div class="num">2.7B</div>
+          <div class="desc">€ FY2026 investment — largest in company history</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BELIEF STRIP -->
+<div class="belief-strip fade-up">
+  <blockquote>
+    "AI is the biggest growth driver in the history of this company. 
+    And we are only getting started."
+  </blockquote>
+  <cite>Jochen Hanebeck — CEO, Infineon Technologies AG, February 2026</cite>
+</div>
+
+<!-- TIMELINE -->
+<section class="timeline-section" id="timeline">
+  <div class="section-label">Path to Breakthrough</div>
+  <h2 class="section-title">Seven Decades.<br/>One Acceleration Moment.</h2>
+  <p class="section-body" style="margin-bottom:0;">
+    Infineon's journey from Siemens spin-off to AI power infrastructure leader is not a 
+    sudden pivot — it is the culmination of disciplined portfolio building across decades.
+  </p>
+
+  <div class="timeline-track fade-up">
+    <div class="timeline-line"></div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">1952</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase">Origin</div>
+        <div class="timeline-title">Siemens Semiconductor Division</div>
+        <div class="timeline-desc">The roots of Infineon begin inside Siemens AG — making chips when computing meant rooms full of vacuum tubes. Older than the internet itself.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">1999</div>
+      <div class="timeline-dot highlight"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase">Foundation Phase</div>
+        <div class="timeline-title">Infineon Technologies AG Founded</div>
+        <div class="timeline-desc">Spun out from Siemens and listed on the Frankfurt Stock Exchange. The independence creates focus — automotive, industrial, and security become the core mission.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2006</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase">Strategic Focus</div>
+        <div class="timeline-title">Memory Division Spun Off (Qimonda)</div>
+        <div class="timeline-desc">A deliberate retreat from commodity memory to double down on differentiated power and automotive semiconductors. The discipline that would later define market leadership.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2019</div>
+      <div class="timeline-dot highlight"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase">Scale & Portfolio</div>
+        <div class="timeline-title">€9B Cypress Semiconductor Acquisition</div>
+        <div class="timeline-desc">The transformational move. Propels Infineon into global top 10, cements #1 automotive position, and brings critical microcontroller and connectivity IP. The foundation for everything SDV-related.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2022</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase">Deep Tech Bets</div>
+        <div class="timeline-title">Quantum Lab Advances + Stellantis SiC Deal</div>
+        <div class="timeline-desc">First quantum processor testing acceleration. Major silicon carbide supply agreement with Stellantis signals the EV wave coming — and Infineon's readiness for it.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2024</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase">Advanced Manufacturing</div>
+        <div class="timeline-title">300mm Thin Wafer Fab Operational · Xiaomi Auto SiC Deal</div>
+        <div class="timeline-desc">Villach's next-gen fab becomes operational. SiC supply for Xiaomi Auto — the Chinese EV market opens up. Manufacturing capability now matches market ambition.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2025</div>
+      <div class="timeline-dot highlight"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase">Breakthrough Acceleration</div>
+        <div class="timeline-title">SURF Unit · ams OSRAM Acquisition · BMW Neue Klasse · RISC-V</div>
+        <div class="timeline-desc">The year of structural reorganization. A dedicated sensor/RF unit formed, $673M acquisition of ams OSRAM's sensor business, BMW's next-gen SDV platform partnership launched, RISC-V MCU development announced for 2028-29.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2026</div>
+      <div class="timeline-dot highlight"></div>
+      <div class="timeline-content">
+        <div class="timeline-phase">Record AI Investment</div>
+        <div class="timeline-title">€2.7B Deployment · Smart Power Fab Dresden · AI 10× Revenue</div>
+        <div class="timeline-desc">The most aggressive investment year in company history. Smart Power Fab opens in Dresden timed precisely for AI demand. AI revenue expected to grow from €1.5B to €2.5B within 12 months — a trajectory described internally as unprecedented.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section class="theta-section" id="theta">
+  <div class="section-label">Theta Innovation Map</div>
+  <h2 class="section-title">Where Does Infineon<br/>Actually Innovate?</h2>
+  <p class="section-body">
+    The Theta Framework plots every innovation initiative across two dimensions: 
+    how far it stretches into new markets, and how radically it changes the technology. 
+    The result reveals which game Infineon is truly playing.
+  </p>
+
+  <div class="theta-intro-grid fade-up">
+    <div class="theta-zone-legend">
+      <div class="theta-zone-chip">
+        <div class="zone-pill core">Core</div>
+        <div class="zone-chip-text">Existing markets, incremental improvement. Optimize and defend. Automotive MCUs, Power ICs, Security chips.</div>
+      </div>
+      <div class="theta-zone-chip">
+        <div class="zone-pill edge">Edge</div>
+        <div class="zone-chip-text">Moderate to high tech change, reaching new markets. AI data center power, SDV platforms, sensor acquisition.</div>
+      </div>
+      <div class="theta-zone-chip">
+        <div class="zone-pill beyond">Beyond</div>
+        <div class="zone-chip-text">Radical bets, speculative horizons. Smart Power Fab, humanoid robotics, imaging radar, quantum research.</div>
+      </div>
+      <div style="margin-top:1rem; padding:1.5rem; background:var(--paper); border-radius:2px;">
+        <div style="font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:0.75rem;">Reading the Map</div>
+        <div style="font-size:0.82rem; color:#555; line-height:1.7;">
+          X-axis → Market reach: existing to speculative<br/>
+          Y-axis → Technology change: incremental to radical<br/>
+          Size of bubble → Strategic importance
+        </div>
+      </div>
+    </div>
+
+    <div class="theta-chart-wrap">
+      <div class="theta-chart-title">Infineon Theta Innovation Map · 2026</div>
+      <div class="scatter-canvas-wrap">
+        <canvas id="thetaScatter"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section class="allocation-section" id="allocation">
+  <div class="section-label">Portfolio Allocation</div>
+  <h2 class="section-title">How Capital Follows Strategy</h2>
+  <p class="section-body">
+    Based on revenue composition, investment disclosures, and R&D signaling, 
+    Infineon's innovation allocation can be triangulated against the Theta 
+    benchmark of 70/20/10.
+  </p>
+
+  <div class="alloc-grid fade-up">
+    <div>
+      <div class="donut-wrap">
+        <canvas id="donutChart"></canvas>
+        <div class="donut-center">
+          <div class="num">3</div>
+          <div class="label">Zones Active</div>
+        </div>
+      </div>
+    </div>
+    <div class="alloc-bars">
+      <div style="margin-bottom:1rem;">
+        <div style="font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:0.75rem;">Infineon vs. Theta Benchmark</div>
+        <div style="font-size:0.82rem; color:#555; line-height:1.6; max-width:380px;">Each bar shows Infineon's actual estimated allocation. The lighter bar beneath shows the Theta guideline for healthy innovation portfolios.</div>
+      </div>
+
+      <div class="bar-item">
+        <div class="bar-meta">
+          <span class="bar-name">🟩 Core Zone</span>
+          <span class="bar-pct">75–80%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill core" style="width:77%"></div></div>
+        <div class="bar-compare">
+          <span class="bar-compare-label">Benchmark 70%</span>
+          <div class="bar-compare-track"><div class="bar-compare-fill core" style="width:70%"></div></div>
+        </div>
+        <div style="font-size:0.78rem; color:var(--muted); margin-top:0.4rem; line-height:1.5;">Defensible given #1 market positions. Risk: optimization becoming a ceiling rather than a floor.</div>
+      </div>
+
+      <div class="bar-item">
+        <div class="bar-meta">
+          <span class="bar-name">🟨 Edge Zone</span>
+          <span class="bar-pct">15–20%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill edge" style="width:17%"></div></div>
+        <div class="bar-compare">
+          <span class="bar-compare-label">Benchmark 20%</span>
+          <div class="bar-compare-track"><div class="bar-compare-fill edge" style="width:20%"></div></div>
+        </div>
+        <div style="font-size:0.78rem; color:var(--muted); margin-top:0.4rem; line-height:1.5;">The AI data center push is Edge's most visible and aggressive expression. Strong momentum here.</div>
+      </div>
+
+      <div class="bar-item">
+        <div class="bar-meta">
+          <span class="bar-name">🟥 Beyond Zone</span>
+          <span class="bar-pct">~5%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill beyond" style="width:5%"></div></div>
+        <div class="bar-compare">
+          <span class="bar-compare-label">Benchmark 10%</span>
+          <div class="bar-compare-track"><div class="bar-compare-fill beyond" style="width:10%"></div></div>
+        </div>
+        <div style="font-size:0.78rem; color:var(--muted); margin-top:0.4rem; line-height:1.5;">Underfunded relative to CEO's stated ambitions in robotics and autonomous systems.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section class="competitor-section" id="competitors">
+  <div class="section-label">Competitive Landscape</div>
+  <h2 class="section-title">Who's Playing the Same Game<br/>— and How</h2>
+  <p class="section-body">
+    In automotive power and AI data center semiconductors, Infineon faces peers 
+    with distinct strategic postures. Each maps differently across the Theta zones.
+  </p>
+
+  <div class="competitor-grid fade-up">
+    <div class="comp-card featured">
+      <div class="comp-name">Infineon</div>
+      <div class="comp-tag">Benchmark</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-core"></div><div class="comp-zone-text">Automotive #1, Power #1, Security #1</div></div>
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-edge"></div><div class="comp-zone-text">AI data center power, BMW SDV, SURF sensors</div></div>
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-beyond"></div><div class="comp-zone-text">Dresden SiC fab, robotics sensing, radar</div></div>
+      </div>
+      <div class="comp-verdict">Transitioning — Strong Edge momentum</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-name">NXP Semi</div>
+      <div class="comp-tag">SDV Aggressor</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-core"></div><div class="comp-zone-text">Auto MCUs, secure access, processors</div></div>
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-edge"></div><div class="comp-zone-text">S32N7 super-integration chip, Bosch SDV deal</div></div>
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-beyond"></div><div class="comp-zone-text">RISC-V open arch development</div></div>
+      </div>
+      <div class="comp-verdict">Edge Aggressor — Owns vehicle's central brain</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-name">STMicro</div>
+      <div class="comp-tag">Beyond Pivot</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-core"></div><div class="comp-zone-text">STM32 industrial MCU dominance</div></div>
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-edge"></div><div class="comp-zone-text">AWS multi-year AI infrastructure deal</div></div>
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-beyond"></div><div class="comp-zone-text">STM32N6 edge AI MCU with NPU</div></div>
+      </div>
+      <div class="comp-verdict">Credibility leap — Direct AWS pipeline</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-name">Texas Instruments</div>
+      <div class="comp-tag">Platform Scale</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-core"></div><div class="comp-zone-text">Analog/embedded processing stronghold</div></div>
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-edge"></div><div class="comp-zone-text">TDA5 scalable AI SoC, 4D imaging radar</div></div>
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-beyond"></div><div class="comp-zone-text">Digital twins + Synopsys simulation tools</div></div>
+      </div>
+      <div class="comp-verdict">Core Powerhouse building full-stack Edge</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-name">onsemi</div>
+      <div class="comp-tag">GaN Challenger</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-core"></div><div class="comp-zone-text">Power SiC and sensor solutions</div></div>
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-edge"></div><div class="comp-zone-text">GaN + GlobalFoundries for AI/EV power</div></div>
+        <div class="comp-zone-row"><div class="comp-zone-dot cz-beyond"></div><div class="comp-zone-text">Full-spectrum GaN architecture push</div></div>
+      </div>
+      <div class="comp-verdict">Beyond Challenger — Betting GaN displaces SiC</div>
+    </div>
+  </div>
+
+  <div class="radar-wrap fade-up">
+    <div style="font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:1rem; text-align:center;">Competitive Positioning Radar — Theta Zone Strength</div>
+    <canvas id="radarChart"></canvas>
+  </div>
+</section>
+
+<!-- S&W -->
+<section class="sw-section" id="sw">
+  <div class="section-label">Strategic Assessment</div>
+  <h2 class="section-title">The Fortress and<br/>Its Fault Lines</h2>
+
+  <div class="sw-grid fade-up">
+    <div class="sw-panel strengths">
+      <div class="sw-panel-title"><span class="sw-icon">▲</span> Strengths</div>
+      <ul class="sw-list">
+        <li>
+          <div class="sw-marker s">S</div>
+          <div><strong>Unassailable market positions.</strong> #1 globally in automotive semiconductors, power semiconductors, and security ICs — positions that took decades to build and cannot be bought overnight.</div>
+        </li>
+        <li>
+          <div class="sw-marker s">S</div>
+          <div><strong>AI revenue trajectory.</strong> From €1.5B to €2.5B in AI data center revenue within one fiscal year — constrained only by manufacturing capacity, not demand.</div>
+        </li>
+        <li>
+          <div class="sw-marker s">S</div>
+          <div><strong>Capital agility.</strong> Increased FY2026 investment by €500M in a single announcement, targeting the exact intersection of their power competency and the AI megatrend.</div>
+        </li>
+        <li>
+          <div class="sw-marker s">S</div>
+          <div><strong>€21 billion order backlog.</strong> Six consecutive months of growth providing revenue visibility that most semiconductor companies would envy.</div>
+        </li>
+        <li>
+          <div class="sw-marker s">S</div>
+          <div><strong>Full-spectrum power portfolio.</strong> Silicon, SiC, and GaN — covering every voltage level and application. Competitors typically specialize in one.</div>
+        </li>
+        <li>
+          <div class="sw-marker s">S</div>
+          <div><strong>Leadership continuity through 2032.</strong> CEO and CFO contracts extended, Supervisory Board chaired by Herbert Diess. Long-term bets are protected from short-term disruption.</div>
+        </li>
+      </ul>
+    </div>
+    <div class="sw-panel weaknesses">
+      <div class="sw-panel-title"><span class="sw-icon">▽</span> Weaknesses</div>
+      <ul class="sw-list">
+        <li>
+          <div class="sw-marker w">W</div>
+          <div><strong>50% of revenue tied to sluggish automotive.</strong> The market has plateaued and Chinese EV competition has forced European OEM production reviews — a structural drag on the #1 revenue source.</div>
+        </li>
+        <li>
+          <div class="sw-marker w">W</div>
+          <div><strong>Net profit margin compression.</strong> From 9.5% to 6.7% on a trailing basis. High capex cycle and lower auto volumes are squeezing what was once a premium margin profile.</div>
+        </li>
+        <li>
+          <div class="sw-marker w">W</div>
+          <div><strong>Negative free cash flow</strong> at -€199M in Q1 FY2026. The investment cycle is right but it creates near-term financial pressure when macro headwinds persist.</div>
+        </li>
+        <li>
+          <div class="sw-marker w">W</div>
+          <div><strong>Beyond zone underfunded</strong> at ~5% vs. the 10% Theta benchmark. Robotics, autonomous systems, and quantum represent CEO-level stated ambitions without matching resource allocation.</div>
+        </li>
+        <li>
+          <div class="sw-marker w">W</div>
+          <div><strong>GaN disruption risk from onsemi.</strong> If gallium nitride displaces silicon carbide in high-power applications, onsemi's aggressive GaN push could erode Infineon's power semiconductor stronghold over a 5–8 year horizon.</div>
+        </li>
+        <li>
+          <div class="sw-marker w">W</div>
+          <div><strong>Valuation leaves no room for error.</strong> Trading at 52.5x P/E vs. the European semiconductor average of 40.4x — the market has priced in the growth story before it fully materializes.</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section class="diagnostic-section" id="diagnostic">
+  <div class="section-label">Theta Framework Diagnostic</div>
+  <h2 class="section-title" style="color:white;">The Verdict:<br/>Transitioning ☑ △ ×</h2>
+
+  <div class="diag-grid fade-up">
+    <div class="diag-column">
+      <div class="diag-block">
+        <div class="diag-block-title">Portfolio Mapping</div>
+        <div class="archetype-row">
+          <div class="arch-box ok">Core ✓</div>
+          <div class="arch-box mid">Edge △</div>
+          <div class="arch-box low">Beyond ×</div>
+        </div>
+        <p>Core is strong and well-defended. Edge is the current strategic narrative — well-funded and showing tangible momentum in AI and SDV. Beyond is present in intent (Hanebeck names robotics and autonomous systems) but under-resourced relative to those ambitions.</p>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Leadership & Culture</div>
+        <p>The Supervisory Board, chaired by Herbert Diess — a man who transformed VW — signals a board-level appetite for bold transformation. Hanebeck's naming of "humanoid robotics" as a growth vector is a visionary signal. The SURF unit formation suggests maverick thinking is being structurally protected. The departure of Laurent Rémont (RF/Sensor chief) to Soitec is a potential loss of a key Edge champion.</p>
+        <div class="verdict-chip">Agile capital · Conscious strategy · Courage present</div>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Mavericks & Risk Tolerance</div>
+        <p>The RISC-V MCU development — directly challenging ARM's dominance — is a rare maverick bet from an incumbent. As a DAX-listed German engineering firm, the institutional tolerance for public failure is low. The true test: if the Dresden fab's AI demand thesis takes longer than projected, how does the board respond?</p>
+      </div>
+    </div>
+
+    <div class="diag-column">
+      <div class="diag-block">
+        <div class="diag-block-title">Customer Signal Alignment</div>
+        <p>Infineon listens to both its core customers (50% auto revenue) and lead users defining the future (BMW Neue Klasse, SolarEdge SST partnership). The pivot to AI data centers was not a reactive move — it was a proactive signal capture from watching power demands make traditional data center architectures unsustainable.</p>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Critical Tension: Metrics Mismatch</div>
+        <p>The most significant structural risk. Infineon's AI data center business (an Edge initiative) is being measured by aggressive short-term revenue targets (€1.5B → €2.5B in 12 months). This applies Core-style KPIs to Edge innovation — a dynamic that historically forces premature scaling and discourages the kind of patient architecture work that produces genuine breakthroughs.</p>
+        <div class="verdict-chip">⚠ Watch: Core KPIs on Edge initiatives</div>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Innovation Zone Allocation vs. Benchmark</div>
+        <div class="diag-bar-chart">
+          <div class="diag-bar-row">
+            <div class="diag-bar-label">Core (IFX)</div>
+            <div class="diag-bar-track"><div class="diag-bar-fill" style="width:77%;background:var(--core-green);opacity:0.8;"></div></div>
+            <div class="diag-bar-pct">77%</div>
+          </div>
+          <div class="diag-bar-row">
+            <div class="diag-bar-label">Core (Theta)</div>
+            <div class="diag-bar-track"><div class="diag-bar-fill" style="width:70%;background:var(--core-green);opacity:0.35;"></div></div>
+            <div class="diag-bar-pct">70%</div>
+          </div>
+          <div class="diag-bar-row">
+            <div class="diag-bar-label">Edge (IFX)</div>
+            <div class="diag-bar-track"><div class="diag-bar-fill" style="width:17%;background:var(--edge-amber);opacity:0.8;"></div></div>
+            <div class="diag-bar-pct">17%</div>
+          </div>
+          <div class="diag-bar-row">
+            <div class="diag-bar-label">Edge (Theta)</div>
+            <div class="diag-bar-track"><div class="diag-bar-fill" style="width:20%;background:var(--edge-amber);opacity:0.35;"></div></div>
+            <div class="diag-bar-pct">20%</div>
+          </div>
+          <div class="diag-bar-row">
+            <div class="diag-bar-label">Beyond (IFX)</div>
+            <div class="diag-bar-track"><div class="diag-bar-fill" style="width:5%;background:var(--beyond-crimson);opacity:0.8;"></div></div>
+            <div class="diag-bar-pct">5%</div>
+          </div>
+          <div class="diag-bar-row">
+            <div class="diag-bar-label">Beyond (Theta)</div>
+            <div class="diag-bar-track"><div class="diag-bar-fill" style="width:10%;background:var(--beyond-crimson);opacity:0.35;"></div></div>
+            <div class="diag-bar-pct">10%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="diag-block" style="border:none; padding-bottom:0;">
+        <div class="diag-block-title">Relativity Assessment</div>
+        <p>Within the power semiconductor landscape, Infineon's Edge bets are genuinely disruptive — TLVR power modules and solid-state transformer partnerships are industry firsts. In the broader semiconductor context (vs. Nvidia, TSMC), the same moves read as disciplined architectural iteration. The Relativity Principle holds: Infineon is not building the AI era — it is building the infrastructure that makes the AI era possible.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left">Infineon Technologies AG — Theta Framework Analysis · 2026</div>
+  <div class="footer-right">Strategic Case Study</div>
+</footer>
+
+<script>
+// ── INTERSECTION OBSERVER for fade-up ──
+const faders = document.querySelectorAll('.fade-up');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.1 });
+faders.forEach(f => observer.observe(f));
+
+// trigger hero immediately
+document.querySelectorAll('.hero .fade-up').forEach((el, i) => {
+  setTimeout(() => el.classList.add('visible'), 100 + i * 120);
+});
+
+// ── THETA SCATTER ──
+const ctx1 = document.getElementById('thetaScatter').getContext('2d');
+const scatterData = {
+  datasets: [
+    {
+      label: '🟩 Core',
+      backgroundColor: 'rgba(45,106,79,0.75)',
+      pointRadius: 10,
+      data: [
+        { x: 0.85, y: 0.15, label: 'Automotive Semicon' },
+        { x: 0.80, y: 0.20, label: 'Power Semicon' },
+        { x: 0.75, y: 0.10, label: 'Security ICs' },
+      ]
+    },
+    {
+      label: '🟨 Edge',
+      backgroundColor: 'rgba(181,132,26,0.8)',
+      pointRadius: 10,
+      data: [
+        { x: 0.40, y: 0.45, label: 'OptiMOS TLVR (AI)' },
+        { x: 0.50, y: 0.35, label: 'ams OSRAM Sensors' },
+        { x: 0.35, y: 0.55, label: 'Zone Controller Kit' },
+        { x: 0.30, y: 0.65, label: "BMW Neue Klasse" },
+        { x: 0.15, y: 0.75, label: 'RISC-V MCU' },
+      ]
+    },
+    {
+      label: '🟥 Beyond',
+      backgroundColor: 'rgba(139,26,26,0.75)',
+      pointRadius: 10,
+      data: [
+        { x: 0.20, y: 0.70, label: 'HL Klemove Radar' },
+        { x: 0.10, y: 0.85, label: 'Smart Power Fab' },
+        { x: 0.08, y: 0.90, label: 'Humanoid Robotics' },
+        { x: 0.03, y: 0.97, label: 'Quantum Research' },
+      ]
+    }
+  ]
+};
+
+new Chart(ctx1, {
+  type: 'scatter',
+  data: scatterData,
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: { font: { family: 'DM Sans', size: 11 }, padding: 16, usePointStyle: true }
+      },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => {
+            const raw = ctx.raw;
+            return ` ${raw.label}`;
+          }
+        },
+        bodyFont: { family: 'DM Sans', size: 12 },
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        padding: 10
+      }
+    },
+    scales: {
+      x: {
+        min: 0, max: 1,
+        title: {
+          display: true, text: 'Market Reach  →  Existing  →  New  →  Emerging  →  Speculative',
+          font: { family: 'DM Sans', size: 10 }, color: '#8A9490'
+        },
+        ticks: { display: false },
+        grid: { color: 'rgba(0,107,94,0.08)' }
+      },
+      y: {
+        min: 0, max: 1,
+        title: {
+          display: true, text: 'Technology Change  →  Incremental  →  High  →  Radical',
+          font: { family: 'DM Sans', size: 10 }, color: '#8A9490'
+        },
+        ticks: { display: false },
+        grid: { color: 'rgba(0,107,94,0.08)' }
+      }
+    }
+  },
+  plugins: [{
+    id: 'pointLabels',
+    afterDatasetsDraw(chart) {
+      const ctx = chart.ctx;
+      chart.data.datasets.forEach((ds, di) => {
+        ds.data.forEach((point, pi) => {
+          const meta = chart.getDatasetMeta(di);
+          const el = meta.data[pi];
+          if (!el) return;
+          const { x, y } = el.getProps(['x', 'y']);
+          ctx.save();
+          ctx.fillStyle = '#444';
+          ctx.font = '10px DM Sans';
+          ctx.textAlign = 'left';
+          ctx.fillText(point.label, x + 12, y + 4);
+          ctx.restore();
+        });
+      });
+    }
+  }]
+});
+
+// ── DONUT ──
+const ctx2 = document.getElementById('donutChart').getContext('2d');
+new Chart(ctx2, {
+  type: 'doughnut',
+  data: {
+    labels: ['Core', 'Edge', 'Beyond'],
+    datasets: [{
+      data: [77, 18, 5],
+      backgroundColor: [
+        'rgba(45,106,79,0.85)',
+        'rgba(181,132,26,0.85)',
+        'rgba(139,26,26,0.8)'
+      ],
+      borderWidth: 0,
+      hoverOffset: 6
+    }]
+  },
+  options: {
+    cutout: '68%',
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { font: { family: 'DM Sans', size: 11 }, padding: 14, usePointStyle: true }
+      },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => ` ${ctx.label}: ${ctx.parsed}%`
+        },
+        bodyFont: { family: 'DM Sans' },
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        padding: 10
+      }
+    }
+  }
+});
+
+// ── RADAR ──
+const ctx3 = document.getElementById('radarChart').getContext('2d');
+new Chart(ctx3, {
+  type: 'radar',
+  data: {
+    labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'AI Readiness', 'Manufacturing', 'SDV Position'],
+    datasets: [
+      {
+        label: 'Infineon',
+        data: [95, 72, 45, 78, 85, 80],
+        borderColor: 'rgba(0,107,94,0.9)',
+        backgroundColor: 'rgba(0,107,94,0.12)',
+        pointBackgroundColor: 'rgba(0,107,94,1)',
+        pointRadius: 4, borderWidth: 2
+      },
+      {
+        label: 'NXP',
+        data: [80, 85, 55, 70, 70, 90],
+        borderColor: 'rgba(181,132,26,0.7)',
+        backgroundColor: 'rgba(181,132,26,0.07)',
+        pointBackgroundColor: 'rgba(181,132,26,1)',
+        pointRadius: 4, borderWidth: 1.5
+      },
+      {
+        label: 'STMicro',
+        data: [75, 80, 70, 88, 65, 60],
+        borderColor: 'rgba(139,26,26,0.7)',
+        backgroundColor: 'rgba(139,26,26,0.07)',
+        pointBackgroundColor: 'rgba(139,26,26,1)',
+        pointRadius: 4, borderWidth: 1.5
+      },
+      {
+        label: 'onsemi',
+        data: [70, 65, 82, 68, 72, 50],
+        borderColor: 'rgba(80,80,80,0.6)',
+        backgroundColor: 'rgba(80,80,80,0.05)',
+        pointBackgroundColor: 'rgba(80,80,80,0.8)',
+        pointRadius: 4, borderWidth: 1.5
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { display: false, stepSize: 20 },
+        pointLabels: { font: { family: 'DM Sans', size: 11 }, color: '#555' },
+        grid: { color: 'rgba(0,0,0,0.07)' },
+        angleLines: { color: 'rgba(0,0,0,0.07)' }
+      }
+    },
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { font: { family: 'DM Sans', size: 11 }, padding: 14, usePointStyle: true }
+      },
+      tooltip: {
+        bodyFont: { family: 'DM Sans' },
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        padding: 10
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
