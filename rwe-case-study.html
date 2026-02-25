@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RWE AG — Theta Framework Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --rwe-teal: #006B5B;
+    --rwe-teal-light: #008C78;
+    --rwe-accent: #B8E04A;
+    --rwe-gold: #D4A843;
+    --ink: #0E1A18;
+    --ink-soft: #1E2D2A;
+    --paper: #F7F5F0;
+    --paper-warm: #EFEBE2;
+    --muted: #8A9490;
+    --core-green: #2D6A4F;
+    --edge-amber: #B5841A;
+    --beyond-crimson: #8B1A1A;
+    --border: rgba(0,107,91,0.14);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px; height: 64px;
+    background: rgba(14,26,24,0.90);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(0,107,91,0.18);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px; font-weight: 500; letter-spacing: 0.14em;
+    color: var(--rwe-accent); text-transform: uppercase;
+  }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase; color: rgba(255,255,255,0.4);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--rwe-accent); }
+
+  /* ── HERO ── */
+  .hero {
+    height: 100vh; min-height: 720px;
+    background: var(--ink);
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+    padding: 0 10vw;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,107,91,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,107,91,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    animation: gridDrift 52s linear infinite;
+  }
+  @keyframes gridDrift { from{transform:translateY(0)} to{transform:translateY(80px)} }
+  .hero-noise {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+  .hero-glow {
+    position: absolute; left: -300px; top: 50%; transform: translateY(-50%);
+    width: 800px; height: 800px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,107,91,0.14) 0%, transparent 68%);
+    pointer-events: none;
+  }
+  .hero-glow-right {
+    position: absolute; right: -200px; bottom: -100px;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(184,224,74,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-watermark {
+    position: absolute; right: 4vw; top: 50%; transform: translateY(-50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26vw; font-weight: 300; line-height: 1;
+    color: rgba(255,255,255,0.016); pointer-events: none; user-select: none;
+    letter-spacing: -0.04em;
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 920px; }
+  .hero-kicker {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.24em;
+    text-transform: uppercase; color: var(--rwe-accent);
+    margin-bottom: 30px;
+    opacity: 0; animation: fadeUp 0.9s 0.2s forwards;
+  }
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 6vw, 92px);
+    font-weight: 300; line-height: 1.03;
+    color: #ffffff; margin-bottom: 30px;
+    opacity: 0; animation: fadeUp 0.9s 0.4s forwards;
+  }
+  .hero-headline em { font-style: italic; color: var(--rwe-accent); }
+  .hero-sub {
+    font-size: 15px; font-weight: 300; line-height: 1.8;
+    color: rgba(255,255,255,0.44); max-width: 560px;
+    margin-bottom: 64px;
+    opacity: 0; animation: fadeUp 0.9s 0.6s forwards;
+  }
+  .hero-meta {
+    display: flex; gap: 52px;
+    opacity: 0; animation: fadeUp 0.9s 0.8s forwards;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding-top: 28px;
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 5px; }
+  .meta-label {
+    font-size: 9px; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: rgba(255,255,255,0.26);
+  }
+  .meta-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 400; color: #fff;
+  }
+  .scroll-indicator {
+    position: absolute; right: 48px; bottom: 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    opacity: 0; animation: fadeIn 1s 1.4s forwards;
+  }
+  .scroll-line {
+    width: 1px; height: 64px;
+    background: linear-gradient(to bottom, transparent, var(--rwe-teal-light));
+    animation: scrollPulse 2.4s ease-in-out infinite;
+  }
+  .scroll-text {
+    font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: rgba(255,255,255,0.22); writing-mode: vertical-rl;
+  }
+  @keyframes scrollPulse { 0%,100%{opacity:0.3;transform:scaleY(0.6)} 50%{opacity:1;transform:scaleY(1)} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  /* ── SECTIONS ── */
+  section { padding: 96px 10vw; }
+  section.white { background: #fff; }
+  section.warm { background: var(--paper-warm); }
+  section.ink { background: var(--ink); color: #fff; }
+
+  .section-label {
+    font-size: 9px; font-weight: 500; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--rwe-teal);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 4vw, 56px);
+    font-weight: 300; line-height: 1.09;
+    margin-bottom: 52px;
+  }
+  .section-title em { font-style: italic; color: var(--rwe-teal); }
+  .ink .section-title { color: #fff; }
+  .ink .section-title em { color: var(--rwe-accent); }
+  .ink .section-label { color: rgba(184,224,74,0.55); }
+
+  /* ── ABOUT ── */
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .about-prose p {
+    font-size: 15.5px; line-height: 1.84; color: #2e3a38;
+    margin-bottom: 22px;
+  }
+  .hidden-fact {
+    margin-top: 36px; padding: 28px 32px;
+    background: var(--ink); border-radius: 3px;
+    border-left: 2px solid var(--rwe-accent);
+  }
+  .hidden-fact-label {
+    font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--rwe-accent); margin-bottom: 12px;
+  }
+  .hidden-fact p { font-size: 13.5px; line-height: 1.74; color: rgba(255,255,255,0.64); }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .stat-box {
+    padding: 30px 26px; background: var(--paper-warm);
+    border: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+  .stat-box:hover { background: #fff; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px; font-weight: 300; color: var(--rwe-teal);
+    line-height: 1; margin-bottom: 8px;
+  }
+  .stat-desc { font-size: 11.5px; color: var(--muted); letter-spacing: 0.02em; line-height: 1.52; }
+
+  .belief-strip {
+    margin-top: 72px; padding: 60px 10vw;
+    background: var(--rwe-teal);
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .belief-strip::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(184,224,74,0.10) 0%, transparent 70%);
+  }
+  .belief-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(20px, 2.6vw, 34px);
+    font-weight: 300; font-style: italic;
+    color: #fff; line-height: 1.48; max-width: 820px; margin: 0 auto 22px;
+    position: relative; z-index: 1;
+  }
+  .belief-attr { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--rwe-accent); position: relative; z-index: 1; }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 160px; }
+  .timeline-line {
+    position: absolute; left: 128px; top: 0; bottom: 0; width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--rwe-teal) 8%, var(--rwe-teal) 92%, transparent);
+  }
+  .timeline-item { position: relative; margin-bottom: 52px; }
+  .timeline-year {
+    position: absolute; left: -160px; width: 118px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px; font-weight: 300; color: var(--rwe-teal);
+    text-align: right; padding-top: 2px;
+  }
+  .timeline-dot {
+    position: absolute; left: -37px; top: 9px;
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--rwe-teal); background: var(--paper-warm); z-index: 2;
+  }
+  .timeline-dot.filled { background: var(--rwe-teal); }
+  .timeline-phase {
+    font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--rwe-gold); margin-bottom: 7px;
+  }
+  .timeline-event {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 500; margin-bottom: 8px; color: var(--ink);
+  }
+  .timeline-desc { font-size: 13.5px; line-height: 1.74; color: #4a5a58; max-width: 580px; }
+
+  /* ── THETA MAP ── */
+  .theta-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 64px; align-items: start; }
+  .zone-legend { display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; }
+  .zone-pill {
+    padding: 16px 20px; border-radius: 3px; border-left: 3px solid;
+  }
+  .zone-pill.core { border-color: var(--core-green); background: rgba(45,106,79,0.05); }
+  .zone-pill.edge { border-color: var(--edge-amber); background: rgba(181,132,26,0.05); }
+  .zone-pill.beyond { border-color: var(--beyond-crimson); background: rgba(139,26,26,0.05); }
+  .zone-pill-name {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px;
+  }
+  .zone-pill.core .zone-pill-name { color: var(--core-green); }
+  .zone-pill.edge .zone-pill-name { color: var(--edge-amber); }
+  .zone-pill.beyond .zone-pill-name { color: var(--beyond-crimson); }
+  .zone-pill-desc { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+  .reading-card {
+    padding: 20px 24px; background: var(--ink); border-radius: 3px;
+  }
+  .reading-card-title { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--rwe-accent); margin-bottom: 10px; }
+  .reading-card p { font-size: 12.5px; line-height: 1.66; color: rgba(255,255,255,0.52); }
+  .chart-wrap { position: relative; height: 460px; }
+
+  /* ── ALLOCATION ── */
+  .alloc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .donut-wrap { position: relative; height: 300px; display: flex; align-items: center; justify-content: center; }
+  .donut-center {
+    position: absolute; text-align: center; pointer-events: none;
+  }
+  .donut-center-label { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; }
+  .donut-center-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px; font-weight: 300; color: var(--ink); display: block; line-height: 1;
+  }
+  .alloc-bars { display: flex; flex-direction: column; gap: 30px; }
+  .alloc-bar-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; }
+  .alloc-bar-name { font-size: 11px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; }
+  .alloc-bar-pcts { font-size: 11.5px; color: var(--muted); }
+  .bar-track { height: 5px; background: rgba(0,0,0,0.08); border-radius: 99px; position: relative; overflow: visible; }
+  .bar-fill { height: 100%; border-radius: 99px; }
+  .bar-benchmark { position: absolute; top: -5px; width: 2px; height: 15px; background: var(--ink); opacity: 0.25; }
+  .alloc-comment { font-size: 12px; color: var(--muted); margin-top: 7px; line-height: 1.57; }
+
+  /* ── COMPETITORS ── */
+  .comp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 60px; }
+  .comp-card {
+    padding: 24px 18px; background: var(--paper-warm);
+    border: 1px solid var(--border); border-radius: 3px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .comp-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  .comp-card.featured {
+    border-color: rgba(0,107,91,0.4);
+    background: rgba(0,107,91,0.04);
+  }
+  .comp-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 500; margin-bottom: 4px;
+  }
+  .comp-tag { font-size: 10.5px; color: var(--muted); margin-bottom: 18px; line-height: 1.4; }
+  .comp-zones { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
+  .comp-zone-row { display: flex; align-items: flex-start; gap: 8px; font-size: 11.5px; line-height: 1.4; color: #4a5a58; }
+  .zone-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+  .zone-dot.core { background: var(--core-green); }
+  .zone-dot.edge { background: var(--edge-amber); }
+  .zone-dot.beyond { background: var(--beyond-crimson); }
+  .verdict-chip {
+    font-size: 9px; font-weight: 500; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 99px; display: inline-block;
+  }
+  .verdict-chip.leader { background: rgba(45,106,79,0.12); color: var(--core-green); }
+  .verdict-chip.challenger { background: rgba(181,132,26,0.12); color: var(--edge-amber); }
+  .verdict-chip.laggard { background: rgba(139,26,26,0.12); color: var(--beyond-crimson); }
+  .radar-wrap { height: 360px; max-width: 640px; margin: 0 auto; }
+
+  /* ── S&W ── */
+  .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .sw-panel { padding: 36px; border-radius: 3px; }
+  .sw-panel.strengths { background: rgba(45,106,79,0.04); border: 1px solid rgba(45,106,79,0.18); }
+  .sw-panel.weaknesses { background: rgba(139,26,26,0.04); border: 1px solid rgba(139,26,26,0.14); }
+  .sw-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 500; margin-bottom: 28px;
+  }
+  .sw-panel.strengths .sw-title { color: var(--core-green); }
+  .sw-panel.weaknesses .sw-title { color: var(--beyond-crimson); }
+  .sw-item { display: flex; gap: 16px; margin-bottom: 22px; }
+  .sw-marker {
+    width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 500; margin-top: 2px;
+  }
+  .strengths .sw-marker { background: rgba(45,106,79,0.1); color: var(--core-green); }
+  .weaknesses .sw-marker { background: rgba(139,26,26,0.09); color: var(--beyond-crimson); }
+  .sw-lead { font-size: 13.5px; font-weight: 500; margin-bottom: 5px; }
+  .sw-body { font-size: 12.5px; line-height: 1.66; color: #4a5a58; }
+
+  /* ── DIAGNOSTIC ── */
+  .diag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+  .diag-block { margin-bottom: 36px; }
+  .diag-block-title {
+    font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(184,224,74,0.55); margin-bottom: 14px;
+    padding-bottom: 10px; border-bottom: 1px solid rgba(0,107,91,0.18);
+  }
+  .archetype-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .archetype-box {
+    padding: 7px 13px; border-radius: 3px;
+    font-size: 10.5px; font-weight: 500; letter-spacing: 0.06em;
+  }
+  .archetype-box.ok { background: rgba(45,106,79,0.18); color: #6fcf97; }
+  .archetype-box.mid { background: rgba(181,132,26,0.18); color: var(--rwe-gold); }
+  .archetype-box.low { background: rgba(139,26,26,0.18); color: #f08080; }
+  .diag-prose { font-size: 13.5px; line-height: 1.76; color: rgba(255,255,255,0.55); }
+  .tension-box {
+    padding: 24px 20px; background: rgba(0,107,91,0.08);
+    border: 1px solid rgba(0,107,91,0.22); border-radius: 3px; margin-top: 16px;
+  }
+  .tension-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--rwe-accent); margin-bottom: 10px; }
+  .tension-text { font-size: 13.5px; line-height: 1.76; color: rgba(255,255,255,0.62); font-style: italic; }
+  .inline-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .inline-bar-label { font-size: 11px; color: rgba(255,255,255,0.48); width: 58px; flex-shrink: 0; }
+  .inline-bar-track { flex: 1; height: 4px; background: rgba(255,255,255,0.07); border-radius: 99px; position: relative; overflow: visible; }
+  .inline-bar-fill { height: 100%; border-radius: 99px; }
+  .inline-bar-benchmark { position: absolute; top: -5px; width: 1px; height: 14px; background: rgba(255,255,255,0.22); }
+  .inline-bar-pct { font-size: 10.5px; color: rgba(255,255,255,0.32); width: 34px; text-align: right; flex-shrink: 0; }
+  .verdict-final {
+    margin-top: 36px; padding: 28px 32px;
+    background: rgba(0,107,91,0.09);
+    border: 1px solid rgba(0,107,91,0.22); border-radius: 3px;
+  }
+  .verdict-type {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px; font-weight: 400; color: #fff; margin-bottom: 10px;
+  }
+  .verdict-symbols { font-size: 17px; margin-bottom: 12px; letter-spacing: 0.08em; }
+  .verdict-explain { font-size: 13.5px; line-height: 1.76; color: rgba(255,255,255,0.56); }
+
+  /* ── BELIEF CARDS ── */
+  .beliefs-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 0; }
+  .belief-card {
+    padding: 32px 28px; background: #fff; transition: background 0.22s;
+  }
+  .belief-card:hover { background: var(--paper-warm); }
+  .belief-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px; font-weight: 300; color: rgba(0,107,91,0.14);
+    line-height: 1; margin-bottom: 16px;
+  }
+  .belief-title { font-size: 13px; font-weight: 500; letter-spacing: 0.04em; margin-bottom: 10px; color: var(--ink); }
+  .belief-body { font-size: 13px; line-height: 1.7; color: #4a5a58; }
+
+  /* ── LEADERSHIP TIMELINE ── */
+  .lead-timeline { position: relative; }
+  .lead-timeline-spine {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--rwe-teal) 6%, var(--rwe-teal) 94%, transparent);
+  }
+  .lead-item {
+    display: grid; grid-template-columns: 200px 1fr;
+    gap: 0 48px; margin-bottom: 0; padding-bottom: 56px;
+    position: relative;
+  }
+  .lead-item::before {
+    content: ''; position: absolute; left: -5px; top: 18px;
+    width: 11px; height: 11px; border-radius: 50%;
+    border: 2px solid var(--rwe-teal); background: var(--paper-warm);
+    z-index: 2;
+  }
+  .lead-item.inflection::before { background: var(--rwe-teal); }
+  .lead-left { padding-left: 24px; padding-top: 14px; }
+  .lead-tenure {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 400; color: var(--rwe-teal);
+    line-height: 1; margin-bottom: 6px;
+  }
+  .lead-name {
+    font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 4px;
+  }
+  .lead-tag {
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--rwe-gold);
+  }
+  .lead-right {
+    padding-top: 14px; border-top: 1px solid var(--border);
+  }
+  .lead-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 500; color: var(--ink);
+    margin-bottom: 10px; line-height: 1.2;
+  }
+  .lead-body { font-size: 13.5px; line-height: 1.76; color: #4a5a58; margin-bottom: 16px; }
+  .lead-theta-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .lead-zone-tag {
+    font-size: 9px; font-weight: 500; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 99px;
+  }
+  .lead-zone-tag.core { background: rgba(45,106,79,0.1); color: var(--core-green); }
+  .lead-zone-tag.edge { background: rgba(181,132,26,0.1); color: var(--edge-amber); }
+  .lead-zone-tag.beyond { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+  .lead-zone-tag.neutral { background: rgba(138,148,144,0.12); color: var(--muted); }
+  .lead-trifecta {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px;
+  }
+  .trifecta-cell {
+    padding: 10px 12px; background: rgba(0,107,91,0.04);
+    border: 1px solid var(--border); border-radius: 3px;
+  }
+  .trifecta-label {
+    font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .trifecta-score {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 400; line-height: 1;
+  }
+  .trifecta-score.high { color: var(--core-green); }
+  .trifecta-score.mid { color: var(--edge-amber); }
+  .trifecta-score.low { color: var(--beyond-crimson); }
+  .trifecta-note { font-size: 10.5px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+  /* Leadership line chart */
+  .lead-chart-wrap { height: 320px; margin-top: 56px; }
+  .lead-chart-label {
+    font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--rwe-teal); margin-bottom: 10px;
+  }
+
+  /* ── M&A STRATEGY ── */
+  .ma-intro { max-width: 780px; margin-bottom: 60px; }
+  .ma-intro p { font-size: 15.5px; line-height: 1.84; color: #2e3a38; margin-bottom: 18px; }
+  .ma-deal-grid { display: grid; grid-template-columns: 1fr; gap: 2px; margin-bottom: 56px; }
+  .ma-deal {
+    display: grid; grid-template-columns: 180px 1fr 280px;
+    gap: 0; background: #fff; border: 1px solid var(--border);
+    transition: box-shadow 0.2s;
+  }
+  .ma-deal:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.08); }
+  .ma-deal-year {
+    padding: 28px 24px; border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; justify-content: center;
+    background: var(--paper-warm);
+  }
+  .ma-deal-yr-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px; font-weight: 300; color: var(--rwe-teal); line-height: 1;
+  }
+  .ma-deal-yr-type {
+    font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--rwe-gold); margin-top: 4px;
+  }
+  .ma-deal-body { padding: 28px 32px; }
+  .ma-deal-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 500; color: var(--ink); margin-bottom: 6px;
+  }
+  .ma-deal-desc { font-size: 13.5px; line-height: 1.74; color: #4a5a58; margin-bottom: 14px; }
+  .ma-deal-verdict {
+    font-size: 12px; color: var(--ink); font-style: italic;
+    padding-top: 10px; border-top: 1px solid var(--border); line-height: 1.55;
+  }
+  .ma-deal-meta { padding: 28px 24px; border-left: 1px solid var(--border); display: flex; flex-direction: column; gap: 16px; }
+  .ma-meta-item { }
+  .ma-meta-key {
+    font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 3px;
+  }
+  .ma-meta-val { font-size: 13.5px; font-weight: 500; color: var(--ink); line-height: 1.3; }
+  .ma-meta-val.core { color: var(--core-green); }
+  .ma-meta-val.edge { color: var(--edge-amber); }
+  .ma-meta-val.beyond { color: var(--beyond-crimson); }
+
+  /* M&A Principles strip */
+  .ma-principles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); }
+  .ma-principle {
+    padding: 26px 22px; background: var(--paper-warm);
+  }
+  .ma-principle-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 40px; font-weight: 300; color: rgba(0,107,91,0.15);
+    line-height: 1; margin-bottom: 12px;
+  }
+  .ma-principle-title { font-size: 12px; font-weight: 500; letter-spacing: 0.04em; margin-bottom: 8px; color: var(--ink); }
+  .ma-principle-body { font-size: 12px; line-height: 1.68; color: #4a5a58; }
+
+  /* ── EDGE → CORE PIPELINE ── */
+  .pipeline-intro { max-width: 780px; margin-bottom: 60px; }
+  .pipeline-intro p { font-size: 15.5px; line-height: 1.84; color: #2e3a38; margin-bottom: 18px; }
+
+  .pipeline-river {
+    position: relative; margin-bottom: 64px;
+  }
+  /* Phase headers */
+  .pipeline-phases {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 2px; margin-bottom: 2px;
+  }
+  .pipeline-phase-header {
+    padding: 14px 18px; text-align: center;
+  }
+  .pipeline-phase-header.p-beyond { background: rgba(139,26,26,0.08); }
+  .pipeline-phase-header.p-edge { background: rgba(181,132,26,0.10); }
+  .pipeline-phase-header.p-transition { background: rgba(45,106,79,0.08); }
+  .pipeline-phase-header.p-core { background: rgba(45,106,79,0.18); }
+  .pipeline-phase-label {
+    font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 2px;
+  }
+  .p-beyond .pipeline-phase-label { color: var(--beyond-crimson); }
+  .p-edge .pipeline-phase-label { color: var(--edge-amber); }
+  .p-transition .pipeline-phase-label { color: var(--core-green); }
+  .p-core .pipeline-phase-label { color: var(--core-green); }
+  .pipeline-phase-years { font-size: 11px; color: var(--muted); }
+
+  /* Technology rows */
+  .pipeline-tech-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 2px; margin-bottom: 2px;
+  }
+  .pipeline-cell {
+    padding: 18px; min-height: 90px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .pipeline-cell.empty { background: rgba(0,0,0,0.02); }
+  .pipeline-cell.p-beyond { background: rgba(139,26,26,0.05); border-left: 2px solid rgba(139,26,26,0.2); }
+  .pipeline-cell.p-edge { background: rgba(181,132,26,0.06); border-left: 2px solid rgba(181,132,26,0.25); }
+  .pipeline-cell.p-transition { background: rgba(45,106,79,0.06); border-left: 2px solid rgba(45,106,79,0.2); }
+  .pipeline-cell.p-core { background: rgba(45,106,79,0.12); border-left: 2px solid rgba(45,106,79,0.4); }
+  .pipeline-cell.p-core-strong { background: rgba(45,106,79,0.20); border-left: 3px solid var(--core-green); }
+  .pipeline-cell-tech { font-size: 12px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .pipeline-cell-note { font-size: 11px; color: var(--muted); line-height: 1.45; }
+  .pipeline-row-label {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink);
+    padding: 6px 0 4px;
+    border-top: 1px solid var(--border);
+    margin-bottom: 2px;
+  }
+
+  /* The key insight card for edge-to-core */
+  .pipeline-insight {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 48px;
+  }
+  .pi-card {
+    padding: 28px 28px; border-radius: 3px; border: 1px solid var(--border);
+  }
+  .pi-card.dark { background: var(--ink); border-color: rgba(0,107,91,0.2); }
+  .pi-card-label {
+    font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--rwe-teal); margin-bottom: 10px;
+  }
+  .pi-card.dark .pi-card-label { color: var(--rwe-accent); }
+  .pi-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px; font-weight: 400; line-height: 1.15; margin-bottom: 14px;
+  }
+  .pi-card.dark .pi-card-title { color: #fff; }
+  .pi-card-body { font-size: 13px; line-height: 1.72; color: #4a5a58; }
+  .pi-card.dark .pi-card-body { color: rgba(255,255,255,0.56); }
+
+  /* S-curve chart */
+  .scurve-wrap { height: 280px; margin-top: 48px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink); padding: 32px 10vw;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid rgba(0,107,91,0.1);
+  }
+  .footer-left { font-size: 11.5px; color: rgba(255,255,255,0.26); letter-spacing: 0.05em; }
+  .footer-left strong { color: rgba(255,255,255,0.42); }
+  .footer-right { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.18); }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.72s ease, transform 0.72s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    section { padding: 64px 6vw; }
+    .about-grid, .theta-grid, .alloc-grid, .sw-grid, .diag-grid { grid-template-columns: 1fr; gap: 40px; }
+    .comp-grid { grid-template-columns: 1fr 1fr; }
+    .beliefs-grid { grid-template-columns: 1fr; }
+    .hero { padding: 0 6vw; }
+    .hero-meta { flex-wrap: wrap; gap: 24px; }
+    .hero-watermark { display: none; }
+    .timeline { padding-left: 96px; }
+    .timeline-year { left: -96px; width: 76px; font-size: 18px; }
+    .belief-strip { padding: 48px 6vw; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    /* Leadership */
+    .lead-item { grid-template-columns: 1fr; gap: 12px; padding-left: 24px; }
+    .lead-trifecta { grid-template-columns: 1fr; }
+    /* M&A */
+    .ma-deal { grid-template-columns: 1fr; }
+    .ma-deal-year { border-right: none; border-bottom: 1px solid var(--border); }
+    .ma-deal-meta { border-left: none; border-top: 1px solid var(--border); }
+    .ma-principles { grid-template-columns: 1fr 1fr; }
+    /* Pipeline */
+    .pipeline-phases, .pipeline-tech-row { grid-template-columns: 1fr 1fr; }
+    .pipeline-insight { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">RWE AG</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#theta-map">Theta Map</a>
+    <a href="#leadership">Leadership</a>
+    <a href="#ma-strategy">M&A</a>
+    <a href="#edge-to-core">Edge→Core</a>
+    <a href="#diagnostic">Diagnostic</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow-right"></div>
+  <div class="hero-watermark">RWE</div>
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Framework · Strategic Case Study</div>
+    <h1 class="hero-headline">A coal company that decided<br>to bury itself before<br><em>the climate did.</em></h1>
+    <p class="hero-sub">The most audacious energy pivot in European history wasn't led by a startup. It was a 125-year-old German utility that traded its own lifeblood — its grid and retail empire — for a bet on renewable assets that nobody thought it could execute at scale.</p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <span class="meta-label">Founded</span>
+        <span class="meta-value">1898</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Employees</span>
+        <span class="meta-value">~20,300</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Market Cap</span>
+        <span class="meta-value">~€36.6B</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Theta Archetype</span>
+        <span class="meta-value">Transitioning</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="white">
+  <div class="section-label">What They Actually Are</div>
+  <h2 class="section-title">Not a utility.<br><em>A deliberate act</em><br>of corporate reinvention.</h2>
+  <div class="about-grid reveal">
+    <div class="about-prose">
+      <p>In 2019, RWE did something that puzzles most people when they first hear it: they sold their renewable energy subsidiary and their grid infrastructure — the two cleanest, most future-facing parts of their business — to their rival E.On. In return, they received E.On's generation assets. To the outside world, it looked like a utility swapping one pile of poles and wires for another. What it actually was is one of the most disciplined acts of strategic self-definition in European corporate history.</p>
+      <p>By shedding the grid — a stable, regulated monopoly that most utilities would die to own — RWE declared that its future lay not in owning infrastructure that society depends on, but in building the machines that generate power in the first place. Generation is competitive. It is exposed to weather, to commodity prices, to policy reversal. RWE chose the harder, riskier, higher-upside path. The "Growing Green" strategy that followed — €55 billion into wind, solar, batteries and hydrogen by 2030 — is not a sustainability report. It is a multi-decade industrial bet placed with unusual precision by a company that most people still think burns coal for a living.</p>
+      <div class="hidden-fact">
+        <div class="hidden-fact-label">The detail most people missed</div>
+        <p>RWE was the principal owner of Amprion, Germany's second-largest transmission grid operator — one of the four companies that physically controls the flow of electricity across the entire nation. In 2025, rather than selling it outright, RWE engineered a deal where Apollo Global Management injected €3.2 billion of equity into a joint venture holding RWE's 25.1% stake. RWE kept operational control, Apollo got the dividend stream from a regulated asset, and RWE quietly freed up €3.2 billion to build wind farms. The deal received almost no press coverage. It was the most elegant piece of infrastructure finance in the European energy transition that year.</p>
+      </div>
+    </div>
+    <div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-num">38 GW</div>
+          <div class="stat-desc">Total generation capacity across Europe and the US after the E.On asset swap</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">€55B</div>
+          <div class="stat-desc">Committed green investment from 2024 to 2030 — 75% into renewables</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">11.2 GW</div>
+          <div class="stat-desc">Capacity currently under construction, the pipeline that backs the strategy</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">2040</div>
+          <div class="stat-desc">Net zero target — validated by SBTi; 10 years ahead of European regulatory minimum</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="belief-strip reveal">
+    <div class="belief-quote">"No electricity, no AI. The question is not whether the world needs more clean power — it is who builds it fast enough to matter."</div>
+    <div class="belief-attr">Dr. Markus Krebber, CEO, RWE AG — on AI data centres and the energy transition</div>
+  </div>
+</section>
+
+<!-- BELIEFS / OPERATING PHILOSOPHY -->
+<section class="warm">
+  <div class="section-label">Operating Philosophy</div>
+  <h2 class="section-title">The beliefs that make<br><em>RWE stranger</em><br>than it appears.</h2>
+  <div class="beliefs-grid reveal">
+    <div class="belief-card">
+      <div class="belief-num">01</div>
+      <div class="belief-title">Sell Your Best Asset to Unlock Your Future</div>
+      <div class="belief-body">In 2019, RWE voluntarily exited grid ownership — a regulated monopoly most utilities would kill for — because it understood that regulated returns cap ambition. By choosing to compete rather than regulate, RWE accepted higher risk in exchange for the freedom to bet on scale. It is one of the only major utilities in Europe to make this choice consciously and completely.</div>
+    </div>
+    <div class="belief-card">
+      <div class="belief-num">02</div>
+      <div class="belief-title">Coal Funds the Transition That Replaces It</div>
+      <div class="belief-body">RWE runs the largest lignite operation in Europe, and it makes no apology for this. The cash flows from coal are explicitly the financing mechanism for the renewable buildout. This is not hypocrisy — it is sequencing. The company has committed to an earlier-than-legally-required coal exit in Germany precisely because it knows the coal revenue window is closing, and it wants to close it on its own terms.</div>
+    </div>
+    <div class="belief-card">
+      <div class="belief-num">03</div>
+      <div class="belief-title">Hydrogen Is a Storage Problem, Not a Generation Problem</div>
+      <div class="belief-body">RWE's Lingen hydrogen strategy reveals something most commentary misses: they are not building hydrogen primarily to sell it as fuel. They are building it because when renewables generate more power than the grid can absorb, hydrogen is the only way to avoid curtailment at scale. The 15-year TotalEnergies offtake deal is not a marketing arrangement. It is proof-of-concept for a new energy vector.</div>
+    </div>
+    <div class="belief-card">
+      <div class="belief-num">04</div>
+      <div class="belief-title">The Grid's Reliability Problem Is Now RWE's Opportunity</div>
+      <div class="belief-body">The same intermittency of wind and solar that critics use against renewables is the reason RWE's gas plants still have value — and will for a decade. Flexible generation that can ramp up in twenty minutes when offshore wind drops is not a contradiction of the green strategy. It is the margin the strategy earns while the storage infrastructure catches up.</div>
+    </div>
+    <div class="belief-card">
+      <div class="belief-num">05</div>
+      <div class="belief-title">AI's Energy Hunger Is Not a Problem. It's a Customer.</div>
+      <div class="belief-body">RWE's 8-year PPA with Global Switch — supplying a London data centre running NVIDIA GPU infrastructure for AI workloads — is not a one-off deal. It is the thesis made commercial. AI data centres need 24/7, low-carbon power in enormous volumes. RWE is the only European generator with the portfolio depth — wind, solar, gas, batteries, and hydrogen — to credibly offer that product.</div>
+    </div>
+    <div class="belief-card">
+      <div class="belief-num">06</div>
+      <div class="belief-title">Vendor Relationships Are Leverage, Not Dependency</div>
+      <div class="belief-body">RWE switched from Siemens Gamesa to Vestas on the Norfolk Vanguard project after acquiring it from Vattenfall, despite an existing supplier relationship. This was not disruption for disruption's sake. It was the signal that RWE negotiates from competence, not from loyalty. The company that builds 65 GW by 2030 will be the company that Siemens and Vestas both need to court.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline" class="white">
+  <div class="section-label">Arc of History</div>
+  <h2 class="section-title">From gas lights<br>to <em>offshore wind</em><br>in 125 years.</h2>
+  <div class="timeline reveal">
+    <div class="timeline-line"></div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">1898</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Origin</div>
+      <div class="timeline-event">Born to Power the Ruhr</div>
+      <div class="timeline-desc">Rheinisch-Westfälisches Elektrizitätswerk is founded in Essen to supply electricity to Germany's industrial heartland. The Ruhr valley is the engine of European industrialisation, and RWE is its power socket. The company and the coal beneath it are, for the next century, inseparable.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">1920s–70s</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">Consolidation</div>
+      <div class="timeline-event">Becoming Germany's Electricity Grid</div>
+      <div class="timeline-desc">RWE expands aggressively through acquisition, absorbing regional utilities across western Germany. By the 1970s, it operates the largest private electricity network in the world. The business model is simple, profitable, and deeply entrenched: lignite mines, coal plants, wires.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2000</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">Diversification</div>
+      <div class="timeline-event">The Short Experiment in Being Everything</div>
+      <div class="timeline-desc">Following European energy market liberalisation, RWE briefly pursues a conglomerate strategy — acquiring Thames Water in the UK, venturing into waste management, building a pan-European retail network. The logic is scale. The result is complexity that destroys focus. The diversification unwinds over the following decade.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2016</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">Internal Restructure</div>
+      <div class="timeline-event">The Creation of innogy</div>
+      <div class="timeline-desc">RWE spins off its renewables, grids, and retail businesses into a separate listed company called innogy SE. On paper, it is a corporate tidying exercise. In hindsight, it is the moment RWE begins to understand what it actually wants to be — and what it doesn't.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2019</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">The Decisive Pivot</div>
+      <div class="timeline-event">The Asset Swap That Rewrote the German Energy Map</div>
+      <div class="timeline-desc">RWE and E.On execute the most complex energy deal in European history. RWE transfers innogy — and with it, the grids, the retail customers, the regulatory certainty — to E.On. In return, RWE receives the majority of E.On's renewable energy generation assets. What looks like a swap is actually a declaration: RWE is now a pure-play power generation company, and it is going green.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2022</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Transatlantic Scale</div>
+      <div class="timeline-event">Con Edison Clean Energy: $6.8 Billion and a US Identity</div>
+      <div class="timeline-desc">RWE acquires Con Edison's Clean Energy Businesses in the US for $6.8 billion — the largest acquisition in company history. In a single transaction, RWE's US renewables portfolio doubles to over 7 GW. The company is no longer a European utility with US ambitions. It is a transatlantic clean energy operator with the balance sheet to match.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2023–26</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Execution</div>
+      <div class="timeline-event">Growing Green: The €55 Billion Wager</div>
+      <div class="timeline-desc">CEO Dr. Markus Krebber sets the ambition that defines the decade: 65 GW of green capacity by 2030, EBITDA above €9 billion, and net zero a full decade ahead of European targets. With 11.2 GW already under construction, the strategy is no longer a slide deck. It is a construction site. The question has shifted from whether RWE can transform, to whether it can execute at the speed the market demands.</div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section id="theta-map" class="warm">
+  <div class="section-label">Theta Innovation Map</div>
+  <h2 class="section-title">Where each bet lives,<br><em>and what it reveals</em><br>about the strategy.</h2>
+  <div class="theta-grid reveal">
+    <div>
+      <div class="zone-legend">
+        <div class="zone-pill core">
+          <div class="zone-pill-name">🟩 Core Zone</div>
+          <div class="zone-pill-desc">The cash engine. Renewables build-out at industrial scale, flexible gas generation, and energy trading. Known technology, proven markets, execution focus.</div>
+        </div>
+        <div class="zone-pill edge">
+          <div class="zone-pill-name">🟨 Edge Zone</div>
+          <div class="zone-pill-desc">New business models and architectural innovation. AI data centre PPAs, drone logistics, recyclable blade technology, and hydrogen pilots redefining what an energy company looks like.</div>
+        </div>
+        <div class="zone-pill beyond">
+          <div class="zone-pill-name">🟥 Beyond Zone</div>
+          <div class="zone-pill-desc">Long-horizon speculative bets. Green hydrogen at commercial scale, long-duration storage, and the 2040 net zero commitment as a structural forcing function.</div>
+        </div>
+      </div>
+      <div class="reading-card">
+        <div class="reading-card-title">Reading This Map</div>
+        <p>RWE's portfolio is shifting its centre of gravity rightward and upward — from a Core-dominant legacy company to one with genuine Edge density. The Beyond zone is present but underpopulated relative to the declared ambition. The map shows a company mid-crossing, not yet arrived.</p>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="scatterChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section id="allocation" class="white">
+  <div class="section-label">Portfolio Allocation</div>
+  <h2 class="section-title">The real weight behind<br><em>the growing green</em><br>commitment.</h2>
+  <div class="alloc-grid reveal">
+    <div class="donut-wrap">
+      <canvas id="donutChart" style="max-width:280px;max-height:280px;"></canvas>
+      <div class="donut-center">
+        <span class="donut-center-label">Zones Active</span>
+        <span class="donut-center-val">3</span>
+      </div>
+    </div>
+    <div class="alloc-bars">
+      <div>
+        <div class="alloc-bar-header">
+          <span class="alloc-bar-name" style="color:var(--core-green)">Core Zone</span>
+          <span class="alloc-bar-pcts">~70% actual · 70% benchmark</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:70%;background:var(--core-green);"></div>
+          <div class="bar-benchmark" style="left:70%;"></div>
+        </div>
+        <div class="alloc-comment">At benchmark but actively shifting. The renewable buildout and flexible gas portfolio are classic Core — proven technology, existing markets, execution-led. The 11.2 GW under construction is the most visible indicator that this zone is healthy and fully funded.</div>
+      </div>
+      <div>
+        <div class="alloc-bar-header">
+          <span class="alloc-bar-name" style="color:var(--edge-amber)">Edge Zone</span>
+          <span class="alloc-bar-pcts">~20% actual · 20% benchmark</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:20%;background:var(--edge-amber);"></div>
+          <div class="bar-benchmark" style="left:20%;"></div>
+        </div>
+        <div class="alloc-comment">At benchmark and producing differentiated outputs. AI data centre PPAs, autonomous offshore logistics, and recyclable blade deployment sit here. These are not experiments — they are commercial innovations generating revenue and competitive advantage today.</div>
+      </div>
+      <div>
+        <div class="alloc-bar-header">
+          <span class="alloc-bar-name" style="color:var(--beyond-crimson)">Beyond Zone</span>
+          <span class="alloc-bar-pcts">~10% actual · 10% benchmark</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:10%;background:var(--beyond-crimson);"></div>
+          <div class="bar-benchmark" style="left:10%;"></div>
+        </div>
+        <div class="alloc-comment">At benchmark but aspirationally thin. The Lingen hydrogen project and long-duration storage R&D are genuine Beyond bets, but the programme depth is modest relative to the 2040 net zero commitment. The Beyond zone needs more seeds planted if 2040 is a real target and not a timeline.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section id="competitors" class="warm">
+  <div class="section-label">Competitive Landscape</div>
+  <h2 class="section-title">The rivals RWE must<br><em>outpace, outbuild,</em><br>and occasionally out-think.</h2>
+  <div class="comp-grid reveal">
+    <div class="comp-card featured">
+      <div class="comp-name">RWE</div>
+      <div class="comp-tag">Transatlantic generator, transition-led</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>Strong — 38 GW, 11.2 GW in build</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Active — PPAs, drones, H₂ pilots</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Emerging — Lingen, net zero 2040</span></div>
+      </div>
+      <span class="verdict-chip challenger">Transitioning</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">Iberdrola</div>
+      <div class="comp-tag">Spain's renewables champion, early mover</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>Dominant — coal-free since 2020</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Steady — offshore & storage scaling</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Thin — emissions plateauing at gas</span></div>
+      </div>
+      <span class="verdict-chip leader">Core Leader</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">Ørsted</div>
+      <div class="comp-tag">Offshore wind pure-play, the original pivot</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>Dominant — offshore wind benchmark</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Strong — green hydrogen in Denmark</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Exploring — but valuation compressed</span></div>
+      </div>
+      <span class="verdict-chip leader">Zone Specialist</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">E.ON</div>
+      <div class="comp-tag">RWE's mirror — chose networks over generation</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>Dominant — Europe's largest grid op</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Smart grid, EV charging rollout</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Absent — regulated model caps upside</span></div>
+      </div>
+      <span class="verdict-chip challenger">Network Specialist</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">NextEra</div>
+      <div class="comp-tag">US renewables titan, RWE's American benchmark</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>Commanding — largest US wind & solar</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Leading — storage-paired projects</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Advancing — green hydrogen pipeline</span></div>
+      </div>
+      <span class="verdict-chip leader">Balanced Leader</span>
+    </div>
+  </div>
+  <div class="radar-wrap reveal">
+    <canvas id="radarChart"></canvas>
+  </div>
+</section>
+
+<!-- STRENGTHS & WEAKNESSES -->
+<section id="sw" class="white">
+  <div class="section-label">Strategic Assessment</div>
+  <h2 class="section-title">The genuine advantages,<br><em>and the honest tensions</em><br>in the strategy.</h2>
+  <div class="sw-grid reveal">
+    <div class="sw-panel strengths">
+      <div class="sw-title">Strengths</div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div>
+          <div class="sw-lead">The pivot was surgical, not gradual</div>
+          <div class="sw-body">Most incumbents manage the energy transition by bolting renewables onto legacy portfolios. RWE restructured its entire corporate architecture in a single transaction — the 2019 asset swap — and has not looked back. This decisiveness has allowed capital and leadership attention to align behind one strategy rather than two conflicting ones.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div>
+          <div class="sw-lead">The Apollo deal is a template, not a one-off</div>
+          <div class="sw-body">By monetising its Amprion stake through a JV with Apollo — retaining control while receiving €3.2 billion in equity — RWE demonstrated a sophisticated approach to capital recycling. This unlocks the ability to fund a €55 billion capex programme without proportionally increasing debt, a model that peers have not replicated at this scale.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div>
+          <div class="sw-lead">AI data centres as a demand anchor</div>
+          <div class="sw-body">The Global Switch PPA — supplying a London data centre running NVIDIA-based AI infrastructure — positions RWE at the intersection of two of the biggest capital expenditure waves of the decade: the energy transition and the AI infrastructure buildout. The portfolio breadth required to offer 24/7 low-carbon power (wind, solar, gas, storage, hydrogen) is something few generators can credibly package.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div>
+          <div class="sw-lead">Operational innovation is genuinely in-house</div>
+          <div class="sw-body">The autonomous cargo drone programme for offshore wind logistics — cutting delivery times from over an hour to under 30 minutes — was developed and deployed by RWE's operational teams, not acquired or outsourced. This matters because it signals a culture of operational problem-solving that scales across 19 offshore farms and growing.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div>
+          <div class="sw-lead">Second-largest offshore wind operator in the world</div>
+          <div class="sw-body">RWE's position in offshore wind is not a growth aspiration — it is a current competitive fact. The expertise accumulated across 19 operational farms, from blade logistics to subsea cabling, creates a compounding advantage that smaller entrants cannot purchase. The Norfolk Vanguard project — 1.38 GW with Vestas turbines — is the pipeline made real.</div>
+        </div>
+      </div>
+    </div>
+    <div class="sw-panel weaknesses">
+      <div class="sw-title">Weaknesses</div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div>
+          <div class="sw-lead">Elliott's 5% stake is a governance question, not a compliment</div>
+          <div class="sw-body">When one of the world's most aggressive activist investors discloses a 5% stake and calls for larger buybacks, it is not an endorsement of the strategy — it is a signal that the market does not yet believe in it. RWE's EV/EBITDA of 7.4 versus Iberdrola's 9.6 and SSE's 8.8 reflects a persistent valuation discount that capital allocation alone will not close.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div>
+          <div class="sw-lead">The hydrogen timeline is permitting-dependent</div>
+          <div class="sw-body">The FUREC waste-to-hydrogen project in the Netherlands — one of RWE's flagship Beyond Zone investments — is already facing delays from permitting complexity. A €685 million project requiring €108 million of EU grant funding has limited tolerance for regulatory friction. The energy transition cannot be executed faster than the planning system allows, and the planning system in Europe is not moving at transition speed.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div>
+          <div class="sw-lead">Capacity market subsidies for gas — a moral ambiguity with real exposure</div>
+          <div class="sw-body">RWE benefits from European capacity market payments that effectively subsidise fossil gas plant availability. These payments are worth billions across the sector. Critics — including environmental groups and some regulators — argue that the mechanism crowds out battery storage alternatives. If policy shifts against fossil capacity payments, a meaningful source of short-term revenue disappears before the hydrogen business is ready to replace it.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div>
+          <div class="sw-lead">The Beyond Zone is thinner than the ambition suggests</div>
+          <div class="sw-body">RWE's 2040 net zero commitment and its "Growing Green" rhetoric sit in the Beyond Zone, but the actual investment programme there — hydrogen, long-duration storage, frontier R&D — is modest relative to the €55 billion total. Without deeper seeding of transformational bets, the 2040 target risks being a communications posture rather than an engineered outcome.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div>
+          <div class="sw-lead">Digital twinning and industrial AI are conspicuously absent</div>
+          <div class="sw-body">Siemens Gamesa and Vestas — both of whom supply RWE's turbines — have invested heavily in digital twin technology, predictive maintenance, and AI-driven asset optimisation. RWE operates these turbines but does not appear to own the intelligence layer above them. As the value in energy assets migrates from physical infrastructure to operational software, this gap could become structural.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section id="diagnostic" class="ink">
+  <div class="section-label">Theta Diagnostic</div>
+  <h2 class="section-title">The honest portrait of where<br><em>RWE stands,</em><br>and what the map says next.</h2>
+  <div class="diag-grid reveal">
+    <div>
+      <div class="diag-block">
+        <div class="diag-block-title">Portfolio Archetype</div>
+        <div class="archetype-row">
+          <span class="archetype-box ok">Core ✓</span>
+          <span class="archetype-box ok">Edge ✓</span>
+          <span class="archetype-box mid">Beyond △</span>
+        </div>
+        <p class="diag-prose" style="margin-top:12px;">RWE's Core is healthy and fully funded — 11.2 GW under construction is not ambition, it is concrete. The Edge zone is producing differentiated commercial outputs with genuine strategic logic. The Beyond zone is present but underdeveloped relative to the scale of the declared transformation. A company committing to net zero by 2040 needs more speculative investments in the ground by now.</p>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Leadership & Culture</div>
+        <p class="diag-prose">Dr. Markus Krebber runs RWE in a model that is neither Founder Mode nor pure Operator Mode — it is what disciplined Operator Mode looks like when it accepts strategic risk. He has held the CEO seat since 2021, extended to 2031, which is rare institutional continuity for a company executing a decade-long transformation. The Leadership Trifecta shows strong Agility (the 2019 pivot; the Apollo deal), measured Consciousness (RWE operates without a celebrity brand — the transformation speaks without showmanship), and credible Courage (the 2040 net zero commitment, validated externally by SBTi, is not a reversible PR commitment). The cultural risk is not failure of courage but failure of curiosity: a highly competent operator culture that may struggle to protect the mavericks who plant the seeds for 2035.</p>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Mavericks & Risk Tolerance</div>
+        <p class="diag-prose">RWE's innovation culture is pragmatic rather than exploratory. The drone logistics programme was operational problem-solving, not blue-sky research. The recyclable blade deployment was vendor-led, with RWE as the courageous first adopter rather than the inventor. This is not a criticism — it is the difference between an operator and a lab. The risk is that the Beyond zone requires people who are willing to be wrong for years before being right, and operator cultures tend to make career paths uncomfortable for that kind of patience.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="diag-block">
+        <div class="diag-block-title">Customer Signal Alignment</div>
+        <p class="diag-prose">RWE's customer is shifting. The traditional utility relationship — government tenders, regulated returns, long-term contracts with grid operators — is being joined by a new relationship with corporate buyers of clean power: tech giants, AI data centre operators, industrial decarbonisers. The Global Switch PPA signals that RWE has heard this signal and is acting. But the infrastructure to serve 24/7 low-carbon demand at the scale that AI will eventually require does not yet exist. RWE is selling the promise while building the reality — which is the right sequence, as long as the build keeps pace with the promise.</p>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Portfolio vs. Theta Benchmark</div>
+        <div style="margin-top:14px;">
+          <div class="inline-bar-row">
+            <span class="inline-bar-label">Core</span>
+            <div class="inline-bar-track">
+              <div class="inline-bar-fill" style="width:70%;background:var(--core-green);"></div>
+              <div class="inline-bar-benchmark" style="left:70%;"></div>
+            </div>
+            <span class="inline-bar-pct">70%</span>
+          </div>
+          <div class="inline-bar-row">
+            <span class="inline-bar-label">Edge</span>
+            <div class="inline-bar-track">
+              <div class="inline-bar-fill" style="width:20%;background:var(--edge-amber);"></div>
+              <div class="inline-bar-benchmark" style="left:20%;"></div>
+            </div>
+            <span class="inline-bar-pct">20%</span>
+          </div>
+          <div class="inline-bar-row">
+            <span class="inline-bar-label">Beyond</span>
+            <div class="inline-bar-track">
+              <div class="inline-bar-fill" style="width:10%;background:var(--beyond-crimson);"></div>
+              <div class="inline-bar-benchmark" style="left:10%;"></div>
+            </div>
+            <span class="inline-bar-pct">10%</span>
+          </div>
+          <p style="font-size:10px;color:rgba(255,255,255,0.22);margin-top:8px;">Vertical markers indicate Theta benchmark targets (70/20/10)</p>
+        </div>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Critical Tension</div>
+        <div class="tension-box">
+          <div class="tension-label">The Transformation Succeeds Only If the Energy Market Cooperates</div>
+          <div class="tension-text">RWE's strategy is built on a set of assumptions that it does not fully control: that EU policy continues to price carbon aggressively, that hydrogen demand materialises at scale by the early 2030s, that offshore wind permitting accelerates rather than stalls, and that AI data centre demand for clean power becomes the dominant commercial tender of the decade. If any two of these assumptions slip by three years, the €55 billion investment programme produces returns below what the capital markets are currently pricing in. RWE has chosen an exposed position deliberately. The discipline is in not pretending otherwise.</div>
+        </div>
+      </div>
+
+      <div class="verdict-final">
+        <div class="verdict-type">Transitioning</div>
+        <div class="verdict-symbols">✓ ✓ △</div>
+        <div class="verdict-explain">RWE is a company that has already completed the hardest part of transformation — deciding who it wants to be — and is now in the most demanding phase: executing at the speed that declaration requires. Its Core and Edge zones are healthy and commercially productive. Its Beyond zone is present but would benefit from more deliberate seeding. The Theta verdict is not that RWE is failing. It is that the distance between a company that grows to 65 GW by 2030 and one that genuinely shapes the decarbonised energy system of 2040 is exactly what happens in the Beyond zone — and that work, at RWE, is still largely ahead.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEADERSHIP THETA TIMELINE -->
+<section id="leadership" class="warm">
+  <div class="section-label">Leadership Through Theta</div>
+  <h2 class="section-title">Six CEOs. One company.<br><em>Six completely different</em><br>bets on the future.</h2>
+  <div class="lead-timeline reveal" style="padding-left: 24px;">
+    <div class="lead-timeline-spine"></div>
+
+    <!-- Kuhnt -->
+    <div class="lead-item">
+      <div class="lead-left">
+        <div class="lead-tenure">~1990s–2003</div>
+        <div class="lead-name">Dietmar Kuhnt</div>
+        <div class="lead-tag">The Architect</div>
+      </div>
+      <div class="lead-right">
+        <div class="lead-headline">Built the platform that would fund the pivot</div>
+        <div class="lead-body">Kuhnt's defining act was the merger with VEW in 2000, creating the largest electricity company in Germany at the time. He was not trying to reinvent the energy industry — he was trying to build a company large enough to survive whatever came next. In Theta terms, his entire tenure lived in the Core zone, executed with unusual aggression. The paradox: this was the right move. Without the scale, cash flows, and political weight that Kuhnt built, none of RWE's later transformation would have been financeable.</div>
+        <div class="lead-theta-row">
+          <span class="lead-zone-tag core">Core: ~85%</span>
+          <span class="lead-zone-tag neutral">Edge: ~12%</span>
+          <span class="lead-zone-tag neutral">Beyond: ~3%</span>
+        </div>
+        <div class="lead-trifecta">
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Agility</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Bold merger when others hesitated</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Consciousness</div>
+            <div class="trifecta-score mid">Medium</div>
+            <div class="trifecta-note">Built scale, not a vision for after scale</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Courage</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Contested merger in a crowded market</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Roels -->
+    <div class="lead-item">
+      <div class="lead-left">
+        <div class="lead-tenure">2003–2007</div>
+        <div class="lead-name">Harry Roels</div>
+        <div class="lead-tag">The Simplifier</div>
+      </div>
+      <div class="lead-right">
+        <div class="lead-headline">Sold the sacred cows. Stripped what wasn't core.</div>
+        <div class="lead-body">Roels inherited a conglomerate that had expanded into water, waste, and American infrastructure. His instinct was to cut. He sold Thames Water. He exited DEA's oil & gas. He sold the American Water business. At the time, this looked like retrenchment. In retrospect, it was preparation. By stripping everything non-essential, Roels left RWE with a much cleaner capital base — and an organisation that could actually change direction. He is the unsung CEO of the transformation story because his most important contributions were subtractive.</div>
+        <div class="lead-theta-row">
+          <span class="lead-zone-tag core">Core: ~80%</span>
+          <span class="lead-zone-tag neutral">Edge: ~18%</span>
+          <span class="lead-zone-tag neutral">Beyond: ~2%</span>
+        </div>
+        <div class="lead-trifecta">
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Agility</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Sold assets others still called "strategic"</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Consciousness</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Saw complexity as the real problem</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Courage</div>
+            <div class="trifecta-score mid">Medium</div>
+            <div class="trifecta-note">Simplified without a declared destination</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Großmann -->
+    <div class="lead-item inflection">
+      <div class="lead-left">
+        <div class="lead-tenure">2007–2012</div>
+        <div class="lead-name">Jürgen Großmann</div>
+        <div class="lead-tag">The Seed Planter</div>
+      </div>
+      <div class="lead-right">
+        <div class="lead-headline">Created RWE Innogy. Planted the Edge. Got hit by Fukushima.</div>
+        <div class="lead-body">Großmann's tenure is the pivotal one that rarely gets its due. In 2008, he created RWE Innogy — the internal renewables unit that would eventually become a standalone company and then be partially reassembled into RWE's new identity. He invested €1 billion per year into renewables when they represented barely 3% of RWE's capacity. That wasn't a green strategy — it was an insurance policy dressed as an R&D programme. Then Fukushima happened in 2011. Germany announced its nuclear phase-out. The €1 billion/year bets suddenly looked prescient. Großmann's real contribution to the Theta framework is demonstrating what a CEO looks like when they plant Edge seeds during Core prosperity rather than waiting for a crisis to force it.</div>
+        <div class="lead-theta-row">
+          <span class="lead-zone-tag core">Core: ~65%</span>
+          <span class="lead-zone-tag edge">Edge: ~28%</span>
+          <span class="lead-zone-tag neutral">Beyond: ~7%</span>
+        </div>
+        <div class="lead-trifecta">
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Agility</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Built RWE Innogy before it was obvious</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Consciousness</div>
+            <div class="trifecta-score mid">Medium</div>
+            <div class="trifecta-note">Saw the shift; underestimated its speed</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Courage</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">€1B/yr into renewables when coal paid the bills</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terium -->
+    <div class="lead-item inflection">
+      <div class="lead-left">
+        <div class="lead-tenure">2012–2016</div>
+        <div class="lead-name">Peter Terium</div>
+        <div class="lead-tag">The Separator</div>
+      </div>
+      <div class="lead-right">
+        <div class="lead-headline">Spun out innogy. Let the new culture breathe on its own.</div>
+        <div class="lead-body">Terium understood something most executives don't: that a new culture cannot grow inside an old one. The 2016 innogy IPO — listing RWE's renewables, networks, and retail businesses as a separate €20 billion company — was an act of cultural architecture as much as financial engineering. By giving innogy its own board, its own P&L, its own investor base, and its own brand, Terium created the separation that allowed the renewables teams to develop a different identity from RWE's coal and nuclear legacy. The Theta insight here is structural: if you want Edge innovation to survive inside a Core-dominant organisation, sometimes the only way to protect it is to make it legally separate. Terium didn't have the full answer — the eventual reassembly of innogy's renewables back into RWE would come under Schmitz — but he did the necessary work of letting the new identity find its own footing.</div>
+        <div class="lead-theta-row">
+          <span class="lead-zone-tag core">Core: ~55%</span>
+          <span class="lead-zone-tag edge">Edge: ~35%</span>
+          <span class="lead-zone-tag neutral">Beyond: ~10%</span>
+        </div>
+        <div class="lead-trifecta">
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Agility</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Invented a new structure for a new reality</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Consciousness</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Understood culture beats strategy</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Courage</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Spun off the "future" while managing the past</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schmitz -->
+    <div class="lead-item inflection">
+      <div class="lead-left">
+        <div class="lead-tenure">2016–2021</div>
+        <div class="lead-name">Rolf Martin Schmitz</div>
+        <div class="lead-tag">The Dealmaker</div>
+      </div>
+      <div class="lead-right">
+        <div class="lead-headline">Executed the swap. Reassembled the future inside a new RWE.</div>
+        <div class="lead-body">Schmitz is the CEO who executed the most consequential transaction in RWE's modern history — the 2018 asset swap with E.On that restructured the entire German energy landscape. His strategic instinct was to recognise that RWE's future was in generation, not in networks or retail, and to act on that with unusual decisiveness. What makes Schmitz's tenure fascinating under the Theta lens is that he wasn't a visionary — he was a dealmaker. He didn't articulate a "Growing Green" philosophy; he created the structural conditions that made that philosophy possible for the next CEO. The 2,700 employees who transferred back to RWE with innogy's renewables assets weren't strangers. They were, in many cases, people who had originally been RWE. The reintegration worked partly because of Schmitz's financial engineering and partly because the cultural memory was intact.</div>
+        <div class="lead-theta-row">
+          <span class="lead-zone-tag core">Core: ~45%</span>
+          <span class="lead-zone-tag edge">Edge: ~48%</span>
+          <span class="lead-zone-tag neutral">Beyond: ~7%</span>
+        </div>
+        <div class="lead-trifecta">
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Agility</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Engineered the defining transaction</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Consciousness</div>
+            <div class="trifecta-score mid">Medium</div>
+            <div class="trifecta-note">Structural clarity, less cultural depth</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Courage</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Sold the crown jewels to buy the future</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Krebber -->
+    <div class="lead-item inflection">
+      <div class="lead-left">
+        <div class="lead-tenure">2021–Present</div>
+        <div class="lead-name">Dr. Markus Krebber</div>
+        <div class="lead-tag">The Executor</div>
+      </div>
+      <div class="lead-right">
+        <div class="lead-headline">Named the strategy. Funded it. Now has to prove it.</div>
+        <div class="lead-body">Krebber is the first RWE CEO in the modern era who inherited a company that had already decided what it was. His predecessors each had to make a structural choice — to merge, simplify, seed, separate, or deal. Krebber's job is to execute. "Growing Green" is his phrase — and it is not rhetoric. It is a €55 billion commitment, a 65 GW build target, a 2040 net zero date backed by SBTi validation, and a business case for AI data centres that positions RWE as essential infrastructure for the next technological era. His leadership trifecta scores the highest of any RWE CEO on all three dimensions simultaneously, which is also why his job is the hardest: he has no structural escape hatches. The restructuring is done. The pivot is made. Now it has to work.</div>
+        <div class="lead-theta-row">
+          <span class="lead-zone-tag core">Core: ~70%</span>
+          <span class="lead-zone-tag edge">Edge: ~20%</span>
+          <span class="lead-zone-tag beyond">Beyond: ~10%</span>
+        </div>
+        <div class="lead-trifecta">
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Agility</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Navigates policy headwinds without flinching</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Consciousness</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">"No electricity, no AI" — reads the macro</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Courage</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Net zero 2040 in an uncertain policy world</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leadership Zone Allocation Chart -->
+  <div class="reveal" style="margin-top: 16px;">
+    <div class="lead-chart-label">Zone allocation shift by CEO — Core / Edge / Beyond over time</div>
+    <div class="lead-chart-wrap">
+      <canvas id="leadershipChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- M&A STRATEGY -->
+<section id="ma-strategy" class="white">
+  <div class="section-label">M&A Strategy Deep Dive</div>
+  <h2 class="section-title">Most acquisitions fail.<br><em>RWE's didn't.</em><br>Here's the exact reason why.</h2>
+
+  <div class="ma-intro reveal">
+    <p>The 70–90% failure rate in M&A is not a mystery. It is a pattern: two companies with different cultures, different processes, and different power structures are forced together under the assumption that combined revenue exceeds integration cost. That assumption is almost always wrong. What makes RWE's acquisition history unusual is that their most consequential transaction — the E.On/innogy asset swap — violated almost every convention of how major M&A is supposed to work.</p>
+    <p>It was not a purchase. It was a reassembly. The 2,700 employees who moved from innogy's renewables division back to RWE had, in many cases, originally been RWE employees before the 2016 innogy spin-out. They were coming home — with four years of experience in a more focused, innovation-oriented culture that RWE's legacy core had never been able to provide them. This is the integration story that no acquisition textbook covers: what happens when the people you are "acquiring" already know who you are.</p>
+  </div>
+
+  <div class="ma-deal-grid reveal">
+    <!-- Deal 1: innogy -->
+    <div class="ma-deal">
+      <div class="ma-deal-year">
+        <div class="ma-deal-yr-num">2019–20</div>
+        <div class="ma-deal-yr-type">Asset Swap</div>
+      </div>
+      <div class="ma-deal-body">
+        <div class="ma-deal-name">The E.On / innogy Asset Swap</div>
+        <div class="ma-deal-desc">RWE transferred its 76.8% innogy stake — grids, retail, the regulated future — to E.On. In exchange, it received the majority of E.On's renewable generation assets and €1.5 billion in cash. What moved to RWE: approximately 9.7 GW of wind, solar, and hydro capacity, the gas storage business, a 49% stake in Austrian utility Kelag, and 2,700 employees. What made the integration work was not process or systems — it was identity. The renewables teams had been RWE people. They understood the parent culture, had maintained informal networks, and returned with a sense of shared purpose rather than the anxiety of corporate conquest.</div>
+        <div class="ma-deal-verdict">"This is not two organisations merging. It is one organisation recovering something it had set aside." — The internal logic that made it work.</div>
+      </div>
+      <div class="ma-deal-meta">
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Capacity Added</div>
+          <div class="ma-meta-val">~9.7 GW</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Employees Transferred</div>
+          <div class="ma-meta-val">2,700</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Theta Zone</div>
+          <div class="ma-meta-val edge">Edge → Core Consolidation</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Integration Risk</div>
+          <div class="ma-meta-val core">Low — shared heritage</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Outcome</div>
+          <div class="ma-meta-val core">Transformational ✓</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deal 2: Con Edison -->
+    <div class="ma-deal">
+      <div class="ma-deal-year">
+        <div class="ma-deal-yr-num">2022</div>
+        <div class="ma-deal-yr-type">Acquisition</div>
+      </div>
+      <div class="ma-deal-body">
+        <div class="ma-deal-name">Con Edison Clean Energy Businesses</div>
+        <div class="ma-deal-desc">The largest acquisition in RWE's history at $6.8 billion. Con Edison's Clean Energy Businesses brought approximately 3 GW of operating US renewables and a development pipeline, instantly making RWE the #4 renewables company in the US. The cultural integration challenge here was substantively different from the innogy swap: American corporate culture versus German engineering culture, different regulatory frameworks, geographic distance, and no shared heritage. RWE's approach was deliberate: leave the platform largely intact, integrate at the portfolio level, and resist the temptation to impose German process on an American team that was already performing. This is the "acquire a platform and let it breathe" model — harder to execute than it sounds because it requires holding back the instinct to centralise.</div>
+        <div class="ma-deal-verdict">The Inflation Reduction Act (signed 3 months after deal close) transformed the economic case retrospectively. RWE timed it without knowing the IRA was coming — which is the best kind of strategic luck.</div>
+      </div>
+      <div class="ma-deal-meta">
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Deal Value</div>
+          <div class="ma-meta-val">$6.8 billion</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">US Portfolio After</div>
+          <div class="ma-meta-val">>7 GW</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Theta Zone</div>
+          <div class="ma-meta-val edge">Edge — Geographic Expansion</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Integration Risk</div>
+          <div class="ma-meta-val edge">Medium — cross-cultural</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Outcome</div>
+          <div class="ma-meta-val edge">Strong — IRA tailwind</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deal 3: Apollo JV -->
+    <div class="ma-deal">
+      <div class="ma-deal-year">
+        <div class="ma-deal-yr-num">2025</div>
+        <div class="ma-deal-yr-type">JV / Partnership</div>
+      </div>
+      <div class="ma-deal-body">
+        <div class="ma-deal-name">Apollo Global Management — Amprion JV</div>
+        <div class="ma-deal-desc">Not an acquisition — a financial architecture move. Apollo injected €3.2 billion of equity into a joint venture holding RWE's 25.1% stake in Amprion, Germany's second-largest transmission grid operator. RWE retained operational control of the JV. Apollo received stable, regulated dividend returns from infrastructure it cannot operate. The elegance of this structure is that it converts a static balance sheet asset into €3.2 billion of liquid capital — without a sale, without losing influence, and without triggering a tax event from asset disposal. This model has no integration risk because there is no integration. It is the most sophisticated non-acquisition in RWE's recent history.</div>
+        <div class="ma-deal-verdict">The deal received almost no financial press. It may be the template for how large utilities fund the energy transition without loading themselves with debt.</div>
+      </div>
+      <div class="ma-deal-meta">
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Capital Unlocked</div>
+          <div class="ma-meta-val">€3.2 billion</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Control Retained</div>
+          <div class="ma-meta-val core">Yes — operational</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Theta Zone</div>
+          <div class="ma-meta-val core">Core — Capital Recycling</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Integration Risk</div>
+          <div class="ma-meta-val core">Zero — JV structure</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Outcome</div>
+          <div class="ma-meta-val core">Elegant ✓</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deal 4: Norges Bank -->
+    <div class="ma-deal">
+      <div class="ma-deal-year">
+        <div class="ma-deal-yr-num">2024–25</div>
+        <div class="ma-deal-yr-type">JV / Co-development</div>
+      </div>
+      <div class="ma-deal-body">
+        <div class="ma-deal-name">Norges Bank — Nordseecluster Offshore Wind</div>
+        <div class="ma-deal-desc">Norges Bank Investment Management (Norway's sovereign wealth fund) acquired a 49% stake in RWE's Nordseecluster offshore wind project — a 1.6 GW development with operations expected from 2029. RWE retained 51% and operational control. This is the partnership model applied to asset development rather than asset monetisation: RWE provides the expertise, permitting, supply chain management, and project execution; Norges Bank provides patient capital that does not demand short-term returns. The cultural fit is clean because there is no cultural merger — Norges Bank does not operate wind farms, and RWE does not manage sovereign wealth. Each party does what it does best.</div>
+        <div class="ma-deal-verdict">Sovereign wealth funds are increasingly the ideal capital partner for long-horizon energy infrastructure: they have 20-year investment horizons that match the assets, and they do not need to be integrated — just respected.</div>
+      </div>
+      <div class="ma-deal-meta">
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Project Scale</div>
+          <div class="ma-meta-val">1.6 GW</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">RWE Stake</div>
+          <div class="ma-meta-val core">51% + operations</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Theta Zone</div>
+          <div class="ma-meta-val edge">Edge — Offshore Scale-Up</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Integration Risk</div>
+          <div class="ma-meta-val core">Zero — clean division</div>
+        </div>
+        <div class="ma-meta-item">
+          <div class="ma-meta-key">Outcome</div>
+          <div class="ma-meta-val edge">In development ◎</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- M&A Principles -->
+  <div class="section-label" style="margin-top: 16px; margin-bottom: 28px;">What RWE Actually Knows About M&A</div>
+  <div class="ma-principles reveal">
+    <div class="ma-principle">
+      <div class="ma-principle-num">01</div>
+      <div class="ma-principle-title">Reassembly beats acquisition</div>
+      <div class="ma-principle-body">The innogy swap worked because it was recovering something that had been separated rather than conquering something foreign. Shared history compresses integration timelines by years. No acquisition strategy replicates this — but the principle it reveals is real: cultural proximity determines integration cost more reliably than deal structure does.</div>
+    </div>
+    <div class="ma-principle">
+      <div class="ma-principle-num">02</div>
+      <div class="ma-principle-title">Buy a platform, not a process</div>
+      <div class="ma-principle-body">The Con Edison acquisition worked — to the extent it has — because RWE left it largely intact. The instinct to centralise, standardise, and impose parent processes is the single most common cause of post-acquisition value destruction. When you buy a functioning machine, the first principle is: do not immediately start disassembling it to see how it works.</div>
+    </div>
+    <div class="ma-principle">
+      <div class="ma-principle-num">03</div>
+      <div class="ma-principle-title">Partner for Beyond, build for Edge</div>
+      <div class="ma-principle-body">RWE does not acquire hydrogen startups. It builds in-house (Lingen) and buys from vendors (Sunfire, ITM Power). For truly Beyond-zone technology, acquisition creates culture clash between a startup's tolerance for chaos and a utility's need for reliability. Vendor relationships and in-house programmes let RWE access the technology without absorbing the culture.</div>
+    </div>
+    <div class="ma-principle">
+      <div class="ma-principle-num">04</div>
+      <div class="ma-principle-title">JVs are acquisitions without the bill</div>
+      <div class="ma-principle-body">The Apollo and Norges Bank structures reveal a financial insight most utilities have not yet internalised: you do not need to own 100% of an asset to capture its strategic value. Joint ventures let RWE retain operational control — which is where the competitive advantage actually lives — while sharing the capital burden with partners who have lower cost of capital for long-duration infrastructure. This is not compromise. It is capital efficiency.</div>
+    </div>
+  </div>
+</section>
+
+<!-- EDGE → CORE PIPELINE -->
+<section id="edge-to-core" class="warm">
+  <div class="section-label">The Edge-to-Core Pipeline</div>
+  <h2 class="section-title">Renewables lived in R&D<br><em>for thirty years</em><br>before it became the business.</h2>
+
+  <div class="pipeline-intro reveal">
+    <p>In 1983, RWE installed Germany's first grid-connected photovoltaic module on its own headquarters roof in Essen. In 1988, it built Europe's largest solar power station in the Moselle valley — 300 kilowatts — as a test facility for different module technologies. By 2008, renewables still represented barely 3% of RWE's total generation capacity. The twenty-five year gap between the technology existing inside the company and the technology becoming the company is one of the most instructive case studies in the Theta framework — not because RWE was slow, but because it reveals how long the journey from Beyond to Core actually takes, and what conditions are required to accelerate it.</p>
+    <p>The acceleration, when it finally came, was driven by three external shocks arriving in close sequence: the EU's Renewable Energy Directive (2009) creating a policy floor, Fukushima (2011) eliminating nuclear as a competing clean alternative, and the collapse of conventional power economics (2013–2014) making the old Core financially untenable. External shocks did not create RWE's renewable capability. They simply forced the capability that had been maturing in the Edge zone for three decades to become the new Core on an accelerated timeline.</p>
+  </div>
+
+  <!-- Pipeline River -->
+  <div class="pipeline-river reveal">
+    <div class="pipeline-phases">
+      <div class="pipeline-phase-header p-beyond">
+        <div class="pipeline-phase-label">🟥 Beyond — R&D</div>
+        <div class="pipeline-phase-years">1983–2007</div>
+      </div>
+      <div class="pipeline-phase-header p-edge">
+        <div class="pipeline-phase-label">🟨 Edge — Scaling</div>
+        <div class="pipeline-phase-years">2007–2016</div>
+      </div>
+      <div class="pipeline-phase-header p-transition">
+        <div class="pipeline-phase-label">🟩 Transition</div>
+        <div class="pipeline-phase-years">2016–2020</div>
+      </div>
+      <div class="pipeline-phase-header p-core">
+        <div class="pipeline-phase-label">🟩 Core — Operating</div>
+        <div class="pipeline-phase-years">2020–Present</div>
+      </div>
+    </div>
+
+    <div class="pipeline-row-label">Solar Technology</div>
+    <div class="pipeline-tech-row">
+      <div class="pipeline-cell p-beyond">
+        <div class="pipeline-cell-tech">First PV module (1983)</div>
+        <div class="pipeline-cell-note">Germany's first grid-connected solar panel. On RWE's own roof.</div>
+      </div>
+      <div class="pipeline-cell p-beyond">
+        <div class="pipeline-cell-tech">Moselle test plant (1988)</div>
+        <div class="pipeline-cell-note">300 kW — Europe's largest at the time. A lab, not a business.</div>
+      </div>
+      <div class="pipeline-cell p-edge">
+        <div class="pipeline-cell-tech">Commercial solar farm roll-out</div>
+        <div class="pipeline-cell-note">Utility-scale solar enters innogy's investment pipeline. Still sub-5% of capacity.</div>
+      </div>
+      <div class="pipeline-cell p-core-strong">
+        <div class="pipeline-cell-tech">Core solar portfolio</div>
+        <div class="pipeline-cell-note">Multi-GW across Europe and US. Mature technology, margin-generating.</div>
+      </div>
+    </div>
+
+    <div class="pipeline-row-label">Wind — Onshore</div>
+    <div class="pipeline-tech-row">
+      <div class="pipeline-cell p-beyond">
+        <div class="pipeline-cell-tech">First wind trials (1990s)</div>
+        <div class="pipeline-cell-note">"Among the first energy suppliers to test wind power for public supply."</div>
+      </div>
+      <div class="pipeline-cell p-edge">
+        <div class="pipeline-cell-tech">RWE Innogy onshore (2008)</div>
+        <div class="pipeline-cell-note">€1B/yr invested. Still experimental relative to coal revenues.</div>
+      </div>
+      <div class="pipeline-cell p-transition">
+        <div class="pipeline-cell-tech">innogy SE scale-up (2016–20)</div>
+        <div class="pipeline-cell-note">Structural separation lets onshore wind develop its own commercial identity.</div>
+      </div>
+      <div class="pipeline-cell p-core-strong">
+        <div class="pipeline-cell-tech">Core onshore fleet</div>
+        <div class="pipeline-cell-note">Operational backbone. Vestas and Siemens Gamesa supply; RWE develops and operates.</div>
+      </div>
+    </div>
+
+    <div class="pipeline-row-label">Wind — Offshore</div>
+    <div class="pipeline-tech-row">
+      <div class="pipeline-cell p-beyond">
+        <div class="pipeline-cell-tech">Early 2000s offshore pilot</div>
+        <div class="pipeline-cell-note">Built what was then the world's largest offshore wind farm off the British coast.</div>
+      </div>
+      <div class="pipeline-cell p-edge">
+        <div class="pipeline-cell-tech">Triton Knoll, Kaskasi</div>
+        <div class="pipeline-cell-note">857 MW and 342 MW. Engineering scale. Offshore becomes the strategic priority.</div>
+      </div>
+      <div class="pipeline-cell p-transition">
+        <div class="pipeline-cell-tech">Portfolio consolidation</div>
+        <div class="pipeline-cell-note">E.On/innogy swap brings offshore assets back under single RWE umbrella.</div>
+      </div>
+      <div class="pipeline-cell p-core-strong">
+        <div class="pipeline-cell-tech">World's 2nd-largest offshore operator</div>
+        <div class="pipeline-cell-note">19 farms. Norfolk Vanguard (1.38 GW) in pipeline. Norges Bank co-invested.</div>
+      </div>
+    </div>
+
+    <div class="pipeline-row-label">Hydrogen</div>
+    <div class="pipeline-tech-row">
+      <div class="pipeline-cell p-beyond">
+        <div class="pipeline-cell-tech">Conceptual research</div>
+        <div class="pipeline-cell-note">Hydrogen understood as a storage vector. No commercial programme.</div>
+      </div>
+      <div class="pipeline-cell p-beyond">
+        <div class="pipeline-cell-tech">Power-to-gas pilots</div>
+        <div class="pipeline-cell-note">Small-scale electrolysis experiments. Proof of concept only.</div>
+      </div>
+      <div class="pipeline-cell p-edge">
+        <div class="pipeline-cell-tech">GET H2 Nukleus, Lingen</div>
+        <div class="pipeline-cell-note">100 MW plant under build. Sunfire + ITM Power + Linde as vendors. TotalEnergies offtake signed.</div>
+      </div>
+      <div class="pipeline-cell p-edge">
+        <div class="pipeline-cell-tech">300 MW by 2027 (target)</div>
+        <div class="pipeline-cell-note">Still Edge — not yet operating at commercial margin. FUREC facing permitting delays.</div>
+      </div>
+    </div>
+
+    <div class="pipeline-row-label">Battery Storage</div>
+    <div class="pipeline-tech-row">
+      <div class="pipeline-cell empty"></div>
+      <div class="pipeline-cell p-beyond">
+        <div class="pipeline-cell-tech">Herdecke battery (2018)</div>
+        <div class="pipeline-cell-note">7 MW with Belectric. Germany's early large-scale battery project. An experiment.</div>
+      </div>
+      <div class="pipeline-cell p-edge">
+        <div class="pipeline-cell-tech">Masdar JV (up to 2 GW)</div>
+        <div class="pipeline-cell-note">Partnership with UAE clean energy leader. Battery co-location with wind and solar.</div>
+      </div>
+      <div class="pipeline-cell p-edge">
+        <div class="pipeline-cell-tech">Grid-scale storage portfolio</div>
+        <div class="pipeline-cell-note">Still Edge — maturing but not yet Core-scale margins. The next transition is here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insight cards -->
+  <div class="pipeline-insight reveal">
+    <div class="pi-card">
+      <div class="pi-card-label">What the pipeline reveals</div>
+      <div class="pi-card-title">R&D without a forcing function is just patience</div>
+      <div class="pi-card-body">RWE had solar and wind technology in its portfolio for 25 years before either became commercially significant. The capability was there. The urgency wasn't. What finally moved renewables from the experimental fringe to the strategic centre was not internal conviction — it was the convergence of three external shocks: EU policy targets, Fukushima's elimination of nuclear as an alternative, and the financial collapse of conventional power economics in 2013–2014. The Theta lesson is not that companies should invest patiently in Beyond-zone technologies and wait. It is that Beyond-zone investments are only valuable if the organisation stays close enough to them that when the external conditions change, it can accelerate rather than start from zero.</div>
+    </div>
+    <div class="pi-card dark">
+      <div class="pi-card-label">The acceleration mechanism</div>
+      <div class="pi-card-title">Structural separation let the new culture grow</div>
+      <div class="pi-card-body">The single most important act in RWE's Edge-to-Core transition was the 2016 innogy spin-out. By creating a legally separate company with its own board, its own investor expectations, and its own brand, Terium gave the renewable teams something coal-era RWE could never have given them: permission to be the main character. Inside RWE's original structure, renewables would always have been measured against coal's margins. Inside innogy, they were measured against their own potential. The four years innogy spent as an independent company built the muscle memory, the culture, and the commercial confidence that made the 2020 reassembly work. You cannot accelerate an Edge capability without first protecting it from Core economics.</div>
+    </div>
+  </div>
+
+  <!-- S-curve chart -->
+  <div class="reveal" style="margin-top: 48px;">
+    <div class="lead-chart-label">Renewables as % of RWE total generation capacity — the S-curve in practice</div>
+    <div class="scurve-wrap">
+      <canvas id="scurveChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left"><strong>Theta Framework</strong> · RWE AG Case Study · 2026</div>
+  <div class="footer-right">Strategic Case Study</div>
+</footer>
+
+<script>
+// SCROLL REVEAL
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.06 });
+reveals.forEach(el => observer.observe(el));
+
+const tooltipDefaults = {
+  backgroundColor: 'rgba(14,26,24,0.94)',
+  titleColor: '#fff',
+  bodyColor: 'rgba(255,255,255,0.65)',
+  titleFont: { family: 'DM Sans', size: 12 },
+  bodyFont: { family: 'DM Sans', size: 11 },
+  padding: 10, cornerRadius: 3, borderWidth: 1,
+  borderColor: 'rgba(0,107,91,0.22)'
+};
+
+// SCATTER CHART
+const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+const pointLabelPlugin = {
+  id: 'pointLabels',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    chart.data.datasets.forEach((dataset, i) => {
+      const meta = chart.getDatasetMeta(i);
+      meta.data.forEach((point, j) => {
+        const d = dataset.data[j];
+        if (d.label) {
+          ctx.save();
+          ctx.fillStyle = dataset.borderColor;
+          ctx.font = '11px DM Sans';
+          ctx.textAlign = 'left';
+          ctx.fillText(d.label, point.x + 11, point.y + 4);
+          ctx.restore();
+        }
+      });
+    });
+  }
+};
+new Chart(scatterCtx, {
+  type: 'scatter',
+  plugins: [pointLabelPlugin],
+  data: {
+    datasets: [
+      {
+        label: 'Core Zone',
+        data: [
+          { x: 15, y: 15, label: 'Onshore Wind / Solar Build' },
+          { x: 22, y: 20, label: 'Offshore Wind (19 farms)' },
+          { x: 26, y: 16, label: 'Flexible Gas Generation' },
+          { x: 18, y: 12, label: 'Energy Supply & Trading' },
+        ],
+        backgroundColor: 'rgba(45,106,79,0.78)', borderColor: '#2D6A4F', pointRadius: 7
+      },
+      {
+        label: 'Edge Zone',
+        data: [
+          { x: 55, y: 62, label: 'AI Data Centre PPAs' },
+          { x: 60, y: 56, label: 'Autonomous Cargo Drones' },
+          { x: 58, y: 68, label: 'Recyclable Wind Blades' },
+          { x: 50, y: 50, label: 'Battery Storage (Masdar JV)' },
+          { x: 52, y: 58, label: 'Hydrogen Pilot (Lingen 100MW)' },
+        ],
+        backgroundColor: 'rgba(181,132,26,0.78)', borderColor: '#B5841A', pointRadius: 7
+      },
+      {
+        label: 'Beyond Zone',
+        data: [
+          { x: 80, y: 84, label: 'Green H₂ Scale (300 MW by 2027)' },
+          { x: 84, y: 90, label: 'Long-Duration Storage R&D' },
+          { x: 78, y: 78, label: 'FUREC Waste-to-Hydrogen' },
+          { x: 88, y: 88, label: 'Net Zero 2040 Commitment' },
+        ],
+        backgroundColor: 'rgba(139,26,26,0.78)', borderColor: '#8B1A1A', pointRadius: 7
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 11 }, color: '#4a5a58', boxWidth: 10, padding: 18 } },
+      tooltip: { ...tooltipDefaults, callbacks: { label: (c) => c.raw.label || '' } }
+    },
+    scales: {
+      x: {
+        min: 0, max: 108,
+        title: { display: true, text: 'Market Reach  →  Existing · New · Emerging · Speculative', font: { family: 'DM Sans', size: 11 }, color: '#8A9490' },
+        ticks: { display: false },
+        grid: { color: 'rgba(0,107,91,0.06)' },
+        border: { display: false }
+      },
+      y: {
+        min: 0, max: 108,
+        title: { display: true, text: 'Technology Change  →  Incremental · Moderate · High · Radical · Extreme', font: { family: 'DM Sans', size: 11 }, color: '#8A9490' },
+        ticks: { display: false },
+        grid: { color: 'rgba(0,107,91,0.06)' },
+        border: { display: false }
+      }
+    }
+  }
+});
+
+// DONUT CHART
+const donutCtx = document.getElementById('donutChart').getContext('2d');
+new Chart(donutCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Core Zone', 'Edge Zone', 'Beyond Zone'],
+    datasets: [{
+      data: [70, 20, 10],
+      backgroundColor: ['rgba(45,106,79,0.82)', 'rgba(181,132,26,0.82)', 'rgba(139,26,26,0.82)'],
+      borderWidth: 0, hoverOffset: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    cutout: '68%',
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 11 }, color: '#4a5a58', boxWidth: 10, padding: 14 } },
+      tooltip: { ...tooltipDefaults, callbacks: { label: (c) => `${c.label}: ${c.raw}%` } }
+    }
+  }
+});
+
+// LEADERSHIP ZONE ALLOCATION CHART
+const leadershipCtx = document.getElementById('leadershipChart').getContext('2d');
+new Chart(leadershipCtx, {
+  type: 'line',
+  data: {
+    labels: ['Kuhnt\n~2000', 'Roels\n2003–07', 'Großmann\n2007–12', 'Terium\n2012–16', 'Schmitz\n2016–21', 'Krebber\n2021–'],
+    datasets: [
+      { label: 'Core Zone %', data: [85, 80, 65, 55, 45, 70], borderColor: '#2D6A4F', backgroundColor: 'rgba(45,106,79,0.08)', borderWidth: 2.5, pointBackgroundColor: '#2D6A4F', pointRadius: 6, pointHoverRadius: 8, tension: 0.35, fill: false },
+      { label: 'Edge Zone %', data: [12, 18, 28, 35, 48, 20], borderColor: '#B5841A', backgroundColor: 'rgba(181,132,26,0.06)', borderWidth: 2.5, pointBackgroundColor: '#B5841A', pointRadius: 6, pointHoverRadius: 8, tension: 0.35, fill: false },
+      { label: 'Beyond Zone %', data: [3, 2, 7, 10, 7, 10], borderColor: '#8B1A1A', backgroundColor: 'rgba(139,26,26,0.06)', borderWidth: 2.5, pointBackgroundColor: '#8B1A1A', pointRadius: 6, pointHoverRadius: 8, tension: 0.35, fill: false }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 11 }, color: '#4a5a58', boxWidth: 10, padding: 20 } },
+      tooltip: { ...tooltipDefaults, callbacks: { label: c => `${c.dataset.label}: ${c.raw}%` } }
+    },
+    scales: {
+      x: { grid: { color: 'rgba(0,107,91,0.05)' }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#8A9490' }, border: { display: false } },
+      y: { min: 0, max: 100, grid: { color: 'rgba(0,107,91,0.05)' }, ticks: { font: { family: 'DM Sans', size: 10 }, color: '#8A9490', callback: v => v + '%', maxTicksLimit: 6 }, border: { display: false } }
+    }
+  }
+});
+
+// S-CURVE CHART — Renewables % of capacity over time
+const scurveCtx = document.getElementById('scurveChart').getContext('2d');
+new Chart(scurveCtx, {
+  type: 'line',
+  data: {
+    labels: ['1983', '1990', '1995', '2000', '2005', '2008', '2012', '2016', '2018', '2020', '2022', '2024', '2026E', '2030T'],
+    datasets: [
+      {
+        label: 'Renewables % of RWE Total Capacity',
+        data: [0.1, 0.3, 0.8, 1.2, 2.0, 3.0, 8, 14, 22, 40, 55, 62, 68, 80],
+        borderColor: '#006B5B', backgroundColor: 'rgba(0,107,91,0.08)',
+        borderWidth: 2.5, pointBackgroundColor: '#006B5B',
+        pointRadius: (ctx) => {
+          const inflections = [5, 7, 9, 11];
+          return inflections.includes(ctx.dataIndex) ? 8 : 4;
+        },
+        tension: 0.42, fill: true
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { ...tooltipDefaults, callbacks: { label: c => `Renewables: ${c.raw}% of capacity` } },
+      annotation: {}
+    },
+    scales: {
+      x: { grid: { color: 'rgba(0,107,91,0.05)' }, ticks: { font: { family: 'DM Sans', size: 10 }, color: '#8A9490' }, border: { display: false } },
+      y: { min: 0, max: 100, grid: { color: 'rgba(0,107,91,0.05)' }, ticks: { font: { family: 'DM Sans', size: 10 }, color: '#8A9490', callback: v => v + '%', maxTicksLimit: 6 }, border: { display: false } }
+    }
+  }
+});
+
+// RADAR CHART
+const radarCtx = document.getElementById('radarChart').getContext('2d');
+new Chart(radarCtx, {
+  type: 'radar',
+  data: {
+    labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'Capital Execution', 'Policy Leverage', 'AI Readiness'],
+    datasets: [
+      { label: 'RWE', data: [80, 74, 58, 82, 88, 70], borderColor: '#006B5B', backgroundColor: 'rgba(0,107,91,0.08)', borderWidth: 2, pointBackgroundColor: '#006B5B', pointRadius: 4 },
+      { label: 'Iberdrola', data: [88, 68, 48, 80, 82, 55], borderColor: '#B5841A', backgroundColor: 'rgba(181,132,26,0.05)', borderWidth: 2, pointBackgroundColor: '#B5841A', pointRadius: 4 },
+      { label: 'Ørsted', data: [82, 76, 62, 70, 78, 58], borderColor: '#2D6A4F', backgroundColor: 'rgba(45,106,79,0.05)', borderWidth: 2, pointBackgroundColor: '#2D6A4F', pointRadius: 4 },
+      { label: 'NextEra', data: [90, 80, 72, 88, 76, 75], borderColor: '#8B1A1A', backgroundColor: 'rgba(139,26,26,0.05)', borderWidth: 2, pointBackgroundColor: '#8B1A1A', pointRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 11 }, color: '#4a5a58', boxWidth: 10, padding: 14 } },
+      tooltip: tooltipDefaults
+    },
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { display: false },
+        grid: { color: 'rgba(0,0,0,0.07)' },
+        angleLines: { color: 'rgba(0,0,0,0.07)' },
+        pointLabels: { font: { family: 'DM Sans', size: 11 }, color: '#4a5a58' }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
