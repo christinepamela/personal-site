@@ -1,891 +1,1358 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tesla Case Study | Strategic Analysis</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --tesla-red: #E82127;
-            --dark-bg: #0a0a0a;
-            --mid-bg: #1a1a1a;
-            --light-text: #f5f5f5;
-            --gray-text: #a0a0a0;
-            --accent-gray: #2a2a2a;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: var(--dark-bg);
-            color: var(--light-text);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(232, 33, 39, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 50%, rgba(232, 33, 39, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 900px;
-        }
-
-        .hero-label {
-            font-size: 0.875rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--gray-text);
-            margin-bottom: 1.5rem;
-            font-weight: 300;
-        }
-
-        .hero-title {
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            font-weight: 200;
-            letter-spacing: -0.02em;
-            margin-bottom: 1.5rem;
-            line-height: 1.1;
-        }
-
-        .hero-title .tesla {
-            font-weight: 600;
-        }
-
-        .hero-subtitle {
-            font-size: clamp(1rem, 2vw, 1.5rem);
-            color: var(--gray-text);
-            font-weight: 300;
-            margin-bottom: 3rem;
-            line-height: 1.5;
-        }
-
-        .hero-meta {
-            display: flex;
-            gap: 3rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            font-size: 0.875rem;
-            color: var(--gray-text);
-        }
-
-        .hero-meta-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .hero-meta-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .hero-meta-value {
-            color: var(--light-text);
-            font-weight: 400;
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.75rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--gray-text);
-            animation: float 2s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
-        }
-
-        /* Section Styles */
-        .section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 6rem 2rem;
-        }
-
-        .section-label {
-            font-size: 0.75rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--tesla-red);
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        .section-title {
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 300;
-            margin-bottom: 3rem;
-            letter-spacing: -0.02em;
-        }
-
-        .section-intro {
-            font-size: 1.125rem;
-            color: var(--gray-text);
-            max-width: 800px;
-            margin-bottom: 3rem;
-            line-height: 1.8;
-        }
-
-        /* Overview Grid */
-        .overview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .overview-card {
-            background: var(--mid-bg);
-            padding: 2rem;
-            border-radius: 2px;
-            border-left: 2px solid var(--tesla-red);
-            transition: transform 0.3s ease;
-        }
-
-        .overview-card:hover {
-            transform: translateY(-4px);
-        }
-
-        .overview-card-label {
-            font-size: 0.875rem;
-            color: var(--gray-text);
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .overview-card-value {
-            font-size: 1.5rem;
-            font-weight: 300;
-            margin-bottom: 0.75rem;
-        }
-
-        .overview-card-detail {
-            font-size: 0.875rem;
-            color: var(--gray-text);
-            line-height: 1.6;
-        }
-
-        /* Product Grid */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 4rem;
-        }
-
-        .product-item {
-            background: var(--mid-bg);
-            padding: 1.5rem;
-            border-radius: 2px;
-            border-top: 1px solid var(--accent-gray);
-        }
-
-        .product-name {
-            font-size: 1.25rem;
-            font-weight: 400;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-segment {
-            font-size: 0.875rem;
-            color: var(--tesla-red);
-            margin-bottom: 0.75rem;
-        }
-
-        .product-status {
-            font-size: 0.875rem;
-            color: var(--gray-text);
-        }
-
-        /* Framework Section */
-        .framework-container {
-            background: var(--mid-bg);
-            padding: 3rem;
-            border-radius: 2px;
-            margin-bottom: 4rem;
-        }
-
-        .framework-title {
-            font-size: 1.5rem;
-            font-weight: 300;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .zone-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .zone-card {
-            padding: 2rem;
-            background: var(--dark-bg);
-            border-radius: 2px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .zone-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-        }
-
-        .zone-card.core::before {
-            background: #4ade80;
-        }
-
-        .zone-card.edge::before {
-            background: #facc15;
-        }
-
-        .zone-card.beyond::before {
-            background: var(--tesla-red);
-        }
-
-        .zone-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 1rem;
-        }
-
-        .zone-name {
-            font-size: 1.125rem;
-            font-weight: 400;
-        }
-
-        .zone-percent {
-            font-size: 0.875rem;
-            color: var(--gray-text);
-        }
-
-        .zone-description {
-            font-size: 0.875rem;
-            color: var(--gray-text);
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-
-        .zone-items {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .zone-item {
-            font-size: 0.875rem;
-            padding-left: 1rem;
-            position: relative;
-        }
-
-        .zone-item::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: var(--tesla-red);
-        }
-
-        /* Success Factors */
-        .factors-grid {
-            display: grid;
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .factor-item {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 1.5rem;
-            align-items: start;
-        }
-
-        .factor-number {
-            font-size: 2rem;
-            font-weight: 200;
-            color: var(--tesla-red);
-            min-width: 3rem;
-        }
-
-        .factor-content h3 {
-            font-size: 1.25rem;
-            font-weight: 400;
-            margin-bottom: 0.5rem;
-        }
-
-        .factor-content p {
-            font-size: 0.9375rem;
-            color: var(--gray-text);
-            line-height: 1.7;
-        }
-
-        /* Risks Grid */
-        .risks-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 4rem;
-        }
-
-        .risk-card {
-            background: var(--mid-bg);
-            padding: 1.5rem;
-            border-radius: 2px;
-            border-left: 2px solid var(--tesla-red);
-        }
-
-        .risk-category {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--tesla-red);
-            margin-bottom: 0.75rem;
-        }
-
-        .risk-description {
-            font-size: 0.9375rem;
-            color: var(--gray-text);
-            line-height: 1.6;
-        }
-
-        /* Chart Container */
-        .chart-container {
-            background: var(--mid-bg);
-            padding: 2rem;
-            border-radius: 2px;
-            margin-bottom: 4rem;
-        }
-
-        .chart-title {
-            font-size: 1rem;
-            font-weight: 400;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            color: var(--gray-text);
-        }
-
-        .bar-chart {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .bar-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .bar-label {
-            min-width: 140px;
-            font-size: 0.875rem;
-            color: var(--light-text);
-        }
-
-        .bar-track {
-            flex: 1;
-            height: 32px;
-            background: var(--accent-gray);
-            border-radius: 2px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--tesla-red), #ff4444);
-            border-radius: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 0.75rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            transition: width 1s ease-out;
-        }
-
-        /* Conclusion */
-        .conclusion {
-            background: var(--mid-bg);
-            padding: 3rem;
-            border-radius: 2px;
-            border-left: 3px solid var(--tesla-red);
-            margin-bottom: 4rem;
-        }
-
-        .conclusion-title {
-            font-size: 1.5rem;
-            font-weight: 300;
-            margin-bottom: 1.5rem;
-        }
-
-        .conclusion-text {
-            font-size: 1.125rem;
-            line-height: 1.8;
-            color: var(--gray-text);
-            margin-bottom: 1.5rem;
-        }
-
-        .conclusion-highlight {
-            font-size: 1rem;
-            color: var(--light-text);
-            font-style: italic;
-            padding-left: 1.5rem;
-            border-left: 2px solid var(--tesla-red);
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 3rem 2rem;
-            color: var(--gray-text);
-            font-size: 0.875rem;
-            border-top: 1px solid var(--accent-gray);
-        }
-
-        /* Smooth Scroll */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .section {
-                padding: 4rem 1.5rem;
-            }
-
-            .hero-meta {
-                gap: 1.5rem;
-            }
-
-            .framework-container,
-            .conclusion {
-                padding: 2rem 1.5rem;
-            }
-
-            .factor-item {
-                grid-template-columns: 1fr;
-            }
-
-            .bar-item {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .bar-label {
-                min-width: auto;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tesla — Theta Framework Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --tesla-red: #CC0000;
+    --tesla-accent: #E82127;
+    --tesla-silver: #C0C0C0;
+    --tesla-gold: #D4A843;
+    --ink: #0E1010;
+    --ink-soft: #1A1E1E;
+    --paper: #F7F5F0;
+    --paper-warm: #EFEBE2;
+    --muted: #8A9090;
+    --core-green: #2D6A4F;
+    --edge-amber: #B5841A;
+    --beyond-crimson: #8B1A1A;
+    --border: rgba(204,0,0,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px; height: 64px;
+    background: rgba(14,16,16,0.88);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(232,33,39,0.12);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px; font-weight: 500; letter-spacing: 0.12em;
+    color: var(--tesla-accent); text-transform: uppercase;
+  }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase; color: rgba(255,255,255,0.45);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--tesla-gold); }
+
+  /* ── HERO ── */
+  .hero {
+    height: 100vh; min-height: 720px;
+    background: var(--ink);
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+    padding: 0 10vw;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(204,0,0,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(204,0,0,0.035) 1px, transparent 1px);
+    background-size: 72px 72px;
+    animation: gridDrift 40s linear infinite;
+  }
+  @keyframes gridDrift { from { transform: translateY(0); } to { transform: translateY(72px); } }
+  .hero-noise {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+  .hero-glow-left {
+    position: absolute; left: -200px; top: 50%; transform: translateY(-50%);
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(204,0,0,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-glow-right {
+    position: absolute; right: -100px; bottom: -100px;
+    width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(204,0,0,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  /* Subtle T silhouette */
+  .hero-t {
+    position: absolute; right: 8vw; top: 50%; transform: translateY(-50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38vw; font-weight: 300; line-height: 1;
+    color: rgba(255,255,255,0.018);
+    pointer-events: none; user-select: none;
+    letter-spacing: -0.05em;
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 860px; }
+  .hero-kicker {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--tesla-gold);
+    margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 0.9s 0.2s forwards;
+  }
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(44px, 6.5vw, 96px);
+    font-weight: 300; line-height: 1.02;
+    color: #ffffff; margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 0.9s 0.4s forwards;
+  }
+  .hero-headline em { font-style: italic; color: var(--tesla-accent); }
+  .hero-sub {
+    font-size: 15px; font-weight: 300; line-height: 1.75;
+    color: rgba(255,255,255,0.48); max-width: 540px;
+    margin-bottom: 60px;
+    opacity: 0; animation: fadeUp 0.9s 0.6s forwards;
+  }
+  .hero-meta {
+    display: flex; gap: 52px;
+    opacity: 0; animation: fadeUp 0.9s 0.8s forwards;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 28px;
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 5px; }
+  .meta-label {
+    font-size: 9px; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: rgba(255,255,255,0.28);
+  }
+  .meta-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 400; color: #fff;
+  }
+  .scroll-indicator {
+    position: absolute; right: 48px; bottom: 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    opacity: 0; animation: fadeIn 1s 1.4s forwards;
+  }
+  .scroll-line {
+    width: 1px; height: 64px;
+    background: linear-gradient(to bottom, transparent, var(--tesla-accent));
+    animation: scrollPulse 2.4s ease-in-out infinite;
+  }
+  .scroll-text {
+    font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: rgba(255,255,255,0.25); writing-mode: vertical-rl;
+  }
+  @keyframes scrollPulse { 0%,100%{opacity:0.3;transform:scaleY(0.6)} 50%{opacity:1;transform:scaleY(1)} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  /* ── SECTIONS ── */
+  section { padding: 96px 10vw; }
+  section.white { background: #fff; }
+  section.warm { background: var(--paper-warm); }
+  section.ink { background: var(--ink); color: #fff; }
+
+  .section-label {
+    font-size: 9px; font-weight: 500; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--tesla-gold);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(34px, 4.2vw, 58px);
+    font-weight: 300; line-height: 1.08;
+    margin-bottom: 52px;
+  }
+  .section-title em { font-style: italic; color: var(--tesla-accent); }
+  .ink .section-title { color: #fff; }
+  .ink .section-label { color: rgba(204,0,0,0.7); }
+
+  /* ── ABOUT ── */
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .about-prose p {
+    font-size: 15.5px; line-height: 1.82; color: #2e3636;
+    margin-bottom: 22px;
+  }
+  .hidden-fact {
+    margin-top: 36px; padding: 28px 32px;
+    background: var(--ink); border-radius: 3px;
+    border-left: 2px solid var(--tesla-accent);
+  }
+  .hidden-fact-label {
+    font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--tesla-accent); margin-bottom: 12px;
+  }
+  .hidden-fact p { font-size: 13.5px; line-height: 1.72; color: rgba(255,255,255,0.68); }
+
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .stat-box {
+    padding: 30px 26px; background: var(--paper-warm);
+    border: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+  .stat-box:hover { background: #fff; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px; font-weight: 300; color: var(--tesla-red);
+    line-height: 1; margin-bottom: 8px;
+  }
+  .stat-desc { font-size: 11.5px; color: var(--muted); letter-spacing: 0.03em; line-height: 1.5; }
+
+  .belief-strip {
+    margin-top: 72px; padding: 56px 10vw;
+    background: var(--ink);
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .belief-strip::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(204,0,0,0.08) 0%, transparent 70%);
+  }
+  .belief-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(20px, 2.8vw, 36px);
+    font-weight: 300; font-style: italic;
+    color: #fff; line-height: 1.45; max-width: 860px; margin: 0 auto 20px;
+    position: relative; z-index: 1;
+  }
+  .belief-attr { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--tesla-gold); position: relative; z-index: 1; }
+
+  /* ── PRINCIPLES ── */
+  .principles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .principle-box {
+    padding: 32px 28px; background: #fff;
+    transition: background 0.22s;
+  }
+  .principle-box:hover { background: var(--paper-warm); }
+  .principle-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px; font-weight: 300; color: rgba(204,0,0,0.15);
+    line-height: 1; margin-bottom: 16px;
+  }
+  .principle-title { font-size: 13px; font-weight: 500; letter-spacing: 0.04em; margin-bottom: 10px; color: var(--ink); }
+  .principle-body { font-size: 13px; line-height: 1.68; color: #4a5a5a; }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 160px; }
+  .timeline-line {
+    position: absolute; left: 128px; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--tesla-red) 8%, var(--tesla-red) 92%, transparent);
+  }
+  .timeline-item { position: relative; margin-bottom: 52px; }
+  .timeline-year {
+    position: absolute; left: -160px; width: 118px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px; font-weight: 300; color: var(--tesla-red);
+    text-align: right; padding-top: 2px;
+  }
+  .timeline-dot {
+    position: absolute; left: -37px; top: 9px;
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--tesla-red); background: var(--paper-warm);
+    z-index: 2;
+  }
+  .timeline-dot.filled { background: var(--tesla-red); }
+  .timeline-phase {
+    font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--tesla-gold); margin-bottom: 7px;
+  }
+  .timeline-event {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 500; margin-bottom: 8px; color: var(--ink);
+  }
+  .timeline-desc { font-size: 13.5px; line-height: 1.72; color: #4a5a5a; max-width: 580px; }
+
+  /* ── THETA MAP ── */
+  .theta-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 64px; align-items: start; }
+  .zone-legend { display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; }
+  .zone-pill {
+    padding: 16px 20px; border-radius: 3px;
+    border-left: 3px solid;
+  }
+  .zone-pill.core { border-color: var(--core-green); background: rgba(45,106,79,0.05); }
+  .zone-pill.edge { border-color: var(--edge-amber); background: rgba(181,132,26,0.05); }
+  .zone-pill.beyond { border-color: var(--beyond-crimson); background: rgba(139,26,26,0.05); }
+  .zone-pill-name {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .zone-pill.core .zone-pill-name { color: var(--core-green); }
+  .zone-pill.edge .zone-pill-name { color: var(--edge-amber); }
+  .zone-pill.beyond .zone-pill-name { color: var(--beyond-crimson); }
+  .zone-pill-desc { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+  .reading-card {
+    padding: 20px 24px; background: var(--ink); border-radius: 3px;
+  }
+  .reading-card-title { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--tesla-gold); margin-bottom: 10px; }
+  .reading-card p { font-size: 12.5px; line-height: 1.65; color: rgba(255,255,255,0.55); }
+  .chart-wrap { position: relative; height: 460px; }
+
+  /* ── ALLOCATION ── */
+  .alloc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .donut-wrap { position: relative; height: 300px; display: flex; align-items: center; justify-content: center; }
+  .donut-center {
+    position: absolute; text-align: center; pointer-events: none;
+  }
+  .donut-center-label { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; }
+  .donut-center-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px; font-weight: 300; color: var(--ink); display: block; line-height: 1;
+  }
+  .alloc-bars { display: flex; flex-direction: column; gap: 30px; }
+  .alloc-bar-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; }
+  .alloc-bar-name { font-size: 11px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; }
+  .alloc-bar-pcts { font-size: 11.5px; color: var(--muted); }
+  .bar-track { height: 5px; background: rgba(0,0,0,0.08); border-radius: 99px; position: relative; overflow: visible; }
+  .bar-fill { height: 100%; border-radius: 99px; }
+  .bar-benchmark {
+    position: absolute; top: -5px; width: 2px; height: 15px;
+    background: var(--ink); opacity: 0.3;
+  }
+  .alloc-comment { font-size: 12px; color: var(--muted); margin-top: 7px; line-height: 1.55; }
+
+  /* ── COMPETITORS ── */
+  .comp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 60px; }
+  .comp-card {
+    padding: 24px 18px; background: var(--paper-warm);
+    border: 1px solid var(--border); border-radius: 3px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .comp-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  .comp-card.featured {
+    border-color: rgba(204,0,0,0.35);
+    background: rgba(204,0,0,0.03);
+  }
+  .comp-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 500; margin-bottom: 4px;
+  }
+  .comp-tag { font-size: 10.5px; color: var(--muted); margin-bottom: 18px; line-height: 1.4; }
+  .comp-zones { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
+  .comp-zone-row { display: flex; align-items: flex-start; gap: 8px; font-size: 11.5px; line-height: 1.4; color: #4a5a5a; }
+  .zone-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+  .zone-dot.core { background: var(--core-green); }
+  .zone-dot.edge { background: var(--edge-amber); }
+  .zone-dot.beyond { background: var(--beyond-crimson); }
+  .verdict-chip {
+    font-size: 9px; font-weight: 500; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 99px;
+    display: inline-block;
+  }
+  .verdict-chip.leader { background: rgba(45,106,79,0.12); color: var(--core-green); }
+  .verdict-chip.challenger { background: rgba(181,132,26,0.12); color: var(--edge-amber); }
+  .verdict-chip.laggard { background: rgba(139,26,26,0.12); color: var(--beyond-crimson); }
+  .radar-wrap { height: 360px; max-width: 640px; margin: 0 auto; }
+
+  /* ── S&W ── */
+  .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .sw-panel { padding: 36px; border-radius: 3px; }
+  .sw-panel.strengths { background: rgba(45,106,79,0.04); border: 1px solid rgba(45,106,79,0.18); }
+  .sw-panel.weaknesses { background: rgba(139,26,26,0.04); border: 1px solid rgba(139,26,26,0.14); }
+  .sw-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 500; margin-bottom: 28px;
+  }
+  .sw-panel.strengths .sw-title { color: var(--core-green); }
+  .sw-panel.weaknesses .sw-title { color: var(--beyond-crimson); }
+  .sw-item { display: flex; gap: 16px; margin-bottom: 22px; }
+  .sw-marker {
+    width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 500; margin-top: 2px;
+  }
+  .strengths .sw-marker { background: rgba(45,106,79,0.1); color: var(--core-green); }
+  .weaknesses .sw-marker { background: rgba(139,26,26,0.09); color: var(--beyond-crimson); }
+  .sw-lead { font-size: 13.5px; font-weight: 500; margin-bottom: 5px; }
+  .sw-body { font-size: 12.5px; line-height: 1.65; color: #4a5a5a; }
+
+  /* ── DIAGNOSTIC ── */
+  .diag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+  .diag-block { margin-bottom: 36px; }
+  .diag-block-title {
+    font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(204,0,0,0.6); margin-bottom: 14px;
+    padding-bottom: 10px; border-bottom: 1px solid rgba(204,0,0,0.12);
+  }
+  .archetype-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .archetype-box {
+    padding: 7px 13px; border-radius: 3px;
+    font-size: 10.5px; font-weight: 500; letter-spacing: 0.06em;
+  }
+  .archetype-box.ok { background: rgba(45,106,79,0.18); color: #6fcf97; }
+  .archetype-box.mid { background: rgba(181,132,26,0.18); color: var(--tesla-gold); }
+  .archetype-box.low { background: rgba(139,26,26,0.18); color: #f08080; }
+  .diag-prose { font-size: 13.5px; line-height: 1.74; color: rgba(255,255,255,0.58); }
+  .tension-box {
+    padding: 24px 20px; background: rgba(204,0,0,0.06);
+    border: 1px solid rgba(204,0,0,0.18); border-radius: 3px;
+    margin-top: 16px;
+  }
+  .tension-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tesla-accent); margin-bottom: 10px; }
+  .tension-text { font-size: 13.5px; line-height: 1.74; color: rgba(255,255,255,0.65); font-style: italic; }
+  .inline-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .inline-bar-label { font-size: 11px; color: rgba(255,255,255,0.5); width: 58px; flex-shrink: 0; }
+  .inline-bar-track { flex: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 99px; position: relative; overflow: visible; }
+  .inline-bar-fill { height: 100%; border-radius: 99px; }
+  .inline-bar-benchmark { position: absolute; top: -5px; width: 1px; height: 14px; background: rgba(255,255,255,0.25); }
+  .inline-bar-pct { font-size: 10.5px; color: rgba(255,255,255,0.35); width: 34px; text-align: right; flex-shrink: 0; }
+  .verdict-final {
+    margin-top: 36px; padding: 28px 32px;
+    background: rgba(204,0,0,0.07);
+    border: 1px solid rgba(204,0,0,0.2); border-radius: 3px;
+  }
+  .verdict-type {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px; font-weight: 400; color: #fff;
+    margin-bottom: 10px;
+  }
+  .verdict-symbols { font-size: 17px; margin-bottom: 12px; letter-spacing: 0.08em; }
+  .verdict-explain { font-size: 13.5px; line-height: 1.74; color: rgba(255,255,255,0.58); }
+
+  /* ── TRAJECTORY ── */
+  .trajectory-intro { max-width: 640px; margin-bottom: 48px; }
+  .trajectory-intro p { font-size: 15px; line-height: 1.8; color: #2e3636; }
+  .trajectory-wrap { position: relative; height: 340px; }
+  .trajectory-note { font-size: 11px; color: var(--muted); margin-top: 14px; letter-spacing: 0.02em; }
+
+  /* ── CHINA GAP ── */
+  .china-gap-wrap { margin-top: 48px; }
+  .china-gap-title {
+    font-size: 9px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--beyond-crimson); margin-bottom: 18px;
+    padding-bottom: 10px; border-bottom: 1px solid rgba(139,26,26,0.15);
+  }
+  .china-gap-table { width: 100%; border-collapse: collapse; }
+  .china-gap-table th {
+    font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); padding: 0 0 10px; text-align: left;
+  }
+  .china-gap-table th:not(:first-child) { text-align: right; }
+  .china-gap-table td {
+    font-size: 13px; color: #2e3636; padding: 11px 0;
+    border-top: 1px solid rgba(0,0,0,0.06); vertical-align: top; line-height: 1.4;
+  }
+  .china-gap-table td:not(:first-child) { text-align: right; }
+  .china-gap-table td.tesla-val { color: var(--tesla-red); font-weight: 500; }
+  .china-gap-table td.china-val { color: var(--core-green); font-weight: 500; }
+  .china-gap-table td.metric-label { font-size: 12px; color: #4a5a5a; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink); padding: 32px 10vw;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid rgba(204,0,0,0.08);
+  }
+  .footer-left { font-size: 11.5px; color: rgba(255,255,255,0.28); letter-spacing: 0.05em; }
+  .footer-left strong { color: rgba(255,255,255,0.45); }
+  .footer-right { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.2); }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.72s ease, transform 0.72s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    section { padding: 64px 6vw; }
+    .about-grid, .theta-grid, .alloc-grid, .sw-grid, .diag-grid { grid-template-columns: 1fr; gap: 40px; }
+    .comp-grid { grid-template-columns: 1fr 1fr; }
+    .principles-grid { grid-template-columns: 1fr; }
+    .hero { padding: 0 6vw; }
+    .hero-meta { flex-wrap: wrap; gap: 24px; }
+    .hero-t { display: none; }
+    .timeline { padding-left: 96px; }
+    .timeline-year { left: -96px; width: 76px; font-size: 18px; }
+    .belief-strip { padding: 48px 6vw; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-label">Strategic Case Study</div>
-            <h1 class="hero-title">
-                How <span class="tesla">Tesla</span> Unlocked<br>the Electric Future
-            </h1>
-            <p class="hero-subtitle">
-                From open-source patents to AI-driven autonomy—<br>
-                a strategic analysis of the company that made EVs aspirational
-            </p>
-            <div class="hero-meta">
-                <div class="hero-meta-item">
-                    <span class="hero-meta-label">Author</span>
-                    <span class="hero-meta-value">Christine Pamela</span>
-                </div>
-                <div class="hero-meta-item">
-                    <span class="hero-meta-label">Company</span>
-                    <span class="hero-meta-value">Tesla, Inc.</span>
-                </div>
-                <div class="hero-meta-item">
-                    <span class="hero-meta-label">Founded</span>
-                    <span class="hero-meta-value">2003</span>
-                </div>
-                <div class="hero-meta-item">
-                    <span class="hero-meta-label">Framework</span>
-                    <span class="hero-meta-value">Theta Analysis</span>
-                </div>
-            </div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Tesla</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#theta-map">Theta Map</a>
+    <a href="#trajectory">Trajectory</a>
+    <a href="#competitors">Competitors</a>
+    <a href="#diagnostic">Diagnostic</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-glow-left"></div>
+  <div class="hero-glow-right"></div>
+  <div class="hero-t">T</div>
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Framework · Strategic Case Study</div>
+    <h1 class="hero-headline">Tesla stopped selling cars<br>the moment it started<br><em>collecting minds.</em></h1>
+    <p class="hero-sub">The most valuable automaker in history never saw itself as one. While incumbents optimised combustion, Tesla was quietly building the world's most sophisticated neural network that happens to have four wheels.</p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <span class="meta-label">Founded</span>
+        <span class="meta-value">2003</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Employees</span>
+        <span class="meta-value">~121,000</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">2025 Revenue</span>
+        <span class="meta-value">$94.8B</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Theta Archetype</span>
+        <span class="meta-value">Transitioning</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="white">
+  <div class="section-label">What They Are</div>
+  <h2 class="section-title">Not an automaker.<br><em>A data organism</em><br>wearing a car's body.</h2>
+  <div class="about-grid reveal">
+    <div class="about-prose">
+      <p>Every Tesla on the road is a sensor node. Every intervention a human driver makes on Autopilot — a nudge of the wheel, a tap of the brake — is a labeled data point sent back to Tesla's servers. The company has been running the world's largest supervised learning operation disguised as a car business, accumulating billions of miles of edge-case driving data that no competitor can purchase, replicate, or approximate.</p>
+      <p>What makes Tesla genuinely unusual in the Theta context is that it never had a stable Core phase. It arrived as a Beyond-zone company — building electric vehicles when the entire industry called them impossible — and has been racing forward ever since. The result is a portfolio that defies conventional balance: a Core business under real competitive pressure, an Edge zone producing its most consequential work, and a Beyond zone so radical it has effectively redefined what the company is. The Model S and Model X are being retired not because they failed, but because the factory floor they occupy is more valuable as a robot production line.</p>
+      <div class="hidden-fact">
+        <div class="hidden-fact-label">The detail most people missed</div>
+        <p>When Elon Musk open-sourced Tesla's entire patent portfolio in 2014, almost no one noticed the clause that made it strategically brilliant rather than philanthropic: the offer only applied to those acting "in good faith." Any company that used Tesla's patents and then initiated a patent war with Tesla — or tried to block Tesla with their own filings — lost the right to Tesla's IP entirely. The open-sourcing wasn't generosity. It was a trap designed to make Tesla's charging connector the default North American standard, which is exactly what happened.</p>
+      </div>
+    </div>
+    <div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-num">6M+</div>
+          <div class="stat-desc">Vehicles on the road acting as live training data nodes</div>
         </div>
-        <div class="scroll-indicator">Scroll to explore</div>
-    </section>
-
-    <!-- Overview Section -->
-    <section class="section">
-        <div class="section-label">Company Profile</div>
-        <h2 class="section-title">The Tesla Ecosystem</h2>
-        <p class="section-intro">
-            Tesla operates across three integrated pillars: Electric Vehicles, Energy Generation & Storage, and Autonomous Software with AI & Robotics. Despite diversification efforts, automotive remains the core business at 85–90% of revenue.
-        </p>
-
-        <div class="overview-grid">
-            <div class="overview-card">
-                <div class="overview-card-label">Headquarters</div>
-                <div class="overview-card-value">Austin, Texas</div>
-                <div class="overview-card-detail">Global operations with manufacturing footprint across US, China, and Europe</div>
-            </div>
-            <div class="overview-card">
-                <div class="overview-card-label">Mission</div>
-                <div class="overview-card-value">Sustainable Energy</div>
-                <div class="overview-card-detail">Accelerate the world's transition to sustainable energy</div>
-            </div>
-            <div class="overview-card">
-                <div class="overview-card-label">Leadership</div>
-                <div class="overview-card-value">Elon Musk, CEO</div>
-                <div class="overview-card-detail">Dominant influence with high innovation velocity and brand volatility</div>
-            </div>
-            <div class="overview-card">
-                <div class="overview-card-label">Core Revenue</div>
-                <div class="overview-card-value">85–90% Auto</div>
-                <div class="overview-card-detail">Model 3/Y drive mass-market adoption while facing margin compression</div>
-            </div>
+        <div class="stat-box">
+          <div class="stat-num">1.1M</div>
+          <div class="stat-desc">Full Self-Driving paid subscribers globally</div>
         </div>
-    </section>
-
-    <!-- Product Lineup -->
-    <section class="section">
-        <div class="section-label">Automotive Portfolio</div>
-        <h2 class="section-title">Current Product Lineup (2025)</h2>
-
-        <div class="product-grid">
-            <div class="product-item">
-                <div class="product-name">Model S / X</div>
-                <div class="product-segment">Premium Sedan & SUV</div>
-                <div class="product-status">Low volume halo products</div>
-            </div>
-            <div class="product-item">
-                <div class="product-name">Model 3 / Y</div>
-                <div class="product-segment">Mass Market</div>
-                <div class="product-status">Core global revenue drivers</div>
-            </div>
-            <div class="product-item">
-                <div class="product-name">Cybertruck</div>
-                <div class="product-segment">Pickup</div>
-                <div class="product-status">Slow ramp, niche appeal</div>
-            </div>
-            <div class="product-item">
-                <div class="product-name">Semi</div>
-                <div class="product-segment">Commercial</div>
-                <div class="product-status">Early rollout phase</div>
-            </div>
-            <div class="product-item">
-                <div class="product-name">Robotaxi</div>
-                <div class="product-segment">Future Platform</div>
-                <div class="product-status">Steering-wheel-free concept</div>
-            </div>
+        <div class="stat-box">
+          <div class="stat-num">$44B</div>
+          <div class="stat-desc">Cash reserves funding the transition to physical AI</div>
         </div>
-    </section>
-
-    <!-- Success Factors -->
-    <section class="section">
-        <div class="section-label">Strategic Execution</div>
-        <h2 class="section-title">Why Tesla Succeeded When Others Quit</h2>
-
-        <div class="factors-grid">
-            <div class="factor-item">
-                <div class="factor-number">01</div>
-                <div class="factor-content">
-                    <h3>Started High, Scaled Down</h3>
-                    <p>Created EV desire before EV affordability. Master Plan ladder: Roadster → Model S/X → Model 3/Y. This approach built brand prestige while developing the technology and manufacturing capabilities needed for mass-market production.</p>
-                </div>
-            </div>
-
-            <div class="factor-item">
-                <div class="factor-number">02</div>
-                <div class="factor-content">
-                    <h3>Owned the Full Stack</h3>
-                    <p>Vertical integration from batteries to software to sales to over-the-air updates. Tesla cars behave like computers—constantly improving, learning, and adapting through software rather than remaining static hardware.</p>
-                </div>
-            </div>
-
-            <div class="factor-item">
-                <div class="factor-number">03</div>
-                <div class="factor-content">
-                    <h3>Built Its Own Charging Network</h3>
-                    <p>Solved range anxiety without waiting for governments or third parties. The Supercharger network became a competitive moat and is now becoming an industry standard through NACS adoption.</p>
-                </div>
-            </div>
-
-            <div class="factor-item">
-                <div class="factor-number">04</div>
-                <div class="factor-content">
-                    <h3>Reframed EV Identity</h3>
-                    <p>Transformed electric vehicles from sacrifice to aspiration. Tesla made EVs synonymous with status, cutting-edge technology, and exhilarating performance—not environmental compromise.</p>
-                </div>
-            </div>
-
-            <div class="factor-item">
-                <div class="factor-number">05</div>
-                <div class="factor-content">
-                    <h3>Took Bigger Risks + Longer View</h3>
-                    <p>Willing to cannibalize gas-car profits because it had none. Without legacy constraints, Tesla could pursue radical innovation and accept short-term losses for long-term transformation.</p>
-                </div>
-            </div>
+        <div class="stat-box">
+          <div class="stat-num">80%</div>
+          <div class="stat-desc">Share of future company value Musk assigns to Optimus and AI</div>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
 
-    <!-- Open Source Strategy -->
-    <section class="section">
-        <div class="section-label">Ecosystem Strategy</div>
-        <h2 class="section-title">Open Source as Market Expansion</h2>
-        <p class="section-intro">
-            In 2014, Tesla opened key patents under a "good faith" pledge. Rather than protecting a small market, they chose to grow the entire EV ecosystem—lowering barriers for competitors, accelerating battery and charging innovation, and positioning Tesla as the de facto standard setter. They grew the market they planned to dominate.
-        </p>
-    </section>
+  <div class="belief-strip reveal">
+    <div class="belief-quote">"The cars are the most sophisticated data collection devices ever deployed at consumer scale. The AI is what we're actually building. The cars just happen to pay for it."</div>
+    <div class="belief-attr">The logic embedded in Tesla's product strategy</div>
+  </div>
+</section>
 
-    <!-- Theta Framework -->
-    <section class="section">
-        <div class="section-label">Strategic Framework</div>
-        <h2 class="section-title">Tesla Through the Theta Lens</h2>
-        <p class="section-intro">
-            Tesla is funded by Core, defended by Edge, and valued on Beyond. This distribution reveals a company where today's automotive cash engine supports tomorrow's moonshots in AI and robotics.
-        </p>
+<!-- PRINCIPLES -->
+<section class="warm">
+  <div class="section-label">Operating Philosophy</div>
+  <h2 class="section-title">The beliefs that make<br><em>Tesla ungovernable</em><br>by conventional logic.</h2>
+  <div class="principles-grid reveal">
+    <div class="principle-box">
+      <div class="principle-num">01</div>
+      <div class="principle-title">First Principles Over Industry Consensus</div>
+      <div class="principle-body">When Tesla's engineers were told lithium-ion battery packs for a car would cost $600 per kWh, Musk asked what the raw materials actually cost on commodity markets. The answer was $80 per kWh. Every assumption in between was a supplier margin masquerading as physics.</div>
+    </div>
+    <div class="principle-box">
+      <div class="principle-num">02</div>
+      <div class="principle-title">The Algorithm Before the Engineer</div>
+      <div class="principle-body">Tesla's manufacturing philosophy, reportedly stated by Musk personally: first question whether the requirement exists at all. Then simplify. Then automate. Most companies automate broken processes and call it progress. Tesla dissolves the process first.</div>
+    </div>
+    <div class="principle-box">
+      <div class="principle-num">03</div>
+      <div class="principle-title">The Mobileye Lesson: Own or Be Owned</div>
+      <div class="principle-body">After a fatal 2016 Autopilot crash, Mobileye issued a statement distancing itself from Tesla's use of their chip. The split was already planned — Tesla had been quietly poaching AMD engineers — but the public blame game simply accelerated what vertical integration demands: if a supplier can throw you under a bus, your roadmap belongs to them.</div>
+    </div>
+    <div class="principle-box">
+      <div class="principle-num">04</div>
+      <div class="principle-title">Learning Velocity as Competitive Moat</div>
+      <div class="principle-body">Tesla ships hardware with software intentionally incomplete, then updates it over the air. This isn't laziness — it's a deliberate strategy to compress the feedback loop between production and perfection. Every car that ships is a hypothesis. Every OTA update is data confirming or refuting it.</div>
+    </div>
+    <div class="principle-box">
+      <div class="principle-num">05</div>
+      <div class="principle-title">Talent Hired for Proof, Not Pedigree</div>
+      <div class="principle-body">Tesla's interview process famously includes walking candidates through actual engineering problems on the production line. The question isn't what have you done — it's can you solve this, now, with what's in front of you. The company explicitly does not require degrees for most technical roles.</div>
+    </div>
+    <div class="principle-box">
+      <div class="principle-num">06</div>
+      <div class="principle-title">Equity as Belief System, Not Compensation</div>
+      <div class="principle-body">Tesla deliberately weights compensation toward long-term equity over base salary. This isn't just alignment — it's a filter. People who need certainty self-select out. The company ends up with a workforce that has voluntarily bet on the future they're building, which changes the energy of everything.</div>
+    </div>
+  </div>
+</section>
 
-        <div class="framework-container">
-            <h3 class="framework-title">Zone Distribution & Strategic Focus</h3>
-            
-            <div class="zone-grid">
-                <div class="zone-card core">
-                    <div class="zone-header">
-                        <div class="zone-name">🟩 Core</div>
-                        <div class="zone-percent">85–90% Revenue</div>
-                    </div>
-                    <div class="zone-description">Today's cash engine. Model 3/Y optimization and margin defense.</div>
-                    <div class="zone-items">
-                        <div class="zone-item">Model 3/Y manufacturing optimization</div>
-                        <div class="zone-item">Cost reduction initiatives</div>
-                        <div class="zone-item">Over-the-air software upgrades</div>
-                        <div class="zone-item">Tesla Insurance integration</div>
-                    </div>
-                </div>
+<!-- TIMELINE -->
+<section id="timeline" class="warm" style="background: var(--paper);">
+  <div class="section-label">Arc of History</div>
+  <h2 class="section-title">A company that spent<br>twenty years <em>proving</em><br>the obvious.</h2>
+  <div class="timeline reveal">
+    <div class="timeline-line"></div>
 
-                <div class="zone-card edge">
-                    <div class="zone-header">
-                        <div class="zone-name">🟨 Edge</div>
-                        <div class="zone-percent">8–12% Revenue</div>
-                    </div>
-                    <div class="zone-description">Moat expansion. Platform control and strategic adjacencies.</div>
-                    <div class="zone-items">
-                        <div class="zone-item">Supercharger + NACS standard</div>
-                        <div class="zone-item">Gigacasting manufacturing leap</div>
-                        <div class="zone-item">Energy storage + grid services</div>
-                        <div class="zone-item">Megapack utility deployments</div>
-                    </div>
-                </div>
+    <div class="timeline-item">
+      <div class="timeline-year">2003</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Origin</div>
+      <div class="timeline-event">Two Engineers, One Thesis</div>
+      <div class="timeline-desc">Martin Eberhard and Marc Tarpenning found Tesla on the belief that an electric car could be better than a gasoline car — not just cleaner, but faster, smarter, more desirable. The automotive industry's response was to not notice.</div>
+    </div>
 
-                <div class="zone-card beyond">
-                    <div class="zone-header">
-                        <div class="zone-name">🟥 Beyond</div>
-                        <div class="zone-percent">&lt;1% Revenue</div>
-                    </div>
-                    <div class="zone-description">The big bet. New systems and economic models.</div>
-                    <div class="zone-items">
-                        <div class="zone-item">Robotaxi network (autonomy-first mobility)</div>
-                        <div class="zone-item">Optimus humanoid robotics</div>
-                        <div class="zone-item">Dojo AI infrastructure</div>
-                        <div class="zone-item">Vision-only Full Self-Driving</div>
-                    </div>
-                </div>
-            </div>
+    <div class="timeline-item">
+      <div class="timeline-year">2004</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">The Bet</div>
+      <div class="timeline-event">Musk Leads the Series A</div>
+      <div class="timeline-desc">Elon Musk invests $6.5 million and becomes chairman. He had just sold PayPal for $180 million and needed somewhere to put the money that matched his risk tolerance. Electric cars, he calculated, were not a niche but a certainty — the question was only timing.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2008</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">Proof of Concept</div>
+      <div class="timeline-event">The Roadster Shatters the Narrative</div>
+      <div class="timeline-desc">The original Tesla Roadster hits 245 miles of range and 0-60 in under 4 seconds. The industry said it was impossible. They were almost right — the company nearly died building it, saved by Musk's personal fortune in a week when he had nothing left.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2010</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">Legitimacy</div>
+      <div class="timeline-event">First US Auto IPO Since 1956</div>
+      <div class="timeline-desc">Tesla goes public on NASDAQ at $17 per share. Toyota pays $50 million for a strategic stake. What was treated as a curiosity is suddenly something incumbents need to own a piece of.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2012</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Inflection Point</div>
+      <div class="timeline-event">The Model S Changes the Argument</div>
+      <div class="timeline-desc">Consumer Reports gives the Model S the highest score in its history: 99/100. Motor Trend Car of the Year. Best-selling plug-in electric globally for two years. The car isn't just good for an EV — it's better than almost everything else on the road, period.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2016</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">The Rupture</div>
+      <div class="timeline-event">The Mobileye Split — and What It Really Meant</div>
+      <div class="timeline-desc">A fatal Autopilot crash. Mobileye issues a statement. Tesla, already recruiting from AMD to build its own chip, accelerates the split. The decision to own every layer of the autonomy stack — sensor, chip, algorithm, data — is the moment Tesla stops being a car company with technology and becomes a technology company that makes cars.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2017–18</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">The Ordeal</div>
+      <div class="timeline-event">Production Hell</div>
+      <div class="timeline-desc">The Model 3 nearly kills the company. Musk sleeps on the factory floor. The production target of 5,000 cars per week takes eighteen months longer than promised. When it's finally hit, it proves that Tesla can manufacture at scale — the one thing the industry said it never could.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2019</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">Global Scale</div>
+      <div class="timeline-event">Shanghai Gigafactory Opens in 10 Months</div>
+      <div class="timeline-desc">From groundbreaking to production in under a year. Cost per vehicle drops from $84,000 in 2017 to $36,000 by 2022. The speed shocks the industry. The cost reduction changes the competitive equation in China permanently.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2024–26</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Metamorphosis</div>
+      <div class="timeline-event">The Car Company Retires Its Own Flagship</div>
+      <div class="timeline-desc">Tesla ends production of the Model S and Model X — the cars that built the brand — to repurpose the Fremont factory for Optimus robots. It is not a retreat. It is the clearest possible statement of what Tesla believes it is becoming.</div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section id="theta-map" class="white">
+  <div class="section-label">Theta Innovation Map</div>
+  <h2 class="section-title">Where each bet lives,<br><em>and what it costs</em><br>the others.</h2>
+  <div class="theta-grid reveal">
+    <div>
+      <div class="zone-legend">
+        <div class="zone-pill core">
+          <div class="zone-pill-name">🟩 Core Zone</div>
+          <div class="zone-pill-desc">Existing markets, incremental improvement. The cash engine. Under real pressure from BYD and Chinese competitors for the first time.</div>
         </div>
-    </section>
-
-    <!-- Revenue Distribution Chart -->
-    <section class="section">
-        <div class="chart-container">
-            <div class="chart-title">Revenue vs Strategic Investment Distribution</div>
-            <div class="bar-chart">
-                <div class="bar-item">
-                    <div class="bar-label">Core (Revenue)</div>
-                    <div class="bar-track">
-                        <div class="bar-fill" style="width: 88%">88%</div>
-                    </div>
-                </div>
-                <div class="bar-item">
-                    <div class="bar-label">Core (Focus)</div>
-                    <div class="bar-track">
-                        <div class="bar-fill" style="width: 55%">55%</div>
-                    </div>
-                </div>
-                <div class="bar-item">
-                    <div class="bar-label">Edge (Revenue)</div>
-                    <div class="bar-track">
-                        <div class="bar-fill" style="width: 10%">10%</div>
-                    </div>
-                </div>
-                <div class="bar-item">
-                    <div class="bar-label">Edge (Focus)</div>
-                    <div class="bar-track">
-                        <div class="bar-fill" style="width: 30%">30%</div>
-                    </div>
-                </div>
-                <div class="bar-item">
-                    <div class="bar-label">Beyond (Revenue)</div>
-                    <div class="bar-track">
-                        <div class="bar-fill" style="width: 2%">2%</div>
-                    </div>
-                </div>
-                <div class="bar-item">
-                    <div class="bar-label">Beyond (Focus)</div>
-                    <div class="bar-track">
-                        <div class="bar-fill" style="width: 15%">15%</div>
-                    </div>
-                </div>
-            </div>
+        <div class="zone-pill edge">
+          <div class="zone-pill-name">🟨 Edge Zone</div>
+          <div class="zone-pill-desc">New markets, architectural disruption. Tesla's most consequential work lives here — FSD v14, energy storage, Cybercab deployment.</div>
         </div>
-    </section>
-
-    <!-- Risks -->
-    <section class="section">
-        <div class="section-label">Risk Assessment</div>
-        <h2 class="section-title">Key Strategic Risks</h2>
-
-        <div class="risks-grid">
-            <div class="risk-card">
-                <div class="risk-category">Market</div>
-                <div class="risk-description">China-driven price competition. BYD has surpassed Tesla in quarterly global EV sales.</div>
-            </div>
-            <div class="risk-card">
-                <div class="risk-category">Regulatory</div>
-                <div class="risk-description">FSD approval delays. Full Self-Driving remains Level 2 legally with regulatory bottlenecks.</div>
-            </div>
-            <div class="risk-card">
-                <div class="risk-category">Technology</div>
-                <div class="risk-description">Vision-only autonomy risk. No lidar strategy creates technical execution pressure.</div>
-            </div>
-            <div class="risk-card">
-                <div class="risk-category">Geopolitical</div>
-                <div class="risk-description">China concentration and tariff exposure threaten supply chain and market access.</div>
-            </div>
-            <div class="risk-card">
-                <div class="risk-category">Leadership</div>
-                <div class="risk-description">Musk reputation volatility. Brand perception deeply tied to controversial CEO persona.</div>
-            </div>
+        <div class="zone-pill beyond">
+          <div class="zone-pill-name">🟥 Beyond Zone</div>
+          <div class="zone-pill-desc">Radical bets, speculative horizons. Optimus. Dojo. xAI integration. The company's stated belief that 80% of future value is here.</div>
         </div>
-    </section>
+      </div>
+      <div class="reading-card">
+        <div class="reading-card-title">Reading This Map</div>
+        <p>The X-axis moves from Existing markets to Speculative. The Y-axis moves from Incremental technology change to Extreme. Tesla's trajectory is distinctly diagonal — always moving upper-right, often before the Core has stabilised.</p>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="scatterChart"></canvas>
+    </div>
+  </div>
+</section>
 
-    <!-- Conclusion -->
-    <section class="section">
-        <div class="conclusion">
-            <h3 class="conclusion-title">Final Strategic Takeaway</h3>
-            <p class="conclusion-text">
-                Tesla unlocked the EV market for everyone. Its future advantage depends on AI, autonomy, and energy scaling faster than EVs become a commodity.
-            </p>
-            <p class="conclusion-highlight">
-                If autonomy works → Tesla becomes a software + AI platform.<br>
-                If not → Tesla becomes a premium automaker with eroding margins.
-            </p>
+<!-- ALLOCATION -->
+<section id="allocation" class="warm">
+  <div class="section-label">Portfolio Allocation</div>
+  <h2 class="section-title">The real numbers behind<br><em>the stated ambition.</em></h2>
+  <div class="alloc-grid reveal">
+    <div class="donut-wrap">
+      <canvas id="donutChart" style="max-width:280px;max-height:280px;"></canvas>
+      <div class="donut-center">
+        <span class="donut-center-label">Zones Active</span>
+        <span class="donut-center-val">3</span>
+      </div>
+    </div>
+    <div class="alloc-bars">
+      <div class="alloc-bar-item">
+        <div class="alloc-bar-header">
+          <span class="alloc-bar-name" style="color:var(--core-green)">Core Zone</span>
+          <span class="alloc-bar-pcts">~60% actual · 70% benchmark</span>
         </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:60%;background:var(--core-green);"></div>
+          <div class="bar-benchmark" style="left:70%;"></div>
+        </div>
+        <div class="alloc-comment">Under the benchmark and falling. Not by design — by market reality. BYD's cost advantage and China's EV ecosystem are compressing Tesla's Core faster than the Edge can replace it.</div>
+      </div>
+      <div class="alloc-bar-item">
+        <div class="alloc-bar-header">
+          <span class="alloc-bar-name" style="color:var(--edge-amber)">Edge Zone</span>
+          <span class="alloc-bar-pcts">~25% actual · 20% benchmark</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:25%;background:var(--edge-amber);"></div>
+          <div class="bar-benchmark" style="left:20%;"></div>
+        </div>
+        <div class="alloc-comment">Slightly above benchmark and producing genuine results. Energy storage at 14.2 GWh in Q4 2025. FSD at 1.1M paid users. Cybercab entering production. The Edge is the healthiest zone.</div>
+      </div>
+      <div class="alloc-bar-item">
+        <div class="alloc-bar-header">
+          <span class="alloc-bar-name" style="color:var(--beyond-crimson)">Beyond Zone</span>
+          <span class="alloc-bar-pcts">~15% actual · 10% benchmark</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:15%;background:var(--beyond-crimson);"></div>
+          <div class="bar-benchmark" style="left:10%;"></div>
+        </div>
+        <div class="alloc-comment">Above benchmark in allocation, below expectation in delivery. $20B capex in 2026 signals the gap between declared commitment and current output. China has deployed 18,000 humanoid robots. Tesla has shipped zero commercially.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <p class="section-intro" style="text-align: center; margin-top: 4rem;">
-            Core keeps the lights on. Edge builds the moat. Beyond determines whether Tesla wins the future.
-        </p>
-    </section>
+<!-- THETA ZONE TRAJECTORY -->
+<section id="trajectory" class="white">
+  <div class="section-label">Zone Trajectory</div>
+  <h2 class="section-title">How the portfolio shifted<br><em>across fourteen years</em><br>of deliberate reinvention.</h2>
+  <div class="reveal">
+    <div class="trajectory-intro">
+      <p>Tesla never had a stable Core period. Every allocation snapshot shows a company pulling energy forward — away from the known, toward the speculative — faster than conventional portfolio theory would sanction. The trajectory below is not a strategy document. It is a record of a company that kept outrunning its own present.</p>
+    </div>
+    <div class="trajectory-wrap">
+      <canvas id="trajectoryChart"></canvas>
+    </div>
+    <p class="trajectory-note">Allocations are estimated based on R&amp;D focus, capital deployment, and product roadmap evidence at each inflection point. They represent strategic weight, not accounting categories.</p>
+  </div>
+</section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>Strategic Analysis by Christine Pamela • 2025</p>
-        <p style="margin-top: 0.5rem; font-size: 0.75rem;">Tesla Case Study • Theta Framework Analysis</p>
-    </footer>
+<!-- COMPETITORS -->
+<section id="competitors" class="warm">
+  <div class="section-label">Competitive Landscape</div>
+  <h2 class="section-title">The rivals playing<br><em>different games</em><br>on the same board.</h2>
+  <div class="comp-grid reveal">
+    <div class="comp-card featured">
+      <div class="comp-name">Tesla</div>
+      <div class="comp-tag">Vertical integrator, data organism</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>Declining — BYD pressure, aging lineup</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Leading — FSD v14, energy, Cybercab</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Declared — Optimus, xAI, Dojo</span></div>
+      </div>
+      <span class="verdict-chip challenger">Transitioning</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">BYD</div>
+      <div class="comp-tag">Scale engine, battery-first</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>Dominant — 2.26M EVs in 2025</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Scaling — God's Eye ADAS fast</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Exploring — battery chemistry</span></div>
+      </div>
+      <span class="verdict-chip leader">Volume Leader</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">NVIDIA</div>
+      <div class="comp-tag">AI infrastructure, platform builder</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>Dominant — GPU monopoly</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Expanding — Alpamayo AV suite</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Competing — robotaxi by 2027</span></div>
+      </div>
+      <span class="verdict-chip leader">Platform Threat</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">Unitree</div>
+      <div class="comp-tag">China robotics, backflip architects</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>None — pure Beyond play</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Moving fast — real deployments</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Already there — 10–20K units 2026</span></div>
+      </div>
+      <span class="verdict-chip challenger">Beyond Native</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">XPeng</div>
+      <div class="comp-tag">Chinese tech-first challenger</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>Building — brand still maturing</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Strong — XNGP architecture</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Racing — Iron robot, flying cars</span></div>
+      </div>
+      <span class="verdict-chip challenger">Edge/Beyond Focus</span>
+    </div>
+  </div>
+  <div class="radar-wrap reveal">
+    <canvas id="radarChart"></canvas>
+  </div>
 
-    <script>
-        // Animate bars on scroll
-        const observerOptions = {
-            threshold: 0.5,
-            rootMargin: '0px 0px -100px 0px'
-        };
+  <!-- CHINA GAP -->
+  <div class="china-gap-wrap reveal" style="margin-top:64px;">
+    <div class="china-gap-title">The Beyond Zone Gap — Tesla vs. China Robotics Ecosystem · 2025–26</div>
+    <table class="china-gap-table">
+      <thead>
+        <tr>
+          <th style="width:44%">Metric</th>
+          <th style="width:28%">Tesla</th>
+          <th style="width:28%">China Ecosystem</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="metric-label">Humanoid robots shipped (2025)</td>
+          <td class="tesla-val">0 commercial</td>
+          <td class="china-val">~18,000</td>
+        </tr>
+        <tr>
+          <td class="metric-label">Active robotics companies</td>
+          <td class="tesla-val">1 (Optimus team)</td>
+          <td class="china-val">140+</td>
+        </tr>
+        <tr>
+          <td class="metric-label">Government-backed investment funds</td>
+          <td class="tesla-val">None</td>
+          <td class="china-val">$26B+</td>
+        </tr>
+        <tr>
+          <td class="metric-label">Real-world deployments</td>
+          <td class="tesla-val">Internal factory trials</td>
+          <td class="china-val">Hospitals, airports, hotels, factories</td>
+        </tr>
+        <tr>
+          <td class="metric-label">Component sourcing radius</td>
+          <td class="tesla-val">Global supply chain</td>
+          <td class="china-val">1-hour drive (Suzhou clusters)</td>
+        </tr>
+        <tr>
+          <td class="metric-label">2026 production target</td>
+          <td class="tesla-val">50,000 (declared)</td>
+          <td class="china-val">10–20K (Unitree alone)</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--muted);margin-top:14px;line-height:1.6;">The gap is not a technology deficit. Tesla's cognition advantage — reasoning, dexterity, generalisation — is real. What China has built is an ecosystem: 140 companies sharing a supply chain, government demand guarantees, and real-world deployment data that compounds daily. Optimus is not competing against a product. It is competing against a country's industrial policy.</p>
+  </div>
+</section>
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const bars = entry.target.querySelectorAll('.bar-fill');
-                    bars.forEach(bar => {
-                        bar.style.width = bar.getAttribute('style').match(/width:\s*(\d+%)/)[1];
-                    });
-                }
-            });
-        }, observerOptions);
+<!-- STRENGTHS & WEAKNESSES -->
+<section id="sw" class="white">
+  <div class="section-label">Strategic Assessment</div>
+  <h2 class="section-title">The genuine edges,<br><em>and the genuine cracks.</em></h2>
+  <div class="sw-grid reveal">
+    <div class="sw-panel strengths">
+      <div class="sw-title">Strengths</div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-item-body">
+          <div class="sw-lead">The data moat compounds every mile</div>
+          <div class="sw-body">Over 6 million vehicles contributing real-world intervention data creates a feedback loop no competitor can purchase. BYD sells more cars, but not all into a unified training architecture. Data for neural networks is winner-take-all — the gap widens with every Tesla sold.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-item-body">
+          <div class="sw-lead">FSD v14 solved the black box problem</div>
+          <div class="sw-body">The Vision-Language-Action architecture now visualises its own decision-making in real time. Regulators can see the car's reasoning. This is the technical breakthrough that makes certification possible — and moves FSD from a product to a regulatory asset.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-item-body">
+          <div class="sw-lead">The Supercharger network became the standard</div>
+          <div class="sw-body">Ford, GM, and major European automakers have all adopted NACS. The 2014 patent open-sourcing strategy worked exactly as designed. Tesla now earns licensing revenue from every competitor that charges on its infrastructure — a moat built from apparent generosity.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-item-body">
+          <div class="sw-lead">Energy storage is the quiet powerhouse</div>
+          <div class="sw-body">14.2 GWh deployed in a single quarter, growing profitably. The Megapack business is approaching standalone Fortune 500 scale and operates at margins the automotive division can no longer match. It is systematically under-covered by analysts who still write about Tesla as a car company.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-item-body">
+          <div class="sw-lead">Technology reuse is the Optimus cost advantage</div>
+          <div class="sw-body">The FSD vision system, battery management, motor design, and supply chain from the automotive side all transfer directly to Optimus. Tesla's $30,000 price target for the robot isn't arbitrary — it's what vertical integration looks like when you've already amortised the foundational R&D across 6 million vehicles.</div>
+        </div>
+      </div>
+    </div>
+    <div class="sw-panel weaknesses">
+      <div class="sw-title">Weaknesses</div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-item-body">
+          <div class="sw-lead">Core is eroding faster than Edge scales</div>
+          <div class="sw-body">European registrations fell 17% in January 2026 while the broader EV market grew 14%. Market share dropped to 0.8% across EU, UK, and EFTA. BYD registered more than twice Tesla's volume in the same period. The Core's decline is not a blip — it is structural and accelerating.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-item-body">
+          <div class="sw-lead">China has deployed what Tesla has only declared</div>
+          <div class="sw-body">Chinese robotics companies shipped approximately 18,000 humanoid robots in 2025 and have them working in hospitals, factories, and airports. Tesla has shipped zero commercially. The gap is not a matter of technology — it is a matter of manufacturing velocity and ecosystem depth that 140 Chinese robotics firms represent.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-item-body">
+          <div class="sw-lead">The CEO is now a liability in some markets</div>
+          <div class="sw-body">Elon Musk's political visibility has become a brand variable that Tesla's marketing team cannot control. Resale values in Australia and Germany have declined in correlation with his public profile. For a company with no advertising budget that has relied entirely on the founder's celebrity as distribution, this is an unhedged risk of unusual magnitude.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-item-body">
+          <div class="sw-lead">Driver monitoring earned a "Poor" from IIHS</div>
+          <div class="sw-body">Despite leading in raw FSD capability, Tesla's system was rated Poor by IIHS for driver monitoring — the same system being positioned for Level 3 certification. The technical gap between "the car can drive" and "the car can be trusted to drive" remains wider than the product narrative suggests.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-item-body">
+          <div class="sw-lead">$20B capex assumes execution Tesla has never demonstrated</div>
+          <div class="sw-body">The planned 2026 capital expenditure is more than double the prior year and more than the entire market capitalisation of most automakers. It assumes simultaneous successful ramps of Cybercab, Optimus, AI infrastructure, and lithium refining. Production Hell on the Model 3 was one ramp. This is five.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        const chartContainer = document.querySelector('.chart-container');
-        if (chartContainer) {
-            observer.observe(chartContainer);
+<!-- DIAGNOSTIC -->
+<section id="diagnostic" class="ink">
+  <div class="section-label">Theta Diagnostic</div>
+  <h2 class="section-title">The honest verdict on<br><em>what Tesla is,</em><br>and what it risks.</h2>
+  <div class="diag-grid reveal">
+    <div>
+      <div class="diag-block">
+        <div class="diag-block-title">Portfolio Archetype</div>
+        <div class="archetype-row">
+          <span class="archetype-box mid">Core △</span>
+          <span class="archetype-box ok">Edge ✓</span>
+          <span class="archetype-box mid">Beyond △</span>
+        </div>
+        <p class="diag-prose" style="margin-top:12px;">Tesla's Core is structurally weakening — not through neglect, but through a market that has finally caught up. Its Edge zone is arguably its most productive in company history, producing FSD v14, record energy deployments, and the Cybercab launch. Its Beyond zone is the boldest declared bet in the auto industry, with the deepest gap between ambition and demonstrated execution.</p>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Leadership &amp; Culture</div>
+        <p class="diag-prose">Tesla operates in extreme Founder Mode — a state that built the company and may be the thing that strains it at scale. The Leadership Trifecta shows near-infinite Agility (the company literally retired its flagship to make room for robots), variable Consciousness (the CEO's public profile creates strategic noise the company cannot absorb quietly), and existential Courage (betting the factory floor on a product that hasn't shipped commercially). The culture rewards first-principles thinking and punishes consensus. In engineering, this is the source of Tesla's edge. In market communication, it is the source of its most expensive problems.</p>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Mavericks &amp; Risk Tolerance</div>
+        <p class="diag-prose">Tesla selects for mavericks at every level — the interview process filters for problem-solvers, not credential-holders; the equity structure attracts those willing to bet on uncertainty; the flat hierarchy gives unconventional thinkers direct access to implementation. Intelligent failure is tolerated. Slow failure is not. The risk is that as the company scales toward $20B annual capex, the maverick culture requires active protection from the institutional antibodies that scale naturally generates.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="diag-block">
+        <div class="diag-block-title">Customer Signal Alignment</div>
+        <p class="diag-prose">Tesla listens obsessively to its own data — telemetry, interventions, edge cases — and intermittently to its customers. The FSD beta programme is one of the most sophisticated early-adopter feedback loops in any industry. The gap is in the mass market: European consumers signalling preference for Chinese and legacy alternatives, and a brand identity that has shifted faster than the customer base could track. Tesla speaks fluently to early adopters and technologists. It is losing the conversation with the pragmatic majority.</p>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Portfolio vs. Theta Benchmark</div>
+        <div style="margin-top:14px;">
+          <div class="inline-bar-row">
+            <span class="inline-bar-label">Core</span>
+            <div class="inline-bar-track">
+              <div class="inline-bar-fill" style="width:60%;background:var(--core-green);"></div>
+              <div class="inline-bar-benchmark" style="left:70%;"></div>
+            </div>
+            <span class="inline-bar-pct">60%</span>
+          </div>
+          <div class="inline-bar-row">
+            <span class="inline-bar-label">Edge</span>
+            <div class="inline-bar-track">
+              <div class="inline-bar-fill" style="width:25%;background:var(--edge-amber);"></div>
+              <div class="inline-bar-benchmark" style="left:20%;"></div>
+            </div>
+            <span class="inline-bar-pct">25%</span>
+          </div>
+          <div class="inline-bar-row">
+            <span class="inline-bar-label">Beyond</span>
+            <div class="inline-bar-track">
+              <div class="inline-bar-fill" style="width:15%;background:var(--beyond-crimson);"></div>
+              <div class="inline-bar-benchmark" style="left:10%;"></div>
+            </div>
+            <span class="inline-bar-pct">15%</span>
+          </div>
+          <p style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:8px;">Vertical markers indicate Theta benchmark targets</p>
+        </div>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Critical Tension</div>
+        <div class="tension-box">
+          <div class="tension-label">The Present Is Being Dismantled Before the Future Can Hold Weight</div>
+          <div class="tension-text">Tesla has made an irreversible declaration — retiring Model S and X, redirecting the factory to robots — before Optimus has shipped a single commercial unit and before FSD has received a single regulatory certification for unsupervised operation. The Core is being voluntarily weakened at the precise moment it needs to generate cash for a $20B capex cycle. If the Beyond bets are even six months later than planned, there is no safety net. The bet requires the future to arrive on schedule. The future rarely does.</div>
+        </div>
+      </div>
+
+      <div class="verdict-final">
+        <div class="verdict-type">Transitioning</div>
+        <div class="verdict-symbols">△ ☑ △</div>
+        <div class="verdict-explain">Tesla is transitioning between two identities — the world's most innovative automaker and the world's first physical AI platform company — and is doing so by choice, at speed, with the Core intentionally de-prioritised. This is not a company drifting into irrelevance. It is a company choosing its own discontinuity. The Theta verdict is neither eulogy nor celebration: it is the recognition that Tesla has placed an enormous, carefully considered, possibly correct bet on a future that will either vindicate everything or arrive too late. That is what a true Beyond company looks like from the inside.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left"><strong>Theta Framework</strong> · Tesla, Inc. Case Study · 2026</div>
+  <div class="footer-right">Strategic Case Study</div>
+</footer>
+
+<script>
+// SCROLL REVEAL
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.06 });
+reveals.forEach(el => observer.observe(el));
+
+const tooltipDefaults = {
+  backgroundColor: 'rgba(14,16,16,0.94)',
+  titleColor: '#fff',
+  bodyColor: 'rgba(255,255,255,0.65)',
+  titleFont: { family: 'DM Sans', size: 12 },
+  bodyFont: { family: 'DM Sans', size: 11 },
+  padding: 10,
+  cornerRadius: 3,
+  borderWidth: 1,
+  borderColor: 'rgba(204,0,0,0.18)'
+};
+
+// TRAJECTORY CHART — Stacked area showing zone allocation over time
+const trajectoryCtx = document.getElementById('trajectoryChart').getContext('2d');
+new Chart(trajectoryCtx, {
+  type: 'line',
+  data: {
+    labels: ['2008\nRoadster', '2012\nModel S', '2016\nMobileye Split', '2019\nShanghai', '2022\nModel Y Peak', '2026\nMetamorphosis'],
+    datasets: [
+      {
+        label: 'Core Zone',
+        data: [92, 85, 75, 70, 68, 60],
+        borderColor: '#2D6A4F',
+        backgroundColor: 'rgba(45,106,79,0.12)',
+        borderWidth: 2,
+        pointBackgroundColor: '#2D6A4F',
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        tension: 0.35,
+        fill: false
+      },
+      {
+        label: 'Edge Zone',
+        data: [8, 13, 20, 22, 24, 25],
+        borderColor: '#B5841A',
+        backgroundColor: 'rgba(181,132,26,0.08)',
+        borderWidth: 2,
+        pointBackgroundColor: '#B5841A',
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        tension: 0.35,
+        fill: false
+      },
+      {
+        label: 'Beyond Zone',
+        data: [0, 2, 5, 8, 8, 15],
+        borderColor: '#8B1A1A',
+        backgroundColor: 'rgba(139,26,26,0.08)',
+        borderWidth: 2,
+        pointBackgroundColor: '#8B1A1A',
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        tension: 0.35,
+        fill: false
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { font: { family: 'DM Sans', size: 11 }, color: '#4a5a5a', boxWidth: 10, padding: 18 }
+      },
+      tooltip: {
+        ...tooltipDefaults,
+        callbacks: {
+          label: (c) => `${c.dataset.label}: ${c.raw}%`
         }
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: 'rgba(204,0,0,0.04)' },
+        ticks: {
+          font: { family: 'DM Sans', size: 11 }, color: '#8A9090',
+          callback: function(val, idx) {
+            const labels = ['2008 · Roadster', '2012 · Model S', '2016 · Mobileye Split', '2019 · Shanghai', '2022 · Model Y Peak', '2026 · Metamorphosis'];
+            return labels[idx];
+          }
+        },
+        border: { display: false }
+      },
+      y: {
+        min: 0, max: 100,
+        grid: { color: 'rgba(204,0,0,0.04)' },
+        ticks: {
+          font: { family: 'DM Sans', size: 10 }, color: '#8A9090',
+          callback: (v) => v + '%',
+          maxTicksLimit: 6
+        },
+        border: { display: false }
+      }
+    }
+  }
+});
 
-        // Initialize bars at 0
-        document.querySelectorAll('.bar-fill').forEach(bar => {
-            const finalWidth = bar.style.width;
-            bar.style.width = '0%';
-            bar.setAttribute('data-width', finalWidth);
-        });
+// SCATTER CHART
+const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+const pointLabelPlugin = {
+  id: 'pointLabels',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    chart.data.datasets.forEach((dataset, i) => {
+      const meta = chart.getDatasetMeta(i);
+      meta.data.forEach((point, j) => {
+        const d = dataset.data[j];
+        if (d.label) {
+          ctx.save();
+          ctx.fillStyle = dataset.borderColor;
+          ctx.font = '11px DM Sans';
+          ctx.textAlign = 'left';
+          ctx.fillText(d.label, point.x + 11, point.y + 4);
+          ctx.restore();
+        }
+      });
+    });
+  }
+};
+new Chart(scatterCtx, {
+  type: 'scatter',
+  plugins: [pointLabelPlugin],
+  data: {
+    datasets: [
+      {
+        label: 'Core Zone',
+        data: [
+          { x: 14, y: 14, label: 'Model Y / Model 3' },
+          { x: 22, y: 20, label: 'Supercharger Network' },
+          { x: 30, y: 18, label: 'Gigafactory Efficiency' },
+          { x: 20, y: 12, label: 'NACS Licensing' },
+        ],
+        backgroundColor: 'rgba(45,106,79,0.75)',
+        borderColor: '#2D6A4F',
+        pointRadius: 7
+      },
+      {
+        label: 'Edge Zone',
+        data: [
+          { x: 56, y: 66, label: 'FSD v14 (VLA)' },
+          { x: 60, y: 55, label: 'Energy / Megapack' },
+          { x: 64, y: 62, label: 'Cybercab Deployment' },
+          { x: 52, y: 50, label: 'Tesla Insurance' },
+          { x: 58, y: 72, label: 'AI4.5 Chip (triple)' },
+        ],
+        backgroundColor: 'rgba(181,132,26,0.75)',
+        borderColor: '#B5841A',
+        pointRadius: 7
+      },
+      {
+        label: 'Beyond Zone',
+        data: [
+          { x: 80, y: 86, label: 'Optimus Robot' },
+          { x: 84, y: 90, label: 'Dojo Supercomputer' },
+          { x: 88, y: 84, label: 'xAI / Grok Integration' },
+          { x: 78, y: 80, label: 'Lithium Refining' },
+          { x: 90, y: 94, label: 'Robotaxi Network' },
+        ],
+        backgroundColor: 'rgba(139,26,26,0.75)',
+        borderColor: '#8B1A1A',
+        pointRadius: 7
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { font: { family: 'DM Sans', size: 11 }, color: '#4a5a5a', boxWidth: 10, padding: 18 }
+      },
+      tooltip: { ...tooltipDefaults, callbacks: { label: (c) => c.raw.label || '' } }
+    },
+    scales: {
+      x: {
+        min: 0, max: 108,
+        title: { display: true, text: 'Market Reach  →  Existing · New · Emerging · Speculative', font: { family: 'DM Sans', size: 11 }, color: '#8A9090' },
+        ticks: { display: false },
+        grid: { color: 'rgba(204,0,0,0.05)' },
+        border: { display: false }
+      },
+      y: {
+        min: 0, max: 108,
+        title: { display: true, text: 'Technology Change  →  Incremental · Moderate · High · Radical · Extreme', font: { family: 'DM Sans', size: 11 }, color: '#8A9090' },
+        ticks: { display: false },
+        grid: { color: 'rgba(204,0,0,0.05)' },
+        border: { display: false }
+      }
+    }
+  }
+});
 
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
+// DONUT CHART
+const donutCtx = document.getElementById('donutChart').getContext('2d');
+new Chart(donutCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Core Zone', 'Edge Zone', 'Beyond Zone'],
+    datasets: [{
+      data: [60, 25, 15],
+      backgroundColor: ['rgba(45,106,79,0.82)', 'rgba(181,132,26,0.82)', 'rgba(139,26,26,0.82)'],
+      borderWidth: 0,
+      hoverOffset: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    cutout: '68%',
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { font: { family: 'DM Sans', size: 11 }, color: '#4a5a5a', boxWidth: 10, padding: 14 }
+      },
+      tooltip: { ...tooltipDefaults, callbacks: { label: (c) => `${c.label}: ${c.raw}%` } }
+    }
+  }
+});
 
-        // Add subtle parallax effect to hero
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const hero = document.querySelector('.hero-content');
-            if (hero && scrolled < window.innerHeight) {
-                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
-                hero.style.opacity = 1 - (scrolled / window.innerHeight) * 0.8;
-            }
-        });
-    </script>
+// RADAR CHART
+const radarCtx = document.getElementById('radarChart').getContext('2d');
+new Chart(radarCtx, {
+  type: 'radar',
+  data: {
+    labels: ['Core Zone Health', 'Edge Zone Trajectory', 'Beyond Zone Conviction', 'Learning Velocity', 'Scale Execution', 'Data Moat Depth'],
+    datasets: [
+      {
+        label: 'Tesla',
+        data: [68, 90, 84, 94, 70, 96],
+        borderColor: '#CC0000',
+        backgroundColor: 'rgba(204,0,0,0.07)',
+        borderWidth: 2,
+        pointBackgroundColor: '#CC0000',
+        pointRadius: 4
+      },
+      {
+        label: 'BYD',
+        data: [90, 76, 68, 70, 92, 62],
+        borderColor: '#2D6A4F',
+        backgroundColor: 'rgba(45,106,79,0.05)',
+        borderWidth: 2,
+        pointBackgroundColor: '#2D6A4F',
+        pointRadius: 4
+      },
+      {
+        label: 'NVIDIA',
+        data: [88, 78, 80, 98, 40, 72],
+        borderColor: '#B5841A',
+        backgroundColor: 'rgba(181,132,26,0.05)',
+        borderWidth: 2,
+        pointBackgroundColor: '#B5841A',
+        pointRadius: 4
+      },
+      {
+        label: 'XPeng',
+        data: [45, 84, 78, 86, 58, 74],
+        borderColor: '#5A7A8A',
+        backgroundColor: 'rgba(90,122,138,0.05)',
+        borderWidth: 2,
+        pointBackgroundColor: '#5A7A8A',
+        pointRadius: 4
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { font: { family: 'DM Sans', size: 11 }, color: '#4a5a5a', boxWidth: 10, padding: 14 }
+      },
+      tooltip: tooltipDefaults
+    },
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { display: false },
+        grid: { color: 'rgba(0,0,0,0.07)' },
+        angleLines: { color: 'rgba(0,0,0,0.07)' },
+        pointLabels: { font: { family: 'DM Sans', size: 11 }, color: '#4a5a5a' }
+      }
+    }
+  }
+});
+</script>
 </body>
 </html>
