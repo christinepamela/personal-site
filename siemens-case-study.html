@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Siemens AG — Theta Framework Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --sie-teal: #009999;
+  --sie-teal-light: #00BFBF;
+  --sie-accent: #00FFD0;
+  --sie-gold: #C8963C;
+  --ink: #0A0F1A;
+  --ink-soft: #111827;
+  --paper: #F6F5F2;
+  --paper-warm: #EDEAE3;
+  --muted: #8A9098;
+  --core-green: #1A6B4A;
+  --edge-amber: #B07B1A;
+  --beyond-crimson: #7A1A2E;
+  --border: rgba(0,153,153,0.13);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); overflow-x: hidden; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; height: 64px;
+  background: rgba(10,15,26,0.92);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(0,153,153,0.16);
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 500; letter-spacing: 0.18em;
+  color: var(--sie-accent); text-transform: uppercase;
+}
+.nav-links { display: flex; gap: 30px; }
+.nav-links a {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(255,255,255,0.35);
+  text-decoration: none; transition: color 0.22s;
+}
+.nav-links a:hover { color: var(--sie-accent); }
+
+/* HERO */
+.hero {
+  height: 100vh; min-height: 740px;
+  background: var(--ink);
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+  padding: 0 10vw;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,153,153,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,153,153,0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  animation: gridDrift 60s linear infinite;
+}
+@keyframes gridDrift { from{transform:translateY(0)} to{transform:translateY(64px)} }
+.hero-noise {
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity: 0.45;
+}
+.hero-glow {
+  position: absolute; left: -200px; top: 40%; transform: translateY(-50%);
+  width: 900px; height: 700px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0,153,153,0.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-glow-right {
+  position: absolute; right: -100px; bottom: -50px;
+  width: 700px; height: 600px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0,255,208,0.04) 0%, transparent 68%);
+  pointer-events: none;
+}
+.hero-circuit {
+  position: absolute; right: 6vw; top: 50%; transform: translateY(-50%);
+  width: 480px; height: 480px; opacity: 0.04; pointer-events: none;
+}
+.hero-circuit svg { width: 100%; height: 100%; }
+.hero-watermark {
+  position: absolute; right: 3vw; top: 50%; transform: translateY(-52%);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28vw; font-weight: 300; line-height: 1;
+  color: rgba(255,255,255,0.012); pointer-events: none; user-select: none;
+  letter-spacing: -0.05em;
+}
+
+.hero-content { position: relative; z-index: 2; max-width: 980px; }
+.hero-kicker {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.26em;
+  text-transform: uppercase; color: var(--sie-accent);
+  margin-bottom: 32px;
+  opacity: 0; animation: fadeUp 0.9s 0.2s forwards;
+}
+.hero-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(38px, 5.8vw, 88px);
+  font-weight: 300; line-height: 1.04;
+  color: #ffffff; margin-bottom: 28px;
+  opacity: 0; animation: fadeUp 0.9s 0.42s forwards;
+}
+.hero-headline em { font-style: italic; color: var(--sie-accent); }
+.hero-sub {
+  font-size: 15px; font-weight: 300; line-height: 1.82;
+  color: rgba(255,255,255,0.42); max-width: 580px;
+  margin-bottom: 64px;
+  opacity: 0; animation: fadeUp 0.9s 0.64s forwards;
+}
+.hero-meta {
+  display: flex; gap: 56px;
+  opacity: 0; animation: fadeUp 0.9s 0.86s forwards;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding-top: 28px;
+}
+.meta-item { display: flex; flex-direction: column; gap: 6px; }
+.meta-label { font-size: 9px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.24); }
+.meta-value { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: #fff; }
+.scroll-indicator {
+  position: absolute; right: 48px; bottom: 48px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  opacity: 0; animation: fadeIn 1s 1.5s forwards;
+}
+.scroll-line {
+  width: 1px; height: 64px;
+  background: linear-gradient(to bottom, transparent, var(--sie-teal-light));
+  animation: scrollPulse 2.6s ease-in-out infinite;
+}
+.scroll-text { font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.2); writing-mode: vertical-rl; }
+@keyframes scrollPulse { 0%,100%{opacity:0.25;transform:scaleY(0.55)} 50%{opacity:1;transform:scaleY(1)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* SECTIONS */
+section { padding: 96px 10vw; }
+section.white { background: #fff; }
+section.warm { background: var(--paper-warm); }
+section.ink { background: var(--ink); color: #fff; }
+
+.section-label {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--sie-teal);
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px, 3.8vw, 54px);
+  font-weight: 300; line-height: 1.1;
+  margin-bottom: 52px;
+}
+.section-title em { font-style: italic; color: var(--sie-teal); }
+.ink .section-title { color: #fff; }
+.ink .section-title em { color: var(--sie-accent); }
+.ink .section-label { color: rgba(0,255,208,0.5); }
+
+/* ABOUT */
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+.about-prose p { font-size: 15.5px; line-height: 1.86; color: #2a3440; margin-bottom: 22px; }
+.hidden-fact {
+  margin-top: 36px; padding: 28px 32px;
+  background: var(--ink); border-radius: 2px;
+  border-left: 2px solid var(--sie-accent);
+}
+.hidden-fact-label { font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sie-accent); margin-bottom: 12px; }
+.hidden-fact p { font-size: 13.5px; line-height: 1.76; color: rgba(255,255,255,0.6); }
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.stat-box {
+  padding: 30px 26px; background: var(--paper-warm);
+  border: 1px solid var(--border); transition: background 0.22s;
+}
+.stat-box:hover { background: #fff; }
+.stat-num { font-family: 'Cormorant Garamond', serif; font-size: 46px; font-weight: 300; color: var(--sie-teal); line-height: 1; margin-bottom: 8px; }
+.stat-desc { font-size: 11.5px; color: var(--muted); letter-spacing: 0.02em; line-height: 1.54; }
+
+.belief-strip {
+  margin-top: 72px; padding: 64px 10vw;
+  background: linear-gradient(135deg, #002B2B 0%, #004040 50%, #002B2B 100%);
+  text-align: center; position: relative; overflow: hidden;
+}
+.belief-strip::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, rgba(0,255,208,0.07) 0%, transparent 65%);
+}
+.belief-strip::after {
+  content: '"';
+  position: absolute; left: 8vw; top: -20px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 280px; font-weight: 300; line-height: 1;
+  color: rgba(0,153,153,0.08); pointer-events: none;
+}
+.belief-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(20px, 2.4vw, 32px);
+  font-weight: 300; font-style: italic;
+  color: rgba(255,255,255,0.9); line-height: 1.52; max-width: 840px; margin: 0 auto 22px;
+  position: relative; z-index: 1;
+}
+.belief-attr { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sie-accent); position: relative; z-index: 1; }
+
+/* BELIEFS GRID */
+.beliefs-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); }
+.belief-card { padding: 32px 28px; background: #fff; transition: background 0.22s; }
+.belief-card:hover { background: var(--paper-warm); }
+.belief-num { font-family: 'Cormorant Garamond', serif; font-size: 46px; font-weight: 300; color: rgba(0,153,153,0.13); line-height: 1; margin-bottom: 16px; }
+.belief-title { font-size: 13px; font-weight: 500; letter-spacing: 0.04em; margin-bottom: 10px; color: var(--ink); }
+.belief-body { font-size: 13px; line-height: 1.72; color: #46555A; }
+
+/* TIMELINE */
+.timeline { position: relative; padding-left: 160px; }
+.timeline-line {
+  position: absolute; left: 128px; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--sie-teal) 7%, var(--sie-teal) 93%, transparent);
+}
+.timeline-item { position: relative; margin-bottom: 56px; }
+.timeline-year {
+  position: absolute; left: -160px; width: 120px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px; font-weight: 300; color: var(--sie-teal);
+  text-align: right; padding-top: 2px;
+}
+.timeline-dot {
+  position: absolute; left: -37px; top: 9px;
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid var(--sie-teal); background: var(--paper-warm); z-index: 2;
+}
+.timeline-dot.filled { background: var(--sie-teal); }
+.timeline-dot.accent { background: var(--sie-accent); border-color: var(--sie-accent); box-shadow: 0 0 0 4px rgba(0,255,208,0.15); }
+.timeline-phase { font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sie-gold); margin-bottom: 7px; }
+.timeline-event { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; margin-bottom: 8px; color: var(--ink); }
+.timeline-desc { font-size: 13.5px; line-height: 1.76; color: #46555A; max-width: 600px; }
+
+/* THETA MAP */
+.theta-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 64px; align-items: start; }
+.zone-legend { display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; }
+.zone-pill { padding: 16px 20px; border-radius: 2px; border-left: 3px solid; }
+.zone-pill.core { border-color: var(--core-green); background: rgba(26,107,74,0.05); }
+.zone-pill.edge { border-color: var(--edge-amber); background: rgba(176,123,26,0.05); }
+.zone-pill.beyond { border-color: var(--beyond-crimson); background: rgba(122,26,46,0.05); }
+.zone-pill-name { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
+.zone-pill.core .zone-pill-name { color: var(--core-green); }
+.zone-pill.edge .zone-pill-name { color: var(--edge-amber); }
+.zone-pill.beyond .zone-pill-name { color: var(--beyond-crimson); }
+.zone-pill-desc { font-size: 12.5px; color: var(--muted); line-height: 1.52; }
+.reading-card { padding: 20px 24px; background: var(--ink); border-radius: 2px; }
+.reading-card-title { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--sie-accent); margin-bottom: 10px; }
+.reading-card p { font-size: 12.5px; line-height: 1.68; color: rgba(255,255,255,0.5); }
+.chart-wrap { position: relative; height: 460px; }
+
+/* ALLOCATION */
+.alloc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+.donut-wrap { position: relative; height: 300px; display: flex; align-items: center; justify-content: center; }
+.donut-center { position: absolute; text-align: center; pointer-events: none; }
+.donut-center-label { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; }
+.donut-center-val { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 300; color: var(--ink); display: block; line-height: 1; }
+.alloc-bars { display: flex; flex-direction: column; gap: 30px; }
+.alloc-bar-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; }
+.alloc-bar-name { font-size: 11px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; }
+.alloc-bar-pcts { font-size: 11.5px; color: var(--muted); }
+.bar-track { height: 5px; background: rgba(0,0,0,0.07); border-radius: 99px; position: relative; overflow: visible; }
+.bar-fill { height: 100%; border-radius: 99px; }
+.bar-benchmark { position: absolute; top: -5px; width: 2px; height: 15px; background: var(--ink); opacity: 0.2; }
+.alloc-comment { font-size: 12px; color: var(--muted); margin-top: 7px; line-height: 1.58; }
+
+/* COMPETITORS */
+.comp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 60px; }
+.comp-card { padding: 24px 18px; background: var(--paper-warm); border: 1px solid var(--border); border-radius: 2px; transition: transform 0.2s, box-shadow 0.2s; }
+.comp-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
+.comp-card.featured { border-color: rgba(0,153,153,0.38); background: rgba(0,153,153,0.04); }
+.comp-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; margin-bottom: 4px; }
+.comp-tag { font-size: 10.5px; color: var(--muted); margin-bottom: 18px; line-height: 1.42; }
+.comp-zones { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
+.comp-zone-row { display: flex; align-items: flex-start; gap: 8px; font-size: 11.5px; line-height: 1.42; color: #46555A; }
+.zone-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+.zone-dot.core { background: var(--core-green); }
+.zone-dot.edge { background: var(--edge-amber); }
+.zone-dot.beyond { background: var(--beyond-crimson); }
+.verdict-chip { font-size: 9px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 99px; display: inline-block; }
+.verdict-chip.leader { background: rgba(26,107,74,0.12); color: var(--core-green); }
+.verdict-chip.challenger { background: rgba(176,123,26,0.12); color: var(--edge-amber); }
+.verdict-chip.laggard { background: rgba(122,26,46,0.12); color: var(--beyond-crimson); }
+.radar-wrap { height: 360px; max-width: 640px; margin: 0 auto; }
+
+/* S&W */
+.sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.sw-panel { padding: 36px; border-radius: 2px; }
+.sw-panel.strengths { background: rgba(26,107,74,0.04); border: 1px solid rgba(26,107,74,0.18); }
+.sw-panel.weaknesses { background: rgba(122,26,46,0.04); border: 1px solid rgba(122,26,46,0.14); }
+.sw-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 500; margin-bottom: 28px; }
+.sw-panel.strengths .sw-title { color: var(--core-green); }
+.sw-panel.weaknesses .sw-title { color: var(--beyond-crimson); }
+.sw-item { display: flex; gap: 16px; margin-bottom: 22px; }
+.sw-marker { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; margin-top: 2px; }
+.strengths .sw-marker { background: rgba(26,107,74,0.1); color: var(--core-green); }
+.weaknesses .sw-marker { background: rgba(122,26,46,0.09); color: var(--beyond-crimson); }
+.sw-lead { font-size: 13.5px; font-weight: 500; margin-bottom: 5px; }
+.sw-body { font-size: 12.5px; line-height: 1.68; color: #46555A; }
+
+/* DIAGNOSTIC */
+.diag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+.diag-block { margin-bottom: 36px; }
+.diag-block-title { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(0,255,208,0.5); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(0,153,153,0.16); }
+.archetype-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.archetype-box { padding: 7px 13px; border-radius: 2px; font-size: 10.5px; font-weight: 500; letter-spacing: 0.06em; }
+.archetype-box.ok { background: rgba(26,107,74,0.18); color: #6fcf97; }
+.archetype-box.mid { background: rgba(176,123,26,0.18); color: #E0A040; }
+.archetype-box.low { background: rgba(122,26,46,0.18); color: #f08080; }
+.diag-prose { font-size: 13.5px; line-height: 1.78; color: rgba(255,255,255,0.54); }
+.tension-box { padding: 24px 20px; background: rgba(0,153,153,0.06); border: 1px solid rgba(0,153,153,0.2); border-radius: 2px; margin-top: 16px; }
+.tension-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sie-accent); margin-bottom: 10px; }
+.tension-text { font-size: 13.5px; line-height: 1.78; color: rgba(255,255,255,0.6); font-style: italic; }
+.inline-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.inline-bar-label { font-size: 11px; color: rgba(255,255,255,0.46); width: 58px; flex-shrink: 0; }
+.inline-bar-track { flex: 1; height: 4px; background: rgba(255,255,255,0.07); border-radius: 99px; position: relative; overflow: visible; }
+.inline-bar-fill { height: 100%; border-radius: 99px; }
+.inline-bar-benchmark { position: absolute; top: -5px; width: 1px; height: 14px; background: rgba(255,255,255,0.2); }
+.inline-bar-pct { font-size: 10.5px; color: rgba(255,255,255,0.3); width: 34px; text-align: right; flex-shrink: 0; }
+.verdict-final { margin-top: 36px; padding: 28px 32px; background: rgba(0,153,153,0.08); border: 1px solid rgba(0,153,153,0.2); border-radius: 2px; }
+.verdict-type { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 400; color: #fff; margin-bottom: 10px; }
+.verdict-symbols { font-size: 17px; margin-bottom: 12px; letter-spacing: 0.08em; }
+.verdict-explain { font-size: 13.5px; line-height: 1.78; color: rgba(255,255,255,0.54); }
+
+/* LEADERSHIP */
+.lead-timeline { position: relative; padding-left: 24px; }
+.lead-timeline-spine {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--sie-teal) 6%, var(--sie-teal) 94%, transparent);
+}
+.lead-item { display: grid; grid-template-columns: 200px 1fr; gap: 0 48px; margin-bottom: 0; padding-bottom: 56px; position: relative; }
+.lead-item::before { content: ''; position: absolute; left: -5px; top: 18px; width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--sie-teal); background: var(--paper-warm); z-index: 2; }
+.lead-item.inflection::before { background: var(--sie-teal); }
+.lead-left { padding-left: 24px; padding-top: 14px; }
+.lead-tenure { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; color: var(--sie-teal); line-height: 1; margin-bottom: 6px; }
+.lead-name { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+.lead-tag { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sie-gold); }
+.lead-right { padding-top: 14px; border-top: 1px solid var(--border); }
+.lead-headline { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; color: var(--ink); margin-bottom: 10px; line-height: 1.22; }
+.lead-body { font-size: 13.5px; line-height: 1.78; color: #46555A; margin-bottom: 16px; }
+.lead-theta-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.lead-zone-tag { font-size: 9px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 99px; }
+.lead-zone-tag.core { background: rgba(26,107,74,0.1); color: var(--core-green); }
+.lead-zone-tag.edge { background: rgba(176,123,26,0.1); color: var(--edge-amber); }
+.lead-zone-tag.beyond { background: rgba(122,26,46,0.1); color: var(--beyond-crimson); }
+.lead-zone-tag.neutral { background: rgba(138,144,152,0.12); color: var(--muted); }
+.lead-trifecta { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 16px; }
+.trifecta-cell { padding: 10px 12px; background: rgba(0,153,153,0.04); border: 1px solid var(--border); border-radius: 2px; }
+.trifecta-label { font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.trifecta-score { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; line-height: 1; }
+.trifecta-score.high { color: var(--core-green); }
+.trifecta-score.mid { color: var(--edge-amber); }
+.trifecta-score.low { color: var(--beyond-crimson); }
+.trifecta-note { font-size: 10.5px; color: var(--muted); margin-top: 2px; line-height: 1.42; }
+.lead-chart-wrap { height: 300px; margin-top: 56px; }
+.lead-chart-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sie-teal); margin-bottom: 10px; }
+
+/* SPINOFF SECTION */
+.spinoff-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); margin-bottom: 52px; }
+.spinoff-card { padding: 28px 22px; background: #fff; transition: background 0.22s; }
+.spinoff-card:hover { background: var(--paper-warm); }
+.spinoff-year { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; color: rgba(0,153,153,0.28); line-height: 1; margin-bottom: 10px; }
+.spinoff-name { font-size: 14px; font-weight: 500; margin-bottom: 6px; color: var(--ink); }
+.spinoff-desc { font-size: 12px; line-height: 1.62; color: var(--muted); margin-bottom: 12px; }
+.spinoff-status { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 9px; border-radius: 99px; display: inline-block; }
+.spinoff-status.independent { background: rgba(26,107,74,0.1); color: var(--core-green); }
+.spinoff-status.listed { background: rgba(0,153,153,0.1); color: var(--sie-teal); }
+.spinoff-status.acquired { background: rgba(176,123,26,0.1); color: var(--edge-amber); }
+
+/* REVENUE CHART */
+.revenue-wrap { height: 260px; margin-bottom: 48px; }
+
+/* FOOTER */
+footer {
+  background: var(--ink); padding: 32px 10vw;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid rgba(0,153,153,0.1);
+}
+.footer-left { font-size: 11.5px; color: rgba(255,255,255,0.24); letter-spacing: 0.05em; }
+.footer-left strong { color: rgba(255,255,255,0.4); }
+.footer-right { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.16); }
+
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.74s ease, transform 0.74s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 900px) {
+  nav { padding: 0 24px; }
+  .nav-links { display: none; }
+  section { padding: 64px 6vw; }
+  .about-grid, .theta-grid, .alloc-grid, .sw-grid, .diag-grid { grid-template-columns: 1fr; gap: 40px; }
+  .comp-grid { grid-template-columns: 1fr 1fr; }
+  .beliefs-grid { grid-template-columns: 1fr; }
+  .spinoff-grid { grid-template-columns: 1fr 1fr; }
+  .hero { padding: 0 6vw; }
+  .hero-meta { flex-wrap: wrap; gap: 24px; }
+  .hero-watermark { display: none; }
+  .timeline { padding-left: 96px; }
+  .timeline-year { left: -96px; width: 78px; font-size: 18px; }
+  .belief-strip { padding: 48px 6vw; }
+  footer { flex-direction: column; gap: 12px; text-align: center; }
+  .lead-item { grid-template-columns: 1fr; gap: 12px; padding-left: 24px; }
+  .lead-trifecta { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Siemens AG</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#theta-map">Theta Map</a>
+    <a href="#spinoffs">The Family</a>
+    <a href="#leadership">Leadership</a>
+    <a href="#competitors">Competitors</a>
+    <a href="#diagnostic">Diagnostic</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow-right"></div>
+  <div class="hero-watermark">Si</div>
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Framework · Strategic Case Study</div>
+    <h1 class="hero-headline">The company that invented<br>the electric age, then quietly<br><em>invented it again.</em></h1>
+    <p class="hero-sub">Siemens built the world's first electric railway, the first elevator, the first tram. Then it spent the next 177 years doing what almost no industrial giant has ever managed: staying structurally relevant across every technological revolution that followed — not by luck, but by systematic reinvention.</p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <span class="meta-label">Founded</span>
+        <span class="meta-value">1847</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Employees</span>
+        <span class="meta-value">~312,000</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Revenue FY2025</span>
+        <span class="meta-value">€78.9B</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Theta Archetype</span>
+        <span class="meta-value">Balanced</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="white">
+  <div class="section-label">What They Actually Are</div>
+  <h2 class="section-title">Not an industrial company.<br><em>A machine that converts</em><br>physics into software.</h2>
+  <div class="about-grid reveal">
+    <div class="about-prose">
+      <p>There is a phrase in Siemens' current strategy that sounds like marketing but is, on close inspection, a genuine philosophical commitment: "combining the real and digital worlds." It sounds like corporate language until you trace what it actually means. Siemens is not selling automation — it is selling the ability to build a factory virtually before the first concrete is poured, to test a pharmaceutical compound in simulation before a molecule is synthesised, to predict a train failure before the component begins to degrade. The product is certainty. The method is digital twin technology, industrial AI, and a software platform called Xcelerator that has become the operating system of modern manufacturing.</p>
+      <p>What makes this transformation remarkable is its origin. Siemens' great-grandfather was Werner von Siemens, a Prussian telegraph engineer who ran an experiment in 1847 to see if a needle telegraph could outperform Morse code. It could. That experiment became a company, and that company spent the next century and a half at the exact technological frontier of whatever was being electrified at the time: telegraphs, generators, railways, elevators, medical imaging, semiconductors. The pattern is not coincidence. It is a compulsion. Siemens has always been drawn to the moment where physical reality needs an intelligence layer placed on top of it.</p>
+      <div class="hidden-fact">
+        <div class="hidden-fact-label">The detail almost nobody knows</div>
+        <p>Siemens invented the dynamo principle in 1867 — the foundational technology behind every electric generator on earth today. But the fact that is almost never mentioned is that Werner von Siemens deliberately refused to patent it. He published it openly, reasoning that the broader electrification of civilisation would create more value for Siemens than any royalty stream. It was, in effect, the first strategic open-source decision in technology history — made 150 years before the concept existed. The Xcelerator platform, Siemens' open digital business ecosystem launched in 2022, is the same bet made again with software.</p>
+      </div>
+    </div>
+    <div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-num">€117B</div>
+          <div class="stat-desc">Record order backlog as of FY2025 — multi-year revenue visibility that most industrials cannot match</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">41,700+</div>
+          <div class="stat-desc">Granted patents globally — more European Patent Office filings than any other EU-based firm</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">151%</div>
+          <div class="stat-desc">Total shareholder return over the five years to 2025, outperforming the German DAX by a wide margin</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">18.3%</div>
+          <div class="stat-desc">Record profit margin in Smart Infrastructure FY2025 — higher than most pure software businesses</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="belief-strip reveal">
+    <div class="belief-quote">"The factory of the future is not a building. It is a digital twin that happens to have a physical counterpart — and the physical counterpart is the one that learns from the digital."</div>
+    <div class="belief-attr">Roland Busch, CEO Siemens AG — on the industrial metaverse</div>
+  </div>
+</section>
+
+<!-- OPERATING PHILOSOPHY -->
+<section class="warm">
+  <div class="section-label">Operating Philosophy</div>
+  <h2 class="section-title">The beliefs that make<br><em>Siemens stranger</em><br>than it appears.</h2>
+  <div class="beliefs-grid reveal">
+    <div class="belief-card">
+      <div class="belief-num">01</div>
+      <div class="belief-title">Spin Off Everything That Doesn't Want to Be You</div>
+      <div class="belief-body">Siemens' spinoff history reads like a portfolio of the world's most important technology companies: Infineon (now the backbone of European semiconductors), Osram (global lighting intelligence), Siemens Energy (one of the world's largest energy infrastructure companies), Siemens Healthineers (a €50B medical technology giant). Most companies hold on. Siemens lets go — deliberately, repeatedly — and each separation reveals a sharper identity underneath. The company that remains is more Siemens than the conglomerate it once was.</div>
+    </div>
+    <div class="belief-card">
+      <div class="belief-num">02</div>
+      <div class="belief-title">Software Is Not a Division. It Is the Metabolism.</div>
+      <div class="belief-body">When Siemens acquired Mentor Graphics in 2017 for $4.5 billion and UGS PLM in 2007 for $3.5 billion, analysts noted it as "diversification." What it actually was is biological: Siemens was building the intelligence layer for its own hardware. The NX design suite, Teamcenter PLM, and now the Altair simulation portfolio mean that Siemens' revenue from software now rivals its revenue from hardware — a metabolic transformation from a company that makes things into a company that models them.</div>
+    </div>
+    <div class="belief-card">
+      <div class="belief-num">03</div>
+      <div class="belief-title">Build the Lab Where the Customer Works</div>
+      <div class="belief-body">Siemens' Technology and Services India centre — STSPL in Bengaluru — is not an outsourcing operation. It is the company's largest global R&D hub, with 10,000 people, 50 dedicated labs, and the distinction of developing Electrification X and Portfolio Manager, two of Siemens' most critical digital products. The decision to build the innovation engine where the engineering talent is densest, rather than where the headquarters history is, is one of the most important and least-discussed structural choices in the company's recent history.</div>
+    </div>
+    <div class="belief-card">
+      <div class="belief-num">04</div>
+      <div class="belief-title">The Industrial Metaverse Is Physics, Not Gaming</div>
+      <div class="belief-body">The NVIDIA partnership that Siemens announced is not a press release about VR headsets in factories. It is a declaration that the industrial metaverse — the real-time digital mirror of physical production — must obey the actual laws of physics, thermodynamics, and mechanical failure. Siemens' contribution is domain knowledge: decades of understanding how motors overheat, how turbines fatigue, how semiconductor designs fail. NVIDIA provides the simulation horsepower. Together they are building the infrastructure for a world where the most valuable factory is the virtual one.</div>
+    </div>
+    <div class="belief-card">
+      <div class="belief-num">05</div>
+      <div class="belief-title">Local For Local Is Not Nationalism — It's Risk Architecture</div>
+      <div class="belief-body">When CEO Roland Busch stated that 70–85% of Siemens' manufacturing and sourcing is localised in major markets including the US and China, he was not describing a supply chain preference. He was describing a geopolitical hedge. A company that makes its American products in America and its Chinese products in China is immune to tariff regimes in a way that no amount of lobbying can replicate. The strategy predates the trade war. It was design, not reaction.</div>
+    </div>
+    <div class="belief-card">
+      <div class="belief-num">06</div>
+      <div class="belief-title">AI Is Not a Product. It Is a Change in How All Products Work.</div>
+      <div class="belief-body">The nine Industrial Copilots Siemens announced across its software portfolio — from Teamcenter to Opcenter — are not Siemens building an AI assistant. They are Siemens embedding intelligence into the moments where engineers make decisions: how to route a PCB trace, when to schedule turbine maintenance, which drug compound to test next. The $5.1 billion Dotmatics acquisition and the $2.5 billion Altair acquisition both follow this logic. Siemens is not selling AI. It is using AI to make everything it already sells orders of magnitude more valuable.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline" class="white">
+  <div class="section-label">Arc of History</div>
+  <h2 class="section-title">177 years of<br><em>inventing the infrastructure</em><br>the world didn't know it needed.</h2>
+  <div class="timeline reveal">
+    <div class="timeline-line"></div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">1847</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Origin</div>
+      <div class="timeline-event">A Better Telegraph</div>
+      <div class="timeline-desc">Werner von Siemens and Johann Georg Halske found Telegraphen-Bauanstalt von Siemens & Halske in Berlin with one insight: a needle telegraph that points to letters is more reliable than Morse code. They are right. Within a year, they build Europe's first long-distance telegraph line, Berlin to Frankfurt. The pattern is set for 177 years: a better interface between intelligence and physical reality.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">1867</div>
+      <div class="timeline-dot accent"></div>
+      <div class="timeline-phase">First Inflection Point</div>
+      <div class="timeline-event">The Dynamo Principle — and the Decision Not to Patent It</div>
+      <div class="timeline-desc">Werner von Siemens describes the dynamo principle: a generator that creates its own magnetic field without permanent magnets. Every power plant on earth today is built on this discovery. His decision to publish rather than patent it is not philanthropy — it is strategy. A world that electrifies faster buys more Siemens equipment. The open-platform instinct that defines Xcelerator in 2022 was written in physics in 1867.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">1879–1881</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Physical World Transformed</div>
+      <div class="timeline-event">Three Revolutions in Three Years</div>
+      <div class="timeline-desc">Siemens unveils the world's first electric railway at the Berlin Trades Exhibition in 1879, then the first electric elevator in 1880, then the first electric tram in 1881. Three separate industries — transportation, vertical mobility, urban transit — are permanently altered. At this point Siemens is 32 years old and has already shaped the physical architecture of every modern city.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">1907</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">Scale</div>
+      <div class="timeline-event">Germany's Seventh-Largest Company</div>
+      <div class="timeline-desc">Siemens reaches a scale that places it among the seven largest companies in Germany — a nation industrialising faster than any other in Europe. The portfolio at this point spans telegraphs, power generation, electric transport, and early telecommunications. The conglomerate instinct is already visible: whatever needs electricity, Siemens will supply it.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">1919</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">Creation</div>
+      <div class="timeline-event">Siemens Co-founds Osram</div>
+      <div class="timeline-desc">In partnership with AEG and Deutsche Gasglühlicht, Siemens co-founds Osram — the lightbulb company that will eventually become a global lighting intelligence business and be spun off independently in 2013. The Osram founding is the first of many moments where Siemens' innovation output becomes a standalone company with its own destiny. The pattern of creation and release begins here.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">1966</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Consolidation</div>
+      <div class="timeline-event">The Modern Siemens AG Is Formed</div>
+      <div class="timeline-desc">The various Siemens-associated entities — Siemens & Halske, Siemens-Schuckertwerke, and Siemens-Reiniger-Werke — merge into the present-day Siemens AG. This is not a bureaucratic tidy-up. It is the creation of a unified entity capable of scaling into semiconductors, computers, and medical devices as those industries emerge. The next three decades are a race into every technology that the electrical era makes possible.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">1999</div>
+      <div class="timeline-dot accent"></div>
+      <div class="timeline-phase">Second Inflection Point</div>
+      <div class="timeline-event">Infineon Spun Off — The Semiconductor Bet Matures</div>
+      <div class="timeline-desc">Siemens spins off its semiconductor business as Infineon Technologies, which becomes one of Europe's most important chipmakers and a critical supplier to the automotive and power electronics industries. The decision demonstrates for the first time what becomes Siemens' defining corporate reflex: when a business has grown large enough to have its own identity, give it one. The parent company becomes sharper. The child becomes more valuable. Both win.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2006–2008</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">The Dark Chapter</div>
+      <div class="timeline-event">The Bribery Scandal — $1.6 Billion and a Reckoning</div>
+      <div class="timeline-desc">Siemens is caught operating one of the largest corporate bribery programmes in history, using slush funds to win government contracts across multiple continents. The fines — over $1.6 billion in the US and Europe — are not the most significant consequence. The most significant consequence is what follows: a wholesale dismantling of the culture that permitted it, new compliance infrastructure, and the beginning of a leadership model that becomes known for transparency rather than opacity. The scandal is the crucible from which modern Siemens is cast.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2017–2020</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Structural Transformation</div>
+      <div class="timeline-event">Healthineers Listed. Energy Spun Off. The Focus Sharpens.</div>
+      <div class="timeline-desc">Siemens Healthineers lists in 2018, raising €4.2 billion in Europe's largest IPO that year. Siemens Energy is spun off in 2020. In four years, Siemens has removed two enormous, capital-intensive businesses from its balance sheet and focused its identity on digital industries, smart infrastructure, and mobility. What remains is not a smaller Siemens. It is a more concentrated one — every resource now pointed at the digital-physical convergence thesis.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2021–2026</div>
+      <div class="timeline-dot accent"></div>
+      <div class="timeline-phase">Third Inflection Point</div>
+      <div class="timeline-event">The "One Tech Company" Era — Altair, Dotmatics, the AI Operating System</div>
+      <div class="timeline-desc">CEO Roland Busch articulates a "Northstar": Siemens is no longer an industrial conglomerate. It is a technology company that happens to understand physics. The Xcelerator platform launches. The NVIDIA partnership creates the Industrial AI Operating System. Altair ($2.5B) and Dotmatics ($5.1B) expand the simulation and life sciences software portfolio. Revenue reaches €78.9 billion. The order backlog hits €117 billion. The transformation is not complete — but it is unmistakably real.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SPINOFFS / THE FAMILY -->
+<section id="spinoffs" class="warm">
+  <div class="section-label">The Siemens Family Tree</div>
+  <h2 class="section-title">Siemens didn't just build companies.<br><em>It kept releasing them</em><br>to grow on their own terms.</h2>
+  <p class="reveal" style="font-size:15.5px;line-height:1.86;color:#2a3440;max-width:780px;margin-bottom:48px;">The most counterintuitive thing about Siemens is that its greatest creative act is not invention — it is the willingness to let things go. Every major spinoff in its history follows the same internal logic: a business has grown large enough to have its own strategic identity, its own investor base, its own culture. Keeping it inside Siemens would constrain it. The parent company's discipline and the child's freedom create more combined value than integration ever could. This is the opposite of the acquisition compulsion that destroys most conglomerates.</p>
+  <div class="spinoff-grid reveal">
+    <div class="spinoff-card">
+      <div class="spinoff-year">1999</div>
+      <div class="spinoff-name">Infineon Technologies</div>
+      <div class="spinoff-desc">Siemens' semiconductor division. Today a €30B+ market cap company supplying chips to the automotive, power, and IoT industries. The backbone of European semiconductor sovereignty.</div>
+      <span class="spinoff-status listed">Listed · DAX 40</span>
+    </div>
+    <div class="spinoff-card">
+      <div class="spinoff-year">2013</div>
+      <div class="spinoff-name">Osram</div>
+      <div class="spinoff-desc">Co-founded with Siemens in 1919. Spun off 94 years later when LED intelligence made the lighting business genuinely different from industrial manufacturing. Now part of ams-OSRAM.</div>
+      <span class="spinoff-status acquired">Acquired · ams-OSRAM</span>
+    </div>
+    <div class="spinoff-card">
+      <div class="spinoff-year">2018</div>
+      <div class="spinoff-name">Siemens Healthineers</div>
+      <div class="spinoff-desc">Europe's largest IPO of 2018. A €50B+ medical technology company covering imaging, diagnostics, and cancer therapy. Siemens retains ~75%. Now being further deconsolidated as its own entity.</div>
+      <span class="spinoff-status listed">Listed · DAX</span>
+    </div>
+    <div class="spinoff-card">
+      <div class="spinoff-year">2020</div>
+      <div class="spinoff-name">Siemens Energy</div>
+      <div class="spinoff-desc">The energy generation, transmission, and storage business including Siemens Gamesa wind. Spun off so Siemens could focus on digital industries without the capital intensity of physical energy infrastructure.</div>
+      <span class="spinoff-status listed">Listed · DAX</span>
+    </div>
+    <div class="spinoff-card">
+      <div class="spinoff-year">2011</div>
+      <div class="spinoff-name">Atos (via IT Solutions)</div>
+      <div class="spinoff-desc">Siemens IT Solutions merged with Atos Origin to form one of Europe's largest IT services companies. A €10B+ enterprise. The IT services culture was incompatible with industrial manufacturing — so Siemens gave it away.</div>
+      <span class="spinoff-status acquired">Merged · Atos</span>
+    </div>
+    <div class="spinoff-card">
+      <div class="spinoff-year">2005</div>
+      <div class="spinoff-name">BenQ-Siemens Mobile</div>
+      <div class="spinoff-desc">Siemens' mobile phone division sold to BenQ. A rare failed spinoff — BenQ filed for insolvency 13 months after acquisition, leaving 3,000 German workers without employment. The lesson: separation only works when the buyer can actually operate the business.</div>
+      <span class="spinoff-status acquired">Divested · Cautionary</span>
+    </div>
+    <div class="spinoff-card">
+      <div class="spinoff-year">1990s</div>
+      <div class="spinoff-name">EPCOS / TDK Electronics</div>
+      <div class="spinoff-desc">Electronic components manufacturer spun from Siemens. Acquired by TDK in 2009 and merged into TDK Electronics. Now a critical supplier of capacitors, filters, and inductors for automotive and consumer electronics globally.</div>
+      <span class="spinoff-status acquired">Acquired · TDK</span>
+    </div>
+    <div class="spinoff-card">
+      <div class="spinoff-year">Various</div>
+      <div class="spinoff-name">The Pattern Itself</div>
+      <div class="spinoff-desc">Siemens has now spun off, sold, or partially listed more than a dozen major businesses across its history. What remains — Digital Industries, Smart Infrastructure, Mobility — is the most focused version of Siemens that has ever existed. The spinoffs were the strategy, not the distraction from it.</div>
+      <span class="spinoff-status independent">Strategic Design</span>
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section id="theta-map" class="white">
+  <div class="section-label">Theta Innovation Map</div>
+  <h2 class="section-title">Where each initiative lives —<br><em>and what it says</em><br>about the decade ahead.</h2>
+  <div class="theta-grid reveal">
+    <div>
+      <div class="zone-legend">
+        <div class="zone-pill core">
+          <div class="zone-pill-name">🟩 Core Zone</div>
+          <div class="zone-pill-desc">The €78.9B engine. Industrial automation, building controls, rail infrastructure, and service contracts. Proven technology, existing relationships, execution-led. The €117B backlog is the Core's proof of health.</div>
+        </div>
+        <div class="zone-pill edge">
+          <div class="zone-pill-name">🟨 Edge Zone</div>
+          <div class="zone-pill-desc">The transformation layer. Xcelerator platform, Industrial Copilots, Digital Twin Composer, private 5G, and the Altair/Dotmatics software integrations. New business models at high technology change.</div>
+        </div>
+        <div class="zone-pill beyond">
+          <div class="zone-pill-name">🟥 Beyond Zone</div>
+          <div class="zone-pill-desc">Physics-based speculation. Industrial Metaverse with NVIDIA, fusion energy digital twin for Commonwealth Fusion Systems, autonomous AI factories, and 6G standardisation research.</div>
+        </div>
+      </div>
+      <div class="reading-card">
+        <div class="reading-card-title">Reading This Map</div>
+        <p>Siemens' portfolio shows unusual density in the Edge zone — a function of the deliberate software acquisition strategy. The Beyond zone is not underpopulated so much as partnership-leveraged: NVIDIA provides radical AI capability without Siemens building it. The map shows a company that understands the difference between owning technology and accessing it at the right time.</p>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="scatterChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section class="warm">
+  <div class="section-label">Portfolio Allocation</div>
+  <h2 class="section-title">The weight behind<br><em>the "One Tech Company"</em><br>ambition.</h2>
+  <div class="alloc-grid reveal">
+    <div class="donut-wrap">
+      <canvas id="donutChart" style="max-width:280px;max-height:280px;"></canvas>
+      <div class="donut-center">
+        <span class="donut-center-label">Zones Active</span>
+        <span class="donut-center-val">3</span>
+      </div>
+    </div>
+    <div class="alloc-bars">
+      <div>
+        <div class="alloc-bar-header">
+          <span class="alloc-bar-name" style="color:var(--core-green)">Core Zone</span>
+          <span class="alloc-bar-pcts">~65% actual · 70% benchmark</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:65%;background:var(--core-green);"></div>
+          <div class="bar-benchmark" style="left:70%;"></div>
+        </div>
+        <div class="alloc-comment">Slightly below benchmark — deliberately. The €117B backlog and record Smart Infrastructure margins confirm Core health. The marginal underfunding of Core relative to benchmark reflects Siemens' conscious Edge rebalancing. The digital business CAGR of 14% from 2020–2025 is the Core funding the transition.</div>
+      </div>
+      <div>
+        <div class="alloc-bar-header">
+          <span class="alloc-bar-name" style="color:var(--edge-amber)">Edge Zone</span>
+          <span class="alloc-bar-pcts">~25% actual · 20% benchmark</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:25%;background:var(--edge-amber);"></div>
+          <div class="bar-benchmark" style="left:20%;"></div>
+        </div>
+        <div class="alloc-comment">Above benchmark — appropriate for a company in active digital transformation. The $16B in software acquisitions (Altair + Dotmatics), the Xcelerator platform, and nine Industrial Copilots represent the most concentrated Edge investment in Siemens' history. The PepsiCo result — 20% throughput gain — validates the spending.</div>
+      </div>
+      <div>
+        <div class="alloc-bar-header">
+          <span class="alloc-bar-name" style="color:var(--beyond-crimson)">Beyond Zone</span>
+          <span class="alloc-bar-pcts">~10% actual · 10% benchmark</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:10%;background:var(--beyond-crimson);"></div>
+          <div class="bar-benchmark" style="left:10%;"></div>
+        </div>
+        <div class="alloc-comment">At benchmark but uniquely structured. Siemens' Beyond zone is primarily accessed through partnerships rather than internal R&D — NVIDIA for the industrial metaverse, Commonwealth Fusion Systems for fusion energy digital twins, 6G consortia for next-generation industrial connectivity. This approach multiplies reach without multiplying headcount.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revenue trend -->
+  <div style="margin-top:64px;" class="reveal">
+    <div class="lead-chart-label">Siemens AG Revenue Trend — Fiscal Year (EUR Billion, approximate)</div>
+    <div class="revenue-wrap">
+      <canvas id="revenueChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section id="competitors" class="white">
+  <div class="section-label">Competitive Landscape</div>
+  <h2 class="section-title">The rivals Siemens must<br><em>outcode, outsimulate,</em><br>and occasionally out-imagine.</h2>
+  <div class="comp-grid reveal">
+    <div class="comp-card featured">
+      <div class="comp-name">Siemens</div>
+      <div class="comp-tag">Industrial AI + software + automation</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>Dominant — €117B backlog, 3 profitable divisions</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Leading — Xcelerator, Copilots, $16B M&A</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Partnership-leveraged — NVIDIA, CFS, 6G</span></div>
+      </div>
+      <span class="verdict-chip leader">Balanced</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">ABB</div>
+      <div class="comp-tag">Electrification + robotics, Swiss precision</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>Strong — robotics and drives portfolio</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Active — ABB Ability digital platform</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Limited — slower on AI integration</span></div>
+      </div>
+      <span class="verdict-chip challenger">Executing</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">Schneider</div>
+      <div class="comp-tag">Energy mgmt + automation, Paris-based</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>Dominant — buildings and grid controls</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Strong — EcoStruxure, data centre boom</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Moderate — sustainability-led R&D</span></div>
+      </div>
+      <span class="verdict-chip challenger">Peer Competitor</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">Rockwell</div>
+      <div class="comp-tag">Factory automation, US-focused</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>Strong — US manufacturing loyalty</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Growing — Plex MES, FactoryTalk</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Thin — limited software platform depth</span></div>
+      </div>
+      <span class="verdict-chip laggard">Niche Strength</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">Dassault</div>
+      <div class="comp-tag">3DEXPERIENCE, design-led software</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="zone-dot core"></div><span>Deep — aerospace and automotive CAD</span></div>
+        <div class="comp-zone-row"><div class="zone-dot edge"></div><span>Strong — virtual twin, life sciences</span></div>
+        <div class="comp-zone-row"><div class="zone-dot beyond"></div><span>Emerging — simulation-first AI</span></div>
+      </div>
+      <span class="verdict-chip challenger">Closest Software Rival</span>
+    </div>
+  </div>
+  <div class="radar-wrap reveal">
+    <canvas id="radarChart"></canvas>
+  </div>
+</section>
+
+<!-- S&W -->
+<section id="sw" class="warm">
+  <div class="section-label">Strategic Assessment</div>
+  <h2 class="section-title">The genuine advantages,<br><em>and the honest tensions</em><br>the strategy carries.</h2>
+  <div class="sw-grid reveal">
+    <div class="sw-panel strengths">
+      <div class="sw-title">Strengths</div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div>
+          <div class="sw-lead">The Xcelerator platform changes what the product actually is</div>
+          <div class="sw-body">Siemens' shift from selling industrial hardware to operating an open digital business platform fundamentally changes its competitive position. Xcelerator doesn't just connect Siemens' products — it creates an ecosystem where partners like Bember (smart parking), RIIICO (factory mapping), and Mendix (low-code) extend Siemens' value proposition without Siemens building anything. The 14% CAGR in digital business from 2020–2025 is the ecosystem compounding, not the product line growing.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div>
+          <div class="sw-lead">India is the largest R&D operation no one talks about</div>
+          <div class="sw-body">STSPL in Bengaluru — 10,000 people, 6,000 in pure R&D, 50 dedicated labs, 200 new global roles added recently — is the largest technology development operation Siemens has anywhere in the world. It has tripled its invention output. The two most critical current digital products, Electrification X and Portfolio Manager, were built there. This is not a cost play. It is where Siemens' intellectual future lives.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div>
+          <div class="sw-lead">The NVIDIA partnership is not a vendor relationship</div>
+          <div class="sw-body">The industrial AI operating system Siemens is building with NVIDIA is genuinely co-developed: NVIDIA contributes GPU infrastructure, Omniverse physics simulation, and AI model architecture; Siemens contributes decades of domain knowledge about how factories fail, how semiconductors are designed, how turbines age. Neither company can build what they're building without the other. The first autonomous AI-driven factory planned for Erlangen in 2026 is the prototype of an entirely new manufacturing paradigm.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div>
+          <div class="sw-lead">Smart Infrastructure's 18.3% margin in FY2025 is structurally significant</div>
+          <div class="sw-body">Smart Infrastructure — covering buildings, grids, and electrification — delivered record 18.3% profit margins driven by AI data centre construction demand. This is the industrial company equivalent of software margins, achieved on physical infrastructure products. The AI power demand cycle has converted what was a stable but modest-margin business into one of Siemens' fastest-growing and most profitable divisions in a single capital expenditure wave.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div>
+          <div class="sw-lead">41,700+ patents represent a moat that acquisitions cannot replicate</div>
+          <div class="sw-body">Siemens' patent portfolio is not an IP defence mechanism — it is the accumulated codification of the insight that real-world industrial intelligence lives in domain knowledge, not general AI. A competitor can acquire software. They cannot acquire the understanding of why a Siemens PLC behaves differently at -40°C versus +85°C, or how a rail switch wears over 10 million cycles. That knowledge is the moat.</div>
+        </div>
+      </div>
+    </div>
+    <div class="sw-panel weaknesses">
+      <div class="sw-title">Weaknesses</div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div>
+          <div class="sw-lead">The $16B acquisition bet is not yet integrated — it is a hypothesis</div>
+          <div class="sw-body">Altair and Dotmatics together represent the largest software M&A programme in Siemens' history. Major investors at the recent AGM warned management not to "burn too much money" and cautioned that a potential AI bubble could leave Siemens "painfully exposed." The acquisitions are strategically coherent — simulation intelligence, life sciences R&D — but integration risk in software M&A is notoriously underestimated. The value is in the thesis. The proof is still ahead.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div>
+          <div class="sw-lead">Digital Industries (factory automation) is facing a market correction</div>
+          <div class="sw-body">The core industrial automation division — PLCs, drives, motion control — experienced revenue decline in FY2025 due to destocking and weak European manufacturing sentiment. Analysts at Kepler Cheuvreux downgraded the stock citing limited confidence indicators in European industry. The Edge bets are funded by Core cash flows. A prolonged Core softness tests the entire transformation funding logic.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div>
+          <div class="sw-lead">The "One Tech Company" strategy remains a "black box" for investors</div>
+          <div class="sw-body">Fund managers from Union Investment and Deka stated publicly at the AGM that the strategy lacks measurable clarity. "We don't want to buy visions anymore — we want to see results." A company executing a genuine philosophical transformation and a company describing one look identical until the results arrive. Siemens has not yet published the innovation allocation metrics — Core/Edge/Beyond breakdown — that would give investors the framework to evaluate the bet they are being asked to make.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div>
+          <div class="sw-lead">The Healthineers deconsolidation was handled with unusual clumsiness</div>
+          <div class="sw-body">The plan to reduce Siemens' stake in Healthineers — already a majority-owned listed subsidiary — has been described by investors as "craftsmanlike weak" and as having "unnecessarily cost trust." The drawn-out communication and execution have created a perception of indecision in a company that otherwise projects strategic clarity. The practical consequence is that Siemens must now replace the stable, predictable cash flow that Healthineers provided — likely through a higher dividend payout ratio that constrains future investment flexibility.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div>
+          <div class="sw-lead">China localisation is a hedge — and an exposure</div>
+          <div class="sw-body">Siemens' "local for local" manufacturing strategy in China insulates it from tariff risk, but Chinese automation challengers like Inovance are rapidly closing the technology gap with the advantage of lower-cost structures and accelerating domestic procurement policy that increasingly favours Chinese suppliers. The localisation strategy protects current revenue. It does not protect against the erosion of the premium that justifies Siemens' price positioning in the world's largest manufacturing market.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEADERSHIP -->
+<section id="leadership" class="white">
+  <div class="section-label">Leadership Through Theta</div>
+  <h2 class="section-title">Four CEOs. One direction.<br><em>The longest transformation</em><br>in German industry.</h2>
+  <div class="lead-timeline reveal">
+    <div class="lead-timeline-spine"></div>
+
+    <div class="lead-item inflection">
+      <div class="lead-left">
+        <div class="lead-tenure">2005–2013</div>
+        <div class="lead-name">Peter Löscher</div>
+        <div class="lead-tag">The Reformer</div>
+      </div>
+      <div class="lead-right">
+        <div class="lead-headline">Hired after the scandal. Tasked with making Siemens trustworthy again.</div>
+        <div class="lead-body">Löscher was the first outsider ever appointed Siemens CEO — a signal of the scale of the reckoning the bribery scandal demanded. He arrived from Merck with a mandate not to grow the company but to make it governable. His tenure is defined by compliance infrastructure, cultural reform, and the beginning of portfolio consolidation. In Theta terms, he stabilised the Core during a period when the Core was producing criminal liability rather than competitive advantage. The spinoff of Osram (2013) was his final act — and a preview of what the next decade would require.</div>
+        <div class="lead-theta-row">
+          <span class="lead-zone-tag core">Core: ~80%</span>
+          <span class="lead-zone-tag neutral">Edge: ~16%</span>
+          <span class="lead-zone-tag neutral">Beyond: ~4%</span>
+        </div>
+        <div class="lead-trifecta">
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Agility</div>
+            <div class="trifecta-score mid">Medium</div>
+            <div class="trifecta-note">Constrained by legacy cleanup</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Consciousness</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Outsider who could see the culture</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Courage</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Accepted the poisoned chalice</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lead-item inflection">
+      <div class="lead-left">
+        <div class="lead-tenure">2013–2021</div>
+        <div class="lead-name">Joe Kaeser</div>
+        <div class="lead-tag">The Architect</div>
+      </div>
+      <div class="lead-right">
+        <div class="lead-headline">Vision 2020 to Vision 2020+. The conglomerate becomes a portfolio company.</div>
+        <div class="lead-body">Kaeser's "Vision 2020" strategy is one of the most consequential strategic plans in German corporate history — not because of what it built, but because of what it removed. During his tenure, Siemens listed Healthineers (Europe's largest IPO of 2018), spun off Siemens Energy (2020), and began the software acquisition programme that would define the next decade. He also acquired Mentor Graphics (2017, $4.5B) — the first major signal that Siemens understood its future lay in electronic design automation, not just physical automation. The Theta shift under Kaeser moves Siemens from Core-dominant to genuinely Edge-investing for the first time at scale.</div>
+        <div class="lead-theta-row">
+          <span class="lead-zone-tag core">Core: ~68%</span>
+          <span class="lead-zone-tag edge">Edge: ~24%</span>
+          <span class="lead-zone-tag beyond">Beyond: ~8%</span>
+        </div>
+        <div class="lead-trifecta">
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Agility</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Spun off two DAX companies in 3 years</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Consciousness</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Saw software before hardware companies did</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Courage</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">Mentor Graphics was a controversial bet</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lead-item inflection">
+      <div class="lead-left">
+        <div class="lead-tenure">2021–Present</div>
+        <div class="lead-name">Roland Busch</div>
+        <div class="lead-tag">The Philosopher-Engineer</div>
+      </div>
+      <div class="lead-right">
+        <div class="lead-headline">A PhD physicist who named the strategy, funded it, and now has to prove it.</div>
+        <div class="lead-body">Busch is the first Siemens CEO in the modern era who arrived with both an engineering PhD and a clear philosophical thesis: that the most valuable thing Siemens can do in the 21st century is become the company that combines the real and digital worlds at industrial scale. He launched Xcelerator (2022), announced the NVIDIA Industrial AI Operating System partnership (CES 2026), acquired Altair ($2.5B) and Dotmatics ($5.1B), and articulated a "Northstar" — the "One Tech Company" — that is either the most coherent strategic vision in Siemens' history or a very expensive statement of intent. Revenue reached a record €78.9B. The order backlog hit €117B. The question has shifted from whether Siemens is transforming to whether the transformation will compound at the rate the market requires. Busch's leadership trifecta scores the highest it has in decades — but his job is also the hardest, because the escape routes his predecessors used (spinoffs, restructuring) are largely exhausted. He has to execute.</div>
+        <div class="lead-theta-row">
+          <span class="lead-zone-tag core">Core: ~65%</span>
+          <span class="lead-zone-tag edge">Edge: ~25%</span>
+          <span class="lead-zone-tag beyond">Beyond: ~10%</span>
+        </div>
+        <div class="lead-trifecta">
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Agility</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">NVIDIA, Meta, CFS simultaneously</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Consciousness</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">"No AI without industrial physics" — right</div>
+          </div>
+          <div class="trifecta-cell">
+            <div class="trifecta-label">Courage</div>
+            <div class="trifecta-score high">High</div>
+            <div class="trifecta-note">$16B in software with investor resistance</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal" style="margin-top:16px;">
+    <div class="lead-chart-label">Zone allocation shift by CEO — Core / Edge / Beyond over time</div>
+    <div class="lead-chart-wrap">
+      <canvas id="leadershipChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section id="diagnostic" class="ink">
+  <div class="section-label">Theta Diagnostic</div>
+  <h2 class="section-title">The honest portrait of where<br><em>Siemens stands,</em><br>and what the map says next.</h2>
+  <div class="diag-grid reveal">
+    <div>
+      <div class="diag-block">
+        <div class="diag-block-title">Portfolio Archetype</div>
+        <div class="archetype-row">
+          <span class="archetype-box ok">Core ✓</span>
+          <span class="archetype-box ok">Edge ✓</span>
+          <span class="archetype-box ok">Beyond ✓</span>
+        </div>
+        <p class="diag-prose" style="margin-top:12px;">All three zones are active, funded, and producing outputs — which is rarer than it sounds for a 177-year-old industrial company. The Core generates the cash. The Edge is producing commercial results (PepsiCo's 20% throughput gain, DMG MORI's testing time reduction). The Beyond is seeded through the NVIDIA partnership and fusion digital twin in ways that extend Siemens' reach without diluting its capital. The portfolio is balanced — the question is whether it stays balanced as the Edge acquisitions are integrated and investors demand proof points.</p>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Leadership &amp; Culture</div>
+        <p class="diag-prose">Roland Busch is operating in Founder Mode inside an Operator organisation — which is the most productive and most unstable leadership state possible. The NVIDIA partnership, the nine Copilots, the Digital Twin Composer, and the autonomous factory at Erlangen are Founder Mode outputs: high conviction, high velocity, high integration risk. The culture around him is still learning to celebrate intelligent failure rather than punish it. Siemens' Gamesa crisis showed that when the Edge zone is measured by Core KPIs, quality breaks down. The lesson is being internalised — but not yet structurally embedded.</p>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Mavericks &amp; Risk Tolerance</div>
+        <p class="diag-prose">STSPL India is the closest thing Siemens has to a protected skunkworks: geographic distance from Munich creates cultural autonomy, and the 50 dedicated labs create permission to experiment. The fact that Electrification X and Portfolio Manager were built there — not in Germany — signals that the real innovation is happening at the edges of the organisational map rather than at its centre. This is not a management failure. It is a design that works. The risk is that it remains informal rather than becoming the template for how all of Siemens' Edge initiatives are protected.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="diag-block">
+        <div class="diag-block-title">Customer Signal Alignment</div>
+        <p class="diag-prose">Siemens' customer is changing in real time. The traditional buyer — a manufacturing plant manager choosing between PLCs — is being joined by a new buyer: a semiconductor company that needs simulation software to design the next GPU node, a pharmaceutical company that needs to virtualise drug discovery, a data centre operator that needs electrification infrastructure for AI workloads. Siemens is responding to all three simultaneously through Altair, Dotmatics, and Smart Infrastructure's data centre business. The risk is not signal detection — Xcelerator usage data provides unprecedented demand intelligence. The risk is execution bandwidth: three new customer archetypes is three new go-to-market motions.</p>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Portfolio vs. Theta Benchmark</div>
+        <div style="margin-top:14px;">
+          <div class="inline-bar-row">
+            <span class="inline-bar-label">Core</span>
+            <div class="inline-bar-track">
+              <div class="inline-bar-fill" style="width:65%;background:var(--core-green);"></div>
+              <div class="inline-bar-benchmark" style="left:70%;"></div>
+            </div>
+            <span class="inline-bar-pct">65%</span>
+          </div>
+          <div class="inline-bar-row">
+            <span class="inline-bar-label">Edge</span>
+            <div class="inline-bar-track">
+              <div class="inline-bar-fill" style="width:25%;background:var(--edge-amber);"></div>
+              <div class="inline-bar-benchmark" style="left:20%;"></div>
+            </div>
+            <span class="inline-bar-pct">25%</span>
+          </div>
+          <div class="inline-bar-row">
+            <span class="inline-bar-label">Beyond</span>
+            <div class="inline-bar-track">
+              <div class="inline-bar-fill" style="width:10%;background:var(--beyond-crimson);"></div>
+              <div class="inline-bar-benchmark" style="left:10%;"></div>
+            </div>
+            <span class="inline-bar-pct">10%</span>
+          </div>
+          <p style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:8px;">Vertical markers indicate Theta benchmark targets (70 / 20 / 10)</p>
+        </div>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Critical Tension</div>
+        <div class="tension-box">
+          <div class="tension-label">The Transformation Is Real — But the Proof Window Is Closing</div>
+          <div class="tension-text">Siemens has spent $16 billion on software acquisitions, launched a new digital platform, and partnered with the two most powerful AI companies in the world. It has also watched its Core Digital Industries division soften, its Healthineers deconsolidation misfire, and its investor base demand results rather than vision. The tension is not strategic — the direction is right. The tension is temporal: the integration of Altair and Dotmatics will take two to four years to produce measurable margin contribution. The investors who funded the bet have a shorter patience horizon. The next eighteen months are not about whether Siemens' strategy is correct. They are about whether Siemens can demonstrate enough proof points to maintain the capital market confidence required to execute it without interference.</div>
+        </div>
+      </div>
+
+      <div class="verdict-final">
+        <div class="verdict-type">Balanced — and Executing</div>
+        <div class="verdict-symbols">✓ ✓ ✓</div>
+        <div class="verdict-explain">Siemens is the rarest of things: a company that has successfully reinvented itself multiple times and is now attempting its most ambitious reinvention yet — from industrial hardware to industrial intelligence. The Theta verdict is Balanced, because all three zones are active and strategically coherent. The modifier is Executing, because the balance is not yet proven at the scale the acquisitions require. The 177-year track record says Siemens usually gets this right. The current investor sentiment says it must prove it faster than it has before. Both things are true simultaneously — which is what genuine strategic transformation always feels like from inside it.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left"><strong>Theta Framework</strong> · Siemens AG Case Study · 2026</div>
+  <div class="footer-right">Strategic Case Study</div>
+</footer>
+
+<script>
+// SCROLL REVEAL
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.05 });
+reveals.forEach(el => observer.observe(el));
+
+const tooltip = {
+  backgroundColor: 'rgba(10,15,26,0.94)',
+  titleColor: '#fff',
+  bodyColor: 'rgba(255,255,255,0.62)',
+  titleFont: { family: 'DM Sans', size: 12 },
+  bodyFont: { family: 'DM Sans', size: 11 },
+  padding: 10, cornerRadius: 2, borderWidth: 1,
+  borderColor: 'rgba(0,153,153,0.2)'
+};
+
+// SCATTER CHART
+const pointLabelPlugin = {
+  id: 'pointLabels',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    chart.data.datasets.forEach((dataset, i) => {
+      const meta = chart.getDatasetMeta(i);
+      meta.data.forEach((point, j) => {
+        const d = dataset.data[j];
+        if (d.label) {
+          ctx.save();
+          ctx.fillStyle = dataset.borderColor;
+          ctx.font = '11px DM Sans';
+          ctx.textAlign = 'left';
+          ctx.fillText(d.label, point.x + 11, point.y + 4);
+          ctx.restore();
+        }
+      });
+    });
+  }
+};
+
+new Chart(document.getElementById('scatterChart').getContext('2d'), {
+  type: 'scatter',
+  plugins: [pointLabelPlugin],
+  data: {
+    datasets: [
+      {
+        label: 'Core Zone',
+        data: [
+          { x: 12, y: 14, label: 'Industrial Automation (DI)' },
+          { x: 20, y: 18, label: 'Smart Infrastructure' },
+          { x: 16, y: 12, label: 'Mobility / Rail' },
+          { x: 10, y: 10, label: 'Service Contracts' },
+          { x: 24, y: 16, label: 'Building Controls' },
+        ],
+        backgroundColor: 'rgba(26,107,74,0.78)', borderColor: '#1A6B4A', pointRadius: 7
+      },
+      {
+        label: 'Edge Zone',
+        data: [
+          { x: 54, y: 62, label: 'Xcelerator Platform' },
+          { x: 60, y: 68, label: 'Industrial Copilots (×9)' },
+          { x: 58, y: 58, label: 'Digital Twin Composer' },
+          { x: 50, y: 54, label: 'Private 5G Networks' },
+          { x: 56, y: 72, label: 'Altair Integration' },
+          { x: 52, y: 64, label: 'Dotmatics / Life Sciences' },
+        ],
+        backgroundColor: 'rgba(176,123,26,0.78)', borderColor: '#B07B1A', pointRadius: 7
+      },
+      {
+        label: 'Beyond Zone',
+        data: [
+          { x: 80, y: 86, label: 'Industrial Metaverse (NVIDIA)' },
+          { x: 86, y: 92, label: 'Fusion Digital Twin (CFS)' },
+          { x: 84, y: 80, label: '6G Research Consortia' },
+          { x: 78, y: 88, label: 'Autonomous AI Factories (2026)' },
+        ],
+        backgroundColor: 'rgba(122,26,46,0.78)', borderColor: '#7A1A2E', pointRadius: 7
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 11 }, color: '#46555A', boxWidth: 10, padding: 18 } },
+      tooltip: { ...tooltip, callbacks: { label: (c) => c.raw.label || '' } }
+    },
+    scales: {
+      x: {
+        min: 0, max: 108,
+        title: { display: true, text: 'Market Reach  →  Existing · New · Emerging · Speculative', font: { family: 'DM Sans', size: 11 }, color: '#8A9098' },
+        ticks: { display: false }, grid: { color: 'rgba(0,153,153,0.05)' }, border: { display: false }
+      },
+      y: {
+        min: 0, max: 108,
+        title: { display: true, text: 'Technology Change  →  Incremental · Moderate · High · Radical · Extreme', font: { family: 'DM Sans', size: 11 }, color: '#8A9098' },
+        ticks: { display: false }, grid: { color: 'rgba(0,153,153,0.05)' }, border: { display: false }
+      }
+    }
+  }
+});
+
+// DONUT CHART
+new Chart(document.getElementById('donutChart').getContext('2d'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Core Zone', 'Edge Zone', 'Beyond Zone'],
+    datasets: [{ data: [65, 25, 10], backgroundColor: ['rgba(26,107,74,0.82)','rgba(176,123,26,0.82)','rgba(122,26,46,0.82)'], borderWidth: 0, hoverOffset: 6 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true, cutout: '68%',
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 11 }, color: '#46555A', boxWidth: 10, padding: 14 } },
+      tooltip: { ...tooltip, callbacks: { label: c => `${c.label}: ${c.raw}%` } }
+    }
+  }
+});
+
+// REVENUE CHART
+new Chart(document.getElementById('revenueChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: ['FY2021', 'FY2022', 'FY2023', 'FY2024', 'FY2025'],
+    datasets: [
+      {
+        label: 'Revenue (€B)',
+        data: [62.3, 71.9, 77.8, 75.9, 78.9],
+        backgroundColor: [
+          'rgba(0,153,153,0.32)',
+          'rgba(0,153,153,0.38)',
+          'rgba(0,153,153,0.50)',
+          'rgba(0,153,153,0.44)',
+          'rgba(0,153,153,0.75)',
+        ],
+        borderColor: 'rgba(0,153,153,0.8)',
+        borderWidth: 1, borderRadius: 2, hoverBackgroundColor: 'rgba(0,255,208,0.5)'
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { ...tooltip, callbacks: { label: c => `€${c.raw}B revenue` } }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#8A9098' }, border: { display: false } },
+      y: { min: 50, max: 90, grid: { color: 'rgba(0,153,153,0.06)' }, ticks: { font: { family: 'DM Sans', size: 10 }, color: '#8A9098', callback: v => '€' + v + 'B', maxTicksLimit: 6 }, border: { display: false } }
+    }
+  }
+});
+
+// LEADERSHIP CHART
+new Chart(document.getElementById('leadershipChart').getContext('2d'), {
+  type: 'line',
+  data: {
+    labels: ['Löscher\n2005–13', 'Kaeser\n2013–21', 'Busch\n2021–'],
+    datasets: [
+      { label: 'Core Zone %', data: [80, 68, 65], borderColor: '#1A6B4A', backgroundColor: 'rgba(26,107,74,0.07)', borderWidth: 2.5, pointBackgroundColor: '#1A6B4A', pointRadius: 7, tension: 0.35, fill: false },
+      { label: 'Edge Zone %', data: [16, 24, 25], borderColor: '#B07B1A', backgroundColor: 'rgba(176,123,26,0.06)', borderWidth: 2.5, pointBackgroundColor: '#B07B1A', pointRadius: 7, tension: 0.35, fill: false },
+      { label: 'Beyond Zone %', data: [4, 8, 10], borderColor: '#7A1A2E', backgroundColor: 'rgba(122,26,46,0.05)', borderWidth: 2.5, pointBackgroundColor: '#7A1A2E', pointRadius: 7, tension: 0.35, fill: false }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 11 }, color: '#46555A', boxWidth: 10, padding: 20 } },
+      tooltip: { ...tooltip, callbacks: { label: c => `${c.dataset.label}: ${c.raw}%` } }
+    },
+    scales: {
+      x: { grid: { color: 'rgba(0,153,153,0.05)' }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#8A9098' }, border: { display: false } },
+      y: { min: 0, max: 100, grid: { color: 'rgba(0,153,153,0.05)' }, ticks: { font: { family: 'DM Sans', size: 10 }, color: '#8A9098', callback: v => v + '%', maxTicksLimit: 6 }, border: { display: false } }
+    }
+  }
+});
+
+// RADAR CHART
+new Chart(document.getElementById('radarChart').getContext('2d'), {
+  type: 'radar',
+  data: {
+    labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'AI Readiness', 'Software Depth', 'Hardware Moat'],
+    datasets: [
+      { label: 'Siemens', data: [87, 82, 76, 84, 80, 90], borderColor: '#009999', backgroundColor: 'rgba(0,153,153,0.08)', borderWidth: 2.5, pointBackgroundColor: '#009999', pointRadius: 4 },
+      { label: 'ABB', data: [82, 62, 52, 64, 55, 84], borderColor: '#B07B1A', backgroundColor: 'rgba(176,123,26,0.05)', borderWidth: 2, pointBackgroundColor: '#B07B1A', pointRadius: 4 },
+      { label: 'Schneider', data: [80, 70, 60, 72, 65, 76], borderColor: '#1A6B4A', backgroundColor: 'rgba(26,107,74,0.05)', borderWidth: 2, pointBackgroundColor: '#1A6B4A', pointRadius: 4 },
+      { label: 'Dassault', data: [72, 68, 72, 70, 88, 42], borderColor: '#7A1A2E', backgroundColor: 'rgba(122,26,46,0.05)', borderWidth: 2, pointBackgroundColor: '#7A1A2E', pointRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 11 }, color: '#46555A', boxWidth: 10, padding: 14 } },
+      tooltip: tooltip
+    },
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { display: false },
+        grid: { color: 'rgba(0,0,0,0.07)' },
+        angleLines: { color: 'rgba(0,0,0,0.07)' },
+        pointLabels: { font: { family: 'DM Sans', size: 11 }, color: '#46555A' }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
