@@ -1,832 +1,1694 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LVMH Case Study: Culture vs. Tech in Luxury</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LVMH — The Architecture of Desire | Theta Innovation Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --company-primary: #1a3a4a;
+  --company-accent: #c8a96e;
+  --ink: #0E1A18;
+  --ink-soft: #1E2D2A;
+  --paper: #F7F5F0;
+  --paper-warm: #EFEBE2;
+  --muted: #8A9490;
+  --core-green: #2D6A4F;
+  --edge-amber: #B5841A;
+  --beyond-crimson: #8B1A1A;
+  --border: rgba(26, 58, 74, 0.15);
+  --gold: #c8a96e;
+  --gold-light: rgba(200,169,110,0.12);
+}
 
-        body {
-            font-family: 'Georgia', 'Times New Roman', serif;
-            color: #1a1a1a;
-            line-height: 1.6;
-            background: #ffffff;
-        }
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            color: #ffffff;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
+html { scroll-behavior: smooth; }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 30% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
-        }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
 
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 900px;
-            padding: 0 2rem;
-        }
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 3rem;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(14,26,24,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(200,169,110,0.15);
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 500; letter-spacing: 0.15em;
+  color: var(--gold); text-transform: uppercase;
+}
+.nav-links { display: flex; gap: 2.5rem; }
+.nav-links a {
+  font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(255,255,255,0.55); text-decoration: none;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--gold); }
 
-        .hero h1 {
-            font-size: 4rem;
-            font-weight: 300;
-            letter-spacing: 0.05em;
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
-        }
+/* ── HERO ── */
+.hero {
+  position: relative; min-height: 100vh;
+  display: flex; align-items: center;
+  background: var(--ink);
+  overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(200,169,110,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,169,110,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  animation: gridDrift 40s linear infinite;
+}
+@keyframes gridDrift { from { transform: translateY(0); } to { transform: translateY(80px); } }
+.hero-radial {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 70% 60% at 20% 50%, rgba(200,169,110,0.08) 0%, transparent 60%),
+              radial-gradient(ellipse 40% 40% at 80% 80%, rgba(26,58,74,0.4) 0%, transparent 70%);
+}
+.hero-noise {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+}
+.hero-content {
+  position: relative; z-index: 2;
+  max-width: 1200px; margin: 0 auto; padding: 7rem 3rem 5rem;
+  width: 100%;
+}
+.hero-kicker {
+  font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 2rem;
+  opacity: 0; animation: fadeUp 0.8s 0.3s forwards;
+  display: flex; align-items: center; gap: 1rem;
+}
+.hero-kicker::before {
+  content: ''; display: block; width: 40px; height: 1px; background: var(--gold); opacity: 0.5;
+}
+.hero-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.2rem, 7vw, 6.5rem);
+  font-weight: 300; line-height: 1.05;
+  color: #fff; margin-bottom: 1.5rem;
+  opacity: 0; animation: fadeUp 0.9s 0.5s forwards;
+}
+.hero-headline em { font-style: italic; color: var(--gold); }
+.hero-subtitle {
+  font-size: 1.15rem; font-weight: 300; line-height: 1.7;
+  color: rgba(255,255,255,0.6); max-width: 680px;
+  margin-bottom: 4rem;
+  opacity: 0; animation: fadeUp 0.9s 0.7s forwards;
+}
+.hero-meta {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0; border-top: 1px solid rgba(200,169,110,0.2);
+  padding-top: 2.5rem;
+  opacity: 0; animation: fadeUp 0.9s 0.9s forwards;
+}
+.meta-item { padding: 0 2rem 0 0; }
+.meta-item:not(:last-child) { border-right: 1px solid rgba(200,169,110,0.15); margin-right: 2rem; }
+.meta-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); opacity: 0.7; margin-bottom: 0.4rem; }
+.meta-value { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 400; color: #fff; }
+.meta-sub { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem; }
+.scroll-indicator {
+  position: absolute; right: 3rem; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 1rem;
+  z-index: 2;
+  opacity: 0; animation: fadeIn 1s 1.2s forwards;
+}
+.scroll-line {
+  width: 1px; height: 80px; background: linear-gradient(to bottom, transparent, var(--gold));
+  animation: scrollLine 2s ease-in-out infinite;
+}
+@keyframes scrollLine {
+  0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+  50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+  100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; }
+}
+.scroll-text { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); writing-mode: vertical-rl; opacity: 0.6; }
 
-        .hero-subtitle {
-            font-size: 1.5rem;
-            font-weight: 300;
-            margin-bottom: 1rem;
-            color: #d4af37;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
+@keyframes fadeUp { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
-        .hero-author {
-            font-size: 1rem;
-            font-style: italic;
-            color: rgba(255, 255, 255, 0.7); 
-            margin-top: 2rem;
-        }
+/* ── SHARED SECTION STYLES ── */
+section { position: relative; }
+.section-white { background: #fff; }
+.section-warm { background: var(--paper-warm); }
+.section-ink { background: var(--ink); color: #fff; }
+.section-paper { background: var(--paper); }
 
-        .scroll-indicator {
-            position: absolute;
-            bottom: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #d4af37;
-            font-size: 0.9rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-        }
+.container { max-width: 1200px; margin: 0 auto; padding: 6rem 3rem; }
+.container-wide { max-width: 1400px; margin: 0 auto; padding: 6rem 3rem; }
 
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
+.section-label {
+  font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 1rem;
+}
+.section-label::before { content: ''; display: block; width: 30px; height: 1px; background: var(--gold); opacity: 0.6; }
 
-        /* Section Styling */
-        section {
-            padding: 6rem 0;
-            border-bottom: 1px solid #e5e5e5;
-        }
+h2.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 300; line-height: 1.15;
+  margin-bottom: 2rem; letter-spacing: -0.01em;
+}
+h2.section-title em { font-style: italic; color: var(--gold); }
+.section-white h2.section-title, .section-paper h2.section-title { color: var(--ink); }
+.section-ink h2.section-title { color: #fff; }
+.section-warm h2.section-title { color: var(--ink); }
 
-        section:last-child {
-            border-bottom: none;
-        }
+p { font-size: 1.05rem; line-height: 1.8; color: #3a3a3a; margin-bottom: 1.4rem; }
+.section-ink p { color: rgba(255,255,255,0.75); }
 
-        .section-header {
-            font-size: 0.9rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: #d4af37;
-            margin-bottom: 1rem;
-            font-weight: 400;
-        }
+/* ── ABOUT SECTION ── */
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+.hidden-fact {
+  background: var(--ink); color: #fff;
+  padding: 2rem 2.5rem; margin-top: 2.5rem;
+  border-left: 3px solid var(--gold);
+}
+.hidden-fact-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; }
+.hidden-fact p { color: rgba(255,255,255,0.8); font-size: 0.95rem; margin: 0; }
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.stat-cell {
+  background: var(--paper); padding: 2.5rem 2rem;
+  transition: background 0.3s;
+}
+.stat-cell:hover { background: var(--gold-light); }
+.stat-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.5rem; font-weight: 300; color: var(--ink); line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.stat-unit { font-size: 1.2rem; color: var(--gold); }
+.stat-desc { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.3rem; }
 
-        h2 {
-            font-size: 2.5rem;
-            font-weight: 300;
-            margin-bottom: 2rem;
-            letter-spacing: 0.02em;
-        }
+.belief-strip {
+  background: var(--company-primary);
+  padding: 5rem 3rem; text-align: center;
+}
+.belief-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  font-style: italic; font-weight: 300; color: #fff;
+  max-width: 900px; margin: 0 auto 1.5rem;
+  line-height: 1.45;
+}
+.belief-attr { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(200,169,110,0.8); }
 
-        h3 {
-            font-size: 1.8rem;
-            font-weight: 300;
-            margin: 3rem 0 1.5rem;
-            letter-spacing: 0.02em;
-        }
+/* ── TIMELINE ── */
+.timeline { position: relative; }
+.timeline-line {
+  position: absolute; left: 7rem; top: 0; bottom: 0;
+  width: 1px; background: linear-gradient(to bottom, transparent, var(--gold) 10%, var(--gold) 90%, transparent);
+  opacity: 0.3;
+}
+.timeline-entry {
+  display: grid; grid-template-columns: 7rem auto;
+  gap: 3rem; padding: 0 0 3.5rem;
+  position: relative;
+}
+.timeline-year {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 300; color: var(--muted);
+  text-align: right; padding-top: 0.1rem;
+  position: relative;
+}
+.timeline-dot {
+  position: absolute; right: -3.4rem; top: 0.45rem;
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--gold);
+  background: var(--paper-warm);
+}
+.timeline-dot.filled { background: var(--gold); }
+.timeline-phase {
+  font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.4rem;
+}
+.timeline-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 400;
+  color: var(--ink); margin-bottom: 0.5rem;
+}
+.timeline-body { font-size: 0.95rem; color: #555; margin: 0; line-height: 1.7; }
+.timeline-inflection .timeline-title { color: var(--company-primary); }
+.timeline-inflection .timeline-dot { width: 14px; height: 14px; background: var(--gold); border-color: var(--gold); right: -3.6rem; top: 0.3rem; }
 
-        p {
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-            color: #333;
-        }
+/* ── THETA MAP ── */
+.theta-map-grid { display: grid; grid-template-columns: 340px 1fr; gap: 4rem; align-items: start; }
+.zone-legend { display: flex; flex-direction: column; gap: 1.5rem; }
+.zone-pill {
+  padding: 1.5rem 2rem; border-radius: 2px;
+  position: relative; overflow: hidden;
+}
+.zone-pill::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px; }
+.zone-core { background: rgba(45,106,79,0.07); }
+.zone-core::before { background: var(--core-green); }
+.zone-edge { background: rgba(181,132,26,0.07); }
+.zone-edge::before { background: var(--edge-amber); }
+.zone-beyond { background: rgba(139,26,26,0.07); }
+.zone-beyond::before { background: var(--beyond-crimson); }
+.zone-pill-label {
+  font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+  margin-bottom: 0.5rem; font-weight: 500;
+}
+.zone-core .zone-pill-label { color: var(--core-green); }
+.zone-edge .zone-pill-label { color: var(--edge-amber); }
+.zone-beyond .zone-pill-label { color: var(--beyond-crimson); }
+.zone-pill-title { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 400; color: var(--ink); margin-bottom: 0.4rem; }
+.zone-pill p { font-size: 0.88rem; color: #555; margin: 0; line-height: 1.6; }
+.reading-card {
+  background: var(--ink); color: rgba(255,255,255,0.75);
+  padding: 1.5rem 2rem; margin-top: 1rem;
+  font-size: 0.85rem; line-height: 1.7;
+}
+.reading-card strong { color: var(--gold); }
+.chart-container { position: relative; height: 480px; }
 
-        /* Executive Summary */
-        .executive-summary {
-            background: #f8f8f8;
-            padding: 3rem;
-            border-left: 3px solid #d4af37;
-            margin: 2rem 0;
-            font-size: 1.2rem;
-            line-height: 1.8;
-        }
+/* ── PORTFOLIO ALLOCATION ── */
+.portfolio-grid { display: grid; grid-template-columns: 380px 1fr; gap: 5rem; align-items: center; }
+.doughnut-wrap { position: relative; height: 340px; }
+.doughnut-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  text-align: center; pointer-events: none;
+}
+.doughnut-center-label { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--ink); line-height: 1.3; }
+.doughnut-center-sub { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-top: 0.3rem; }
+.allocation-bars { display: flex; flex-direction: column; gap: 2.5rem; }
+.alloc-item {}
+.alloc-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.6rem; }
+.alloc-name { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+.alloc-pct { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 300; }
+.alloc-track { height: 4px; background: rgba(0,0,0,0.08); position: relative; }
+.alloc-fill { height: 100%; position: absolute; top: 0; left: 0; }
+.alloc-benchmark { position: absolute; top: -6px; width: 2px; height: 16px; background: var(--ink); opacity: 0.3; }
+.alloc-commentary { font-size: 0.82rem; color: var(--muted); margin-top: 0.6rem; line-height: 1.6; }
 
-        /* Data Grid */
-        .data-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
+/* ── COMPETITORS ── */
+.competitor-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.5px; margin-bottom: 4rem; }
+.comp-card {
+  background: var(--paper); padding: 2rem 1.5rem;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.comp-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.1); }
+.comp-card.featured {
+  background: #fff;
+  border: 1.5px solid rgba(200,169,110,0.4);
+  box-shadow: 0 4px 24px rgba(200,169,110,0.12);
+}
+.comp-name { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 400; color: var(--ink); margin-bottom: 0.3rem; }
+.comp-tag { font-size: 0.72rem; color: var(--muted); margin-bottom: 1.4rem; line-height: 1.5; }
+.comp-zone-row { display: flex; align-items: flex-start; gap: 0.6rem; margin-bottom: 0.8rem; }
+.zone-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 0.35rem; }
+.zone-dot-core { background: var(--core-green); }
+.zone-dot-edge { background: var(--edge-amber); }
+.zone-dot-beyond { background: var(--beyond-crimson); }
+.comp-zone-text { font-size: 0.8rem; color: #555; line-height: 1.5; }
+.comp-verdict {
+  display: inline-block; margin-top: 1.2rem;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+  border: 1px solid;
+}
+.verdict-strong { border-color: var(--core-green); color: var(--core-green); }
+.verdict-pivot { border-color: var(--edge-amber); color: var(--edge-amber); }
+.verdict-focused { border-color: var(--company-primary); color: var(--company-primary); }
+.verdict-ascending { border-color: var(--beyond-crimson); color: var(--beyond-crimson); }
 
-        .data-card {
-            background: #ffffff;
-            border: 1px solid #e5e5e5;
-            padding: 2rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+.radar-wrap { height: 440px; max-width: 640px; margin: 0 auto; }
 
-        .data-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
+/* ── STRENGTHS & WEAKNESSES ── */
+.sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+.sw-panel { padding: 2.5rem; }
+.sw-panel-strength { border: 1px solid rgba(45,106,79,0.25); background: rgba(45,106,79,0.03); }
+.sw-panel-weakness { border: 1px solid rgba(139,26,26,0.2); background: rgba(139,26,26,0.02); }
+.sw-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 400;
+  margin-bottom: 2rem;
+}
+.sw-panel-strength .sw-title { color: var(--core-green); }
+.sw-panel-weakness .sw-title { color: var(--beyond-crimson); }
+.sw-item { display: flex; gap: 1.2rem; margin-bottom: 1.8rem; align-items: flex-start; }
+.sw-marker {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 0.75rem; font-weight: 600; margin-top: 0.1rem;
+}
+.sw-panel-strength .sw-marker { background: rgba(45,106,79,0.12); color: var(--core-green); }
+.sw-panel-weakness .sw-marker { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+.sw-content {}
+.sw-lead { font-weight: 500; color: var(--ink); font-size: 0.95rem; margin-bottom: 0.3rem; }
+.sw-desc { font-size: 0.88rem; color: #666; line-height: 1.65; margin: 0; }
 
-        .data-label {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: #999;
-            margin-bottom: 0.5rem;
-        }
+/* ── DIAGNOSTIC (INK) ── */
+.diagnostic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+.diag-block { margin-bottom: 2.5rem; }
+.diag-label {
+  font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold); opacity: 0.7; margin-bottom: 0.8rem;
+}
+.diag-title { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 300; color: rgba(255,255,255,0.9); margin-bottom: 0.8rem; }
+.diag-body { font-size: 0.9rem; color: rgba(255,255,255,0.6); line-height: 1.75; margin: 0; }
+.archetype-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem; }
+.archetype-chip {
+  padding: 0.35rem 0.9rem; border: 1px solid;
+  font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+}
+.chip-ok { border-color: var(--core-green); color: var(--core-green); }
+.chip-mid { border-color: var(--edge-amber); color: var(--edge-amber); }
+.chip-gap { border-color: var(--beyond-crimson); color: var(--beyond-crimson); }
 
-        .data-value {
-            font-size: 2rem;
-            font-weight: 300;
-            color: #1a1a1a;
-        }
+.tension-box {
+  background: rgba(200,169,110,0.08); border-left: 3px solid var(--gold);
+  padding: 1.5rem 2rem;
+}
+.tension-box p { color: rgba(255,255,255,0.75); font-size: 0.92rem; margin: 0; line-height: 1.7; }
 
-        /* Table */
-        .table-wrapper {
-            overflow-x: auto;
-            margin: 2rem 0;
-        }
+.inline-bars { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 1rem; }
+.inline-bar-row { display: flex; align-items: center; gap: 1rem; }
+.inline-bar-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); width: 70px; flex-shrink: 0; }
+.inline-bar-track { flex: 1; height: 3px; background: rgba(255,255,255,0.1); position: relative; }
+.inline-bar-actual { height: 100%; position: absolute; top: 0; left: 0; }
+.inline-bar-bench { position: absolute; top: -4px; width: 2px; height: 11px; background: rgba(255,255,255,0.3); }
+.inline-bar-pct { font-size: 0.75rem; color: rgba(255,255,255,0.6); width: 40px; text-align: right; flex-shrink: 0; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-        }
+.verdict-block {
+  background: rgba(200,169,110,0.06); border: 1px solid rgba(200,169,110,0.2);
+  padding: 2rem 2.5rem; margin-top: 1.5rem;
+}
+.verdict-headline { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 300; color: #fff; margin-bottom: 0.8rem; }
+.verdict-sub { font-size: 0.9rem; color: rgba(255,255,255,0.6); line-height: 1.75; margin: 0; }
 
-        th {
-            background: #1a1a1a;
-            color: #ffffff;
-            padding: 1rem;
-            text-align: left;
-            font-weight: 400;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-        }
+/* ── INSIGHT STRIPS ── */
+.insight-strip {
+  background: var(--company-primary);
+  padding: 4rem 3rem; text-align: center;
+}
+.insight-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.5rem, 2.8vw, 2.2rem); font-style: italic; font-weight: 300;
+  color: #fff; max-width: 860px; margin: 0 auto;
+  line-height: 1.5;
+}
+.insight-quote em { color: var(--gold); }
 
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid #e5e5e5;
-        }
+/* ── KERING SECTION ── */
+.kering-intro { max-width: 760px; }
+.kering-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin: 3rem 0; }
+.kering-metric { background: #fff; padding: 2rem 1.5rem; }
+.kering-metric-val { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 300; line-height: 1; margin-bottom: 0.3rem; }
+.kering-metric-val.neg { color: var(--beyond-crimson); }
+.kering-metric-val.pos { color: var(--core-green); }
+.kering-metric-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+.kering-theta { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; margin: 2rem 0; }
+.kering-zone { padding: 2rem 1.8rem; }
+.kering-zone-core { background: rgba(45,106,79,0.08); border-top: 2px solid var(--core-green); }
+.kering-zone-edge { background: rgba(181,132,26,0.08); border-top: 2px solid var(--edge-amber); }
+.kering-zone-beyond { background: rgba(139,26,26,0.07); border-top: 2px solid var(--beyond-crimson); }
+.kz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.kz-name { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; }
+.kering-zone-core .kz-name { color: var(--core-green); }
+.kering-zone-edge .kz-name { color: var(--edge-amber); }
+.kering-zone-beyond .kz-name { color: var(--beyond-crimson); }
+.kz-status {
+  font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.2rem 0.6rem; border: 1px solid;
+}
+.status-critical { border-color: var(--beyond-crimson); color: var(--beyond-crimson); }
+.status-early { border-color: var(--edge-amber); color: var(--edge-amber); }
+.status-bold { border-color: var(--core-green); color: var(--core-green); }
+.kz-body { font-size: 0.88rem; color: #555; line-height: 1.7; }
+.kz-items { list-style: none; margin-top: 1rem; }
+.kz-items li {
+  padding: 0.5rem 0; border-bottom: 1px solid rgba(0,0,0,0.06);
+  font-size: 0.82rem; color: #555;
+  display: flex; align-items: flex-start; gap: 0.5rem;
+}
+.kz-items li::before { content: '—'; opacity: 0.4; flex-shrink: 0; }
 
-        tr:hover {
-            background: #f8f8f8;
-        }
+/* ── LUXURY × TECH SECTION ── */
+.luxtech-intro { max-width: 760px; margin-bottom: 3rem; }
+.principles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin: 2rem 0; }
+.principle-card { background: var(--paper-warm); padding: 2.5rem 2rem; }
+.principle-num {
+  font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 300;
+  color: rgba(200,169,110,0.4); line-height: 1; margin-bottom: 1rem;
+}
+.principle-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 400; color: var(--ink); margin-bottom: 0.8rem; }
+.principle-body { font-size: 0.88rem; color: #666; line-height: 1.7; margin: 0; }
+.spectrum-table { width: 100%; border-collapse: collapse; margin: 3rem 0; }
+.spectrum-table th {
+  text-align: left; padding: 0.8rem 1.2rem;
+  font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+  background: var(--ink); color: var(--gold);
+  font-weight: 400;
+}
+.spectrum-table td { padding: 1.1rem 1.2rem; border-bottom: 1px solid rgba(0,0,0,0.07); font-size: 0.9rem; color: #444; }
+.spectrum-table tr:nth-child(even) td { background: rgba(0,0,0,0.02); }
+.spectrum-table td:first-child { font-weight: 500; color: var(--ink); }
 
-        /* Innovation Framework */
-        .theta-framework {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin: 3rem 0;
-        }
+/* ── STARTUP/AGENTIC INNOVATIONS ── */
+.innovation-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin: 2rem 0; }
+.innovation-tile { background: #fff; padding: 2.5rem 2rem; transition: box-shadow 0.25s; }
+.innovation-tile:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+.tile-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+.tile-zone-tag {
+  display: inline-block; padding: 0.2rem 0.7rem; margin-bottom: 1rem;
+  font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+}
+.tag-edge { background: rgba(181,132,26,0.12); color: var(--edge-amber); }
+.tag-beyond { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+.tag-core { background: rgba(45,106,79,0.1); color: var(--core-green); }
+.tile-title { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 400; color: var(--ink); margin-bottom: 0.7rem; }
+.tile-body { font-size: 0.88rem; color: #666; line-height: 1.7; margin-bottom: 1rem; }
+.tile-build { font-size: 0.8rem; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 0.8rem; color: var(--muted); }
+.tile-build strong { color: var(--company-primary); }
+.build-badge {
+  display: inline-block; padding: 0.15rem 0.6rem;
+  background: rgba(26,58,74,0.08); color: var(--company-primary);
+  font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
 
-        .zone-card {
-            padding: 2rem;
-            border-radius: 2px;
-            color: #ffffff;
-            min-height: 300px;
-        }
+/* ── RICHEMONT SECTION ── */
+.richemont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
 
-        .zone-core {
-            background: linear-gradient(135deg, #2d5016 0%, #3d6b21 100%);
-        }
+/* ── FOOTER ── */
+footer {
+  background: var(--ink);
+  padding: 3rem;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid rgba(200,169,110,0.1);
+}
+.footer-left { font-size: 0.75rem; color: rgba(255,255,255,0.4); letter-spacing: 0.1em; }
+.footer-left span { color: var(--gold); margin-right: 1rem; }
+.footer-right { font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: rgba(255,255,255,0.4); letter-spacing: 0.08em; }
 
-        .zone-edge {
-            background: linear-gradient(135deg, #8b6914 0%, #b8941f 100%);
-        }
+/* ── SCROLL ANIMATIONS ── */
+.fade-up {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
 
-        .zone-beyond {
-            background: linear-gradient(135deg, #8b1a1a 0%, #b52424 100%);
-        }
-
-        .zone-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            font-weight: 300;
-        }
-
-        .zone-percentage {
-            font-size: 3rem;
-            font-weight: 300;
-            margin-bottom: 1rem;
-        }
-
-        .zone-description {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            opacity: 0.9;
-        }
-
-        .zone-list {
-            list-style: none;
-            margin-top: 1.5rem;
-        }
-
-        .zone-list li {
-            padding: 0.5rem 0;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            font-size: 0.9rem;
-        }
-
-        .zone-list li:last-child {
-            border-bottom: none;
-        }
-
-        /* Comparison Table */
-        .comparison-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin: 3rem 0;
-        }
-
-        .company-card {
-            border: 2px solid #e5e5e5;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .company-card:hover {
-            border-color: #d4af37;
-            transform: translateY(-5px);
-        }
-
-        .company-name {
-            font-size: 1.3rem;
-            font-weight: 400;
-            margin-bottom: 1rem;
-        }
-
-        .company-focus {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .focus-bar {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-        }
-
-        .bar {
-            height: 8px;
-            background: #e5e5e5;
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .bar-fill {
-            height: 100%;
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
-
-        .bar-core { background: #3d6b21; }
-        .bar-edge { background: #b8941f; }
-        .bar-beyond { background: #b52424; }
-
-        /* Risk Table */
-        .risk-grid {
-            display: grid;
-            gap: 1.5rem;
-            margin: 3rem 0;
-        }
-
-        .risk-card {
-            border-left: 4px solid #b52424;
-            padding: 1.5rem;
-            background: #f8f8f8;
-        }
-
-        .risk-title {
-            font-size: 1.2rem;
-            font-weight: 400;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Quote/Insight */
-        .insight-box {
-            background: #1a1a1a;
-            color: #ffffff;
-            padding: 3rem;
-            margin: 3rem 0;
-            text-align: center;
-            font-size: 1.5rem;
-            font-style: italic;
-            line-height: 1.8;
-            border-left: 4px solid #d4af37;
-        }
-
-        /* Recommendation */
-        .recommendation {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            margin: 3rem 0;
-            padding: 3rem;
-            background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 100%);
-        }
-
-        .allocation {
-            text-align: center;
-        }
-
-        .allocation-label {
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: #999;
-            margin-bottom: 1rem;
-        }
-
-        .allocation-value {
-            font-size: 2.5rem;
-            font-weight: 300;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-        }
-
-        .allocation-bars {
-            display: flex;
-            height: 60px;
-            margin-top: 1rem;
-            gap: 2px;
-        }
-
-        .alloc-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            font-weight: 400;
-        }
-
-        /* Footer */
-        footer {
-            background: #1a1a1a;
-            color: #ffffff;
-            padding: 3rem 0;
-            text-align: center;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero-subtitle {
-                font-size: 1.2rem;
-            }
-
-            .theta-framework {
-                grid-template-columns: 1fr;
-            }
-
-            .recommendation {
-                grid-template-columns: 1fr;
-            }
-
-            section {
-                padding: 4rem 0;
-            }
-        }
-    </style>
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  nav { padding: 0 1.5rem; }
+  .nav-links { display: none; }
+  .container, .container-wide { padding: 4rem 1.5rem; }
+  .about-grid, .theta-map-grid, .portfolio-grid, .sw-grid, .diagnostic-grid,
+  .kering-theta, .principles-grid, .richemont-grid { grid-template-columns: 1fr; }
+  .hero-meta { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .meta-item:not(:last-child) { border-right: none; margin-right: 0; }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .competitor-grid { grid-template-columns: 1fr 1fr; }
+  .innovation-tiles { grid-template-columns: 1fr; }
+  .kering-metrics { grid-template-columns: 1fr 1fr; }
+  .scroll-indicator { display: none; }
+  .timeline-entry { grid-template-columns: 5rem auto; gap: 2rem; }
+  .timeline-line { left: 5rem; }
+  .timeline-dot { right: -2.4rem; }
+  .belief-strip { padding: 3rem 1.5rem; }
+  footer { flex-direction: column; gap: 1rem; text-align: center; }
+}
+</style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <div class="hero">
-        <div class="hero-content">
-            <div class="hero-subtitle">Case Study</div>
-            <h1>Culture vs. Tech in Luxury:<br>Is LVMH Future-Ready?</h1>
-            <p class="hero-author">By Christine Pamela</p>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">LVMH × Theta</div>
+  <div class="nav-links">
+    <a href="#about">Overview</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#theta-map">Innovation Map</a>
+    <a href="#engines">Engines</a>
+    <a href="#competitors">Competitors</a>
+    <a href="#kering">Kering</a>
+    <a href="#luxtech">Luxury × Tech</a>
+    <a href="#diagnostic">Diagnostic</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-radial"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Innovation Case Study — Luxury Conglomerates</div>
+    <h1 class="hero-headline">
+      The <em>Architecture</em><br>of Desire
+    </h1>
+    <p class="hero-subtitle">How the world's most powerful luxury empire innovates without losing its soul — and what every founder, strategist, and builder can learn from the way LVMH plays the long game across three innovation horizons.</p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">Founded</div>
+        <div class="meta-value">1987</div>
+        <div class="meta-sub">Paris, France</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Employees</div>
+        <div class="meta-value">215,000</div>
+        <div class="meta-sub">Across 75+ Maisons</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Market Cap</div>
+        <div class="meta-value">$312B</div>
+        <div class="meta-sub">February 2026</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Framework</div>
+        <div class="meta-value">Balanced</div>
+        <div class="meta-sub">Core ☑ Edge ☑ Beyond ⚠</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Explore</span>
+  </div>
+</div>
+
+<!-- 2025 CONTEXT STRIP -->
+<div style="background:var(--company-primary); padding:1.8rem 3rem; display:flex; align-items:center; justify-content:center; gap:4rem; flex-wrap:wrap;">
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <span style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,169,110,0.7);">2025 in Context</span>
+  </div>
+  <div style="display:flex;gap:3rem;flex-wrap:wrap;align-items:center;">
+    <div style="text-align:center;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:#fff;">−5%</div>
+      <div style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,169,110,0.65);margin-top:0.2rem;">Fashion &amp; Leather</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:rgba(200,169,110,0.8);">↓</div>
+      <div style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,169,110,0.65);margin-top:0.2rem;">Hennessy (China collapse)</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:#7ec8a0;">↑</div>
+      <div style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,169,110,0.65);margin-top:0.2rem;">Sephora &amp; Jewelry</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:#fff;">€11.3B</div>
+      <div style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,169,110,0.65);margin-top:0.2rem;">Operating Cash Flow (+8%)</div>
+    </div>
+    <div style="max-width:320px;">
+      <p style="font-size:0.82rem;color:rgba(255,255,255,0.55);margin:0;line-height:1.6;">The portfolio hedge worked exactly as designed: when fashion and cognac fell, beauty and jewelry absorbed the shock. This is LVMH's structural argument made visible in a single year.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="section-white" id="about">
+  <div class="container">
+    <div class="section-label">What They Do</div>
+    <div class="about-grid fade-up">
+      <div>
+        <h2 class="section-title">A holding company that <em>owns</em> the aspiration economy</h2>
+        <p>LVMH Moët Hennessy Louis Vuitton is not a fashion company. It is the infrastructure behind desire. Through 75+ Maisons spanning fashion, jewelry, fragrance, wine, hospitality, and retail, it has built the most diversified luxury portfolio in history — one that functions less like a corporation and more like a sovereign of culture. Every Maison retains its heritage and independence while drawing on the group's capital, data, and scale.</p>
+        <p>Bernard Arnault — "the wolf in cashmere" — entered LVMH in 1989 not as a luxury man but as a predator with a thesis: that heritage brands were systematically undervalued by their founding families, and that applying rigorous financial strategy to creative businesses would generate compounding returns that conventional industries could never match. He was right. LVMH's 2025 revenue of €80.8 billion, even in a year of softening, remains a figure no competitor has ever approached.</p>
+        <div class="hidden-fact">
+          <div class="hidden-fact-label">Hidden Fact</div>
+          <p>Louis Vuitton has never held a sale. Not once. In its 170-year history, the brand has maintained a strict policy of destroying unsold inventory rather than discounting. Every Louis Vuitton sold in the world is sold at full price. This is not just a business practice — it is the foundational act of scarcity theatre that makes the brand worth $40 billion by itself.</p>
         </div>
-        <div class="scroll-indicator">Scroll to Explore</div>
+      </div>
+      <div>
+        <div class="stat-grid">
+          <div class="stat-cell">
+            <div class="stat-number">€80.8<span class="stat-unit">B</span></div>
+            <div class="stat-desc">2025 Revenue</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number">46<span class="stat-unit">%</span></div>
+            <div class="stat-desc">Fashion & Leather share</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number">74<span class="stat-unit">M</span></div>
+            <div class="stat-desc">Sephora loyalty members</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number">700<span class="stat-unit">+</span></div>
+            <div class="stat-desc">Startup collaborations since 2018</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="belief-strip">
+    <div class="belief-quote">"Buy the best brands in the world, and make them even better."</div>
+    <div class="belief-attr">Bernard Arnault — Chairman &amp; CEO, LVMH</div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="section-warm" id="timeline">
+  <div class="container">
+    <div class="section-label">Journey</div>
+    <h2 class="section-title" style="margin-bottom:3.5rem;">From <em>trunk maker</em><br>to trillion-dollar empire</h2>
+    <div class="timeline fade-up">
+      <div class="timeline-line"></div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">1854<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Origin</div>
+          <div class="timeline-title">Louis Vuitton opens his trunk atelier in Paris</div>
+          <p class="timeline-body">Hired as trunk-maker to Empress Eugénie of France. His flat-top, stackable trunk design — revolutionary in an age of round-topped cases — earns him royal clientele and launches 170 years of travel mythology.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry timeline-inflection">
+        <div class="timeline-year">1987<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Inflection · Merger</div>
+          <div class="timeline-title">LVMH is born: Louis Vuitton meets Moët Hennessy</div>
+          <p class="timeline-body">The luxury conglomerate model is invented. No precedent existed for packaging heritage brands under corporate architecture while preserving their creative DNA. It was an untested bet — and it worked.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">1989<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Inflection · Power</div>
+          <div class="timeline-title">Arnault seizes control — the hostile acquisition of a lifetime</div>
+          <p class="timeline-body">Invited in as a stabilizing investor during a family feud, Arnault quietly acquired a controlling stake in LVMH. What followed was 35 years of the most disciplined brand-building operation in corporate history. He didn't just buy companies; he bought culture.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">1990s<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Expansion</div>
+          <div class="timeline-title">The acquisition machine begins: Celine, Loewe, Kenzo, Sephora, TAG Heuer</div>
+          <p class="timeline-body">Arnault's playbook crystallizes: identify undervalued heritage brands, install visionary creative directors, apply rigorous financial discipline, and let the brand's DNA do the rest. Each acquisition is a cultural bet, not just a financial one.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">2010<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Controversy</div>
+          <div class="timeline-title">The Hermès ambush — and a feud that never truly ended</div>
+          <p class="timeline-body">Using complex equity derivatives, LVMH built a 23% stake in rival Hermès without disclosure — stunning the founding family and triggering years of legal warfare. LVMH agreed to divest under settlement in 2014. But the feud was never fully buried: in late 2025, Hermès heir Nicolas Puech filed a new lawsuit alleging that his 6 million missing shares — worth approximately €14B — had been secretly funneled to LVMH. LVMH denied the claims vehemently, calling them a "coordinated press campaign." What the dispute reveals is not just a legal conflict, but the irreducible rivalry between the two most powerful forces in French luxury — a tension that shapes the strategic posture of both houses to this day.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">2021<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Inflection · Scale</div>
+          <div class="timeline-title">Tiffany & Co. acquired for $15.8B — the largest luxury deal in history</div>
+          <p class="timeline-body">After dramatically pulling out during the pandemic and renegotiating, LVMH completed the acquisition that transformed its jewelry division into a global powerhouse. Tiffany's American identity and cultural weight gave LVMH something it never had: deep US heritage.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">2023<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Cultural Peak</div>
+          <div class="timeline-title">Pharrell Williams arrives at Louis Vuitton. $500B valuation milestone.</div>
+          <p class="timeline-body">LVMH becomes the first European company to surpass $500B in market cap. Simultaneously, the appointment of Pharrell — a musician with no formal fashion training — signals that LVMH treats culture itself as the technology of desire.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">2025<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Reckoning</div>
+          <div class="timeline-title">The aspirational middle class retreats — revenue falls 1%, fashion -5%</div>
+          <p class="timeline-body">The post-pandemic luxury boom ends. China's recovery stalls. LVMH's first real pressure test since the financial crisis reveals both the resilience of the portfolio (Sephora, jewelry growing) and the vulnerability of the core (fashion down, Hennessy in freefall). Arnault warns: "2026 will not be easy."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section class="section-white" id="theta-map">
+  <div class="container-wide">
+    <div class="section-label">Theta Innovation Map</div>
+    <h2 class="section-title">Where LVMH places its <em>bets</em></h2>
+    <div class="theta-map-grid fade-up">
+      <div>
+        <div class="zone-legend">
+          <div class="zone-pill zone-core">
+            <div class="zone-pill-label">🟩 Core Zone · ~72%</div>
+            <div class="zone-pill-title">Optimize &amp; Sustain</div>
+            <p>Existing markets, incremental technology. A IDEA demand forecasting across 75 Maisons. Precision viticulture at Moët. Sephora's Beauty Hubs and 74M loyalty members. The One Route shared logistics program — Dior, Louis Vuitton, and Rimowa share truck capacity across US routes, reducing redundant mileage and CO₂ emissions while cutting logistics costs across three of the group's most active shipping operations. Invisible to the consumer. Fundamental to the margin.</p>
+          </div>
+          <div class="zone-pill zone-edge">
+            <div class="zone-pill-label">🟨 Edge Zone · ~23%</div>
+            <div class="zone-pill-title">Build the Next S-Curve</div>
+            <p>New formats, reconfigured experiences. Kahoona's AI clienteling for Dior (winner, 2025 Innovation Awards). OMI's 3D content studio for Guerlain. Louis Vuitton's "Louisiana" cruise ship store in Shanghai. Bulgari's blockchain digital passport. And at the center of it all: La Maison des Startups — LVMH's systematized mechanism for continuous external innovation ingestion, housed at Station F in Paris, running year-round since 2018.</p>
+          </div>
+          <div class="zone-pill zone-beyond">
+            <div class="zone-pill-label">🟥 Beyond Zone · ~5%</div>
+            <div class="zone-pill-title">Shape the Future</div>
+            <p>Dior's Reverse Aging Board: 19 global scientists, 600 researchers, collaboration with Harvard's Dr. Gladyshev, 12,000 genes analyzed. Genesis soil platform at Moët Hennessy. Aglaé Ventures (family VC) placing $300M+ bets in AI. Bio-material R&D via L Catterton.</p>
+          </div>
+        </div>
+        <div class="reading-card" style="margin-top:1.5rem;">
+          <strong>How to read this map:</strong> X-axis tracks Market Reach from Existing to Speculative. Y-axis tracks Technology Change from Incremental to Extreme. The diagonal you'll see — Core to Edge to Beyond — is not LVMH's ambition. It is the blueprint of any company trying to survive the next decade. The question is whether the dots in the Beyond quadrant are funded or merely aspirational.
+        </div>
+      </div>
+      <div>
+        <div class="chart-container">
+          <canvas id="scatterChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO ALLOCATION -->
+<section class="section-warm" id="allocation">
+  <div class="container">
+    <div class="section-label">Portfolio Allocation</div>
+    <h2 class="section-title">The <em>funded</em> versus the aspirational</h2>
+    <p style="max-width:700px; margin-bottom:3rem;">LVMH's allocation is healthy by conventional benchmarks — but the single most important insight in luxury innovation analysis is not the percentage. It is whether those percentages are backed by real cash, real teams, and real mandates. Funded beyond beats unfunded beyond every time.</p>
+    <div class="portfolio-grid fade-up">
+      <div>
+        <div class="doughnut-wrap">
+          <canvas id="doughnutChart"></canvas>
+          <div class="doughnut-center">
+            <div class="doughnut-center-label">Core · Edge<br>Beyond</div>
+            <div class="doughnut-center-sub">Active Zones</div>
+          </div>
+        </div>
+      </div>
+      <div class="allocation-bars">
+        <div class="alloc-item">
+          <div class="alloc-header">
+            <span class="alloc-name">🟩 Core Zone</span>
+            <span class="alloc-pct" style="color:var(--core-green)">72%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill" style="width:72%;background:var(--core-green)"></div>
+            <div class="alloc-benchmark" style="left:70%"></div>
+          </div>
+          <div class="alloc-commentary">2% above the 70% Theta benchmark. LVMH's Core is world-class — A IDEA, precision viticulture, and Sephora's loyalty engine are genuine competitive advantages, not just operational hygiene. The risk is that Core strength breeds complacency toward Edge and Beyond.</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-header">
+            <span class="alloc-name">🟨 Edge Zone</span>
+            <span class="alloc-pct" style="color:var(--edge-amber)">23%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill" style="width:23%;background:var(--edge-amber)"></div>
+            <div class="alloc-benchmark" style="left:20%"></div>
+          </div>
+          <div class="alloc-commentary">3% above benchmark. La Maison des Startups is the Edge engine — not just an accelerator but a systematic mechanism for external innovation ingestion. The pilot-scale-deploy model means LVMH benefits from 1,500+ startup experiments annually without bearing their failure cost.</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-header">
+            <span class="alloc-name">🟥 Beyond Zone</span>
+            <span class="alloc-pct" style="color:var(--beyond-crimson)">5%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill" style="width:5%;background:var(--beyond-crimson)"></div>
+            <div class="alloc-benchmark" style="left:10%"></div>
+          </div>
+          <div class="alloc-commentary">5% below the 10% Theta benchmark — and the gap matters. LVMH's Beyond is biased toward sustainability (soil, regenerative agriculture) and physical science (Dior Reverse Aging). The digital behavioral layer — agentic commerce, GEO, consumer tech hardware — is conspicuously absent from any public roadmap.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSIGHT STRIP 1 -->
+<div class="insight-strip fade-up">
+  <div class="insight-quote">
+    "The most dangerous innovation gap is not the one your competitors exploit today —<br>it is the one that <em>redefines how your customer finds you</em> tomorrow."
+  </div>
+</div>
+
+<!-- INNOVATION ENGINES BREAKOUT -->
+<section class="section-white" id="engines">
+  <div class="container">
+    <div class="section-label">Behind the Allocation</div>
+    <h2 class="section-title">The <em>engines</em> that fund each zone</h2>
+    <p style="max-width:720px; margin-bottom:3.5rem;">LVMH's innovation allocation is not a spreadsheet exercise. It is backed by three distinct vehicles — each purpose-built for a different time horizon, risk profile, and return expectation. Understanding how these engines work is the difference between reading LVMH's innovation story as theater and understanding it as architecture.</p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:2px; margin-bottom:3rem;" class="fade-up">
+
+      <!-- La Maison des Startups -->
+      <div style="background:var(--paper-warm); padding:2.5rem 2rem; border-top:3px solid var(--edge-amber);">
+        <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--edge-amber);margin-bottom:0.8rem;">Edge Engine</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;color:var(--ink);margin-bottom:1rem;">La Maison des Startups</div>
+        <p style="font-size:0.88rem;color:#555;line-height:1.75;margin-bottom:1.2rem;">Founded 2018. Located at Station F, Paris — the world's largest startup campus. A year-long accelerator that is not an accelerator: LVMH does not write equity checks. Instead, startups get access — to decision-makers at 75+ Maisons, to real-world pilots, to the group's infrastructure and mentorship network.</p>
+        <div style="display:flex;flex-direction:column;gap:0.7rem;margin-top:1rem;">
+          <div style="display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid rgba(0,0,0,0.07);">
+            <span style="font-size:0.8rem;color:#666;">Annual Applications</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--ink);">1,500–2,000</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid rgba(0,0,0,0.07);">
+            <span style="font-size:0.8rem;color:#666;">Selected per year</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--ink);">30–50 (2% rate)</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid rgba(0,0,0,0.07);">
+            <span style="font-size:0.8rem;color:#666;">Total collaborations</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--ink);">700+ since 2018</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.6rem 0;">
+            <span style="font-size:0.8rem;color:#666;">Equity taken</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--core-green);">None</span>
+          </div>
+        </div>
+        <div style="margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid rgba(0,0,0,0.1);">
+          <div style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem;">Proven outcomes</div>
+          <p style="font-size:0.82rem;color:#666;margin:0;line-height:1.65;"><strong style="color:var(--ink);">Raiku</strong> — Estonian sustainable packaging startup. Partnered with Moët Hennessy; subsequently raised €8.8M from the European Innovation Council. <strong style="color:var(--ink);">LivingPackets</strong> — co-created "THE BOX," a reusable smart packaging solution with Berluti. <strong style="color:var(--ink);">Orbis</strong> — deployed holographic product presentations with Zenith globally.</p>
+        </div>
+      </div>
+
+      <!-- L Catterton -->
+      <div style="background:var(--paper-warm); padding:2.5rem 2rem; border-top:3px solid var(--beyond-crimson);">
+        <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--beyond-crimson);margin-bottom:0.8rem;">Beyond Engine · Corporate PE</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;color:var(--ink);margin-bottom:1rem;">L Catterton</div>
+        <p style="font-size:0.88rem;color:#555;line-height:1.75;margin-bottom:1.2rem;">The world's largest consumer-focused private equity fund, LVMH-backed with $34B in assets under management. L Catterton is LVMH's institutional bet on consumer evolution — investing in companies across luxury, wellness, food, and crucially, the materials science that could one day transform LVMH's own supply chains.</p>
+        <div style="display:flex;flex-direction:column;gap:0.7rem;margin-top:1rem;">
+          <div style="display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid rgba(0,0,0,0.07);">
+            <span style="font-size:0.8rem;color:#666;">AUM</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--ink);">$34B</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid rgba(0,0,0,0.07);">
+            <span style="font-size:0.8rem;color:#666;">Focus</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--ink);">Consumer + Materials</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.6rem 0;">
+            <span style="font-size:0.8rem;color:#666;">Horizon</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--ink);">7–15 years</span>
+          </div>
+        </div>
+        <div style="margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid rgba(0,0,0,0.1);">
+          <div style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem;">Strategic bets</div>
+          <p style="font-size:0.82rem;color:#666;margin:0;line-height:1.65;"><strong style="color:var(--ink);">Crédit Médical (创健医疗)</strong> — biotech firm developing sustainable collagen as a future leather alternative; directly relevant to Louis Vuitton's core material supply chain. Consumer brands across pet food, beverages, and wellness — building a broad map of where consumer spending is moving.</p>
+        </div>
+      </div>
+
+      <!-- Aglaé Ventures -->
+      <div style="background:var(--paper-warm); padding:2.5rem 2rem; border-top:3px solid var(--company-primary);">
+        <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--company-primary);margin-bottom:0.8rem;">Beyond Engine · Family VC</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;color:var(--ink);margin-bottom:1rem;">Aglaé Ventures</div>
+        <p style="font-size:0.88rem;color:#555;line-height:1.75;margin-bottom:1.2rem;">The Arnault family's personal venture capital fund — the most speculative and frontier-facing vehicle in the LVMH ecosystem. While L Catterton bets on consumer evolution, Aglaé bets on the technologies that will reshape reality itself. Early backing of Netflix and Spotify established its pattern recognition in platform-defining companies before the market understood them.</p>
+        <div style="display:flex;flex-direction:column;gap:0.7rem;margin-top:1rem;">
+          <div style="display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid rgba(0,0,0,0.07);">
+            <span style="font-size:0.8rem;color:#666;">Recent AI commitment</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--ink);">$300M+</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid rgba(0,0,0,0.07);">
+            <span style="font-size:0.8rem;color:#666;">Portfolio signals</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--ink);">H, Photoroom (AI)</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.6rem 0;">
+            <span style="font-size:0.8rem;color:#666;">Legacy positions</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--ink);">Netflix, Spotify</span>
+          </div>
+        </div>
+        <div style="margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid rgba(0,0,0,0.1);">
+          <div style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem;">What this signals</div>
+          <p style="font-size:0.82rem;color:#666;margin:0;line-height:1.65;">Arnault's personal money in AI startups gives LVMH's leadership a front-row seat to the behavioral technologies that could reshape luxury discovery — without the reputational risk of deploying them inside a Maison prematurely. This is the Beyond engine operating exactly as it should: place options, observe closely, deploy when proven.</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Executive Summary -->
-    <section>
-        <div class="container">
-            <div class="section-header">Executive Summary</div>
-            <h2>The Luxury Paradox</h2>
-            <div class="executive-summary">
-                LVMH dominates global luxury today. Its Core and Edge zones secure profit and cultural relevance, while Beyond-zone investments are minimal, creating a risk of technological under-preparedness for digital-native luxury consumers. Comparative insight with Kering, Chanel, and Hermès shows that LVMH leads in scale and margin but lags in future-oriented, tech-forward initiatives.
-            </div>
+    <div style="background:var(--ink);padding:2rem 2.5rem;border-left:3px solid var(--gold);max-width:900px;" class="fade-up">
+      <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);opacity:0.8;margin-bottom:0.8rem;">The Structural Insight</div>
+      <p style="color:rgba(255,255,255,0.8);font-size:0.95rem;line-height:1.8;margin:0;">LVMH does not run one innovation program. It runs three vehicles operating at three different time horizons simultaneously — La Maison des Startups for 2–5 year returns, L Catterton for 7–15 year consumer evolution bets, and Aglaé Ventures for the 10–20 year technological frontier. This is how a company with 75 brands and €80B in revenue stays genuinely connected to early-stage disruption without destabilizing its core business. The model is not easily replicated — it requires Arnault's personal capital commitment and four decades of earned trust from founders who want access to the luxury ecosystem, not just a check.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section class="section-white" id="competitors">
+  <div class="container-wide">
+    <div class="section-label">Competitive Landscape</div>
+    <h2 class="section-title">Five conglomerates. <em>One</em> market to define.</h2>
+    <p style="max-width:700px; margin-bottom:3rem;">The 8x valuation gap between LVMH ($312B) and Kering ($40B) is not a story about size. It is a story about the compounding returns of a well-funded, well-sequenced innovation portfolio versus the cost of having the wrong zone absorb the wrong resource at the wrong moment.</p>
+    <div class="competitor-grid fade-up">
+      <div class="comp-card featured">
+        <div class="comp-name">LVMH</div>
+        <div class="comp-tag">The Balanced Empire — 75+ Maisons, €80.8B revenue, systematic innovation at scale</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">A IDEA AI, precision viticulture, Sephora scale, One Route logistics — world-class Core</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">La Maison des Startups (700+ collabs), Kahoona AI, Bulgari digital passport</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">Dior Reverse Aging Board, Genesis soil, Aglaé Ventures — funded but narrow</div></div>
+        <div class="comp-verdict verdict-strong">Balanced — Digital Gap</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Hermès</div>
+        <div class="comp-tag">The Core-Only Fortress — scarcity as strategy, P/E 49.9x, +9% in 2025</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">13 new workshops in 15 years, 6–8% annual price increases with zero elasticity</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">Deliberate restraint — no digital clienteling, no AI experiments. By design.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">Material mastery only. No public speculative bets. Scarcity is its entire thesis.</div></div>
+        <div class="comp-verdict verdict-focused">Core-Only Fortress</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Kering</div>
+        <div class="comp-tag">The Stressed Repositioner — Gucci −22%, but L'Oréal wellness JV is the boldest Beyond bet in luxury</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">Gucci −22%, McQueen −60%, margins at 11% — Core is the crisis, not the opportunity</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">Innovation Day (14 startups, Google, Snap), Generation Award — promising but event-based</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">L'Oréal wellness JV: 15 years of skin aging research + ultra-HNWI access. Unfunded ambition until Gucci recovers.</div></div>
+        <div class="comp-verdict verdict-pivot">Crisis → Turnaround</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Richemont</div>
+        <div class="comp-tag">The Focused Jeweler — Cartier & Van Cleef dominance, only major luxury group expected to show positive 2025 growth</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">17% French jewelry market share vs. LVMH's 11%. Cartier's enduring cultural pull is unmatched in hard luxury.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">YNAP divestiture to sharpen focus; digital passport initiatives; improved capital discipline</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">Conservative. Wins through operational excellence and jewelry's cultural permanence.</div></div>
+        <div class="comp-verdict verdict-focused">Focused Quality</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Prada Group</div>
+        <div class="comp-tag">The Quiet Ascendant — Versace acquisition, supply chain overhaul, ascending quietly</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">Linea Rossa wellness positioning; severed ties with 222 Italian suppliers post-labor investigation — supply chain discipline</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">Versace acquisition (~$1.3B); luxury-athleisure positioning; building portfolio breadth</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">No visible Beyond bets — consolidation phase, not speculation phase</div></div>
+        <div class="comp-verdict verdict-ascending">Quietly Ascending</div>
+      </div>
+    </div>
+    <div class="radar-wrap fade-up">
+      <canvas id="radarChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- STRENGTHS & WEAKNESSES -->
+<section class="section-warm" id="sw">
+  <div class="container">
+    <div class="section-label">LVMH Diagnostic</div>
+    <h2 class="section-title">What the empire <em>owns</em> — and what it doesn't</h2>
+    <div class="sw-grid fade-up">
+      <div class="sw-panel sw-panel-strength">
+        <div class="sw-title">Structural Strengths</div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">The funded beyond — Dior Reverse Aging Board</div>
+            <p class="sw-desc">19 global scientists, 600 researchers, Harvard collaboration, 12,000 genes analyzed. LVMH isn't just making skincare — it is building the science of longevity into its product pipeline. First products launch 2026. This is what funded Beyond looks like.</p>
+          </div>
         </div>
-    </section>
-
-    <!-- Background & Growth -->
-    <section>
-        <div class="container">
-            <div class="section-header">Background</div>
-            <h2>LVMH Overview</h2>
-            
-            <div class="data-grid">
-                <div class="data-card">
-                    <div class="data-label">Founded</div>
-                    <div class="data-value">1987</div>
-                </div>
-                <div class="data-card">
-                    <div class="data-label">2024 Revenue</div>
-                    <div class="data-value">€86B+</div>
-                </div>
-                <div class="data-card">
-                    <div class="data-label">Employees</div>
-                    <div class="data-value">~196,000</div>
-                </div>
-                <div class="data-card">
-                    <div class="data-label">Brands</div>
-                    <div class="data-value">75+</div>
-                </div>
-            </div>
-
-            <h3>Louis Vuitton: The Crown Jewel</h3>
-            <p>Louis Vuitton contributes approximately 25% of LVMH's revenue but generates over 45% of profit, making it both a cash engine and cultural powerhouse. Founded in 1854, the brand has evolved from trunk-maker to global status symbol under creative directors Nicolas Ghesquière and Pharrell Williams.</p>
-
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Year</th>
-                            <th>Acquisition</th>
-                            <th>Price</th>
-                            <th>Strategic Impact</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1987</td>
-                            <td>LV + Moët Hennessy</td>
-                            <td>—</td>
-                            <td>Conglomerate formed</td>
-                        </tr>
-                        <tr>
-                            <td>1999</td>
-                            <td>Fendi</td>
-                            <td>~$300M</td>
-                            <td>Rescued brand → profitable</td>
-                        </tr>
-                        <tr>
-                            <td>2011</td>
-                            <td>Bulgari</td>
-                            <td>$5.2B</td>
-                            <td>Jewelry acceleration</td>
-                        </tr>
-                        <tr>
-                            <td>2017</td>
-                            <td>Christian Dior Couture</td>
-                            <td>$13B</td>
-                            <td>Full control of Dior</td>
-                        </tr>
-                        <tr>
-                            <td>2021</td>
-                            <td>Tiffany & Co.</td>
-                            <td>$15.8B</td>
-                            <td>US flagship jewel, youth appeal</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">La Maison des Startups — the outsourced skunkworks</div>
+            <p class="sw-desc">2% acceptance rate from 1,500+ annual applications. 700+ collaborations since 2018. LVMH doesn't build every innovation — it ingests the best of what 1,500 founders are building globally. This is more efficient than any internal R&D lab.</p>
+          </div>
         </div>
-    </section>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">Portfolio diversification as a hedge, not just a strategy</div>
+            <p class="sw-desc">When Hennessy cognac collapsed in China in 2025, Sephora's beauty revenue and Tiffany's jewelry growth absorbed the shock. No single Maison failure can sink LVMH. This is architecturally superior to any single-brand luxury house.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">Decentralized creativity with centralized infrastructure</div>
+            <p class="sw-desc">Pharrell Williams at LV, Jonathan Anderson at Dior, Rihanna at Fenty — Arnault imports cultural mavericks from outside fashion and gives them real creative power. The Group provides the infrastructure. The Maison provides the identity. The maverick provides the heat.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">Sephora as the group's innovation laboratory</div>
+            <p class="sw-desc">With 74M loyalty members, 3,400 stores, and one-third of sales online, Sephora is where LVMH experiments at scale. Beauty Hubs with foundation scanners, AI virtual try-ons, omnichannel clienteling — all tested at Sephora before deployment across the premium houses.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">€11.3B operating cash flow — the perpetual innovation fuel</div>
+            <p class="sw-desc">Even in a down year, LVMH generated more cash than most luxury competitors generate in revenue. This capital pool funds Aglaé Ventures, L Catterton, La Maison des Startups, and any acquisition that appears during the current sector downturn.</p>
+          </div>
+        </div>
+      </div>
+      <div class="sw-panel sw-panel-weakness">
+        <div class="sw-title">Structural Vulnerabilities</div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">The agentic commerce blind spot — existential, not tactical</div>
+            <p class="sw-desc">Shopping-related searches on AI platforms grew 4,700% in 2024-2025. Amazon Rufus allows purchases from third-party sites within its app. OpenAI integrates directly with Shopify. If AI agents become the primary discovery layer, LVMH's owned-channel strategy becomes irrelevant. Hadjali (LV) admits it's "changing our industry, sooner than we expected" — but no public roadmap exists.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">Consumer tech hardware is a category LVMH doesn't own</div>
+            <p class="sw-desc">Ray-Ban Meta smart glasses became the bestseller in 60% of EMEA Ray-Ban stores in Q3 2024. Google, Apple, and Snap are launching luxury-adjacent wearables in 2026. LVMH owns eyewear (Thélios), jewelry (Tiffany, Bulgari), and watches (TAG Heuer, Hublot) — the exact categories that merge with wearable tech — yet has no hardware strategy.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">The digital beyond is biased toward physical science</div>
+            <p class="sw-desc">LVMH's Beyond portfolio is almost entirely sustainability and materials science — Genesis soil, regenerative agriculture, Dior Reverse Aging. These are genuine bets. But the behavioral layer of the future (how people discover, evaluate, and buy luxury) is underrepresented in any publicly disclosed initiative.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">Succession creates compounding innovation uncertainty</div>
+            <p class="sw-desc">Arnault's age limit was extended to 85 in early 2025. Five children hold senior roles — Delphine (Christian Dior Couture CEO), Antoine (Christian Dior SE CEO), Alexandre (Wines &amp; Spirits co-CEO), Frédéric (Watches CEO), Jean (LV Watches Director) — but no single designated heir. The market applies a visible "succession discount" to the stock. More critically for innovation: Arnault's founder-mode decision-making — his willingness to import Pharrell Williams, to bet on Rihanna, to pursue Tiffany after walking away — is not a system. It is a person. The family is consolidating its controlling stake (near 50%) using the lower share price, but consolidating ownership and replicating founder intuition are different problems entirely.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">Post-purchase innovation is a white space</div>
+            <p class="sw-desc">Startups like Slip are transforming the post-purchase receipt into a 70%+ open-rate engagement channel — delivering care instructions, loyalty enrollment, and personalized recommendations. LVMH's focus on pre-purchase desirability and in-store experience leaves this high-engagement moment largely unexplored.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">Innovation events vs. innovation engines — a Kering comparison that stings</div>
+            <p class="sw-desc">Kering holds annual Innovation Days. LVMH runs La Maison des Startups continuously. But even LVMH's Edge engine is structured as a partnership program, not a product team. There is no LVMH equivalent of Google X — a protected internal space for ideas that would embarrass the brands if they failed publicly.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Innovation Framework -->
-    <section style="background: #f8f8f8;">
-        <div class="container">
-            <div class="section-header">Innovation Framework</div>
-            <h2>The Theta Model: Three Zones of Innovation</h2>
-            
-            <div class="theta-framework">
-                <div class="zone-card zone-core">
-                    <div class="zone-title">Core Zone 🟩</div>
-                    <div class="zone-percentage">70%</div>
-                    <div class="zone-description">Optimize & extend existing luxury powerhouses. Cash engine through leather goods, selective retail, and heritage brands.</div>
-                    <ul class="zone-list">
-                        <li>Louis Vuitton leather goods refreshes</li>
-                        <li>Sephora format expansion</li>
-                        <li>Moët Hennessy limited drops</li>
-                        <li>Tiffany Blue Box revivals</li>
-                    </ul>
-                </div>
+<!-- KERING DEEP DIVE -->
+<section class="section-white" id="kering">
+  <div class="container">
+    <div class="section-label">Kering — A Theta Audit</div>
+    <h2 class="section-title">Vibrant energy. <em>Bleeding</em> Core.</h2>
+    <div class="kering-intro fade-up">
+      <p>Luca de Meo took the CEO chair at Kering in September 2025 — the first non-Pinault appointment in the company's history, poached from Renault with an automotive strategist's eye for operational discipline and a technologist's hunger for disruption. His arrival generated genuine energy. Innovation Days with Google and Snap, $300M+ in agentic AI exploration, a bold L'Oréal joint venture. His LinkedIn presence alone signals a new chapter.</p>
+      <p>That LinkedIn presence is worth taking seriously as primary data. De Meo is unusually visible for a luxury CEO — posting actively, engaging with startup founders, sharing his curiosity about AI in creative processes. He recently visited an LA digital artist's workshop and has publicly tried Snap's AR filters at Kering's own Innovation Day. This is not corporate communication managed by a PR team. It is an automotive outsider broadcasting his learning curve in real time. The posts reveal his three genuine obsessions: AI as a creative accelerator ("how do we help creative people get better, faster, stronger?"), supply chain overproduction ("producing 3 to sell 1 is unsustainable"), and consistent client experience through agentic AI ("strong brands deliver the same experience 24/7/365 everywhere"). What they do not yet reveal is a clear timeline for Gucci's recovery — the one metric that will determine whether his ambitions get funded.</p>
+      <p>But here is what the Theta lens demands we say plainly: vibrant people talking about innovation are not the same as an innovation portfolio working. You cannot fund Edge ambition from a Core that is generating net losses. The most important thing de Meo can do in 2026 is fix Gucci — not because Gucci is a prestige symbol, but because Gucci's cash flow is the only thing that can fund the bets he wants to make.</p>
+    </div>
+    <div class="kering-metrics fade-up">
+      <div class="kering-metric"><div class="kering-metric-val neg">−13%</div><div class="kering-metric-label">2025 Group Revenue</div></div>
+      <div class="kering-metric"><div class="kering-metric-val neg">−22%</div><div class="kering-metric-label">Gucci Sales (10th consecutive decline)</div></div>
+      <div class="kering-metric"><div class="kering-metric-val neg">−60%</div><div class="kering-metric-label">Alexander McQueen Sales</div></div>
+      <div class="kering-metric"><div class="kering-metric-val pos">+3%</div><div class="kering-metric-label">Bottega Veneta (only bright spot)</div></div>
+    </div>
+    <div class="kering-theta fade-up">
+      <div class="kering-zone kering-zone-core">
+        <div class="kz-header"><span class="kz-name">Core Zone</span><span class="kz-status status-critical">Crisis</span></div>
+        <p class="kz-body">The Core is not being optimized — it is being repaired. Kering spent 2025 cutting costs (€925M saved), closing 75 boutiques, restructuring McQueen's Italian workforce. These are stabilization actions, not innovation. The problem is not that de Meo is ignoring Core — it is that the Core demands all available attention, leaving nothing for Edge and Beyond.</p>
+        <ul class="kz-items">
+          <li>Gucci: 10 consecutive quarters of decline. Sell-through "far below" Louis Vuitton and Hermès.</li>
+          <li>Operating margin: 11.1% (down from 14.5% and a 2022 peak near 28%)</li>
+          <li>De Meo diagnosis: "No industrial company can survive producing 3 to sell 1."</li>
+          <li>Q4 sequential improvement: −10% (vs −21% in Q1) — early, fragile, real</li>
+        </ul>
+      </div>
+      <div class="kering-zone kering-zone-edge">
+        <div class="kz-header"><span class="kz-name">Edge Zone</span><span class="kz-status status-early">Promising · Unfunded</span></div>
+        <p class="kz-body">De Meo brings genuine Edge energy — his automotive background, his curiosity about agentic AI, his personal engagement with startups (trying Snap AR filters, visiting LA digital artists). The Kering Innovation Day in January 2026 featured 14 startups alongside Google and Snap. The Generation Award for sustainability startups has expanded to MENA. Real signals. But annual events are not continuous engines.</p>
+        <ul class="kz-items">
+          <li>Innovation Day: 14 startups, de Meo personally engaged with AR and AI demos</li>
+          <li>Generation Award (Sustainability): 500+ applications in Saudi first edition</li>
+          <li>Agentic AI explicit focus: "same experience 24/7/365 everywhere" as CRM goal</li>
+          <li>Comparison: LVMH runs 1,500+ startup applications annually, year-round</li>
+        </ul>
+      </div>
+      <div class="kering-zone kering-zone-beyond">
+        <div class="kz-header"><span class="kz-name">Beyond Zone</span><span class="kz-status status-bold">Bold · Long Horizon</span></div>
+        <p class="kz-body">The L'Oréal joint venture is legitimately the most ambitious Beyond bet in luxury right now. Kering sold its beauty division for €4B and simultaneously entered a 50-year partnership with L'Oréal to explore "luxury, wellness, and longevity." L'Oréal contributes 15 years of skin aging science. Kering contributes ultra-HNWI relationships and prime real estate. Together, they are building a category that does not yet exist: medical luxury. This is genuine Beyond — speculative, long-horizon, potentially industry-defining. But until Gucci's Core funds it, it remains vision.</p>
+        <ul class="kz-items">
+          <li>L'Oréal JV: €4B deal closing H1 2026; joint exploration of "wellness and longevity"</li>
+          <li>L'Oréal brings: biological age tools, LED masks, injectable expertise, skin aging research</li>
+          <li>Kering brings: ultra-HNWI access, prime global real estate, luxury experience DNA</li>
+          <li>The gap LVMH has: Dior spas and Celine kettlebells. Kering could own this category.</li>
+        </ul>
+      </div>
+    </div>
+    <p style="max-width:740px; margin-top:1.5rem; font-style:italic; color:var(--muted); font-size:0.95rem;">The Theta framework does not prescribe what de Meo should do. But it does illuminate the sequencing challenge: a company cannot fund the future by starving the present. The 8x valuation gap between LVMH and Kering is not a permanent sentence. It is a current reading of who has sequenced innovation correctly — and who has not, yet.</p>
+  </div>
+</section>
 
-                <div class="zone-card zone-edge">
-                    <div class="zone-title">Edge Zone 🟨</div>
-                    <div class="zone-percentage">25%</div>
-                    <div class="zone-description">New experiences + cultural reinvention. Brand heat and youth relevance through bold collaborations.</div>
-                    <ul class="zone-list">
-                        <li>LV x Supreme</li>
-                        <li>Fenty Beauty (Rihanna)</li>
-                        <li>Loewe (Jonathan Anderson)</li>
-                        <li>Virtual runway pilots</li>
-                    </ul>
-                </div>
-
-                <div class="zone-card zone-beyond">
-                    <div class="zone-title">Beyond Zone 🟥</div>
-                    <div class="zone-percentage">5%</div>
-                    <div class="zone-description">Future bets + transformational initiatives. System-level change in digital identity, AI, and sustainability.</div>
-                    <ul class="zone-list">
-                        <li>Aura Blockchain Consortium</li>
-                        <li>Biotech + luxury materials R&D</li>
-                        <li>Next-gen retail AI</li>
-                        <li>Space-related activations</li>
-                    </ul>
-                </div>
+<!-- RICHEMONT -->
+<section class="section-warm" id="richemont">
+  <div class="container">
+    <div class="section-label">Richemont — A Theta Reading</div>
+    <h2 class="section-title">The <em>focused</em> player that beat the market</h2>
+    <div class="richemont-grid fade-up">
+      <div>
+        <p>Richemont is the clearest proof that Theta's 70/20/10 benchmark is not a universal law — it is a contextual starting point. Richemont allocates closer to 80/15/5, deliberately underweighting Edge and Beyond. By the conventional logic of innovation management, this should make them a laggard. Instead, they are Bernstein's top luxury pick for 2026 and the only major luxury group expected to show positive 2025 organic growth.</p>
+        <p>The reason is the Relativity Principle: Richemont's Core is not just strong — it is near-unassailable. Cartier's cultural permanence and Van Cleef & Arpels' mythological status in jewelry create a moat so deep that modest innovation in Edge and Beyond is sufficient to stay relevant. You do not need to build the next S-curve when your current S-curve has been ascending for 178 years.</p>
+        <p>Their YNAP divestiture is instructive. Rather than doubling down on e-commerce platform ownership (a classic Edge bet), Richemont acknowledged that running a marketplace was not a Core competency and exited cleanly. This is strategic self-awareness — knowing which zone you should not be in is as important as knowing where to invest.</p>
+      </div>
+      <div>
+        <div class="sw-panel sw-panel-strength" style="margin-bottom:1.5rem;">
+          <div class="sw-title" style="font-size:1.1rem; margin-bottom:1.2rem;">What Richemont Gets Right</div>
+          <div class="sw-item" style="margin-bottom:1.2rem;">
+            <div class="sw-marker">S</div>
+            <div class="sw-content">
+              <div class="sw-lead">Hard luxury moat</div>
+              <p class="sw-desc">Cartier and Van Cleef's jewelry is not fashion. It appreciates. It is passed down. This fundamentally different relationship with time insulates Richemont from trend cycles that hammer soft luxury.</p>
             </div>
-        </div>
-    </section>
-
-    <!-- Competitive Comparison -->
-    <section>
-        <div class="container">
-            <div class="section-header">Competitive Analysis</div>
-            <h2>LVMH vs. Luxury Peers</h2>
-            
-            <div class="comparison-grid">
-                <div class="company-card">
-                    <div class="company-name">LVMH</div>
-                    <div class="company-focus">
-                        <div class="focus-bar">
-                            <span>Core</span>
-                            <div class="bar"><div class="bar-fill bar-core" style="width: 70%"></div></div>
-                            <span>70%</span>
-                        </div>
-                        <div class="focus-bar">
-                            <span>Edge</span>
-                            <div class="bar"><div class="bar-fill bar-edge" style="width: 25%"></div></div>
-                            <span>25%</span>
-                        </div>
-                        <div class="focus-bar">
-                            <span>Beyond</span>
-                            <div class="bar"><div class="bar-fill bar-beyond" style="width: 5%"></div></div>
-                            <span>5%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="company-card">
-                    <div class="company-name">Kering</div>
-                    <div class="company-focus">
-                        <div class="focus-bar">
-                            <span>Core</span>
-                            <div class="bar"><div class="bar-fill bar-core" style="width: 50%"></div></div>
-                            <span>50%</span>
-                        </div>
-                        <div class="focus-bar">
-                            <span>Edge</span>
-                            <div class="bar"><div class="bar-fill bar-edge" style="width: 35%"></div></div>
-                            <span>35%</span>
-                        </div>
-                        <div class="focus-bar">
-                            <span>Beyond</span>
-                            <div class="bar"><div class="bar-fill bar-beyond" style="width: 15%"></div></div>
-                            <span>15%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="company-card">
-                    <div class="company-name">Chanel</div>
-                    <div class="company-focus">
-                        <div class="focus-bar">
-                            <span>Core</span>
-                            <div class="bar"><div class="bar-fill bar-core" style="width: 60%"></div></div>
-                            <span>60%</span>
-                        </div>
-                        <div class="focus-bar">
-                            <span>Edge</span>
-                            <div class="bar"><div class="bar-fill bar-edge" style="width: 30%"></div></div>
-                            <span>30%</span>
-                        </div>
-                        <div class="focus-bar">
-                            <span>Beyond</span>
-                            <div class="bar"><div class="bar-fill bar-beyond" style="width: 10%"></div></div>
-                            <span>10%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="company-card">
-                    <div class="company-name">Hermès</div>
-                    <div class="company-focus">
-                        <div class="focus-bar">
-                            <span>Core</span>
-                            <div class="bar"><div class="bar-fill bar-core" style="width: 85%"></div></div>
-                            <span>85%</span>
-                        </div>
-                        <div class="focus-bar">
-                            <span>Edge</span>
-                            <div class="bar"><div class="bar-fill bar-edge" style="width: 10%"></div></div>
-                            <span>10%</span>
-                        </div>
-                        <div class="focus-bar">
-                            <span>Beyond</span>
-                            <div class="bar"><div class="bar-fill bar-beyond" style="width: 5%"></div></div>
-                            <span>5%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="company-card">
-                    <div class="company-name">Richemont</div>
-                    <div class="company-focus">
-                        <div class="focus-bar">
-                            <span>Core</span>
-                            <div class="bar"><div class="bar-fill bar-core" style="width: 80%"></div></div>
-                            <span>80%</span>
-                        </div>
-                        <div class="focus-bar">
-                            <span>Edge</span>
-                            <div class="bar"><div class="bar-fill bar-edge" style="width: 15%"></div></div>
-                            <span>15%</span>
-                        </div>
-                        <div class="focus-bar">
-                            <span>Beyond</span>
-                            <div class="bar"><div class="bar-fill bar-beyond" style="width: 5%"></div></div>
-                            <span>5%</span>
-                        </div>
-                    </div>
-                </div>
+          </div>
+          <div class="sw-item" style="margin-bottom:1.2rem;">
+            <div class="sw-marker">S</div>
+            <div class="sw-content">
+              <div class="sw-lead">Digital passport leadership in jewelry</div>
+              <p class="sw-desc">While LVMH deploys Bulgari's digital passport as an Edge initiative, Richemont is building traceability and authentication as a Core proposition — appropriate sequencing for a brand where provenance is the product.</p>
             </div>
-
-            <p style="margin-top: 3rem;">Kering leads in future-focused innovation with 15% Beyond allocation, heavily invested in NFTs, virtual fashion, and sustainability labs. LVMH and Hermès share conservative 5% Beyond investments, but LVMH's scale and cultural dominance provide more resilience.</p>
-        </div>
-    </section>
-
-    <!-- Strategic Risks -->
-    <section style="background: #f8f8f8;">
-        <div class="container">
-            <div class="section-header">Risk Analysis</div>
-            <h2>Strategic Vulnerabilities</h2>
-            
-            <div class="risk-grid">
-                <div class="risk-card">
-                    <div class="risk-title">Overreliance on Asia</div>
-                    <p>Asia represents 35%+ of revenue. Geopolitical tensions and economic slowdowns in China create cyclical vulnerability.</p>
-                </div>
-
-                <div class="risk-card">
-                    <div class="risk-title">Brand Dilution</div>
-                    <p>Excessive collaborations and market saturation risk eroding the mystique and exclusivity that define luxury.</p>
-                </div>
-
-                <div class="risk-card">
-                    <div class="risk-title">Counterfeiting</div>
-                    <p>Over 90% of Louis Vuitton products in circulation are counterfeit, threatening brand exclusivity and pricing power.</p>
-                </div>
-
-                <div class="risk-card">
-                    <div class="risk-title">Digital-Native Competitors</div>
-                    <p>Web3 ecosystems, virtual fashion platforms, and direct-to-consumer digital brands bypass traditional luxury gatekeepers.</p>
-                </div>
-
-                <div class="risk-card">
-                    <div class="risk-title">Tech Ecosystem Lag</div>
-                    <p>Lack of investment in digital identity, AI personalization, and circularity platforms may cede leadership to tech-forward competitors.</p>
-                </div>
-
-                <div class="risk-card">
-                    <div class="risk-title">Sustainability Backlash</div>
-                    <p>Growing consumer scrutiny and activist pressure demand authentic circular economy solutions, not greenwashing.</p>
-                </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-content">
+              <div class="sw-lead">Capital discipline post-YNAP</div>
+              <p class="sw-desc">The market rewarded the YNAP exit. Selling an underperforming asset to focus resources on Core strengths is a textbook Theta move: protect the allocation that generates your highest return.</p>
             </div>
+          </div>
         </div>
-    </section>
+        <div class="tension-box" style="background:rgba(181,132,26,0.07); border-left-color:var(--edge-amber);">
+          <div class="diag-label" style="color:var(--edge-amber);">The Richemont Blind Spot</div>
+          <p style="color:#555; margin:0;">With no visible wellness bet, no agentic commerce strategy, and a conservative Beyond posture, Richemont's thesis depends entirely on jewelry's permanence outlasting digital disruption. For now, it's working. The question is whether their Core moat is deep enough to weather a generation that discovers jewelry through AI agents rather than boutique visits.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Key Insight -->
-    <section>
-        <div class="container">
-            <div class="insight-box">
-                "LVMH risks becoming the Kodak of luxury — dominant now but underweight in tomorrow's operating system."
+<!-- LUXURY × TECH -->
+<section class="section-white" id="luxtech">
+  <div class="container">
+    <div class="section-label">The Central Question</div>
+    <h2 class="section-title">How luxury ventures into tech<br><em>without losing its soul</em></h2>
+    <div class="luxtech-intro fade-up">
+      <p>The most dangerous question in luxury innovation is also the most tempting one: "How do we add technology to our products?" It is the wrong question. The right question is: "What does our customer's experience feel like in a world where AI mediates discovery, and how do we ensure the magic survives the interface?" The answer looks very different — and it begins not with tech but with the psychology of desire.</p>
+    </div>
+    <div class="principles-grid fade-up">
+      <div class="principle-card">
+        <div class="principle-num">01</div>
+        <div class="principle-title">Technology must be invisible — or it must be the spectacle</div>
+        <p class="principle-body">LVMH's Chief Omnichannel Officer Gonzague de Pirey put it best: "Technology needs to be everywhere but visible nowhere." Clienteling AI that allows a Dior sales associate to know your entire purchase history across every store globally — that is invisible. A connected Rimowa suitcase with Apple Find My integration — that is the spectacle. Both are correct. Neither exists in between.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">02</div>
+        <div class="principle-title">Heritage is not a constraint — it is the brief</div>
+        <p class="principle-body">Every innovation attempt at a luxury Maison must pass a single test: does this feel like the brand's next evolution, or does it feel imported? Louis Vuitton's 3D AI content studio for marketing campaigns is invisible heritage-consistent innovation. A blockchain loyalty point system for LV would feel imported — and would rightly be rejected. The brief is always the DNA, not the technology.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">03</div>
+        <div class="principle-title">Scarcity is the product — efficiency must never threaten it</div>
+        <p class="principle-body">When LVMH deploys A IDEA for supply chain optimization, the metric is not cost reduction — it is scarcity management. The AI ensures that exactly the right number of pieces exist in exactly the right locations. Surplus destroys pricing power. Shortage creates the queue. The technology serves the scarcity, not the efficiency. This is the inversion of every other industry's relationship with supply chain AI.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">04</div>
+        <div class="principle-title">The discovery layer is shifting — and luxury is not ready</div>
+        <p class="principle-body">AI shopping searches grew 4,700% in 2024-2025. Amazon Rufus buys on your behalf. OpenAI sells directly through ChatGPT. The luxury industry's response so far has been optimizing for human-led discovery — beautiful stores, editorial content, clienteling apps. But if AI agents become primary discovery, the question becomes: is your brand "in the model"? The luxury mindset — control the narrative, own the channel — is structurally incompatible with this future. This is not a technology problem. It is a philosophical one.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">05</div>
+        <div class="principle-title">Wellness is the next luxury category — the science is the moat</div>
+        <p class="principle-body">$2 trillion in global wellness spending. 97% of consumers concerned about aging. Dior's Reverse Aging Board — 19 scientists, 600 researchers, Harvard collaboration — is not a marketing exercise. It is a 7-year bet that the most valuable luxury product of the 2030s will be longevity science, and that Dior's name on that science will carry the same pricing power as its name on a handbag. Kering's L'Oréal JV is the same bet, arrived at from the opposite direction.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">06</div>
+        <div class="principle-title">The fast-follower advantage is real — but has a horizon</div>
+        <p class="principle-body">LVMH did not invent AI clienteling (Kahoona did). Did not build 3D content generation (OMI did). Did not create the blockchain passport standard (startups did). They ingested, scaled, and deployed what others pioneered. This fast-follower-with-scale strategy is genuinely sustainable in Core and Edge zones. In the Beyond zone — especially the behavioral digital layer — it may not be. Some technologies require a first-mover who shapes the category before incumbents can follow.</p>
+      </div>
+    </div>
+    <div style="margin-top:3rem;" class="fade-up">
+      <div class="section-label">The Spectrum</div>
+      <h2 class="section-title" style="font-size:1.8rem; margin-bottom:1.5rem;">Global breakthrough innovations: <em>how LVMH compares</em></h2>
+      <table class="spectrum-table">
+        <thead>
+          <tr>
+            <th>Innovation</th>
+            <th>Company</th>
+            <th>Theta Zone</th>
+            <th>LVMH Equivalent</th>
+            <th>Gap Assessment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Kahoona AI Predictive Segmentation</td>
+            <td>Dior (LVMH)</td>
+            <td>🟨 Edge</td>
+            <td>Native — 2025 Innovation Award winner</td>
+            <td>LVMH leads</td>
+          </tr>
+          <tr>
+            <td>Genesis Soil Health Platform</td>
+            <td>Moët Hennessy (LVMH)</td>
+            <td>🟥 Beyond</td>
+            <td>Native — 2025 Best Impact Award</td>
+            <td>LVMH leads</td>
+          </tr>
+          <tr>
+            <td>Ray-Ban Meta Smart Glasses</td>
+            <td>EssilorLuxottica / Meta</td>
+            <td>🟨 Edge</td>
+            <td>None — no consumer tech hardware strategy</td>
+            <td>Significant gap</td>
+          </tr>
+          <tr>
+            <td>Agentic Commerce (Buy for Me)</td>
+            <td>Amazon / OpenAI</td>
+            <td>🟥 Beyond</td>
+            <td>None — acknowledged but no roadmap</td>
+            <td>Existential risk</td>
+          </tr>
+          <tr>
+            <td>MycoWorks Mycelium Leather (Reishi)</td>
+            <td>MycoWorks</td>
+            <td>🟨 Edge</td>
+            <td>Bio-material VC (L Catterton) — not deployed</td>
+            <td>Investing, not leading</td>
+          </tr>
+          <tr>
+            <td>Generative Engine Optimization (GEO)</td>
+            <td>Glara / Brandback</td>
+            <td>🟨 Edge</td>
+            <td>None — no public GEO capability</td>
+            <td>Blind spot</td>
+          </tr>
+          <tr>
+            <td>Slip Digital Receipt Platform</td>
+            <td>Slip</td>
+            <td>🟩 Core</td>
+            <td>None — post-purchase is underdeveloped</td>
+            <td>Missed adjacent</td>
+          </tr>
+          <tr>
+            <td>SuperCircle Textile End-of-Life OS</td>
+            <td>SuperCircle</td>
+            <td>🟨 Edge</td>
+            <td>LV Re-Source (brand-level, not platform-level)</td>
+            <td>Scope gap</td>
+          </tr>
+          <tr>
+            <td>Wellness × Medical Luxury JV</td>
+            <td>Kering × L'Oréal</td>
+            <td>🟥 Beyond</td>
+            <td>Dior Reverse Aging Board (scientific, not experiential)</td>
+            <td>Different bets, both real</td>
+          </tr>
+          <tr>
+            <td>Dior Reverse Aging Board</td>
+            <td>Christian Dior (LVMH)</td>
+            <td>🟥 Beyond</td>
+            <td>Native — 19 scientists, 600 researchers, Harvard</td>
+            <td>LVMH leads</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- INSIGHT STRIP 2 -->
+<div class="insight-strip fade-up" style="background:var(--ink);">
+  <div class="insight-quote" style="color:rgba(255,255,255,0.85);">
+    "The luxury mindset — control the narrative, own the channel —<br>is <em>structurally incompatible</em> with a world where AI agents buy on your behalf."
+  </div>
+</div>
+
+<!-- AGENTIC & STARTUP INNOVATIONS -->
+<section class="section-warm" id="innovations">
+  <div class="container-wide">
+    <div class="section-label">Buildable Innovations</div>
+    <h2 class="section-title">What you can build <em>today</em> — from startup to Maison</h2>
+    <p style="max-width:720px; margin-bottom:3rem;">The innovations that will reshape luxury are not all being built in LVMH's Paris headquarters. Many are available as APIs, open-source frameworks, or buildable prototypes right now. Here is what is genuinely accessible — even to a solo founder — and why each one matters through a Theta lens.</p>
+    <div class="innovation-tiles fade-up">
+      <div class="innovation-tile">
+        <div class="tile-icon">🤖</div>
+        <span class="tile-zone-tag tag-beyond">🟥 Beyond — Agentic</span>
+        <div class="tile-title">Agentic Commerce Layer</div>
+        <p class="tile-body">Build a product agent that operates autonomously within platforms like ChatGPT or Claude. When a user asks an AI assistant "find me a birthday gift for someone who loves Dior," your brand should be in the answer — not because you paid for it, but because you've structured your catalog, schema, and content to be machine-readable and AI-discoverable. This is Generative Engine Optimization (GEO), and it is the new SEO.</p>
+        <div class="tile-build">
+          <span class="build-badge">Build Today</span><br>
+          <strong>Stack:</strong> OpenAI Assistants API or Claude API + product catalog structured as semantic JSON-LD + schema.org markup. Add a product recommendation agent that interprets natural language intent and surfaces your catalog. Cost: API credits (~$20–50/month for testing). Time to prototype: 1–2 days.
+        </div>
+      </div>
+      <div class="innovation-tile">
+        <div class="tile-icon">✨</div>
+        <span class="tile-zone-tag tag-edge">🟨 Edge — Architectural</span>
+        <div class="tile-title">AI-Powered Clienteling Engine</div>
+        <p class="tile-body">What Dior built with Kahoona — predictive audience segmentation from anonymous browsing behavior — can now be prototyped with open-source tools. Build a system that unifies a customer's browsing history, purchase data, and behavioral signals to empower any sales associate (or automated message) with hyper-personalized context. The LVMH version runs on WhatsApp and WeChat. Yours can start on email or SMS.</p>
+        <div class="tile-build">
+          <span class="build-badge">Build Today</span><br>
+          <strong>Stack:</strong> PostHog or Mixpanel for behavioral events + a vector database (Pinecone, Weaviate) to store user profiles + GPT-4 to generate personalized recommendations from profile context. Time to prototype: 3–5 days. Cost: ~$50/month for 1,000 users.
+        </div>
+      </div>
+      <div class="innovation-tile">
+        <div class="tile-icon">🥽</div>
+        <span class="tile-zone-tag tag-edge">🟨 Edge — Architectural</span>
+        <div class="tile-title">Immersive AR Try-On Experience</div>
+        <p class="tile-body">Louis Vuitton's makeup launch included AI-powered virtual try-on. Sephora's Color IQ is a permanent fixture in 3,400 stores. AR try-on is no longer a future technology — it is an accessible Edge innovation that any product company can deploy. For luxury, the stakes are higher: a bad AR experience degrades the brand. The right implementation makes the decision to buy feel certain before the product arrives.</p>
+        <div class="tile-build">
+          <span class="build-badge">Build Today</span><br>
+          <strong>Stack:</strong> Apple RealityKit or WebXR (browser-native) + a 3D product model (create with Spline or import from manufacturer). For beauty: Banuba SDK provides a white-label face AR API. For apparel: Snap's Camera Kit enables in-app try-on. Estimated cost: $0–$500/month depending on scale.
+        </div>
+      </div>
+      <div class="innovation-tile">
+        <div class="tile-icon">🔗</div>
+        <span class="tile-zone-tag tag-edge">🟨 Edge — Architectural</span>
+        <div class="tile-title">Digital Product Passport (Blockchain Authentication)</div>
+        <p class="tile-body">Bulgari's connected jewelry and LVMH's group-wide Digital Product Passport initiative are built on the Aura Blockchain Consortium. Every physical luxury item gains a verifiable digital identity: provenance, certifications, ownership history, repair records. For a startup, this solves authentication, resale market participation, and sustainability transparency in a single infrastructure layer.</p>
+        <div class="tile-build">
+          <span class="build-badge">Build Today</span><br>
+          <strong>Stack:</strong> Aura Blockchain Consortium has an open API. Alternatively: Polygon blockchain + ERC-721 NFT as the passport + IPFS for storing provenance documents. QR code or NFC chip embedded in product links to the passport. Legal: EU Digital Product Passport regulation mandates this by 2030 anyway — build it now.
+        </div>
+      </div>
+      <div class="innovation-tile">
+        <div class="tile-icon">🌱</div>
+        <span class="tile-zone-tag tag-beyond">🟥 Beyond — Frontier</span>
+        <div class="tile-title">Regenerative Supply Chain Intelligence</div>
+        <p class="tile-body">LVMH's Genesis platform and Moët Hennessy's Living Soils program use data platforms to monitor soil health, carbon capture, and biodiversity. For any brand with agricultural supply chains — tea, coffee, natural fibers, leather — this is both a sustainability claim and a supply quality advantage. The same intelligence that improves soil health also predicts harvest quality and optimizes sourcing decisions.</p>
+        <div class="tile-build">
+          <span class="build-badge">Build Today</span><br>
+          <strong>Stack:</strong> Satellite imagery APIs (Sentinel Hub, Planet Labs) + soil sensor data (FarmHack open hardware or commercial sensors) + a time-series dashboard (Grafana or Retool). Connect supply chain events to environmental outcomes. Cost to prototype: ~$200/month in APIs + sensor hardware.
+        </div>
+      </div>
+      <div class="innovation-tile">
+        <div class="tile-icon">💬</div>
+        <span class="tile-zone-tag tag-core">🟩 Core — Adjacent</span>
+        <div class="tile-title">Post-Purchase Engagement Layer</div>
+        <p class="tile-body">Startups like Slip have demonstrated that the digital receipt — opened at 70%+ rates — is the most under-exploited engagement surface in commerce. For luxury brands, the post-purchase moment is when emotional investment is highest: the customer has already committed. A post-purchase sequence that delivers care instructions, styling ideas, repair offers, and loyalty enrollment in a branded experience converts a transaction into a relationship.</p>
+        <div class="tile-build">
+          <span class="build-badge">Build Today</span><br>
+          <strong>Stack:</strong> Klaviyo or Brevo for email/SMS sequences + a product API to pull dynamic care instructions per SKU + Claude API to generate personalized styling recommendations based on purchase history. This can be live in 48 hours with no-code tools like Make or Zapier as the backbone.
+        </div>
+      </div>
+      <div class="innovation-tile">
+        <div class="tile-icon">🎨</div>
+        <span class="tile-zone-tag tag-edge">🟨 Edge — Architectural</span>
+        <div class="tile-title">AI-Powered 3D Product &amp; Content Studio</div>
+        <p class="tile-body">LVMH uses OMI's 3D content studio to create photorealistic marketing assets for Guerlain without physical photoshoots — reducing time-to-market by weeks and cost by orders of magnitude. For a startup or small brand, this means generating professional product imagery, lifestyle scenes, and campaign visuals from a single 3D model. The creative quality has crossed the threshold of consumer indistinguishability.</p>
+        <div class="tile-build">
+          <span class="build-badge">Build Today</span><br>
+          <strong>Stack:</strong> Blender or Spline for 3D modeling (both free) + Stable Diffusion or Midjourney for lifestyle scene generation + Krea.ai for upscaling and consistency. For products requiring photorealism: Keyshot for rendering. A single 3D model can generate unlimited campaign assets. Time investment: 1–2 days to create the base model.
+        </div>
+      </div>
+      <div class="innovation-tile">
+        <div class="tile-icon">🧬</div>
+        <span class="tile-zone-tag tag-beyond">🟥 Beyond — Frontier</span>
+        <div class="tile-title">Longevity &amp; Wellness Science Partnership</div>
+        <p class="tile-body">Dior's Reverse Aging Board and Kering's L'Oréal JV are building the institutional version of what smaller brands can pursue through partnership. The wellness economy ($2T globally) is being reshaped by accessible longevity science — skin microbiome analysis, biological age testing, personalized supplement protocols. For a luxury brand, white-labeling or co-developing with frontier science startups delivers the same positioning advantage at a fraction of the infrastructure cost.</p>
+        <div class="tile-build">
+          <span class="build-badge">Partnership Path</span><br>
+          <strong>Partners to watch:</strong> Viome (gut/skin microbiome API), Elysium Health (biological age testing), Rejuve.AI (longevity data platform). Most offer B2B API access. A luxury skincare or wellness brand can integrate biological age data into product recommendations without building the science in-house.
+        </div>
+      </div>
+      <div class="innovation-tile">
+        <div class="tile-icon">🏛️</div>
+        <span class="tile-zone-tag tag-edge">🟨 Edge — Disruptive</span>
+        <div class="tile-title">Experiential Retail Intelligence Layer</div>
+        <p class="tile-body">Louis Vuitton's "Louisiana" cruise ship concept store in Shanghai is not a retail store — it is a brand experience platform that happens to sell things. The underlying principle: physical retail must justify its existence by generating emotional value that digital cannot replicate. For any brand, this means building spaces (physical or virtual) where the experience is the product. The tech layer makes this measurable: dwell time, emotional response, conversion by experience type.</p>
+        <div class="tile-build">
+          <span class="build-badge">Build Today</span><br>
+          <strong>Stack:</strong> Spatial.io or Mozilla Hubs for virtual spaces + WebGL for custom immersive web experiences + heatmap tools (Microsoft Clarity, HotJar) for behavioral mapping. Physical: ESP32 sensors for dwell time tracking. The insight engine connects emotional moments to purchase outcomes.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA DIAGNOSTIC -->
+<section class="section-ink" id="diagnostic">
+  <div class="container">
+    <div class="section-label" style="color:var(--gold); opacity:0.8;">Theta Diagnostic</div>
+    <h2 class="section-title" style="color:#fff; margin-bottom:3rem;">The verdict on LVMH's<br><em>innovation architecture</em></h2>
+    <div class="diagnostic-grid fade-up">
+      <div>
+        <div class="diag-block">
+          <div class="diag-label">Portfolio Mapping</div>
+          <div class="diag-title">Core · Edge · Beyond — all active, unevenly funded</div>
+          <p class="diag-body">The portfolio exists across all three zones — a genuine structural advantage over single-zone competitors. But the Beyond zone is biased toward physical science (sustainability, materials, longevity research) and underweighted in behavioral digital (agentic commerce, GEO, wearable tech). This is not negligence. It is the luxury mindset's structural preference for the tangible over the algorithmic.</p>
+          <div class="archetype-row">
+            <span class="archetype-chip chip-ok">Core ✓</span>
+            <span class="archetype-chip chip-ok">Edge ✓</span>
+            <span class="archetype-chip chip-mid">Beyond ⚠</span>
+          </div>
+        </div>
+        <div class="diag-block">
+          <div class="diag-label">Leadership &amp; Culture</div>
+          <div class="diag-title">Founder mode at the top — operator mode throughout</div>
+          <p class="diag-body">Arnault's 40-year tenure brings irreplaceable founder energy: obsessive quality standards, talent-as-strategy instinct, willingness to make long bets that analysts cannot model. The risk is that founder-mode leadership is not a system — it is a person. The succession discount in LVMH's stock price is a market reading of this exact vulnerability. Five children in senior roles is a family governance structure, not an innovation succession plan.</p>
+        </div>
+        <div class="diag-block">
+          <div class="diag-label">Mavericks &amp; Risk Tolerance</div>
+          <div class="diag-title">Imported mavericks — not grown internally</div>
+          <p class="diag-body">Pharrell at LV, Rihanna at Fenty, Jonathan Anderson at Dior — LVMH's mavericks are cultural imports, not internal rebels. This produces spectacular results (Fenty launched with 40 shades when industry standard was 15–20, disrupting the entire beauty category). But it creates a structural dependence on external talent identification. The internal culture rewards execution, not experimentation.</p>
+          <div class="archetype-row">
+            <span class="archetype-chip chip-ok">External Mavericks ✓</span>
+            <span class="archetype-chip chip-mid">Internal Risk Culture △</span>
+          </div>
+        </div>
+        <div class="diag-block">
+          <div class="diag-label">Inline Zone Comparison</div>
+          <div class="inline-bars">
+            <div class="inline-bar-row">
+              <span class="inline-bar-label">Core</span>
+              <div class="inline-bar-track">
+                <div class="inline-bar-actual" style="width:72%;background:var(--core-green)"></div>
+                <div class="inline-bar-bench" style="left:70%"></div>
+              </div>
+              <span class="inline-bar-pct">72%</span>
             </div>
-        </div>
-    </section>
-
-    <!-- Recommendations -->
-    <section style="background: #f8f8f8;">
-        <div class="container">
-            <div class="section-header">Strategic Recommendations</div>
-            <h2>Path to Future-Readiness</h2>
-            
-            <div class="recommendation">
-                <div class="allocation">
-                    <div class="allocation-label">Current Allocation</div>
-                    <div class="allocation-value">70 / 25 / 5</div>
-                    <div class="allocation-bars">
-                        <div class="alloc-bar bar-core" style="flex: 70;">70%</div>
-                        <div class="alloc-bar bar-edge" style="flex: 25;">25%</div>
-                        <div class="alloc-bar bar-beyond" style="flex: 5;">5%</div>
-                    </div>
-                </div>
-
-                <div class="allocation">
-                    <div class="allocation-label">Target by 2030</div>
-                    <div class="allocation-value">60 / 25 / 15</div>
-                    <div class="allocation-bars">
-                        <div class="alloc-bar bar-core" style="flex: 60;">60%</div>
-                        <div class="alloc-bar bar-edge" style="flex: 25;">25%</div>
-                        <div class="alloc-bar bar-beyond" style="flex: 15;">15%</div>
-                    </div>
-                </div>
+            <div class="inline-bar-row">
+              <span class="inline-bar-label">Edge</span>
+              <div class="inline-bar-track">
+                <div class="inline-bar-actual" style="width:23%;background:var(--edge-amber)"></div>
+                <div class="inline-bar-bench" style="left:20%"></div>
+              </div>
+              <span class="inline-bar-pct">23%</span>
             </div>
-
-            <h3>Priority Beyond Initiatives</h3>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Focus Area</th>
-                            <th>Strategic Importance</th>
-                            <th>Timeline</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Smart Luxury</td>
-                            <td>Materials innovation + authentication technology to combat counterfeiting and enhance value</td>
-                            <td>2025-2027</td>
-                        </tr>
-                        <tr>
-                            <td>True Circularity</td>
-                            <td>Resale, repair, and upcycling ecosystems that enhance rather than diminish desirability</td>
-                            <td>2025-2028</td>
-                        </tr>
-                        <tr>
-                            <td>Digital Identity</td>
-                            <td>Web3 ownership, virtual goods, and metaverse presence for digital-native consumers</td>
-                            <td>2025-2030</td>
-                        </tr>
-                        <tr>
-                            <td>AI-Augmented Craftsmanship</td>
-                            <td>Personalization at scale without sacrificing human artistry and heritage</td>
-                            <td>2026-2030</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="inline-bar-row">
+              <span class="inline-bar-label">Beyond</span>
+              <div class="inline-bar-track">
+                <div class="inline-bar-actual" style="width:5%;background:var(--beyond-crimson)"></div>
+                <div class="inline-bar-bench" style="left:10%"></div>
+              </div>
+              <span class="inline-bar-pct">5%</span>
             </div>
+          </div>
+          <p class="diag-body" style="margin-top:0.8rem; font-size:0.8rem;">Vertical markers show Theta benchmarks (70/20/10). LVMH overindexes slightly on Core, matches Edge, and underinvests in Beyond — particularly in the digital behavioral layer.</p>
         </div>
-    </section>
+      </div>
+      <div>
+        <div class="diag-block">
+          <div class="diag-label">Customer Signal Alignment</div>
+          <div class="diag-title">VIC-depth + aspirational scale + early adopter observation</div>
+          <p class="diag-body">LVMH listens at three levels simultaneously: Very Important Clients (VICs) through personalized clienteling; aspirational consumers through Sephora's 74M loyalty dataset; and early adopters through La Maison des Startups and cultural hires. This three-tier signal architecture is genuinely sophisticated. The blind spot is the AI-mediated layer — what signals are captured when a consumer's AI agent searches for a gift recommendation, and LVMH's brands are not in the answer?</p>
+        </div>
+        <div class="diag-block">
+          <div class="diag-label">Critical Tension</div>
+          <div class="tension-box">
+            <p>The luxury mindset — control the narrative, own the channel, make discovery feel curated and intentional — is the foundational competitive advantage of every LVMH Maison. It is also structurally incompatible with a world where AI agents mediate discovery before the customer ever enters the brand's ecosystem. This is not a technology gap that can be closed with an R&D investment. It is a philosophical confrontation between two incompatible models of how desire is created. LVMH has not yet decided which side of this tension it stands on.</p>
+          </div>
+        </div>
+        <div class="diag-block">
+          <div class="diag-label">Relativity Assessment</div>
+          <div class="diag-title">Fast-follower with scale — a sustainable position with a horizon</div>
+          <p class="diag-body">Against Kering: LVMH wins decisively across every financial and innovation metric. Against Hermès: LVMH is larger but Hermès is more resilient per dollar of revenue. Against global fashion-tech benchmarks: LVMH leads in sustainable innovation, clienteling AI, and supply chain intelligence, but lags in agentic commerce, wearable tech, and post-purchase innovation. The fast-follower-with-scale model that served LVMH in Core and Edge may not be sufficient in the behavioral Beyond zone — some categories require being first to define them.</p>
+        </div>
+        <div class="verdict-block">
+          <div class="verdict-headline">Verdict: Balanced ☑☑⚠</div>
+          <p class="verdict-sub">LVMH is the most complete innovation portfolio in global luxury — genuinely operating across Core, Edge, and Beyond with real resources behind each zone. The Theta diagnosis is not that they are innovating incorrectly. It is that the luxury mindset's structural preference for the physical over the behavioral, and for owned channels over distributed discovery, creates a specific and growing vulnerability in the digital Beyond. The empire is balanced. The blind spot is real. The question every strategist, founder, and builder should sit with after reading this is not "what should LVMH do?" — it is "what does this reveal about where the next luxury disruption will come from, and who is building it right now?"</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Conclusion -->
-    <section>
-        <div class="container">
-            <div class="section-header">Conclusion</div>
-            <h2>The Future of Luxury</h2>
-            <p style="font-size: 1.3rem; line-height: 1.8; max-width: 900px; margin: 0 auto;">
-                LVMH preserves the past, dominates the present, and must invest strategically to secure the future. The conglomerate's unparalleled scale, cultural relevance, and financial strength provide a strong foundation. However, to maintain leadership through 2030 and beyond, LVMH must shift from a 70/25/5 to a 60/25/15 allocation model—reducing Core dominance while tripling Beyond investments in digital identity, AI, and circular luxury ecosystems.
-            </p>
-            <p style="font-size: 1.3rem; line-height: 1.8; max-width: 900px; margin: 2rem auto 0;">
-                The question is not whether LVMH will remain dominant today, but whether it will define luxury tomorrow.
-            </p>
-        </div>
-    </section>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left"><span>Theta Framework</span>Strategic Case Study · 2026</div>
+  <div class="footer-right">LVMH — The Architecture of Desire</div>
+</footer>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p style="color: #d4af37; letter-spacing: 0.2em; text-transform: uppercase; font-size: 0.9rem;">Case Study</p>
-            <p style="margin-top: 0.5rem; color: rgba(255, 255, 255, 0.7);">LVMH: Culture vs. Tech in Luxury</p>
-            <p style="margin-top: 1rem; color: rgba(255, 255, 255, 0.5); font-size: 0.9rem;">© 2025 Christine Pamela</p>
-        </div>
-    </footer>
+<script>
+// ── SCROLL ANIMATION ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// ── SCATTER CHART ──
+const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+
+const pointLabelPlugin = {
+  id: 'pointLabels',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    chart.data.datasets.forEach((dataset, di) => {
+      const meta = chart.getDatasetMeta(di);
+      meta.data.forEach((point, i) => {
+        const dp = dataset.data[i];
+        if (!dp.label) return;
+        ctx.save();
+        ctx.font = '11px "DM Sans", sans-serif';
+        ctx.fillStyle = 'rgba(30,45,42,0.75)';
+        ctx.textAlign = 'left';
+        ctx.fillText(dp.label, point.x + 10, point.y + 4);
+        ctx.restore();
+      });
+    });
+  }
+};
+
+new Chart(scatterCtx, {
+  type: 'scatter',
+  plugins: [pointLabelPlugin],
+  data: {
+    datasets: [
+      {
+        label: '🟩 Core Zone',
+        data: [
+          { x: 1.2, y: 1.3, label: 'A IDEA Forecasting' },
+          { x: 1.5, y: 1.5, label: 'Precision Viticulture' },
+          { x: 1.3, y: 1.2, label: 'Sephora Beauty Hub' },
+          { x: 1.8, y: 1.4, label: 'LV Makeup Launch' },
+          { x: 1.6, y: 1.1, label: 'One Route Logistics' },
+        ],
+        backgroundColor: 'rgba(45,106,79,0.75)', pointRadius: 9, pointHoverRadius: 12
+      },
+      {
+        label: '🟨 Edge Zone',
+        data: [
+          { x: 2.6, y: 2.8, label: 'Kahoona AI Clienteling' },
+          { x: 2.4, y: 2.5, label: 'OMI 3D Content Studio' },
+          { x: 2.9, y: 2.2, label: 'Louisiana Store Experience' },
+          { x: 2.2, y: 2.9, label: 'Bulgari Digital Passport' },
+          { x: 2.7, y: 2.4, label: 'Fenty Beauty 40 Shades' },
+          { x: 2.3, y: 2.1, label: 'Rimowa Connected Case' },
+        ],
+        backgroundColor: 'rgba(181,132,26,0.8)', pointRadius: 9, pointHoverRadius: 12
+      },
+      {
+        label: '🟥 Beyond Zone',
+        data: [
+          { x: 3.6, y: 3.8, label: 'Dior Reverse Aging Board' },
+          { x: 3.4, y: 3.5, label: 'Genesis Soil Platform' },
+          { x: 3.8, y: 3.2, label: 'Regenerative Agriculture' },
+          { x: 3.2, y: 3.6, label: 'Aglaé Ventures (AI)' },
+        ],
+        backgroundColor: 'rgba(139,26,26,0.8)', pointRadius: 9, pointHoverRadius: 12
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 12 }, color: '#3a3a3a', padding: 20 } },
+      tooltip: {
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        titleFont: { family: 'DM Sans', size: 12 },
+        bodyFont: { family: 'DM Sans', size: 11 },
+        padding: 12, cornerRadius: 2
+      }
+    },
+    scales: {
+      x: {
+        min: 0.5, max: 4.5,
+        title: { display: true, text: 'Market Reach →  Existing · New · Emerging · Speculative', font: { family: 'DM Sans', size: 11 }, color: '#8A9490' },
+        grid: { color: 'rgba(200,169,110,0.08)' },
+        ticks: { display: false },
+        border: { color: 'rgba(200,169,110,0.2)' }
+      },
+      y: {
+        min: 0.5, max: 4.5,
+        title: { display: true, text: 'Technology Change →  Incremental · Moderate · High · Radical', font: { family: 'DM Sans', size: 11 }, color: '#8A9490' },
+        grid: { color: 'rgba(200,169,110,0.08)' },
+        ticks: { display: false },
+        border: { color: 'rgba(200,169,110,0.2)' }
+      }
+    }
+  }
+});
+
+// ── DOUGHNUT CHART ──
+new Chart(document.getElementById('doughnutChart').getContext('2d'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Core Zone (72%)', 'Edge Zone (23%)', 'Beyond Zone (5%)'],
+    datasets: [{
+      data: [72, 23, 5],
+      backgroundColor: ['rgba(45,106,79,0.85)', 'rgba(181,132,26,0.85)', 'rgba(139,26,26,0.85)'],
+      borderWidth: 0, hoverOffset: 6
+    }]
+  },
+  options: {
+    cutout: '68%', responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 12 }, color: '#3a3a3a', padding: 18 } },
+      tooltip: {
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        titleFont: { family: 'DM Sans' }, bodyFont: { family: 'DM Sans' },
+        padding: 12, cornerRadius: 2
+      }
+    }
+  }
+});
+
+// ── RADAR CHART ──
+new Chart(document.getElementById('radarChart').getContext('2d'), {
+  type: 'radar',
+  data: {
+    labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'AI Readiness', 'Brand Resilience', 'Digital Reach'],
+    datasets: [
+      {
+        label: 'LVMH', data: [92, 80, 55, 72, 88, 68],
+        borderColor: 'rgba(200,169,110,0.9)', backgroundColor: 'rgba(200,169,110,0.1)',
+        borderWidth: 2, pointRadius: 4, pointBackgroundColor: 'rgba(200,169,110,0.9)'
+      },
+      {
+        label: 'Hermès', data: [96, 28, 20, 22, 98, 30],
+        borderColor: 'rgba(26,58,74,0.8)', backgroundColor: 'rgba(26,58,74,0.07)',
+        borderWidth: 2, pointRadius: 4, pointBackgroundColor: 'rgba(26,58,74,0.8)'
+      },
+      {
+        label: 'Kering', data: [42, 62, 74, 58, 40, 60],
+        borderColor: 'rgba(181,132,26,0.8)', backgroundColor: 'rgba(181,132,26,0.07)',
+        borderWidth: 2, pointRadius: 4, pointBackgroundColor: 'rgba(181,132,26,0.8)'
+      },
+      {
+        label: 'Richemont', data: [84, 50, 38, 44, 82, 42],
+        borderColor: 'rgba(139,26,26,0.7)', backgroundColor: 'rgba(139,26,26,0.06)',
+        borderWidth: 2, pointRadius: 4, pointBackgroundColor: 'rgba(139,26,26,0.7)'
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 12 }, color: '#3a3a3a', padding: 20 } },
+      tooltip: {
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        titleFont: { family: 'DM Sans' }, bodyFont: { family: 'DM Sans' },
+        padding: 12, cornerRadius: 2
+      }
+    },
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { display: false },
+        grid: { color: 'rgba(200,169,110,0.12)' },
+        angleLines: { color: 'rgba(200,169,110,0.12)' },
+        pointLabels: { font: { family: 'DM Sans', size: 12 }, color: '#3a3a3a' }
+      }
+    }
+  }
+});
+</script>
 </body>
 </html>
