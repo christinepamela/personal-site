@@ -1,1336 +1,1155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Block Inc. - An Economy Without Permission</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --black: #000000;
-            --white: #ffffff;
-            --gray: #666666;
-            --light-gray: #f5f5f5;
-            --accent: #00D924;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            color: var(--black);
-            background: var(--white);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-            color: var(--white);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(0, 217, 36, 0.1) 0%, transparent 70%);
-            animation: pulse 15s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1) translate(0, 0); }
-            50% { transform: scale(1.1) translate(5%, 5%); }
-        }
-
-        .hero-content {
-            text-align: center;
-            z-index: 1;
-            max-width: 900px;
-            padding: 0 40px;
-        }
-
-        .hero-label {
-            font-size: 12px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 30px;
-            font-weight: 500;
-        }
-
-        .hero h1 {
-            font-size: clamp(48px, 8vw, 80px);
-            font-weight: 300;
-            line-height: 1.2;
-            margin-bottom: 30px;
-            letter-spacing: -2px;
-        }
-
-        .hero-subtitle {
-            font-size: clamp(18px, 2.5vw, 24px);
-            color: rgba(255, 255, 255, 0.7);
-            font-weight: 300;
-            max-width: 700px;
-            margin: 0 auto 50px;
-        }
-
-        .hero-stats {
-            display: flex;
-            justify-content: center;
-            gap: 60px;
-            margin-top: 60px;
-            flex-wrap: wrap;
-        }
-
-        .stat {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 48px;
-            font-weight: 300;
-            color: var(--accent);
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.6);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
-        }
-
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 40px;
-        }
-
-        /* Section */
-        section {
-            padding: 120px 0;
-        }
-
-        .section-label {
-            font-size: 12px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--gray);
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-
-        .section-title {
-            font-size: clamp(36px, 5vw, 56px);
-            font-weight: 300;
-            line-height: 1.2;
-            margin-bottom: 30px;
-            letter-spacing: -1px;
-        }
-
-        .section-intro {
-            font-size: 20px;
-            color: var(--gray);
-            max-width: 800px;
-            margin-bottom: 60px;
-            font-weight: 300;
-            line-height: 1.8;
-        }
-
-        /* Problem Section */
-        .problem {
-            background: var(--light-gray);
-        }
-
-        .problem-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 40px;
-            margin-top: 60px;
-        }
-
-        .problem-card {
-            background: var(--white);
-            padding: 40px;
-            border-radius: 2px;
-            transition: transform 0.3s ease;
-        }
-
-        .problem-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .problem-number {
-            font-size: 64px;
-            font-weight: 300;
-            color: var(--black);
-            opacity: 0.1;
-            margin-bottom: 20px;
-        }
-
-        .problem-title {
-            font-size: 24px;
-            font-weight: 400;
-            margin-bottom: 15px;
-        }
-
-        .problem-desc {
-            color: var(--gray);
-            font-size: 16px;
-            line-height: 1.6;
-        }
-
-        /* Chart Section */
-        .chart-container {
-            background: var(--white);
-            padding: 60px;
-            border-radius: 2px;
-            margin: 60px 0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        .chart-title {
-            font-size: 18px;
-            font-weight: 400;
-            margin-bottom: 40px;
-            text-align: center;
-            color: var(--black);
-        }
-
-        .bar-chart {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-around;
-            height: 300px;
-            margin-top: 40px;
-            position: relative;
-        }
-
-        .bar-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-            max-width: 200px;
-        }
-
-        .bar {
-            width: 80%;
-            background: linear-gradient(180deg, var(--black) 0%, #333 100%);
-            position: relative;
-            transition: all 0.5s ease;
-            border-radius: 2px 2px 0 0;
-        }
-
-        .bar.accent {
-            background: linear-gradient(180deg, var(--accent) 0%, #00a01d 100%);
-        }
-
-        .bar-label {
-            margin-top: 15px;
-            font-size: 13px;
-            text-align: center;
-            color: var(--gray);
-            line-height: 1.4;
-        }
-
-        .bar-value {
-            position: absolute;
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 14px;
-            font-weight: 500;
-            white-space: nowrap;
-        }
-
-                /* Comparison Bars */
-        .comparison-bars {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            margin-top: 40px;
-        }
-        
-        .comparison-row {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .comparison-label {
-            font-weight: 500;
-            font-size: 14px;
-            color: var(--black);
-            margin-bottom: 5px;
-        }
-        
-        .comparison-values {
-            display: flex;
-            gap: 20px;
-            align-items: flex-end;
-        }
-        
-        .comparison-bar-wrapper {
-            flex: 1;
-            background: #e0e0e0;
-            border-radius: 4px;
-            height: 24px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .comparison-bar {
-            height: 100%;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 12px;
-            font-weight: 500;
-            transition: width 0.5s ease;
-        }
-        
-        .comparison-bar.traditional {
-            background: var(--black);
-        }
-        
-        .comparison-bar.block {
-            background: var(--accent);
-        }
-        
-        .comparison-legend {
-            display: flex;
-            gap: 30px;
-            margin-top: 30px;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            color: var(--gray);
-        }
-        
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 2px;
-        }
-        
-        .legend-color.traditional { background: var(--black); }
-        .legend-color.block { background: var(--accent); }
-
-        /* Solution Grid */
-        .solution-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-top: 60px;
-        }
-
-        .solution-card {
-            padding: 40px 30px;
-            border: 1px solid #e0e0e0;
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .solution-card:hover {
-            border-color: var(--black);
-            transform: translateY(-5px);
-        }
-
-        .solution-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--black);
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 25px;
-            font-size: 24px;
-            border-radius: 2px;
-        }
-
-        .solution-name {
-            font-size: 20px;
-            font-weight: 500;
-            margin-bottom: 15px;
-        }
-
-        .solution-desc {
-            font-size: 15px;
-            color: var(--gray);
-            line-height: 1.6;
-        }
-
-        /* Flywheel */
-        .flywheel {
-            background: var(--black);
-            color: var(--white);
-        }
-
-        .flywheel-diagram {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 80px 0;
-            position: relative;
-            min-height: 400px;
-        }
-
-        .flywheel-center {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-size: 18px;
-            font-weight: 500;
-            z-index: 2;
-            box-shadow: 0 0 60px rgba(0, 217, 36, 0.3);
-        }
-
-        .flywheel-nodes {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-
-        .flywheel-node {
-            position: absolute;
-            width: 180px;
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            backdrop-filter: blur(10px);
-        }
-
-        .flywheel-node.top { top: -20%; left: 50%; transform: translateX(-50%); }
-        .flywheel-node.right { top: 50%; right: 0; transform: translateY(-50%); }
-        .flywheel-node.bottom { top: 85%; left: 50%; transform: translateX(-50%); }
-        .flywheel-node.left { top: 50%; left: 0; transform: translateY(-50%); }
-
-        .node-title {
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: var(--accent);
-        }
-
-        .node-desc {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.6);
-            line-height: 1.5;
-        }
-
-        /* Impact Section */
-        .impact-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 50px;
-            margin: 80px 0;
-        }
-
-        .impact-stat {
-            text-align: center;
-        }
-
-        .impact-number {
-            font-size: 56px;
-            font-weight: 300;
-            color: var(--black);
-            display: block;
-            margin-bottom: 15px;
-        }
-
-        .impact-label {
-            font-size: 14px;
-            color: var(--gray);
-            line-height: 1.5;
-        }
-
-        /* Table */
-        .comparison-table {
-            width: 100%;
-            margin: 60px 0;
-            border-collapse: collapse;
-        }
-
-        .comparison-table th {
-            text-align: left;
-            padding: 20px;
-            background: var(--light-gray);
-            font-weight: 500;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .comparison-table td {
-            padding: 20px;
-            border-bottom: 1px solid #e0e0e0;
-            font-size: 15px;
-        }
-
-        .comparison-table tr:hover {
-            background: var(--light-gray);
-        }
-
-        /* Theta Framework */
-        .theta-framework {
-            background: var(--light-gray);
-        }
-
-        .theta-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin: 60px 0;
-        }
-
-        .theta-card {
-            background: var(--white);
-            padding: 40px;
-            border-radius: 2px;
-            border-left: 4px solid;
-            transition: transform 0.3s ease;
-        }
-
-        .theta-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .theta-card.core { border-left-color: #00D924; }
-        .theta-card.edge { border-left-color: #FFB800; }
-        .theta-card.beyond { border-left-color: #FF4444; }
-
-        .theta-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            background: var(--light-gray);
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-
-        .theta-allocation {
-            font-size: 48px;
-            font-weight: 300;
-            margin-bottom: 20px;
-            color: var(--black);
-        }
-
-        .theta-title {
-            font-size: 22px;
-            font-weight: 500;
-            margin-bottom: 15px;
-        }
-
-        .theta-desc {
-            font-size: 15px;
-            color: var(--gray);
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        .theta-unlock {
-            font-size: 13px;
-            color: var(--gray);
-            font-style: italic;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .theta-table {
-            width: 100%;
-            margin: 40px 0;
-            border-collapse: collapse;
-        }
-
-        .theta-table th {
-            text-align: left;
-            padding: 15px;
-            background: var(--light-gray);
-            font-weight: 500;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 2px solid var(--black);
-        }
-
-        .theta-table td {
-            padding: 18px 15px;
-            border-bottom: 1px solid #e0e0e0;
-            font-size: 15px;
-        }
-
-        .theta-table tr:hover {
-            background: rgba(0, 0, 0, 0.02);
-        }
-
-        .risk-section {
-            margin-top: 80px;
-        }
-
-        .risk-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 40px;
-        }
-
-        .risk-card {
-            background: var(--white);
-            padding: 30px;
-            border-radius: 2px;
-            border: 1px solid #e0e0e0;
-        }
-
-        .risk-title {
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 12px;
-            color: var(--black);
-        }
-
-        .risk-challenge {
-            font-size: 14px;
-            color: #FF4444;
-            margin-bottom: 12px;
-        }
-
-        .risk-mitigation {
-            font-size: 14px;
-            color: #00D924;
-        }
-
-        /* Quote */
-        .quote-section {
-            background: var(--light-gray);
-            padding: 100px 0;
-            text-align: center;
-        }
-
-        .quote {
-            font-size: clamp(28px, 4vw, 42px);
-            font-weight: 300;
-            line-height: 1.5;
-            max-width: 900px;
-            margin: 0 auto;
-            color: var(--black);
-            letter-spacing: -0.5px;
-        }
-
-        .quote-author {
-            margin-top: 30px;
-            font-size: 16px;
-            color: var(--gray);
-            font-weight: 400;
-        }
-
-        /* Conclusion */
-        .conclusion {
-            background: var(--black);
-            color: var(--white);
-            text-align: center;
-            padding: 120px 40px;
-        }
-
-        .conclusion-title {
-            font-size: clamp(36px, 5vw, 56px);
-            font-weight: 300;
-            line-height: 1.3;
-            margin-bottom: 30px;
-            letter-spacing: -1px;
-        }
-
-        .conclusion-text {
-            font-size: 20px;
-            color: rgba(255, 255, 255, 0.7);
-            max-width: 700px;
-            margin: 0 auto 60px;
-            line-height: 1.8;
-        }
-
-        .conclusion-cta {
-            display: inline-block;
-            padding: 18px 50px;
-            background: var(--accent);
-            color: var(--black);
-            text-decoration: none;
-            font-weight: 500;
-            border-radius: 2px;
-            transition: all 0.3s ease;
-            font-size: 15px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .conclusion-cta:hover {
-            background: var(--white);
-            transform: translateY(-2px);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            section { padding: 60px 0; }
-            .container { padding: 0 20px; }
-            
-            /* Hero */
-            .hero { height: auto; min-height: 100vh; padding: 80px 20px; }
-            .hero h1 { font-size: 42px; margin-bottom: 20px; }
-            .hero-subtitle { font-size: 18px; margin-bottom: 40px; }
-            .hero-stats { 
-                gap: 20px; 
-                flex-direction: column;
-                margin-top: 40px;
-            }
-            .stat-number { font-size: 36px; }
-            
-            /* Section titles */
-            .section-title { font-size: 32px; margin-bottom: 20px; }
-            .section-intro { font-size: 16px; margin-bottom: 40px; }
-            
-            /* Problem cards */
-            .problem-grid { 
-                grid-template-columns: 1fr; 
-                gap: 20px;
-                margin-top: 40px;
-            }
-            .problem-card { padding: 30px 25px; }
-            .problem-number { font-size: 48px; }
-            
-            /* Charts */
-            .chart-container { padding: 30px 20px; }
-            .chart-title { font-size: 16px; margin-bottom: 30px; }
-            .bar-chart { 
-                height: 250px;
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-            .bar-group { 
-                min-width: 80px;
-                max-width: 100px;
-            }
-            .bar-value { font-size: 12px; top: -25px; }
-            .bar-label { font-size: 11px; }
-            
-            /* Solution grid */
-            .solution-grid { 
-                grid-template-columns: 1fr; 
-                gap: 20px;
-                margin-top: 40px;
-            }
-            .solution-card { padding: 30px 25px; }
-            
-            /* Flywheel */
-            .flywheel-diagram { 
-                min-height: 600px;
-                margin: 60px 0;
-            }
-            .flywheel-node { 
-                width: 130px; 
-                padding: 15px;
-            }
-            .flywheel-node.top { top: 20px; }
-            .flywheel-node.right { right: 10px; top: 45%; }
-            .flywheel-node.bottom { bottom: 20px; }
-            .flywheel-node.left { left: 10px; top: 45%; }
-            .flywheel-center { 
-                width: 140px; 
-                height: 140px; 
-                font-size: 14px;
-                padding: 20px;
-            }
-            .node-title { font-size: 14px; }
-            .node-desc { font-size: 11px; }
-            
-            /* Table */
-            .comparison-table { 
-                font-size: 13px;
-                display: block;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            .comparison-table th,
-            .comparison-table td { 
-                padding: 15px 10px;
-                min-width: 120px;
-            }
-            
-            /* Impact stats */
-            .impact-stats { 
-                grid-template-columns: repeat(2, 1fr);
-                gap: 30px;
-                margin: 50px 0;
-            }
-            .impact-number { font-size: 42px; }
-            .impact-label { font-size: 13px; }
-            
-            /* SVG */
-            .chart-container svg {
-                width: 100%;
-                height: auto;
-                min-height: 350px;
-            }
-            
-            /* Bitcoin circular chart mobile */
-            #bitcoin-circular-chart {
-                padding: 40px 20px !important;
-            }
-            
-            /* Theta Framework */
-            .theta-grid { 
-                grid-template-columns: 1fr;
-                gap: 20px;
-                margin: 40px 0;
-            }
-            .theta-card { padding: 30px 25px; }
-            .theta-allocation { font-size: 36px; }
-            
-            .theta-table {
-                display: block;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            .theta-table th,
-            .theta-table td {
-                font-size: 12px;
-                padding: 12px 8px;
-                min-width: 80px;
-            }
-            
-            .risk-grid { 
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .risk-card { padding: 25px 20px; }
-            
-            /* Quote */
-            .quote { font-size: 24px; }
-            .quote-author { font-size: 14px; }
-            
-            /* Conclusion */
-            .conclusion { padding: 80px 20px; }
-            .conclusion-title { font-size: 32px; margin-bottom: 25px; }
-            .conclusion-text { font-size: 16px; margin-bottom: 40px; }
-            .conclusion-cta { 
-                padding: 15px 40px;
-                font-size: 13px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .hero h1 { font-size: 36px; }
-            .section-title { font-size: 28px; }
-            .impact-stats { grid-template-columns: 1fr; }
-            .bar-chart { height: auto; }
-            .bar-group { 
-                margin-bottom: 15px;
-                max-width: 120px;
-            }
-            .flywheel-diagram { min-height: 550px; }
-            .flywheel-node { width: 110px; padding: 12px; }
-            .flywheel-center { width: 120px; height: 120px; font-size: 12px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block Inc. — An Economy Without Permission</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --ink: #0E1A18;
+  --ink-soft: #1E2D2A;
+  --paper: #F7F5F0;
+  --paper-warm: #EFEBE2;
+  --muted: #8A9490;
+  --block-green: #00C04B;
+  --block-dark: #00571F;
+  --accent-gold: #C8A84B;
+  --core-green: #2D6A4F;
+  --edge-amber: #B5841A;
+  --beyond-crimson: #8B1A1A;
+  --border: rgba(0,192,75,0.15);
+  --white: #FFFFFF;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); overflow-x: hidden; font-size: 16px; line-height: 1.7; }
+
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 48px; background: rgba(14,26,24,0.88); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,192,75,0.12); }
+.nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 500; color: var(--block-green); letter-spacing: 0.02em; }
+.nav-links { display: flex; gap: 32px; }
+.nav-links a { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.5); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover { color: var(--block-green); }
+
+.hero { min-height: 100vh; background: var(--ink); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(0,192,75,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,192,75,0.04) 1px, transparent 1px); background-size: 60px 60px; animation: gridDrift 30s linear infinite; }
+@keyframes gridDrift { from { transform: translate(0,0); } to { transform: translate(60px,60px); } }
+.hero-radial { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 60% 50%, rgba(0,192,75,0.07) 0%, transparent 70%); }
+.hero-noise { position: absolute; inset: 0; opacity: 0.02; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
+.hero-content { position: relative; z-index: 2; max-width: 1000px; padding: 120px 48px 80px; text-align: left; }
+.hero-kicker { display: inline-block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--block-green); font-weight: 500; margin-bottom: 28px; opacity: 0; animation: fadeUp 0.8s 0.2s forwards; }
+.hero-headline { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 6.5vw, 6rem); font-weight: 300; line-height: 1.05; color: var(--paper); letter-spacing: -0.02em; margin-bottom: 28px; opacity: 0; animation: fadeUp 0.8s 0.4s forwards; }
+.hero-headline em { font-style: italic; color: var(--block-green); }
+.hero-sub { font-size: 1.1rem; font-weight: 300; color: rgba(247,245,240,0.6); max-width: 600px; line-height: 1.75; margin-bottom: 60px; opacity: 0; animation: fadeUp 0.8s 0.6s forwards; }
+.hero-meta { display: flex; gap: 48px; flex-wrap: wrap; padding-top: 40px; border-top: 1px solid rgba(0,192,75,0.15); opacity: 0; animation: fadeUp 0.8s 0.8s forwards; }
+.meta-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(247,245,240,0.35); margin-bottom: 4px; }
+.meta-value { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 500; color: var(--paper); }
+.scroll-line { position: absolute; right: 48px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0; animation: fadeIn 1s 1.2s forwards; }
+.scroll-line span { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(247,245,240,0.3); writing-mode: vertical-lr; }
+.scroll-line-bar { width: 1px; height: 80px; background: linear-gradient(to bottom, var(--block-green), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+@keyframes scrollPulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+section { padding: 100px 0; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
+.section-kicker { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--muted); font-weight: 500; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+.section-kicker::after { content: ''; flex: 1; max-width: 40px; height: 1px; background: var(--block-green); }
+.section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.2rem, 4vw, 3.4rem); font-weight: 300; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 24px; }
+.section-title em { font-style: italic; color: var(--block-green); }
+.fade-up { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.fade-up.visible { opacity: 1; transform: none; }
+
+#about { background: var(--white); }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+.about-text p { color: #3a4a47; line-height: 1.85; margin-bottom: 20px; font-size: 1.02rem; }
+.hidden-fact { background: var(--ink); color: var(--paper); padding: 28px 32px; margin-top: 32px; border-left: 3px solid var(--block-green); }
+.hidden-fact-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--block-green); margin-bottom: 10px; }
+.hidden-fact p { font-size: 0.92rem; color: rgba(247,245,240,0.8); line-height: 1.7; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.stat-block { background: var(--paper-warm); padding: 36px 28px; }
+.stat-block:nth-child(even) { background: var(--paper); }
+.stat-number { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 300; line-height: 1; color: var(--ink); margin-bottom: 8px; }
+.stat-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+.belief-strip { background: var(--block-dark); padding: 72px 48px; text-align: center; }
+.belief-quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.5rem, 3.5vw, 2.6rem); font-style: italic; font-weight: 300; color: var(--paper); line-height: 1.45; max-width: 860px; margin: 0 auto 20px; letter-spacing: -0.01em; }
+.belief-attr { color: rgba(247,245,240,0.4); font-size: 0.82rem; }
+
+#pillars { background: var(--paper-warm); }
+.pillars-intro { max-width: 720px; font-size: 1.05rem; color: #3a4a47; line-height: 1.85; margin-bottom: 60px; }
+.pillars-system { background: var(--ink); padding: 60px; position: relative; overflow: hidden; }
+.pillars-system::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 40% at 50% 50%, rgba(0,192,75,0.06) 0%, transparent 70%); }
+.pillars-label-top { text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 500; color: var(--paper); margin-bottom: 8px; position: relative; z-index: 1; }
+.pillars-label-sub { text-align: center; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(247,245,240,0.35); margin-bottom: 40px; position: relative; z-index: 1; }
+.pillars-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; position: relative; z-index: 1; }
+.pillar-box { background: rgba(255,255,255,0.04); border: 1px solid rgba(0,192,75,0.12); padding: 32px 24px; transition: background 0.3s, border-color 0.3s; position: relative; }
+.pillar-box:hover { background: rgba(0,192,75,0.08); border-color: rgba(0,192,75,0.35); }
+.pillar-tag { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--block-green); margin-bottom: 12px; }
+.pillar-name { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 500; color: var(--paper); margin-bottom: 8px; line-height: 1.2; }
+.pillar-role { font-size: 0.78rem; color: rgba(247,245,240,0.45); line-height: 1.5; }
+.pillars-footer { text-align: center; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(247,245,240,0.25); margin-top: 24px; position: relative; z-index: 1; }
+.pillars-footer strong { color: rgba(0,192,75,0.6); }
+
+.pillar-section { padding: 80px 0; }
+.pillar-section:nth-child(odd) { background: var(--white); }
+.pillar-section:nth-child(even) { background: var(--paper-warm); }
+.pillar-header { display: flex; align-items: baseline; gap: 20px; margin-bottom: 48px; }
+.pillar-num { font-family: 'Cormorant Garamond', serif; font-size: 5rem; font-weight: 300; color: rgba(0,192,75,0.12); line-height: 1; flex-shrink: 0; }
+.pillar-big-tag { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--block-green); margin-bottom: 6px; }
+.pillar-big-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 300; color: var(--ink); line-height: 1.1; letter-spacing: -0.01em; }
+.pillar-big-title em { font-style: italic; color: var(--block-green); }
+.pillar-body-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 64px; align-items: start; }
+.pillar-body-grid.flip { grid-template-columns: 0.9fr 1.1fr; }
+.pillar-text p { color: #3a4a47; line-height: 1.85; margin-bottom: 18px; font-size: 1rem; }
+.pillar-text p:last-child { margin-bottom: 0; }
+
+.three-steps { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); }
+.step-row { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+.step-row:last-child { border-bottom: none; }
+.step-num { width: 56px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300; color: var(--block-green); background: rgba(0,192,75,0.04); border-right: 1px solid var(--border); }
+.step-content { padding: 24px 28px; }
+.step-title { font-size: 0.8rem; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+.step-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+.stat-inline-row { display: flex; gap: 2px; margin-top: 28px; }
+.stat-inline { flex: 1; background: var(--ink); padding: 20px 16px; text-align: center; }
+.stat-inline-num { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300; color: var(--block-green); display: block; }
+.stat-inline-label { font-size: 0.7rem; color: rgba(247,245,240,0.45); line-height: 1.4; margin-top: 4px; }
+
+.btc-loop { background: var(--ink); padding: 40px; }
+.btc-loop-title { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(247,245,240,0.3); margin-bottom: 28px; }
+.btc-steps { display: flex; flex-direction: column; }
+.btc-step { display: flex; align-items: flex-start; border-bottom: 1px solid rgba(0,192,75,0.1); padding: 16px 0; gap: 16px; }
+.btc-step:last-child { border-bottom: none; }
+.btc-step-icon { color: var(--block-green); font-size: 0.8rem; padding-top: 3px; flex-shrink: 0; width: 16px; }
+.btc-step-name { font-size: 0.82rem; font-weight: 500; color: var(--paper); margin-bottom: 3px; }
+.btc-step-detail { font-size: 0.75rem; color: rgba(247,245,240,0.4); }
+
+.oss-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; }
+.oss-item { background: var(--ink); padding: 24px 28px; border-left: 2px solid transparent; transition: border-color 0.2s; }
+.oss-item:hover { border-left-color: var(--block-green); }
+.oss-name { font-size: 0.9rem; font-weight: 500; color: var(--block-green); margin-bottom: 6px; }
+.oss-use { font-size: 0.78rem; color: rgba(247,245,240,0.5); line-height: 1.55; }
+
+.neighborhood-stack { background: var(--ink); padding: 40px; }
+.stack-row { display: flex; align-items: stretch; margin-bottom: 2px; }
+.stack-label { width: 130px; flex-shrink: 0; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(247,245,240,0.3); text-align: right; padding-right: 20px; display: flex; align-items: center; justify-content: flex-end; }
+.stack-content { flex: 1; background: rgba(0,192,75,0.07); border: 1px solid rgba(0,192,75,0.1); padding: 16px 20px; transition: background 0.3s; }
+.stack-content:hover { background: rgba(0,192,75,0.13); }
+.stack-name { font-size: 0.88rem; font-weight: 500; color: var(--paper); }
+.stack-sub { font-size: 0.75rem; color: rgba(247,245,240,0.4); margin-top: 3px; }
+
+#theta { background: var(--white); }
+.theta-two-col { display: grid; grid-template-columns: 1fr 1.6fr; gap: 64px; align-items: start; }
+.zone-legend { display: flex; flex-direction: column; gap: 20px; }
+.zone-pill { display: flex; align-items: flex-start; gap: 16px; padding: 20px 24px; border-left: 3px solid; }
+.zone-pill.core { border-color: var(--core-green); background: rgba(45,106,79,0.04); }
+.zone-pill.edge { border-color: var(--edge-amber); background: rgba(181,132,26,0.04); }
+.zone-pill.beyond { border-color: var(--beyond-crimson); background: rgba(139,26,26,0.04); }
+.zone-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.core .zone-dot { background: var(--core-green); }
+.edge .zone-dot { background: var(--edge-amber); }
+.beyond .zone-dot { background: var(--beyond-crimson); }
+.zone-label { font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+.zone-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+.reading-card { background: var(--paper-warm); padding: 20px 24px; margin-top: 20px; border: 1px solid rgba(0,0,0,0.06); }
+.reading-title { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 8px; }
+.reading-text { font-size: 0.82rem; color: var(--ink); line-height: 1.6; }
+.chart-wrap { position: relative; height: 400px; }
+
+#allocation { background: var(--paper-warm); }
+.alloc-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: start; }
+.alloc-chart-wrap { position: relative; }
+.alloc-center-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%); text-align: center; pointer-events: none; }
+.alloc-center-big { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 400; color: var(--ink); line-height: 1.2; }
+.alloc-center-sub { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+.alloc-bars { display: flex; flex-direction: column; gap: 28px; }
+.alloc-bar-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.alloc-bar-name { font-size: 0.82rem; font-weight: 500; }
+.alloc-bar-pct { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--muted); }
+.alloc-track { height: 6px; background: rgba(0,0,0,0.07); position: relative; overflow: visible; }
+.alloc-fill { height: 100%; position: absolute; top: 0; left: 0; transition: width 1.2s ease; }
+.alloc-fill.core { background: var(--core-green); }
+.alloc-fill.edge { background: var(--edge-amber); }
+.alloc-fill.beyond { background: var(--beyond-crimson); }
+.alloc-benchmark { position: absolute; top: -3px; width: 2px; height: 12px; background: rgba(0,0,0,0.25); }
+.alloc-comment { font-size: 0.78rem; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+
+#competitors { background: var(--white); }
+.comp-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 2px; margin-bottom: 60px; }
+.comp-card { padding: 24px 20px; background: var(--paper); border-top: 2px solid transparent; transition: border-color 0.2s; }
+.comp-card.featured { background: var(--paper-warm); border-top-color: var(--block-green); }
+.comp-card:not(.featured):hover { border-top-color: rgba(0,0,0,0.15); }
+.comp-name { font-size: 0.88rem; font-weight: 500; margin-bottom: 4px; }
+.comp-tag { font-size: 0.7rem; color: var(--muted); margin-bottom: 16px; line-height: 1.4; }
+.comp-zones { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.comp-zone-row { display: flex; align-items: center; gap: 8px; }
+.comp-zone-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.comp-zone-text { font-size: 0.72rem; color: var(--muted); line-height: 1.4; }
+.comp-verdict { display: inline-block; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 10px; background: var(--ink); color: var(--paper); }
+.comp-verdict.strong { background: var(--core-green); }
+.comp-verdict.moderate { background: var(--edge-amber); }
+.comp-verdict.specialist { background: rgba(139,26,26,0.75); }
+.radar-wrap { height: 380px; }
+
+#sw { background: var(--paper-warm); }
+.sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.sw-panel { padding: 40px; }
+.sw-panel.strengths { background: rgba(45,106,79,0.05); border-left: 3px solid var(--core-green); }
+.sw-panel.weaknesses { background: rgba(139,26,26,0.04); border-left: 3px solid var(--beyond-crimson); }
+.sw-panel-title { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 28px; font-weight: 500; }
+.sw-panel.strengths .sw-panel-title { color: var(--core-green); }
+.sw-panel.weaknesses .sw-panel-title { color: var(--beyond-crimson); }
+.sw-items { display: flex; flex-direction: column; gap: 20px; }
+.sw-item { display: flex; gap: 16px; }
+.sw-marker { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 500; flex-shrink: 0; margin-top: 2px; }
+.strengths .sw-marker { background: rgba(45,106,79,0.12); color: var(--core-green); }
+.weaknesses .sw-marker { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+.sw-lead { font-size: 0.88rem; font-weight: 500; margin-bottom: 3px; }
+.sw-detail { font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
+
+#diagnostic { background: var(--ink); padding: 100px 0; }
+.diagnostic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+.diag-section-title { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--block-green); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(0,192,75,0.2); }
+.archetype-boxes { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+.archetype-box { display: flex; align-items: flex-start; gap: 16px; padding: 18px 20px; border: 1px solid rgba(255,255,255,0.06); }
+.archetype-status { width: 28px; flex-shrink: 0; font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--block-green); line-height: 1; }
+.archetype-label { font-size: 0.8rem; font-weight: 500; color: var(--paper); margin-bottom: 4px; }
+.archetype-desc { font-size: 0.75rem; color: rgba(247,245,240,0.4); line-height: 1.55; }
+.leader-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 8px; }
+.leader-row:last-child { border-bottom: none; }
+.leader-name { font-size: 0.82rem; color: var(--paper); }
+.leader-tag { font-size: 0.68rem; color: rgba(247,245,240,0.4); }
+.leader-align { font-size: 0.72rem; display: flex; gap: 3px; }
+.star-filled { color: var(--block-green); }
+.star-empty { color: rgba(255,255,255,0.12); }
+.tension-box { background: rgba(139,26,26,0.12); border: 1px solid rgba(139,26,26,0.3); padding: 24px; margin-bottom: 28px; }
+.tension-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(200,100,100,0.8); margin-bottom: 10px; }
+.tension-text { font-size: 0.88rem; color: rgba(247,245,240,0.75); line-height: 1.65; }
+.diag-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.diag-bar-name { font-size: 0.75rem; color: rgba(247,245,240,0.6); width: 80px; flex-shrink: 0; }
+.diag-bar-track { flex: 1; height: 4px; background: rgba(255,255,255,0.07); position: relative; }
+.diag-bar-actual { height: 100%; }
+.diag-bar-bench { position: absolute; top: -4px; width: 1px; height: 12px; background: rgba(255,255,255,0.25); }
+.diag-bar-vals { font-size: 0.68rem; color: rgba(247,245,240,0.3); width: 60px; text-align: right; }
+.relativity-box { background: rgba(0,192,75,0.06); border: 1px solid rgba(0,192,75,0.15); padding: 24px; }
+.relativity-text { font-size: 0.85rem; color: rgba(247,245,240,0.7); line-height: 1.7; }
+.verdict-strip { margin-top: 48px; padding: 32px 40px; background: rgba(0,192,75,0.07); border: 1px solid rgba(0,192,75,0.2); display: flex; align-items: center; gap: 24px; }
+.verdict-symbols { font-size: 1.8rem; letter-spacing: 4px; color: var(--block-green); flex-shrink: 0; }
+.verdict-label { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 400; color: var(--paper); margin-bottom: 6px; }
+.verdict-text { font-size: 0.82rem; color: rgba(247,245,240,0.5); line-height: 1.6; }
+
+#vision { background: var(--ink); position: relative; overflow: hidden; padding: 100px 0; }
+#vision::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 50% at 30% 60%, rgba(0,192,75,0.05) 0%, transparent 70%); }
+.vision-intro { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.5rem, 3.5vw, 2.4rem); font-weight: 300; font-style: italic; color: rgba(247,245,240,0.75); line-height: 1.5; max-width: 740px; margin-bottom: 60px; letter-spacing: -0.01em; }
+.vision-list { display: flex; flex-direction: column; max-width: 800px; }
+.vision-item { display: flex; gap: 24px; align-items: flex-start; padding: 24px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.vision-item:last-child { border-bottom: none; }
+.vision-arrow { color: var(--block-green); font-size: 0.9rem; padding-top: 4px; flex-shrink: 0; }
+.vision-text { font-size: 1.05rem; color: rgba(247,245,240,0.8); line-height: 1.65; }
+.vision-text strong { color: var(--paper); font-weight: 500; }
+.vision-close { margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(0,192,75,0.2); }
+.vision-close-quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.2rem, 2.5vw, 1.8rem); font-weight: 300; font-style: italic; color: var(--block-green); line-height: 1.5; margin-bottom: 8px; }
+.vision-close-attr { font-size: 0.78rem; color: rgba(247,245,240,0.3); }
+
+footer { background: var(--ink-soft); padding: 32px 48px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(0,192,75,0.1); }
+.footer-left { font-size: 0.72rem; color: rgba(247,245,240,0.3); }
+.footer-right { font-size: 0.72rem; color: rgba(247,245,240,0.2); }
+
+@media (max-width: 900px) {
+  nav { padding: 16px 24px; }
+  .nav-links { display: none; }
+  .container { padding: 0 24px; }
+  section { padding: 64px 0; }
+  .hero-content { padding: 100px 24px 60px; }
+  .about-grid, .pillar-body-grid, .pillar-body-grid.flip, .theta-two-col, .alloc-grid, .diagnostic-grid, .sw-grid { grid-template-columns: 1fr; gap: 40px; }
+  .comp-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-meta { gap: 24px; }
+  .scroll-line { display: none; }
+  .pillars-row { grid-template-columns: repeat(2, 1fr); }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .oss-grid { grid-template-columns: 1fr; }
+  .verdict-strip { flex-direction: column; gap: 12px; }
+  footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
 </head>
 <body>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-label">Case Study</div>
-            <h1>An Economy Without Permission</h1>
-            <p class="hero-subtitle">How Block Uses Open Money to Rewire Access to the Global Economy</p>
-            
-            <div class="hero-stats">
-                <div class="stat">
-                    <span class="stat-number">2B</span>
-                    <span class="stat-label">Unbanked Globally</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">57M</span>
-                    <span class="stat-label">Cash App Users</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">4M+</span>
-                    <span class="stat-label">Square Merchants</span>
-                </div>
-            </div>
+<nav>
+  <div class="nav-logo">Block Inc.</div>
+  <div class="nav-links">
+    <a href="#pillars">Pillars</a>
+    <a href="#theta">Theta Map</a>
+    <a href="#competitors">Competitors</a>
+    <a href="#diagnostic">Diagnostic</a>
+    <a href="#vision">Vision</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-radial"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Innovation Case Study</div>
+    <h1 class="hero-headline">
+      Building the rails for<br>
+      an economy that needs<br>
+      <em>no permission</em>
+    </h1>
+    <p class="hero-sub">Block is not a fintech company. It is infrastructure—invisible by design, generative by nature. What it's building quietly may be the most consequential financial architecture of this decade.</p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">Founded</div>
+        <div class="meta-value">2009</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Team (Post-2026 Reset)</div>
+        <div class="meta-value">~6,000</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">2024 Revenue</div>
+        <div class="meta-value">$24.1B</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Theta Archetype</div>
+        <div class="meta-value">Balanced ☑☑☑</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-line">
+    <span>Scroll</span>
+    <div class="scroll-line-bar"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid fade-up">
+      <div class="about-text">
+        <div class="section-kicker">What They Actually Do</div>
+        <h2 class="section-title">The company that builds the <em>tools</em>, not the products</h2>
+        <p>Most people know Block as the company behind the Square payment terminal and Cash App. That description is accurate and almost entirely wrong. What Block actually does is build infrastructure—foundational layers of the economic system that most people never see, touch, or think about, until the day they can't live without them.</p>
+        <p>Jack Dorsey once said "the really great designs fade away." This isn't a design philosophy. It's the entire company strategy. Block's goal is to render itself invisible—to become so embedded in the fabric of how money moves and how businesses operate that people stop attributing it to any company at all.</p>
+        <p>Block has rebuilt itself three times: from a payments startup into a consumer fintech, from a consumer fintech into a Bitcoin infrastructure company, and now from a large company into what Dorsey calls an "intelligence-native" organization—smaller, sharper, AI-augmented from the inside out.</p>
+        <div class="hidden-fact">
+          <div class="hidden-fact-label">Hidden Fact</div>
+          <p>Block's engineers built OkHttp, the HTTP networking library that powers millions of Android applications worldwide—including apps at Google. It eventually became the default HTTP client in the Android operating system itself. Block wrote the plumbing that parts of the internet runs on, and almost no one knows it.</p>
         </div>
-        <div class="scroll-indicator">Scroll</div>
-    </section>
-
-    <!-- Problem Section -->
-    <section class="problem">
-        <div class="container">
-            <div class="section-label">The Challenge</div>
-            <h2 class="section-title">Money Has Gatekeepers</h2>
-            <p class="section-intro">
-                Today's financial system decides who counts. Bank accounts require documentation and credit. 
-                Underserved populations pay the highest fees. 2 billion people operate mostly in cash.
-            </p>
-
-            <div class="problem-grid">
-                <div class="problem-card">
-                    <div class="problem-number">1.4B</div>
-                    <h3 class="problem-title">Adults Remain Unbanked</h3>
-                    <p class="problem-desc">70% live in emerging markets where access to traditional banking remains limited or impossible.</p>
-                </div>
-                <div class="problem-card">
-                    <div class="problem-number">6-9%</div>
-                    <h3 class="problem-title">Remittance Fees</h3>
-                    <p class="problem-desc">Migrants lose up to 9% of earnings just to send money home through traditional channels.</p>
-                </div>
-                <div class="problem-card">
-                    <div class="problem-number">90%</div>
-                    <h3 class="problem-title">Cash Transactions</h3>
-                    <p class="problem-desc">In many developing regions, cash remains dominant due to lack of accessible alternatives.</p>
-                </div>
-            </div>
-
-            <div class="chart-container">
-                <div class="chart-title">The Cost of Accessing Money</div>
-                <div class="comparison-bars">
-                    <div class="comparison-row">
-                        <div class="comparison-label">Overdraft/Access Fee</div>
-                        <div class="comparison-values">
-                            <div class="comparison-bar-wrapper">
-                                <div class="comparison-bar traditional" style="width: 100%;"><span>$35 flat</span></div>
-                            </div>
-                            <div class="comparison-bar-wrapper">
-                                <div class="comparison-bar block" style="width: 8%;"><span>$0-3</span></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="comparison-row">
-                        <div class="comparison-label">Remittance Fee</div>
-                        <div class="comparison-values">
-                            <div class="comparison-bar-wrapper">
-                                <div class="comparison-bar traditional" style="width: 75%;"><span>6-9%</span></div>
-                            </div>
-                            <div class="comparison-bar-wrapper">
-                                <div class="comparison-bar block" style="width: 8%;"><span>&lt;1%</span></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="comparison-row">
-                        <div class="comparison-label">Merchant Processing</div>
-                        <div class="comparison-values">
-                            <div class="comparison-bar-wrapper">
-                                <div class="comparison-bar traditional" style="width: 85%;"><span>2.7-3.5%</span></div>
-                            </div>
-                            <div class="comparison-bar-wrapper">
-                                <div class="comparison-bar block" style="width: 70%;"><span>Similar*</span></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="comparison-legend">
-                        <div class="legend-item">
-                            <div class="legend-color traditional"></div>
-                            <span>Traditional System</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color block"></div>
-                            <span>Block/Bitcoin</span>
-                        </div>
-                    </div>
-                </div>
-                <p style="text-align: center; margin-top: 30px; font-size: 13px; color: var(--gray);">*Reducing with Bitcoin Lightning integration</p>
-            </div>
+      </div>
+      <div>
+        <div class="stats-grid">
+          <div class="stat-block">
+            <div class="stat-number">57M</div>
+            <div class="stat-desc">Monthly active Cash App users—more than the population of South Korea using Block as their primary financial platform</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-number">$200B+</div>
+            <div class="stat-desc">Total credit originated across Cash App Borrow, Afterpay, and Square Loans since inception</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-number">97%</div>
+            <div class="stat-desc">Repayment rate on Cash App Borrow—where 70% of borrowers have FICO scores below 580, the traditional cutoff for credit access</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-number">40%</div>
+            <div class="stat-desc">Engineer productivity gain since September 2025, driven by AI tools built in-house, not purchased from vendors</div>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Solution Section -->
-    <section class="solution">
-        <div class="container">
-            <div class="section-label">The Approach</div>
-            <h2 class="section-title">Open, Permissionless Money</h2>
-            <p class="section-intro">
-                Block believes money should behave like the internet: borderless, inclusive by default, 
-                resistant to gatekeeping, and user-owned.
-            </p>
+<div class="belief-strip fade-up">
+  <p class="belief-quote">"The electric outlets in every room are something we don't realize until it's pointed out or the power goes down. The really great designs fade away in that sense."</p>
+  <div class="belief-attr">— Jack Dorsey</div>
+</div>
 
-            <div class="solution-grid">
-                <div class="solution-card">
-                    <div class="solution-icon">□</div>
-                    <h3 class="solution-name">Square</h3>
-                    <p class="solution-desc">Empowering 4M+ merchants with POS systems, software, and instant loans—many digitally enabled for the first time.</p>
-                </div>
-
-                <div class="solution-card">
-                    <div class="solution-icon">$</div>
-                    <h3 class="solution-name">Cash App</h3>
-                    <p class="solution-desc">57M users can earn, save, spend, and invest instantly—without a traditional bank account.</p>
-                </div>
-
-                <div class="solution-card">
-                    <div class="solution-icon">▶</div>
-                    <h3 class="solution-name">Afterpay</h3>
-                    <p class="solution-desc">40M users access buy-now-pay-later services, boosting merchant sales by 20%+ without traditional credit.</p>
-                </div>
-
-                <div class="solution-card">
-                    <div class="solution-icon">🔑</div>
-                    <h3 class="solution-name">Bitkey</h3>
-                    <p class="solution-desc">Secure Bitcoin self-custody for anyone distrustful of institutions—truly own your savings.</p>
-                </div>
-
-                <div class="solution-card">
-                    <div class="solution-icon">⚡</div>
-                    <h3 class="solution-name">TBD / tbDEX</h3>
-                    <p class="solution-desc">Global transfers and decentralized identity without gatekeepers—enabling entrepreneurs in emerging markets.</p>
-                </div>
-
-                <div class="solution-card">
-                    <div class="solution-icon">⛏</div>
-                    <h3 class="solution-name">Bitcoin Mining</h3>
-                    <p class="solution-desc">Energy-based Bitcoin creation fueling decentralization at the community level.</p>
-                </div>
-            </div>
+<!-- FIVE PILLARS -->
+<section id="pillars">
+  <div class="container">
+    <div class="section-kicker fade-up">The Architecture</div>
+    <h2 class="section-title fade-up">Five pillars. One <em>purpose</em>.</h2>
+    <p class="pillars-intro fade-up">Block does not build features. It builds systems. Each initiative belongs to a pillar. Each pillar feeds the others. Together they converge on a single outcome: giving people—merchants, consumers, developers, artists, anyone—the tools to build something that lasts.</p>
+    <div class="pillars-system fade-up">
+      <div class="pillars-label-top">Enabling Entrepreneurs in America and the World</div>
+      <div class="pillars-label-sub">The Why — Anyone Anywhere Can Build Something That Outlasts Them</div>
+      <div class="pillars-row">
+        <div class="pillar-box">
+          <div class="pillar-tag">The How</div>
+          <div class="pillar-name">AI-Native Company</div>
+          <div class="pillar-role">Intelligence as operating system. Rebuilt from inside out.</div>
         </div>
-    </section>
-
-    <!-- Flywheel Section -->
-    <section class="flywheel">
-        <div class="container">
-            <div class="section-label" style="color: rgba(255,255,255,0.5);">The Strategy</div>
-            <h2 class="section-title">The Neighborhood Flywheel</h2>
-            <p class="section-intro" style="color: rgba(255,255,255,0.7);">
-                Block builds two ecosystems that meet in the middle—Square for merchants, Cash App for consumers. 
-                Once density builds in a city, Block becomes the default economic layer of that community.
-            </p>
-
-            <div class="flywheel-diagram">
-                <div class="flywheel-nodes">
-                    <div class="flywheel-node top">
-                        <div class="node-title">Square Merchants</div>
-                        <div class="node-desc">POS, software, loans, and payment processing</div>
-                    </div>
-                    <div class="flywheel-node right">
-                        <div class="node-title">Local Commerce</div>
-                        <div class="node-desc">65% of Cash App spend stays local</div>
-                    </div>
-                    <div class="flywheel-node bottom">
-                        <div class="node-title">Cash App Users</div>
-                        <div class="node-desc">Banking, investing, Bitcoin access</div>
-                    </div>
-                    <div class="flywheel-node left">
-                        <div class="node-title">Afterpay</div>
-                        <div class="node-desc">Discovery, checkout, rewards</div>
-                    </div>
-                </div>
-                <div class="flywheel-center">
-                    Neighborhood<br>Economics
-                </div>
-            </div>
-
-            <table class="comparison-table" style="color: var(--white);">
-                <thead>
-                    <tr>
-                        <th style="background: rgba(255,255,255,0.05);">Product</th>
-                        <th style="background: rgba(255,255,255,0.05);">What It Enables</th>
-                        <th style="background: rgba(255,255,255,0.05);">Who Gains</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Cash App</td>
-                        <td>Earn + spend instantly</td>
-                        <td>People excluded from traditional banks</td>
-                    </tr>
-                    <tr>
-                        <td>Bitkey</td>
-                        <td>Secure savings you truly own</td>
-                        <td>Anyone distrustful of institutions</td>
-                    </tr>
-                    <tr>
-                        <td>TBD / tbDEX</td>
-                        <td>Global transfers + identity without gatekeepers</td>
-                        <td>Entrepreneurs in emerging markets</td>
-                    </tr>
-                    <tr>
-                        <td>Bitcoin Mining</td>
-                        <td>Energy-based Bitcoin creation</td>
-                        <td>Local communities fueling decentralization</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="pillar-box">
+          <div class="pillar-tag">The What</div>
+          <div class="pillar-name">Neighborhood Ecosystem</div>
+          <div class="pillar-role">Local commerce engine. One loop, two sides, zero intermediaries.</div>
         </div>
-    </section>
-
-    <!-- Impact Section -->
-    <section class="impact">
-        <div class="container">
-            <div class="section-label">The Impact</div>
-            <h2 class="section-title">From Banking the Unbanked to Skipping the Bank</h2>
-            <p class="section-intro">
-                Instead of replicating banks digitally, Block removes the need for permission entirely. 
-                Economic participation becomes a feature of the network, not a privilege granted by institutions.
-            </p>
-
-            <div class="impact-stats">
-                <div class="impact-stat">
-                    <span class="impact-number">50%+</span>
-                    <span class="impact-label">Cash App users have no credit card</span>
-                </div>
-                <div class="impact-stat">
-                    <span class="impact-number">65%</span>
-                    <span class="impact-label">Of Cash App card spend stays with local merchants</span>
-                </div>
-                <div class="impact-stat">
-                    <span class="impact-number">20%+</span>
-                    <span class="impact-label">Sales lift for merchants using Afterpay</span>
-                </div>
-                <div class="impact-stat">
-                    <span class="impact-number">100M+</span>
-                    <span class="impact-label">People globally hold Bitcoin</span>
-                </div>
-            </div>
-
-            <!-- Bitcoin Flow Chart -->
-            <div class="chart-container">
-                <div class="chart-title">The Circular Bitcoin Economy</div>
-                <div style="text-align: center; padding: 80px 40px;">
-                    <svg width="100%" height="500" viewBox="0 0 1000 500" style="max-width: 1000px; margin: 0 auto; display: block;">
-                        <!-- Arrows forming circle -->
-                        <defs>
-                            <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
-                                <polygon points="0 0, 12 4, 0 8" fill="#00D924" />
-                            </marker>
-                        </defs>
-                        
-                        <!-- Circle path -->
-                        <path d="M 500 80 A 170 170 0 0 1 670 250" stroke="#00D924" stroke-width="3" fill="none" marker-end="url(#arrowhead)" />
-                        <path d="M 670 250 A 170 170 0 0 1 500 420" stroke="#00D924" stroke-width="3" fill="none" marker-end="url(#arrowhead)" />
-                        <path d="M 500 420 A 170 170 0 0 1 330 250" stroke="#00D924" stroke-width="3" fill="none" marker-end="url(#arrowhead)" />
-                        <path d="M 330 250 A 170 170 0 0 1 500 80" stroke="#00D924" stroke-width="3" fill="none" marker-end="url(#arrowhead)" />
-                        
-                        <!-- Labels -->
-                        <text x="500" y="45" text-anchor="middle" font-size="20" font-weight="500">Earn</text>
-                        <text x="500" y="68" text-anchor="middle" font-size="15" fill="#666">Cash App + Square</text>
-                        
-                        <text x="710" y="255" text-anchor="start" font-size="20" font-weight="500">Save</text>
-                        <text x="710" y="278" text-anchor="start" font-size="15" fill="#666">Bitkey</text>
-                        
-                        <text x="500" y="475" text-anchor="middle" font-size="20" font-weight="500">Spend</text>
-                        <text x="500" y="498" text-anchor="middle" font-size="15" fill="#666">Lightning Network</text>
-                        
-                        <text x="290" y="255" text-anchor="end" font-size="20" font-weight="500">Build</text>
-                        <text x="290" y="278" text-anchor="end" font-size="15" fill="#666">TBD + Spiral</text>
-                        
-                        <!-- Center -->
-                        <circle cx="500" cy="250" r="80" fill="#000" />
-                        <text x="500" y="260" text-anchor="middle" font-size="24" font-weight="500" fill="#00D924">Bitcoin</text>
-                    </svg>
-                </div>
-                <p style="text-align: center; margin-top: 30px; font-size: 16px; color: var(--gray); font-style: italic;">
-                    Not speculation — utility.
-                </p>
-            </div>
+        <div class="pillar-box">
+          <div class="pillar-tag">The Where</div>
+          <div class="pillar-name">Bitcoin Ecosystem</div>
+          <div class="pillar-role">Neutral global money. Full stack from wallet to mining chip.</div>
         </div>
-    </section>
-
-    <!-- Theta Framework Section -->
-    <section class="theta-framework">
-        <div class="container">
-            <div class="section-label">Strategic Innovation</div>
-            <h2 class="section-title">Where Block Innovates on the Theta Curve</h2>
-            <p class="section-intro">
-                The Theta Framework maps innovation across time horizons. Block invests across the entire curve—
-                from today's mass participation to tomorrow's permissionless economies.
-            </p>
-
-            <div class="theta-grid">
-                <div class="theta-card core">
-                    <div class="theta-badge">Core (0-2 yrs)</div>
-                    <div class="theta-allocation">60%</div>
-                    <h3 class="theta-title">Mass Participation</h3>
-                    <p class="theta-desc">Square, Cash App, Afterpay</p>
-                    <div class="theta-unlock">What it unlocks: Economic access at scale</div>
-                </div>
-
-                <div class="theta-card edge">
-                    <div class="theta-badge">Edge (2-5 yrs)</div>
-                    <div class="theta-allocation">25%</div>
-                    <h3 class="theta-title">Lower Fees + Speed</h3>
-                    <p class="theta-desc">Lightning, Bitcoin in Cash App, Seller automation</p>
-                    <div class="theta-unlock">What it unlocks: Instant, low-cost transactions</div>
-                </div>
-
-                <div class="theta-card beyond">
-                    <div class="theta-badge">Beyond (5-10 yrs)</div>
-                    <div class="theta-allocation">15%</div>
-                    <h3 class="theta-title">Permissionless Economies</h3>
-                    <p class="theta-desc">Bitkey, Spiral, TBD, Proto</p>
-                    <div class="theta-unlock">What it unlocks: Self-sovereign finance</div>
-                </div>
-            </div>
-
-            <!-- Competitive Positioning -->
-            <div class="chart-container">
-                <div class="chart-title">Competitive Landscape: Theta Positioning</div>
-                <table class="theta-table">
-                    <thead>
-                        <tr>
-                            <th>Company</th>
-                            <th>Core</th>
-                            <th>Edge</th>
-                            <th>Beyond</th>
-                            <th>Limitation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Block</strong></td>
-                            <td>⭐⭐⭐⭐</td>
-                            <td>⭐⭐⭐</td>
-                            <td>⭐⭐⭐</td>
-                            <td>New rails > old rails</td>
-                        </tr>
-                        <tr>
-                            <td>PayPal</td>
-                            <td>⭐⭐⭐⭐</td>
-                            <td>⭐⭐</td>
-                            <td>—</td>
-                            <td>Closed rails</td>
-                        </tr>
-                        <tr>
-                            <td>Revolut</td>
-                            <td>⭐⭐⭐⭐</td>
-                            <td>⭐</td>
-                            <td>⭐</td>
-                            <td>Regulated bank mindset</td>
-                        </tr>
-                        <tr>
-                            <td>Coinbase</td>
-                            <td>⭐</td>
-                            <td>⭐⭐⭐⭐</td>
-                            <td>⭐⭐</td>
-                            <td>Speculation-first</td>
-                        </tr>
-                        <tr>
-                            <td>Visa/Mastercard</td>
-                            <td>⭐⭐⭐⭐⭐</td>
-                            <td>—</td>
-                            <td>—</td>
-                            <td>Fee dependency</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p style="text-align: center; margin-top: 30px; font-size: 16px; font-weight: 500;">
-                    Everyone else fintechs banking. Block innovates around banking.
-                </p>
-            </div>
-
-            <!-- Risk Map -->
-            <div class="risk-section">
-                <h3 style="font-size: 28px; font-weight: 400; margin-bottom: 40px;">Theta Risk Map</h3>
-                <div class="risk-grid">
-                    <div class="risk-card">
-                        <div class="risk-title">Regulation</div>
-                        <div class="risk-challenge">KYC/AML pressure</div>
-                        <div class="risk-mitigation">✓ Early regulator collaboration</div>
-                    </div>
-                    <div class="risk-card">
-                        <div class="risk-title">UX Complexity</div>
-                        <div class="risk-challenge">Self-custody confusion</div>
-                        <div class="risk-mitigation">✓ Bitkey simplicity</div>
-                    </div>
-                    <div class="risk-card">
-                        <div class="risk-title">Bitcoin Volatility</div>
-                        <div class="risk-challenge">Savings fear</div>
-                        <div class="risk-mitigation">✓ Instant merchant conversions</div>
-                    </div>
-                    <div class="risk-card">
-                        <div class="risk-title">Network Adoption</div>
-                        <div class="risk-challenge">Density required</div>
-                        <div class="risk-mitigation">✓ City-first rollout</div>
-                    </div>
-                    <div class="risk-card">
-                        <div class="risk-title">Copycats</div>
-                        <div class="risk-challenge">Core products imitable</div>
-                        <div class="risk-mitigation">✓ Moat: Network density + Bitcoin layer</div>
-                    </div>
-                    <div class="risk-card">
-                        <div class="risk-title">Energy Scrutiny</div>
-                        <div class="risk-challenge">ESG concerns</div>
-                        <div class="risk-mitigation">✓ Renewable-first Proto mining</div>
-                    </div>
-                </div>
-                <p style="margin-top: 50px; font-size: 18px; color: var(--gray); text-align: center; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.8;">
-                    Block isn't betting on crypto hype nor is it a fintech company. 
-                    It's betting on open money becoming the financial infrastructure of the future.
-                </p>
-            </div>
+        <div class="pillar-box">
+          <div class="pillar-tag">The Base</div>
+          <div class="pillar-name">Open Source Ecosystem</div>
+          <div class="pillar-role">Shared infrastructure. Talent magnet. Standards engine.</div>
         </div>
-    </section>
+      </div>
+      <div class="pillars-footer">All pillars interlock → All serve <strong>Enabling Entrepreneurs</strong></div>
+    </div>
+  </div>
+</section>
 
-    <!-- Quote Section -->
-    <section class="quote-section">
-        <div class="container">
-            <blockquote class="quote">
-                "Where banks saw risk, 57 million saw a future."
-            </blockquote>
-            <div class="quote-author">The Block Story</div>
+<!-- PILLAR 1: AI NATIVE -->
+<section class="pillar-section" style="background:var(--white);">
+  <div class="container">
+    <div class="pillar-header fade-up">
+      <div class="pillar-num">01</div>
+      <div>
+        <div class="pillar-big-tag">The How</div>
+        <h2 class="pillar-big-title">AI-Native Company — <em>Rebuilt from the inside out</em></h2>
+      </div>
+    </div>
+    <div class="pillar-body-grid fade-up">
+      <div class="pillar-text">
+        <p>In 2023, Jack Dorsey gathered 40 executives. The AI wave was visible on the horizon, and Block wasn't ready. Then Dhanji Prasanna—a senior engineer—sent a memo. Not a product proposal. An argument that Block needed to become AI-native: not a company that uses AI tools, but one rebuilt from the inside out around intelligence as its operating system.</p>
+        <p>Jack read it, flew to Sydney, and offered him the CTO role. That single decision set Block on a path no other major fintech company has attempted at the same scale or speed.</p>
+        <p>Most companies approach AI as an acquisition problem—buy the tools, hire the consultants, run pilots. Block treated it as an identity problem. The result is a three-layer transformation that required structural courage, cultural permission, and architectural vision simultaneously.</p>
+        <p>By February 2026, Block announced what analysts framed as a mass layoff—cutting nearly 40% of its workforce from over 10,000 to under 6,000. What actually happened was a reallocation. Engineer productivity was already up 40% since September 2025. A smaller, AI-augmented team was doing more than the larger one had. As Dorsey put it: "I'd rather get there honestly and on our own terms than be forced into it reactively."</p>
+        <div class="stat-inline-row">
+          <div class="stat-inline">
+            <span class="stat-inline-num">95%</span>
+            <div class="stat-inline-label">of engineers use AI regularly</div>
+          </div>
+          <div class="stat-inline">
+            <span class="stat-inline-num">60%+</span>
+            <div class="stat-inline-label">of entire workforce uses Goose weekly</div>
+          </div>
+          <div class="stat-inline">
+            <span class="stat-inline-num">8–10h</span>
+            <div class="stat-inline-label">saved per person per week</div>
+          </div>
         </div>
-    </section>
-
-    <!-- Conclusion -->
-    <section class="conclusion">
-        <div class="container">
-            <h2 class="conclusion-title">An Economy That Grows for Everyone</h2>
-            <p class="conclusion-text">
-                Block isn't banking the unbanked—it's removing the need for banks to grant permission. 
-                Every neighborhood becomes an economic node. Every person becomes economically included.
-            </p>
-            <a href="https://block.xyz/bitcoin" class="conclusion-cta">Explore Block</a>
+      </div>
+      <div>
+        <div class="three-steps">
+          <div class="step-row">
+            <div class="step-num">I</div>
+            <div class="step-content">
+              <div class="step-title">Structural — One Technical Language</div>
+              <div class="step-desc">Block had grown into semi-independent silos. They moved to functional teams—all engineers under one leader, all designers under one leader. Conway's Law applied deliberately: unified organization creates unified products. A single AI tool built by one team now deploys across all business units instantly.</div>
+            </div>
+          </div>
+          <div class="step-row">
+            <div class="step-num">II</div>
+            <div class="step-content">
+              <div class="step-title">Cultural — Controlled Chaos and the Champions Program</div>
+              <div class="step-desc">50 developers dedicated 30% of their time to understanding why AI tools failed and making them succeed. Hack Weeks. Repo Readiness. The philosophy was "controlled chaos"—freedom to experiment, stability in core systems. Non-technical teams saw the biggest gains: the Enterprise Risk team automated multi-week data gathering into hours.</div>
+            </div>
+          </div>
+          <div class="step-row">
+            <div class="step-num">III</div>
+            <div class="step-content">
+              <div class="step-title">Architectural — Goose and the MCP Revolution</div>
+              <div class="step-desc">Goose is an open-source AI agent built on Model Context Protocol (MCP), co-developed with Anthropic. It connects to Slack, GitHub, Figma, Salesforce, Snowflake—897 applications, bypassing old integration rules. Engineers run 3–5 agent instances in parallel. The Neighborhoods extension lets entrepreneurs build agents that interact with the physical world through Square's merchant ecosystem.</div>
+            </div>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+</section>
 
+<!-- PILLAR 2: NEIGHBORHOOD -->
+<section class="pillar-section" style="background:var(--paper-warm);">
+  <div class="container">
+    <div class="pillar-header fade-up">
+      <div class="pillar-num">02</div>
+      <div>
+        <div class="pillar-big-tag">The What</div>
+        <h2 class="pillar-big-title">Neighborhood Ecosystem — <em>One loop, owned end-to-end</em></h2>
+      </div>
+    </div>
+    <div class="pillar-body-grid flip fade-up">
+      <div>
+        <div class="neighborhood-stack">
+          <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.15em;color:rgba(247,245,240,0.3);margin-bottom:20px;">The Full Stack Block Owns</div>
+          <div class="stack-row">
+            <div class="stack-label">Square</div>
+            <div class="stack-content">
+              <div class="stack-name">4M+ Merchants</div>
+              <div class="stack-sub">POS, loans, payroll, inventory — the seller side</div>
+            </div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-label">Cash App</div>
+            <div class="stack-content">
+              <div class="stack-name">57M Consumers</div>
+              <div class="stack-sub">Banking, investing, Bitcoin — the buyer side</div>
+            </div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-label">Cash App Pay</div>
+            <div class="stack-content">
+              <div class="stack-name">Owned Payment Rail</div>
+              <div class="stack-sub">1% fee vs. 2.5% industry — growing 70% year-on-year</div>
+            </div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-label">Afterpay</div>
+            <div class="stack-content">
+              <div class="stack-name">40M BNPL Users</div>
+              <div class="stack-sub">Discovery, financing, 20%+ merchant sales lift</div>
+            </div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-label">Credit Layer</div>
+            <div class="stack-content">
+              <div class="stack-name">Real-Time Underwriting</div>
+              <div class="stack-sub">38% more approvals at same risk · near-live behavioral data</div>
+            </div>
+          </div>
+          <div style="margin-top:24px;padding-top:20px;border-top:1px solid rgba(0,192,75,0.15);font-size:0.75rem;color:rgba(247,245,240,0.3);">Issuer · Network · Acquirer · Risk Engine — all Block</div>
+        </div>
+      </div>
+      <div class="pillar-text">
+        <p>Jack described it as growing "block by block—one barber shop, one taqueria, one neighborhood at a time." This is a hyperlocal density strategy: build enough seller and buyer participation in a ZIP code that Block becomes the default economic layer of that community.</p>
+        <p>Neighborhoods, launched in October 2025, is where the strategy became visible. Cash App users discover local Square merchants, order in-app, pay at 1%—less than half the card network rate. Merchants receive payment faster. Block owns every layer of the transaction. No Visa. No Mastercard. No fee leakage to a network that adds no local value.</p>
+        <p>The flywheel becomes self-reinforcing. More merchants attract more consumers. More consumers make Square more valuable to merchants. More transaction data improves underwriting. Better underwriting enables more loans. More loans fund more growth. The whole thing runs on rails that belong to Block.</p>
+        <p>The credit layer is where the societal impact becomes undeniable. Cash App's models approve 38% more borrowers at the same loss rate as traditional underwriting—and 30% more for auto loans. These are not reckless approvals. These are people the credit system had already written off, based on data that was out of date before it was collected.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PILLAR 3: BITCOIN -->
+<section class="pillar-section" style="background:var(--white);">
+  <div class="container">
+    <div class="pillar-header fade-up">
+      <div class="pillar-num">03</div>
+      <div>
+        <div class="pillar-big-tag">The Where</div>
+        <h2 class="pillar-big-title">Bitcoin Ecosystem — <em>From the wallet to the mining chip</em></h2>
+      </div>
+    </div>
+    <div class="pillar-body-grid fade-up">
+      <div class="pillar-text">
+        <p>When someone asked Jack Dorsey whether quantum computing might eventually break Bitcoin, his answer was simple: "I'm excited by it." That response tells you everything about Block's relationship with Bitcoin. This is not treasury management. It is not speculative exposure. It is a multi-decade infrastructure bet placed with the conviction of someone who believes the technology is inevitable and is building the physical substrate it needs to exist.</p>
+        <p>Block is one of the few organizations in the world building across every layer of the Bitcoin stack simultaneously—consumer access, merchant utility, self-custody, mining hardware, and protocol development. No other company does this. Coinbase dominates trading. Bitmain dominates hardware. But no one else connects all five layers into a single coherent system.</p>
+        <p>The Proto mining project is where the bet becomes most tangible. Block's Proto Rig is a modular, repairable Bitcoin miner designed to last ten years in an industry that treats hardware as three-to-five-year disposable assets. Thomas Templeton leads this initiative—building proprietary 3-nanometer mining chips that compete directly with Bitmain. This is American semiconductor design entering Bitcoin infrastructure.</p>
+        <p>The Bitcoin reinvestment loop completes the system: Block commits 20% of its Bitcoin gross profit to automatically purchasing more Bitcoin. In January 2026, that mechanism acquired 820 BTC in a single purchase. The balance sheet becomes an alignment instrument—Block's financial success mathematically linked to Bitcoin's long-term trajectory.</p>
+        <div class="btc-loop" style="margin-top:28px;">
+          <div class="btc-loop-title">The Bitcoin Circular Economy</div>
+          <div class="btc-steps">
+            <div class="btc-step"><div class="btc-step-icon">▶</div><div><div class="btc-step-name">Earn — Cash App</div><div class="btc-step-detail">$1.97B revenue Q3 2025 · 20% of gross profit reinvested automatically</div></div></div>
+            <div class="btc-step"><div class="btc-step-icon">▶</div><div><div class="btc-step-name">Save — Bitkey</div><div class="btc-step-detail">Self-custody hardware wallet · 95+ countries · Not Block's keys — yours</div></div></div>
+            <div class="btc-step"><div class="btc-step-icon">▶</div><div><div class="btc-step-name">Spend — Square Merchants</div><div class="btc-step-detail">4M+ merchants · Zero processing fees through 2027 · Lightning integration</div></div></div>
+            <div class="btc-step"><div class="btc-step-icon">▶</div><div><div class="btc-step-name">Build — Proto + Spiral</div><div class="btc-step-detail">Mining hardware · Open-source protocol development · OpenIP pledge</div></div></div>
+            <div class="btc-step"><div class="btc-step-icon">▶</div><div><div class="btc-step-name">Reinforce — Treasury Loop</div><div class="btc-step-detail">8,780 BTC (~$1B) · Automated accumulation · Balance sheet aligned with the network</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="pillar-text">
+        <p>There is an irony embedded in Block's Bitcoin strategy worth naming directly. Bitcoin was designed to operate without any company, any permission, any centralized entity. And yet, for Bitcoin's utility layer to reach scale today—for merchants to accept it, for consumers to hold it, for developers to build on it—it currently depends on Block's network of 4 million merchants and 57 million users to function at meaningful reach.</p>
+        <p>The revolutionary future is being bootstrapped by the incumbent present. This is not a flaw. It is the shape of every infrastructure transition. Every revolutionary technology rides the existing rails while building the new ones. Block is the bridge. Eventually, the network sustains itself. Block's role shifts from builder to steward. The infrastructure remains when the company fades away—which is precisely the point.</p>
+        <p>Stake n' Shake reported cutting payment processing fees by half since implementing Bitcoin payments through Square. For a fast food chain processing millions of transactions, that is not a Bitcoin story. That is a margin story—a company that can now keep more of what it earns. This is how infrastructure earns its place.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PILLAR 4: OPEN SOURCE -->
+<section class="pillar-section" style="background:var(--paper-warm);">
+  <div class="container">
+    <div class="pillar-header fade-up">
+      <div class="pillar-num">04</div>
+      <div>
+        <div class="pillar-big-tag">The Base</div>
+        <h2 class="pillar-big-title">Open Source Ecosystem — <em>The competitive moat no one sees</em></h2>
+      </div>
+    </div>
+    <div class="pillar-body-grid flip fade-up">
+      <div>
+        <div class="oss-grid">
+          <div class="oss-item">
+            <div class="oss-name">OkHttp</div>
+            <div class="oss-use">Built to solve Block's own networking problems. Became the default HTTP client inside Android OS—running on billions of devices, credited to no one.</div>
+          </div>
+          <div class="oss-item">
+            <div class="oss-name">gRPC</div>
+            <div class="oss-use">Co-created with Google. Now the worldwide standard for service communication across cloud infrastructure. Block co-authored the protocol the internet runs on.</div>
+          </div>
+          <div class="oss-item">
+            <div class="oss-name">Goose</div>
+            <div class="oss-use">Open-source AI agent built on MCP. Used internally by 60%+ of Block's workforce. Available to any developer worldwide, with grant funding up to $100K.</div>
+          </div>
+          <div class="oss-item">
+            <div class="oss-name">MCP</div>
+            <div class="oss-use">Co-developed with Anthropic. The open standard for connecting AI agents to real-world tools. Positions Block at the center of the AI ecosystem without owning any model.</div>
+          </div>
+          <div class="oss-item">
+            <div class="oss-name">Proto Fleet</div>
+            <div class="oss-use">Open-source Bitcoin mining management software. Compatible with all miners, not just Block's. Building the ecosystem before capturing the market.</div>
+          </div>
+          <div class="oss-item">
+            <div class="oss-name">OpenIP</div>
+            <div class="oss-use">Bitkey and Proto hardware patents pledged open. Block uses IP only defensively—to protect builders, never to extract from them.</div>
+          </div>
+        </div>
+      </div>
+      <div class="pillar-text">
+        <p>Block's open-source strategy is the least understood part of its business—and possibly the most important. The standard framing is altruism: Block gives tools away for the good of the developer community. The reality is more sophisticated and more strategic.</p>
+        <p>Block's business model does not depend on software licensing. It depends on transaction fees, lending margins, hardware sales, and ecosystem network effects. Open source doesn't threaten that model—it accelerates it. Every developer who builds on OkHttp is more likely to build on Square's APIs. Every miner using Proto Fleet is a warm lead for Proto hardware. Every AI developer using MCP is in Block's gravitational field.</p>
+        <p>There is a parallel worth drawing. China's 14th Five-Year Plan explicitly elevated open source to national strategy—recognizing that shared foundational infrastructure creates economy-wide productivity rather than concentrating returns in a few incumbents. Block operates by an identical logic at the company level. When Block gives away its tools, it is not reducing its advantage. It is expanding the ecosystem that makes its advantage possible.</p>
+        <p>TIDAL belongs here too. Jesse Dorogusker runs both Bitcoin hardware and TIDAL—not by coincidence. Punk and hip-hop emerged when artists couldn't access traditional gatekeepers and built their own distribution. Mix tapes. Independent labels. DIY culture that eventually became the dominant culture. TIDAL combined with Bitcoin Lightning payments is the same bet: artists paid instantly, directly, keeping 80-90% of revenue instead of 12-15%. Not a Spotify competitor. An infrastructure bet on creative autonomy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section id="theta">
+  <div class="container">
+    <div class="section-kicker fade-up">Theta Innovation Map</div>
+    <h2 class="section-title fade-up">Where Block's bets actually <em>land</em></h2>
+    <div class="theta-two-col fade-up">
+      <div>
+        <div class="zone-legend">
+          <div class="zone-pill core">
+            <div class="zone-dot"></div>
+            <div>
+              <div class="zone-label" style="color:var(--core-green)">Core Zone — 60%</div>
+              <div class="zone-desc">Existing markets, incremental improvement. Square merchant network, Cash App banking, Afterpay BNPL, Square Loans. These fund everything.</div>
+            </div>
+          </div>
+          <div class="zone-pill edge">
+            <div class="zone-dot"></div>
+            <div>
+              <div class="zone-label" style="color:var(--edge-amber)">Edge Zone — 25%</div>
+              <div class="zone-desc">Architectural and disruptive bets. Neighborhoods full-stack, AI infrastructure (Goose/MCP), Bitcoin merchant acceptance, Lightning Network, Cash App Pay.</div>
+            </div>
+          </div>
+          <div class="zone-pill beyond">
+            <div class="zone-dot"></div>
+            <div>
+              <div class="zone-label" style="color:var(--beyond-crimson)">Beyond Zone — 15%</div>
+              <div class="zone-desc">Transformational and speculative. Proto mining hardware, Bitkey self-custody, OpenIP ecosystem, Spiral protocol development, Bitcoin treasury loop.</div>
+            </div>
+          </div>
+        </div>
+        <div class="reading-card">
+          <div class="reading-title">How to Read This Map</div>
+          <div class="reading-text">Each point represents a Block initiative plotted against Market Reach (X-axis) and Technology Change (Y-axis). Cluster density in Core reflects Block's profitable base. The Edge cluster shows active architectural bets with momentum. The scattered Beyond points show deliberate long-horizon infrastructure plays. Healthy portfolios show all three zones—Block's does.</div>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="thetaChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section id="allocation">
+  <div class="container">
+    <div class="section-kicker fade-up">Portfolio Allocation</div>
+    <h2 class="section-title fade-up">The balance that makes <em>long bets possible</em></h2>
+    <div class="alloc-grid fade-up">
+      <div class="alloc-chart-wrap">
+        <canvas id="donutChart" style="max-height:300px;"></canvas>
+        <div class="alloc-center-label">
+          <div class="alloc-center-big">All 3<br>Zones<br>Active</div>
+          <div class="alloc-center-sub">Balanced</div>
+        </div>
+      </div>
+      <div class="alloc-bars">
+        <div class="alloc-bar-group">
+          <div class="alloc-bar-label">
+            <span class="alloc-bar-name" style="color:var(--core-green)">Core Zone</span>
+            <span class="alloc-bar-pct" style="color:var(--core-green)">~60%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill core" style="width:0%" data-target="60"></div>
+            <div class="alloc-benchmark" style="left:70%"></div>
+          </div>
+          <div class="alloc-comment">Square, Cash App banking, Afterpay, lending. Generates the revenue that makes all other bets possible. Benchmark: 70%. Block runs slightly lean here—deliberately harvesting efficiency to seed future zones.</div>
+        </div>
+        <div class="alloc-bar-group">
+          <div class="alloc-bar-label">
+            <span class="alloc-bar-name" style="color:var(--edge-amber)">Edge Zone</span>
+            <span class="alloc-bar-pct" style="color:var(--edge-amber)">~25%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill edge" style="width:0%" data-target="25"></div>
+            <div class="alloc-benchmark" style="left:20%"></div>
+          </div>
+          <div class="alloc-comment">Neighborhoods, AI infrastructure, Bitcoin merchant acceptance, Cash App Pay. Multiple Edge bets showing momentum—Cash App Pay at 70% YoY growth, Goose at 60%+ adoption. Benchmark: 20%. Block runs above—aggressive, proactive positioning.</div>
+        </div>
+        <div class="alloc-bar-group">
+          <div class="alloc-bar-label">
+            <span class="alloc-bar-name" style="color:var(--beyond-crimson)">Beyond Zone</span>
+            <span class="alloc-bar-pct" style="color:var(--beyond-crimson)">~15%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill beyond" style="width:0%" data-target="15"></div>
+            <div class="alloc-benchmark" style="left:10%"></div>
+          </div>
+          <div class="alloc-comment">Proto mining, Bitkey, OpenIP, Spiral. Benchmark: 10%. Block runs above—Jack's long arc. Hardware shipping. Wallet in 95 countries. Protocol development funded. Not concept bets. Working bets.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section id="competitors">
+  <div class="container">
+    <div class="section-kicker fade-up">Competitive Landscape</div>
+    <h2 class="section-title fade-up">What separates Block from <em>specialists</em></h2>
+    <div class="comp-grid fade-up">
+      <div class="comp-card featured">
+        <div class="comp-name">Block</div>
+        <div class="comp-tag">Intelligence-native, full-stack, values-driven</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div><div class="comp-zone-text">Core: Square + Cash App + Afterpay</div></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div><div class="comp-zone-text">Edge: Neighborhoods + Goose + MCP</div></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson)"></div><div class="comp-zone-text">Beyond: Proto + Bitkey + Spiral</div></div>
+        </div>
+        <span class="comp-verdict strong">Integrated</span>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">PayPal / Venmo</div>
+        <div class="comp-tag">Closed rails, two apps, reactive posture</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div><div class="comp-zone-text">Core: Online payments, P2P</div></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div><div class="comp-zone-text">Edge: PayPal World, limited crypto</div></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:rgba(0,0,0,0.15)"></div><div class="comp-zone-text">Beyond: None substantive</div></div>
+        </div>
+        <span class="comp-verdict moderate">Reactive</span>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Toast</div>
+        <div class="comp-tag">Restaurant specialist, no consumer side</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div><div class="comp-zone-text">Core: 148K restaurants, deep POS</div></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div><div class="comp-zone-text">Edge: ToastIQ AI insights</div></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:rgba(0,0,0,0.15)"></div><div class="comp-zone-text">Beyond: No consumer ecosystem</div></div>
+        </div>
+        <span class="comp-verdict moderate">Specialist</span>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Coinbase</div>
+        <div class="comp-tag">Speculation-first, trading dominant</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div><div class="comp-zone-text">Core: Crypto exchange, 240+ assets</div></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div><div class="comp-zone-text">Edge: Limited Bitcoin utility</div></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:rgba(0,0,0,0.15)"></div><div class="comp-zone-text">Beyond: No hardware, no protocol</div></div>
+        </div>
+        <span class="comp-verdict specialist">Speculative</span>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Stripe</div>
+        <div class="comp-tag">Developer-first, online dominant</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div><div class="comp-zone-text">Core: Online payments, developer tools</div></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div><div class="comp-zone-text">Edge: Stripe Atlas, some AI tooling</div></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:rgba(0,0,0,0.15)"></div><div class="comp-zone-text">Beyond: No consumer, no Bitcoin hardware</div></div>
+        </div>
+        <span class="comp-verdict moderate">Focused</span>
+      </div>
+    </div>
+    <div class="radar-wrap fade-up">
+      <canvas id="radarChart"></canvas>
+    </div>
+    <div style="margin-top:32px;padding:24px 32px;background:var(--paper-warm);border-left:3px solid var(--block-green);" class="fade-up">
+      <p style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-style:italic;color:#3a4a47;line-height:1.7;">"Everyone else fintechs banking. Block innovates around banking. The difference is not a feature gap. It is a philosophy gap."</p>
+    </div>
+  </div>
+</section>
+
+<!-- S&W -->
+<section id="sw">
+  <div class="container">
+    <div class="section-kicker fade-up">Strengths & Weaknesses</div>
+    <h2 class="section-title fade-up">What makes Block <em>remarkable</em>—and where the tensions live</h2>
+    <div class="sw-grid fade-up">
+      <div class="sw-panel strengths">
+        <div class="sw-panel-title">Strengths</div>
+        <div class="sw-items">
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-text">
+              <div class="sw-lead">The only company that owns both sides of the transaction</div>
+              <div class="sw-detail">Square serves sellers. Cash App serves buyers. When they transact via Cash App Pay, Block owns the issuer, network, acquirer, and risk engine. The 1% fee advantage over the 2.5% industry standard is not temporary—it's structural.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-text">
+              <div class="sw-lead">Credit data that traditional lenders cannot access or replicate</div>
+              <div class="sw-detail">Real-time behavioral data—paycheck deposits, spending cadence, repayment patterns—enables approval of 38% more borrowers at identical risk levels. 97% repayment among sub-580 FICO borrowers is a data advantage, not charity.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-text">
+              <div class="sw-lead">Open-source ecosystem as an invisible talent and standards engine</div>
+              <div class="sw-detail">OkHttp lives in Android. gRPC became an internet standard. MCP is positioning as the AI connectivity protocol. These are compounding ecosystem advantages that make Block's infrastructure indispensable to developers who may never pay Block a dollar.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-text">
+              <div class="sw-lead">Rebel genius leadership with the courage to break its own culture</div>
+              <div class="sw-detail">Dorsey's 40% workforce reduction, Dhanji's AI transformation, Owen Jennings restoring startup velocity—a leadership team capable of unlearning. The TBD cancellation proved they kill what isn't working. That discipline is rarer than any product feature.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-text">
+              <div class="sw-lead">Full-stack Bitcoin infrastructure with no comparable competitor</div>
+              <div class="sw-detail">Coinbase does trading. Bitmain does hardware. Block does both—plus wallets, merchant acceptance, protocol development, and a corporate treasury aligned to the network's long-term success. The circular economy is operational, not aspirational.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sw-panel weaknesses">
+        <div class="sw-panel-title">Weaknesses</div>
+        <div class="sw-items">
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-text">
+              <div class="sw-lead">Bitcoin Edge depends structurally on Core to function at scale</div>
+              <div class="sw-detail">Square's 4M merchants and Cash App's 57M users are the distribution network that makes Bitcoin utility possible today. The revolutionary future is currently debt to the profitable present. If Core weakens before Bitcoin's Edge matures independently, the system is at risk.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-text">
+              <div class="sw-lead">Cash App user growth stalled at 57M—the ceiling problem</div>
+              <div class="sw-detail">57 million is not a small number. But the growth curve has plateaued in the US market. International expansion is the logical path; regulatory complexity makes it slow. The Neighborhood flywheel deepens existing users—it doesn't easily acquire new ones.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-text">
+              <div class="sw-lead">Proto mining faces Bitmain incumbency that won't yield easily</div>
+              <div class="sw-detail">Bitmain controls approximately 80% of the ASIC mining market. Block's modular design and OpenIP philosophy are compelling—but hardware has physical distribution, supply chain, and brand loyalty dynamics that take years to overcome.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-text">
+              <div class="sw-lead">The succession question remains unanswered</div>
+              <div class="sw-detail">Apple after Jobs is the cautionary tale. Block's innovation culture flows from Dorsey's rebel genius and first-principles thinking. The structural, cultural, and architectural changes he's embedded are real—but whether they survive his eventual departure is genuinely unknown.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-text">
+              <div class="sw-lead">Restaurant vertical faces a better-specialized competitor in Toast</div>
+              <div class="sw-detail">Toast has 148,000 restaurant locations and features built specifically for kitchen operations and food service workflows. Square for Restaurants has breadth. Toast has depth. In that vertical, depth usually wins.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section id="diagnostic">
+  <div class="container">
+    <div class="section-kicker fade-up" style="color:rgba(247,245,240,0.35);">Theta Diagnostic</div>
+    <h2 class="section-title fade-up" style="color:var(--paper);">The architecture of a company <em>building the future</em></h2>
+    <div class="diagnostic-grid fade-up">
+      <div>
+        <div class="diag-section-title">Portfolio Mapping</div>
+        <div class="archetype-boxes">
+          <div class="archetype-box">
+            <div class="archetype-status">✓</div>
+            <div>
+              <div class="archetype-label">Core — Optimized, Not Stagnant</div>
+              <div class="archetype-desc">Square, Cash App, Afterpay, and lending generate the revenue that funds everything. The 40% workforce reduction was Core optimization in action—deliberate efficiency harvesting, not crisis management.</div>
+            </div>
+          </div>
+          <div class="archetype-box">
+            <div class="archetype-status">✓</div>
+            <div>
+              <div class="archetype-label">Edge — Proactive, with Momentum</div>
+              <div class="archetype-desc">Neighborhoods (70% YoY growth), Cash App Pay, Goose (60%+ adoption), Bitcoin merchant acceptance. Multiple Edge bets showing simultaneous traction. Built before demand arrived—proactive, not reactive.</div>
+            </div>
+          </div>
+          <div class="archetype-box">
+            <div class="archetype-status">✓</div>
+            <div>
+              <div class="archetype-label">Beyond — Visionary, Shipping</div>
+              <div class="archetype-desc">Proto rigs operating. Bitkey in 95 countries. Spiral funding protocol development. OpenIP protecting the ecosystem. The Beyond portfolio is not a whiteboard. It is hardware in data centers and wallets in 95 nations.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="diag-section-title">Leadership — Dorsey Alignment Index</div>
+        <div style="margin-bottom:28px;">
+          <div class="leader-row">
+            <span class="leader-name">Jack Dorsey</span>
+            <span class="leader-tag">Rebel Genius · Founder Mode</span>
+            <span class="leader-align"><span class="star-filled">★★★★★</span></span>
+          </div>
+          <div class="leader-row">
+            <span class="leader-name">Dhanji Prasanna</span>
+            <span class="leader-tag">CTO · AI Manifesto Author</span>
+            <span class="leader-align"><span class="star-filled">★★★★</span><span class="star-empty">★</span></span>
+          </div>
+          <div class="leader-row">
+            <span class="leader-name">Owen Jennings</span>
+            <span class="leader-tag">Head of Product · Velocity Driver</span>
+            <span class="leader-align"><span class="star-filled">★★★★</span><span class="star-empty">★</span></span>
+          </div>
+          <div class="leader-row">
+            <span class="leader-name">Amrita Ahuja</span>
+            <span class="leader-tag">COO/CFO · Operational Architect</span>
+            <span class="leader-align"><span class="star-filled">★★★</span><span class="star-empty">★★</span></span>
+          </div>
+          <div class="leader-row">
+            <span class="leader-name">Jesse Dorogusker</span>
+            <span class="leader-tag">TIDAL + Bitcoin Hardware</span>
+            <span class="leader-align"><span class="star-filled">★★★★</span><span class="star-empty">★</span></span>
+          </div>
+          <div class="leader-row">
+            <span class="leader-name">Thomas Templeton</span>
+            <span class="leader-tag">Proto Mining · Hardware Disruptor</span>
+            <span class="leader-align"><span class="star-filled">★★★★</span><span class="star-empty">★</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="diag-section-title">Critical Tension</div>
+        <div class="tension-box">
+          <div class="tension-label">Primary Structural Risk</div>
+          <div class="tension-text">The irony at the center of Block's strategy: Bitcoin was designed to need no company. But Bitcoin's utility layer—merchant acceptance, Lightning payments, self-custody wallets at scale—currently requires Block's 57M users and 4M merchants to function at meaningful reach. The permissionless future is being bootstrapped by permissioned infrastructure. This is not a flaw. It is a transition architecture. But if Block's Core weakens before Bitcoin's Edge matures independently, the whole system is at risk.</div>
+        </div>
+
+        <div class="diag-section-title">Portfolio vs. Theta Benchmark</div>
+        <div style="margin-bottom:28px;">
+          <div class="diag-bar-row">
+            <span class="diag-bar-name" style="color:rgba(45,106,79,0.9)">Core</span>
+            <div class="diag-bar-track">
+              <div class="diag-bar-actual" style="width:60%;background:var(--core-green)"></div>
+              <div class="diag-bar-bench" style="left:70%"></div>
+            </div>
+            <span class="diag-bar-vals">60% / 70%</span>
+          </div>
+          <div class="diag-bar-row">
+            <span class="diag-bar-name" style="color:rgba(181,132,26,0.9)">Edge</span>
+            <div class="diag-bar-track">
+              <div class="diag-bar-actual" style="width:25%;background:var(--edge-amber)"></div>
+              <div class="diag-bar-bench" style="left:20%"></div>
+            </div>
+            <span class="diag-bar-vals">25% / 20%</span>
+          </div>
+          <div class="diag-bar-row">
+            <span class="diag-bar-name" style="color:rgba(139,26,26,0.9)">Beyond</span>
+            <div class="diag-bar-track">
+              <div class="diag-bar-actual" style="width:15%;background:var(--beyond-crimson)"></div>
+              <div class="diag-bar-bench" style="left:10%"></div>
+            </div>
+            <span class="diag-bar-vals">15% / 10%</span>
+          </div>
+          <div style="margin-top:10px;font-size:0.7rem;color:rgba(247,245,240,0.25);">Actual / Theta Benchmark · Bar = Actual · Line = Benchmark</div>
+        </div>
+
+        <div class="diag-section-title">Relativity Assessment</div>
+        <div class="relativity-box">
+          <div class="relativity-text">Relative to fintech peers, Block is categorically ahead in integration depth, open-source infrastructure, and Bitcoin ecosystem breadth. Relative to AI-native ambitions, Block is early but moving faster than any comparable public company—40% fewer people producing 40% more output is an empirical data point, not a narrative. Relative to Bitcoin infrastructure, Block is building what no other company is attempting at this scale. The timeline is long. The bets are real. The execution is visible.</div>
+        </div>
+
+        <div class="verdict-strip">
+          <div class="verdict-symbols">☑☑☑</div>
+          <div>
+            <div class="verdict-label">Balanced — Actively Building the Future</div>
+            <div class="verdict-text">Block maintains healthy innovation across all three Theta zones simultaneously. Core funds Edge. Edge seeds Beyond. The whole system serves a single stated purpose: enabling anyone anywhere to build something that outlasts them. That is not a mission statement. It is an architecture.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISION FINALE -->
+<section id="vision">
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="section-kicker fade-up" style="color:rgba(247,245,240,0.3);">If Block Succeeds Completely</div>
+    <p class="vision-intro fade-up">What does the world look like?</p>
+    <div class="vision-list fade-up">
+      <div class="vision-item">
+        <div class="vision-arrow">→</div>
+        <div class="vision-text"><strong>Any merchant</strong> can accept any payment—fiat or Bitcoin—at near-zero cost. The 2.5% that used to disappear into card networks stays in the neighborhood where the transaction happened.</div>
+      </div>
+      <div class="vision-item">
+        <div class="vision-arrow">→</div>
+        <div class="vision-text"><strong>Any person</strong> can access credit based on how they actually manage money—not on a backward-looking score built from data that was already stale when collected. Creditworthiness becomes real, not assumed.</div>
+      </div>
+      <div class="vision-item">
+        <div class="vision-arrow">→</div>
+        <div class="vision-text"><strong>Any entrepreneur</strong> can build on open infrastructure without asking permission from a technology gatekeeper. OkHttp, Retrofit, Goose, MCP, Proto Fleet—shared foundations available to anyone who wants to build.</div>
+      </div>
+      <div class="vision-item">
+        <div class="vision-arrow">→</div>
+        <div class="vision-text"><strong>Any community</strong> can keep capital local instead of sending it to Wall Street. When 65 cents of every Cash App dollar spent stays with local merchants, the neighborhood compounds its own wealth rather than exporting it.</div>
+      </div>
+      <div class="vision-item">
+        <div class="vision-arrow">→</div>
+        <div class="vision-text"><strong>Any country's citizens</strong> can opt out of failing currencies—not through force or ideology, but through a self-custody wallet, a merchant that accepts Lightning, and a system that doesn't require anyone's permission to function.</div>
+      </div>
+      <div class="vision-item">
+        <div class="vision-arrow">→</div>
+        <div class="vision-text">The <strong>American dream becomes exportable</strong>—not through military presence or dollar hegemony, but through tools that let anyone anywhere work hard and build something that outlasts them. That is not a metaphor. That is the product roadmap.</div>
+      </div>
+    </div>
+    <div class="vision-close fade-up">
+      <div class="vision-close-quote">"That's the vision. Everything we've discussed is just the execution."</div>
+      <div class="vision-close-attr">Block Inc. — Intelligence-Native · Bitcoin Infrastructure · Open Economy · 2026</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left">Theta Innovation Framework · Strategic Case Study · 2026</div>
+  <div class="footer-right">Block Inc. — An Economy Without Permission</div>
+</footer>
+
+<script>
+// Fade-up observer
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// Animate allocation bars
+const allocObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.alloc-fill[data-target]').forEach(bar => {
+        bar.style.width = bar.dataset.target + '%';
+      });
+    }
+  });
+}, { threshold: 0.3 });
+const allocSection = document.getElementById('allocation');
+if (allocSection) allocObserver.observe(allocSection);
+
+// THETA SCATTER CHART
+const thetaCtx = document.getElementById('thetaChart').getContext('2d');
+new Chart(thetaCtx, {
+  type: 'scatter',
+  data: {
+    datasets: [
+      {
+        label: 'Core Zone',
+        data: [
+          {x:1.2,y:1.3,label:'Square POS'},{x:1.5,y:1.1,label:'Cash App Banking'},
+          {x:1.8,y:1.4,label:'Afterpay'},{x:1.3,y:1.6,label:'Square Loans'},
+          {x:1.6,y:1.2,label:'Cash App Borrow'},
+        ],
+        backgroundColor:'rgba(45,106,79,0.75)',borderColor:'rgba(45,106,79,0.4)',pointRadius:8,pointHoverRadius:11,
+      },
+      {
+        label: 'Edge Zone',
+        data: [
+          {x:2.8,y:2.9,label:'Neighborhoods'},{x:2.5,y:3.2,label:'Cash App Pay'},
+          {x:3.1,y:3.5,label:'Goose / MCP'},{x:2.9,y:3.1,label:'Square Bitcoin'},
+          {x:3.3,y:3.4,label:'Lightning Network'},
+        ],
+        backgroundColor:'rgba(181,132,26,0.75)',borderColor:'rgba(181,132,26,0.4)',pointRadius:8,pointHoverRadius:11,
+      },
+      {
+        label: 'Beyond Zone',
+        data: [
+          {x:3.6,y:4.2,label:'Proto Mining'},{x:3.4,y:4.0,label:'Bitkey Wallet'},
+          {x:3.9,y:4.4,label:'3nm Chips'},{x:3.7,y:3.9,label:'Spiral / OpenIP'},
+          {x:4.1,y:4.6,label:'Bitcoin Treasury'},
+        ],
+        backgroundColor:'rgba(139,26,26,0.75)',borderColor:'rgba(139,26,26,0.4)',pointRadius:8,pointHoverRadius:11,
+      }
+    ]
+  },
+  options: {
+    responsive:true,maintainAspectRatio:false,
+    plugins: {
+      legend:{position:'bottom',labels:{font:{family:'DM Sans',size:11},color:'#8A9490',boxWidth:10,padding:20}},
+      tooltip:{backgroundColor:'rgba(14,26,24,0.92)',titleFont:{family:'DM Sans',size:11},bodyFont:{family:'DM Sans',size:11},padding:12,
+        callbacks:{label:(ctx)=>{const d=ctx.dataset.data[ctx.dataIndex];return d.label||'';}}
+      }
+    },
+    scales:{
+      x:{title:{display:true,text:'Market Reach  →  Existing · New · Emerging · Speculative',font:{family:'DM Sans',size:10},color:'#8A9490'},min:0.5,max:5,grid:{color:'rgba(0,192,75,0.06)'},ticks:{display:false}},
+      y:{title:{display:true,text:'Technology Change  →  Incremental · Moderate · High · Radical · Extreme',font:{family:'DM Sans',size:10},color:'#8A9490'},min:0.5,max:5,grid:{color:'rgba(0,192,75,0.06)'},ticks:{display:false}}
+    }
+  },
+  plugins:[{
+    id:'pointLabels',
+    afterDatasetsDraw(chart){
+      const ctx=chart.ctx;ctx.save();
+      chart.data.datasets.forEach((dataset,di)=>{
+        const meta=chart.getDatasetMeta(di);
+        meta.data.forEach((point,i)=>{
+          const d=dataset.data[i];
+          if(d&&d.label){ctx.fillStyle='#8A9490';ctx.font='500 9px DM Sans';ctx.textAlign='left';ctx.fillText(d.label,point.x+10,point.y+4);}
+        });
+      });
+      ctx.restore();
+    }
+  }]
+});
+
+// DONUT CHART
+const donutCtx = document.getElementById('donutChart').getContext('2d');
+new Chart(donutCtx,{
+  type:'doughnut',
+  data:{
+    labels:['Core Zone','Edge Zone','Beyond Zone'],
+    datasets:[{data:[60,25,15],backgroundColor:['rgba(45,106,79,0.85)','rgba(181,132,26,0.85)','rgba(139,26,26,0.85)'],borderWidth:0,hoverOffset:4}]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:true,cutout:'68%',
+    plugins:{
+      legend:{position:'bottom',labels:{font:{family:'DM Sans',size:11},color:'#8A9490',boxWidth:10,padding:16}},
+      tooltip:{backgroundColor:'rgba(14,26,24,0.92)',bodyFont:{family:'DM Sans',size:11},padding:12}
+    }
+  }
+});
+
+// RADAR CHART
+const radarCtx = document.getElementById('radarChart').getContext('2d');
+new Chart(radarCtx,{
+  type:'radar',
+  data:{
+    labels:['Core Strength','Edge Momentum','Beyond Vision','AI Readiness','Bitcoin Stack','Open Ecosystem'],
+    datasets:[
+      {label:'Block',data:[82,88,84,92,96,90],backgroundColor:'rgba(0,192,75,0.1)',borderColor:'rgba(0,192,75,0.7)',borderWidth:2,pointRadius:4,pointBackgroundColor:'rgba(0,192,75,0.8)'},
+      {label:'PayPal',data:[85,52,20,55,38,22],backgroundColor:'rgba(100,130,255,0.05)',borderColor:'rgba(100,130,255,0.4)',borderWidth:1.5,pointRadius:3,pointBackgroundColor:'rgba(100,130,255,0.5)'},
+      {label:'Toast',data:[78,60,15,62,5,10],backgroundColor:'rgba(255,165,0,0.05)',borderColor:'rgba(255,165,0,0.4)',borderWidth:1.5,pointRadius:3,pointBackgroundColor:'rgba(255,165,0,0.5)'},
+      {label:'Coinbase',data:[45,50,55,48,72,25],backgroundColor:'rgba(180,180,180,0.05)',borderColor:'rgba(180,180,180,0.4)',borderWidth:1.5,pointRadius:3,pointBackgroundColor:'rgba(180,180,180,0.5)'}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    scales:{r:{min:0,max:100,ticks:{display:false},pointLabels:{font:{family:'DM Sans',size:11},color:'#8A9490'},grid:{color:'rgba(0,192,75,0.08)'},angleLines:{color:'rgba(0,192,75,0.08)'}}},
+    plugins:{
+      legend:{position:'bottom',labels:{font:{family:'DM Sans',size:11},color:'#8A9490',boxWidth:10,padding:16}},
+      tooltip:{backgroundColor:'rgba(14,26,24,0.92)',titleFont:{family:'DM Sans',size:11},bodyFont:{family:'DM Sans',size:11},padding:12}
+    }
+  }
+});
+</script>
 </body>
 </html>
