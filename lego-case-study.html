@@ -1,986 +1,1460 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEGO: When Innovation Lost Its Center</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            line-height: 1.6;
-            color: #1a1a1a;
-            background: #ffffff;
-            overflow-x: hidden;
-        }
-
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(209, 16, 19, 0.15) 0%, transparent 70%);
-            top: 10%;
-            right: 10%;
-            border-radius: 50%;
-            animation: pulse 8s ease-in-out infinite;
-        }
-
-        .hero::after {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(255, 207, 0, 0.1) 0%, transparent 70%);
-            bottom: 15%;
-            left: 15%;
-            border-radius: 50%;
-            animation: pulse 6s ease-in-out infinite reverse;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.3; }
-            50% { transform: scale(1.2); opacity: 0.5; }
-        }
-
-        .hero-content {
-            text-align: center;
-            color: white;
-            z-index: 1;
-            max-width: 900px;
-            padding: 0 40px;
-        }
-
-        .hero-label {
-            font-size: 11px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: #D11013;
-            font-weight: 600;
-            margin-bottom: 24px;
-        }
-
-        .hero h1 {
-            font-size: 72px;
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 32px;
-            letter-spacing: -2px;
-        }
-
-        .hero-subtitle {
-            font-size: 20px;
-            color: rgba(255, 255, 255, 0.7);
-            font-weight: 400;
-            max-width: 700px;
-            margin: 0 auto 48px;
-            line-height: 1.7;
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 120px 40px;
-        }
-
-        .section {
-            margin-bottom: 120px;
-        }
-
-        h2 {
-            font-size: 42px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #000;
-            letter-spacing: -1px;
-        }
-
-        h3 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: #1a1a1a;
-        }
-
-        p {
-            font-size: 17px;
-            color: #4a4a4a;
-            margin-bottom: 20px;
-            line-height: 1.8;
-        }
-
-        .section-intro {
-            font-size: 20px;
-            color: #666;
-            margin-bottom: 48px;
-            line-height: 1.7;
-            max-width: 800px;
-        }
-
-        .problem-box {
-            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
-            padding: 48px;
-            border-radius: 12px;
-            margin: 48px 0;
-            border-left: 4px solid #D11013;
-        }
-
-        .problem-box h3 {
-            color: #D11013;
-            margin-bottom: 16px;
-        }
-
-        .timeline {
-            position: relative;
-            padding-left: 48px;
-            margin: 64px 0;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(180deg, #D11013 0%, rgba(209, 16, 19, 0.1) 100%);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 40px;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -54px;
-            top: 6px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #D11013;
-            border: 3px solid white;
-            box-shadow: 0 0 0 2px #D11013;
-        }
-
-        .timeline-item.warning::before {
-            background: #FF9800;
-            box-shadow: 0 0 0 2px #FF9800;
-        }
-
-        .timeline-year {
-            font-size: 14px;
-            font-weight: 700;
-            color: #D11013;
-            margin-bottom: 4px;
-            letter-spacing: 1px;
-        }
-
-        .timeline-content {
-            font-size: 16px;
-            color: #4a4a4a;
-            line-height: 1.6;
-        }
-
-        .hub-spoke-container {
-            background: #fafafa;
-            padding: 80px 40px;
-            border-radius: 12px;
-            margin: 64px 0;
-            text-align: center;
-        }
-
-        .hub-spoke-container h3 {
-            margin-bottom: 16px;
-        }
-
-        .hub-spoke-description {
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 48px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .hub-spoke-visual {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin: 48px 0;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .hub {
-            grid-column: 2;
-            grid-row: 2;
-            width: 160px;
-            height: 100px;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #D11013 0%, #FFCF00 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-            font-weight: 700;
-            text-align: center;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(209, 16, 19, 0.2);
-        }
-
-        .spoke {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #333;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        .spoke:nth-child(1) {
-            grid-column: 1;
-            grid-row: 1;
-        }
-
-        .spoke:nth-child(3) {
-            grid-column: 3;
-            grid-row: 1;
-        }
-
-        .spoke:nth-child(4) {
-            grid-column: 1;
-            grid-row: 3;
-        }
-
-        .spoke:nth-child(5) {
-            grid-column: 3;
-            grid-row: 3;
-        }
-
-        .failure-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin: 48px 0;
-        }
-
-        .failure-card {
-            background: white;
-            padding: 32px;
-            border-radius: 8px;
-            border-top: 3px solid #FF9800;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-        }
-
-        .failure-card h4 {
-            font-size: 18px;
-            color: #FF9800;
-            margin-bottom: 12px;
-        }
-
-        .failure-card .product-name {
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 8px;
-        }
-
-        .failure-card .why-failed {
-            font-size: 14px;
-            color: #666;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #f0f0f0;
-        }
-
-        .insight-box {
-            background: linear-gradient(135deg, rgba(209, 16, 19, 0.05) 0%, rgba(255, 207, 0, 0.05) 100%);
-            padding: 40px;
-            border-radius: 8px;
-            margin: 48px 0;
-            border-left: 4px solid #D11013;
-        }
-
-        .insight-box h4 {
-            color: #D11013;
-            font-size: 18px;
-            margin-bottom: 16px;
-        }
-
-        .theta-table-container {
-            overflow-x: auto;
-            margin: 48px 0;
-        }
-
-        .theta-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-        }
-
-        .theta-table th {
-            background: #f5f5f5;
-            padding: 20px 16px;
-            text-align: left;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #666;
-            border-bottom: 2px solid #e0e0e0;
-        }
-
-        .theta-table td {
-            padding: 20px 16px;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 15px;
-            color: #333;
-        }
-
-        .theta-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .zone-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .zone-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-
-        .zone-core { background: #4CAF50; }
-        .zone-edge { background: #FFC107; }
-        .zone-beyond { background: #D11013; }
-
-        .alignment-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .aligned {
-            background: #E8F5E9;
-            color: #4CAF50;
-        }
-
-        .partial {
-            background: #FFF3E0;
-            color: #FF9800;
-        }
-
-        .misaligned {
-            background: #FFEBEE;
-            color: #D11013;
-        }
-
-        .chart-container {
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            margin: 48px 0;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-        }
-
-        .chart-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 24px;
-            color: #1a1a1a;
-        }
-
-        .allocation-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin: 48px 0;
-        }
-
-        .allocation-card {
-            background: white;
-            padding: 40px 24px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .allocation-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-        }
-
-        .allocation-card:nth-child(1)::before { background: #4CAF50; }
-        .allocation-card:nth-child(2)::before { background: #FFC107; }
-        .allocation-card:nth-child(3)::before { background: #D11013; }
-
-        .allocation-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #666;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .allocation-percentage {
-            font-size: 56px;
-            font-weight: 700;
-            color: #D11013;
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-
-        .allocation-description {
-            font-size: 13px;
-            color: #999;
-        }
-
-        .key-takeaway {
-            background: #0a0a0a;
-            color: white;
-            padding: 64px 48px;
-            border-radius: 12px;
-            margin: 64px 0;
-            text-align: center;
-        }
-
-        .key-takeaway h3 {
-            color: white;
-            font-size: 32px;
-            margin-bottom: 24px;
-        }
-
-        .key-takeaway p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 18px;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .lessons-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 24px;
-            margin: 48px 0;
-        }
-
-        .lesson-card {
-            background: white;
-            padding: 32px;
-            border-radius: 8px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-            border-left: 4px solid #D11013;
-        }
-
-        .lesson-card h4 {
-            font-size: 18px;
-            color: #D11013;
-            margin-bottom: 12px;
-        }
-
-        .lesson-card p {
-            font-size: 15px;
-            color: #666;
-            margin: 0;
-        }
-
-        .conclusion {
-            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
-            padding: 64px 48px;
-            border-radius: 12px;
-            margin: 64px 0;
-        }
-
-        .conclusion h3 {
-            margin-bottom: 24px;
-        }
-
-        .conclusion-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .conclusion-list li {
-            padding: 16px 0;
-            font-size: 16px;
-            color: #4a4a4a;
-            position: relative;
-            padding-left: 32px;
-        }
-
-        .conclusion-list li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: #D11013;
-            font-weight: bold;
-            font-size: 20px;
-        }
-
-        .final-quote {
-            background: linear-gradient(135deg, #D11013 0%, #FFCF00 100%);
-            color: white;
-            padding: 64px 48px;
-            border-radius: 12px;
-            margin: 64px 0;
-            text-align: center;
-        }
-
-        .final-quote p {
-            font-size: 24px;
-            font-weight: 600;
-            line-height: 1.5;
-            color: white;
-            margin: 0;
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 42px;
-            }
-
-            .hero-subtitle {
-                font-size: 16px;
-            }
-
-            .container {
-                padding: 80px 24px;
-            }
-
-            h2 {
-                font-size: 32px;
-            }
-
-            .section {
-                margin-bottom: 80px;
-            }
-
-            .allocation-grid,
-            .failure-grid,
-            .spokes-grid,
-            .lessons-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .timeline {
-                padding-left: 32px;
-            }
-
-            .theta-table {
-                font-size: 13px;
-            }
-
-            .theta-table th,
-            .theta-table td {
-                padding: 12px 8px;
-            }
-
-            .key-takeaway,
-            .final-quote {
-                padding: 48px 32px;
-            }
-
-            .key-takeaway h3 {
-                font-size: 24px;
-            }
-
-            .key-takeaway p,
-            .final-quote p {
-                font-size: 18px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEGO Less Is More: The Innovation Paradox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --lego-red: #D11013;
+  --lego-yellow: #FFCF00;
+  --ink: #0E1A18;
+  --ink-soft: #1E2D2A;
+  --paper: #F7F5F0;
+  --paper-warm: #EFEBE2;
+  --muted: #8A9490;
+  --core-green: #2D6A4F;
+  --edge-amber: #B5841A;
+  --beyond-crimson: #8B1A1A;
+  --border: rgba(209,16,19,0.12);
+  --gold: #C9A84C;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family:'DM Sans',sans-serif;
+  background:#fff;
+  color:var(--ink);
+  overflow-x:hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:20px 48px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(14,26,24,0.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.nav-logo {
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:600;
+  color:var(--lego-red);
+  letter-spacing:0.04em;
+}
+.nav-links {
+  display:flex;gap:36px;list-style:none;
+}
+.nav-links a {
+  color:rgba(255,255,255,0.55);
+  text-decoration:none;
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  transition:color 0.2s;
+}
+.nav-links a:hover{color:#fff;}
+
+/* ── HERO ── */
+.hero {
+  height:100vh;
+  background:var(--ink);
+  position:relative;
+  overflow:hidden;
+  display:flex;align-items:center;
+}
+
+.hero-grid {
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size:64px 64px;
+  animation:gridDrift 40s linear infinite;
+}
+@keyframes gridDrift{0%{transform:translate(0,0);}100%{transform:translate(64px,64px);}}
+
+.hero-glow-red {
+  position:absolute;width:600px;height:600px;
+  background:radial-gradient(circle, rgba(209,16,19,0.18) 0%, transparent 65%);
+  top:-100px;right:-80px;
+  pointer-events:none;
+}
+.hero-glow-gold {
+  position:absolute;width:400px;height:400px;
+  background:radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 65%);
+  bottom:-50px;left:10%;
+  pointer-events:none;
+}
+
+.hero-inner {
+  position:relative;z-index:2;
+  max-width:1100px;margin:0 auto;padding:0 48px;
+  padding-top:80px;
+}
+
+.hero-kicker {
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:11px;font-weight:500;
+  letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--lego-red);
+  margin-bottom:36px;
+  opacity:0;animation:fadeUp 0.8s 0.3s forwards;
+}
+.hero-kicker::before {
+  content:'';width:28px;height:1px;background:var(--lego-red);
+}
+
+.hero-h1 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(56px,7vw,96px);
+  font-weight:300;
+  line-height:1.02;
+  color:#fff;
+  max-width:860px;
+  margin-bottom:28px;
+  opacity:0;animation:fadeUp 0.9s 0.5s forwards;
+}
+.hero-h1 em {
+  font-style:italic;
+  color:var(--gold);
+}
+
+.hero-sub {
+  font-size:18px;
+  line-height:1.75;
+  color:rgba(255,255,255,0.55);
+  max-width:640px;
+  margin-bottom:64px;
+  font-weight:300;
+  opacity:0;animation:fadeUp 0.9s 0.7s forwards;
+}
+
+.hero-meta {
+  display:flex;gap:0;
+  border-top:1px solid rgba(255,255,255,0.1);
+  padding-top:32px;
+  opacity:0;animation:fadeUp 0.9s 0.9s forwards;
+}
+.hero-meta-item {
+  flex:1;
+  padding-right:32px;
+  border-right:1px solid rgba(255,255,255,0.1);
+  margin-right:32px;
+}
+.hero-meta-item:last-child{border:none;margin:0;}
+.hero-meta-label {
+  font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);margin-bottom:6px;
+}
+.hero-meta-value {
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:400;
+  color:#fff;
+}
+
+.scroll-line {
+  position:absolute;right:48px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  opacity:0;animation:fadeIn 1s 1.4s forwards;
+}
+.scroll-line span {
+  font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(255,255,255,0.3);
+  writing-mode:vertical-rl;
+}
+.scroll-line-bar {
+  width:1px;height:60px;
+  background:linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+  animation:scrollDrop 2s 1.6s ease-in-out infinite;
+}
+@keyframes scrollDrop{0%,100%{transform:scaleY(1);opacity:0.4;}50%{transform:scaleY(1.4);opacity:0.8;}}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:none;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+/* ── SECTION BASES ── */
+.section-white{background:#fff;}
+.section-paper{background:var(--paper-warm);}
+.section-ink{background:var(--ink);color:#fff;}
+
+.container{max-width:1100px;margin:0 auto;padding:0 48px;}
+.section-pad{padding:120px 0;}
+
+/* ── REVEAL ON SCROLL ── */
+.reveal {
+  opacity:0;transform:translateY(32px);
+  transition:opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible{opacity:1;transform:none;}
+
+/* ── SECTION LABELS ── */
+.section-label {
+  font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--lego-red);font-weight:600;
+  margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;
+}
+.section-label::before{content:'';width:20px;height:1px;background:var(--lego-red);}
+
+/* ── TYPOGRAPHY ── */
+.display-headline {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(38px,4.5vw,58px);
+  font-weight:300;line-height:1.1;
+  margin-bottom:24px;
+}
+.display-headline em{font-style:italic;color:var(--gold);}
+.display-headline.ink-version{color:#fff;}
+
+.lead-text {
+  font-size:19px;line-height:1.75;
+  color:#555;font-weight:300;
+  max-width:720px;
+}
+
+/* ── ABOUT TWO-COL ── */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+.about-prose p{font-size:17px;line-height:1.85;color:#4a4a4a;margin-bottom:22px;}
+
+.hidden-fact-card {
+  background:var(--ink);
+  border-radius:4px;
+  padding:32px;
+  margin-top:32px;
+}
+.hidden-fact-card .label {
+  font-size:10px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:12px;
+}
+.hidden-fact-card p{font-size:15px;color:rgba(255,255,255,0.75);line-height:1.7;}
+
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+.stat-item {
+  background:#fff;
+  padding:36px 28px;
+}
+.stat-item:nth-child(2){background:var(--paper);}
+.stat-item:nth-child(3){background:var(--paper);}
+.stat-item:nth-child(4){background:#fff;}
+.stat-number {
+  font-family:'Cormorant Garamond',serif;
+  font-size:52px;font-weight:300;
+  color:var(--ink);line-height:1;
+  margin-bottom:8px;
+}
+.stat-number span{font-size:28px;}
+.stat-label{font-size:13px;color:var(--muted);font-weight:400;line-height:1.4;}
+
+/* ── BELIEF STRIP ── */
+.belief-strip {
+  background:var(--lego-red);
+  padding:80px 48px;
+  text-align:center;
+}
+.belief-strip blockquote {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(26px,3.5vw,42px);
+  font-style:italic;
+  font-weight:300;
+  color:#fff;
+  max-width:860px;
+  margin:0 auto 20px;
+  line-height:1.35;
+}
+.belief-strip cite {
+  font-size:13px;letter-spacing:0.12em;text-transform:uppercase;
+  color:rgba(255,255,255,0.6);font-style:normal;
+}
+
+/* ── TIMELINE ── */
+.timeline-section{padding:120px 0;}
+.timeline-intro{max-width:640px;margin-bottom:72px;}
+.timeline-track {
+  position:relative;
+  padding-left:56px;
+}
+.timeline-track::before {
+  content:'';position:absolute;left:14px;top:8px;bottom:8px;
+  width:1px;background:rgba(181,132,26,0.25);
+}
+.tl-item {
+  position:relative;margin-bottom:48px;
+  display:grid;grid-template-columns:80px 1fr;gap:28px;
+  align-items:start;
+}
+.tl-dot {
+  position:absolute;left:-48px;top:6px;
+  width:12px;height:12px;border-radius:50%;
+  background:#fff;border:2px solid rgba(181,132,26,0.5);
+}
+.tl-dot.major{
+  background:var(--lego-red);border-color:var(--lego-red);
+  box-shadow:0 0 0 4px rgba(209,16,19,0.15);
+}
+.tl-dot.warning{background:var(--edge-amber);border-color:var(--edge-amber);}
+.tl-year {
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:400;
+  color:var(--gold);
+  line-height:1.2;
+  padding-top:2px;
+}
+.tl-phase {
+  font-size:9px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:4px;
+}
+.tl-title{font-size:17px;font-weight:500;color:var(--ink);margin-bottom:6px;}
+.tl-body{font-size:15px;color:#666;line-height:1.65;}
+.tl-highlight {
+  background:linear-gradient(135deg, rgba(209,16,19,0.05), rgba(201,168,76,0.05));
+  border-left:3px solid var(--lego-red);
+  padding:20px 24px;
+  border-radius:0 4px 4px 0;
+  margin-top:10px;
+}
+.tl-highlight p{font-size:14px;color:#555;font-style:italic;line-height:1.6;margin:0;}
+
+/* ── INNOVATION PHILOSOPHY ── */
+.phil-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+.phil-card {
+  background:#fff;
+  padding:52px 44px;
+}
+.phil-number {
+  font-family:'Cormorant Garamond',serif;
+  font-size:80px;font-weight:300;
+  color:rgba(209,16,19,0.08);
+  line-height:1;
+  margin-bottom:-20px;
+}
+.phil-title{font-size:22px;font-weight:500;margin-bottom:16px;color:var(--ink);}
+.phil-body{font-size:16px;line-height:1.75;color:#555;}
+.phil-quote {
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-style:italic;
+  color:var(--lego-red);
+  margin-top:20px;
+  padding-top:20px;
+  border-top:1px solid var(--border);
+  line-height:1.5;
+}
+
+/* ── THETA MAP ── */
+.theta-layout{display:grid;grid-template-columns:340px 1fr;gap:60px;align-items:start;}
+.zone-pills{display:flex;flex-direction:column;gap:16px;margin-bottom:32px;}
+.zone-pill {
+  padding:20px 24px;border-radius:4px;
+  display:flex;align-items:flex-start;gap:14px;
+}
+.zone-pill.core{background:rgba(45,106,79,0.08);border:1px solid rgba(45,106,79,0.2);}
+.zone-pill.edge{background:rgba(181,132,26,0.08);border:1px solid rgba(181,132,26,0.2);}
+.zone-pill.beyond{background:rgba(139,26,26,0.08);border:1px solid rgba(139,26,26,0.2);}
+.zone-dot-pill{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.zone-dot-pill.c{background:var(--core-green);}
+.zone-dot-pill.e{background:var(--edge-amber);}
+.zone-dot-pill.b{background:var(--beyond-crimson);}
+.zone-pill-name{font-weight:600;font-size:14px;margin-bottom:4px;}
+.zone-pill.core .zone-pill-name{color:var(--core-green);}
+.zone-pill.edge .zone-pill-name{color:var(--edge-amber);}
+.zone-pill.beyond .zone-pill-name{color:var(--beyond-crimson);}
+.zone-pill-desc{font-size:13px;color:#666;line-height:1.5;}
+
+.reading-card {
+  background:var(--paper-warm);
+  padding:24px;border-radius:4px;
+  font-size:13px;color:#666;line-height:1.6;
+}
+.reading-card strong{color:var(--ink);}
+
+.chart-wrap{position:relative;height:500px;}
+
+/* ── CPL SECTION ── */
+.cpl-intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;margin-bottom:72px;}
+.cpl-intro-text p{font-size:17px;line-height:1.85;color:#4a4a4a;margin-bottom:20px;}
+
+.cpl-quote-block {
+  background:var(--ink);
+  padding:44px;
+  border-radius:4px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.cpl-quote-block blockquote {
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:300;font-style:italic;
+  color:#fff;line-height:1.5;margin-bottom:16px;
+}
+.cpl-quote-block cite{font-size:12px;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;}
+
+/* CPL Outcomes Table */
+.cpl-table-wrap{overflow-x:auto;margin-top:48px;}
+table.cpl-table{width:100%;border-collapse:collapse;}
+.cpl-table th {
+  text-align:left;padding:14px 20px;
+  font-size:11px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);font-weight:500;
+  border-bottom:1px solid #e8e4dc;
+}
+.cpl-table td{padding:20px;font-size:15px;border-bottom:1px solid #f0ece4;vertical-align:top;}
+.cpl-table tr:last-child td{border:none;}
+.cpl-table tr:hover td{background:rgba(209,16,19,0.02);}
+.outcome-chip {
+  display:inline-block;
+  padding:4px 12px;border-radius:2px;
+  font-size:12px;font-weight:600;
+  letter-spacing:0.04em;
+}
+.chip-success{background:#E6F2EC;color:var(--core-green);}
+.chip-fail{background:#FDECEA;color:var(--beyond-crimson);}
+.chip-live{background:rgba(181,132,26,0.1);color:var(--edge-amber);}
+
+/* ── DILEMMA SECTION ── */
+.dilemma-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:rgba(0,0,0,0.08);}
+.dilemma-card {
+  background:var(--paper-warm);
+  padding:44px 40px;
+}
+.dilemma-tension {
+  font-size:11px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--edge-amber);margin-bottom:12px;font-weight:600;
+}
+.dilemma-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;margin-bottom:16px;}
+.dilemma-body{font-size:15px;line-height:1.75;color:#555;}
+
+/* ── ALLOCATION SECTION ── */
+.alloc-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.alloc-bars{margin-top:16px;}
+.alloc-bar-item{margin-bottom:28px;}
+.alloc-bar-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.alloc-bar-label{font-size:14px;font-weight:500;}
+.alloc-bar-pct{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:var(--ink);}
+.alloc-bar-track{height:6px;background:rgba(0,0,0,0.08);border-radius:3px;position:relative;}
+.alloc-bar-fill{height:100%;border-radius:3px;position:relative;}
+.alloc-bar-bench{position:absolute;top:-2px;height:10px;width:2px;background:rgba(0,0,0,0.2);}
+.alloc-note{font-size:13px;color:var(--muted);margin-top:6px;}
+
+.doughnut-wrap{position:relative;max-width:320px;margin:0 auto;}
+.doughnut-center {
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;pointer-events:none;
+}
+.doughnut-center-label{font-size:12px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;}
+.doughnut-center-sub{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ink);}
+
+/* ── DIAGNOSTIC (INK BG) ── */
+.diag-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;}
+.diag-card {
+  border:1px solid rgba(255,255,255,0.08);
+  padding:36px;
+  border-radius:4px;
+}
+.diag-card-label {
+  font-size:10px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:16px;
+}
+.diag-card h4{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:#fff;margin-bottom:12px;}
+.diag-card p{font-size:15px;color:rgba(255,255,255,0.6);line-height:1.7;}
+
+.archetype-row{display:flex;gap:12px;margin-top:28px;}
+.archetype-box {
+  flex:1;padding:16px;text-align:center;border-radius:4px;
+  background:rgba(255,255,255,0.05);
+}
+.archetype-box .a-zone{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;}
+.archetype-box .a-icon{font-size:24px;margin-bottom:4px;}
+.archetype-box .a-label{font-size:12px;color:rgba(255,255,255,0.7);}
+.archetype-box.ok{border:1px solid rgba(45,106,79,0.5);}
+.archetype-box.mid{border:1px solid rgba(181,132,26,0.5);}
+
+.tension-highlight {
+  background:rgba(209,16,19,0.12);
+  border:1px solid rgba(209,16,19,0.25);
+  border-radius:4px;
+  padding:24px;
+  margin-top:20px;
+}
+.tension-highlight p{font-size:15px;color:rgba(255,255,255,0.75);line-height:1.7;}
+.tension-highlight strong{color:#fff;}
+
+.inline-bars{margin-top:20px;}
+.ib-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.ib-zone{font-size:12px;color:rgba(255,255,255,0.5);width:50px;flex-shrink:0;}
+.ib-track{flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;position:relative;}
+.ib-actual{height:100%;border-radius:2px;}
+.ib-bench-line{position:absolute;top:-3px;width:2px;height:10px;background:rgba(255,255,255,0.25);}
+.ib-pct{font-size:12px;color:rgba(255,255,255,0.5);width:32px;text-align:right;}
+
+.verdict-box {
+  grid-column:1/-1;
+  background:rgba(201,168,76,0.08);
+  border:1px solid rgba(201,168,76,0.2);
+  padding:40px;border-radius:4px;
+  text-align:center;
+}
+.verdict-label{font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.verdict-text{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:#fff;margin-bottom:16px;}
+.verdict-desc{font-size:15px;color:rgba(255,255,255,0.6);max-width:660px;margin:0 auto;line-height:1.7;}
+
+/* ── SW SECTION ── */
+.sw-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+.sw-panel{padding:40px;border-radius:4px;}
+.sw-panel.strengths{background:#fff;border:1px solid rgba(45,106,79,0.2);}
+.sw-panel.weaknesses{background:#fff;border:1px solid rgba(139,26,26,0.15);}
+.sw-panel-label{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.sw-panel-label .dot{width:10px;height:10px;border-radius:50%;}
+.sw-panel-label .dot.s{background:var(--core-green);}
+.sw-panel-label .dot.w{background:var(--beyond-crimson);}
+.sw-panel-label h3{font-size:16px;font-weight:600;}
+.sw-item{display:flex;gap:14px;margin-bottom:24px;align-items:flex-start;}
+.sw-marker {
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;
+  flex-shrink:0;margin-top:2px;
+}
+.sw-marker.s{background:rgba(45,106,79,0.12);color:var(--core-green);}
+.sw-marker.w{background:rgba(139,26,26,0.1);color:var(--beyond-crimson);}
+.sw-item-body{}
+.sw-item-body strong{font-size:15px;display:block;margin-bottom:4px;color:var(--ink);}
+.sw-item-body p{font-size:14px;color:#666;line-height:1.6;margin:0;}
+
+/* ── VENTURES ── */
+.ventures-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:48px;}
+.ventures-card {
+  background:#fff;
+  padding:32px;
+  border-radius:4px;
+  border-top:3px solid var(--edge-amber);
+}
+.ventures-card h4{font-size:16px;font-weight:600;margin-bottom:10px;color:var(--ink);}
+.ventures-card p{font-size:14px;color:#666;line-height:1.6;}
+.ventures-number {
+  font-family:'Cormorant Garamond',serif;
+  font-size:44px;font-weight:300;
+  color:var(--edge-amber);
+  line-height:1;margin-bottom:4px;
+}
+
+/* ── FOOTER ── */
+footer {
+  background:var(--ink-soft);
+  padding:40px 48px;
+  display:flex;justify-content:space-between;align-items:center;
+  border-top:1px solid rgba(255,255,255,0.06);
+}
+footer .f-left{font-size:13px;color:rgba(255,255,255,0.35);}
+footer .f-right{font-size:13px;color:rgba(255,255,255,0.35);}
+footer .f-logo{font-family:'Cormorant Garamond',serif;color:var(--gold);font-size:15px;}
+
+/* ── RANDOM FACT CALLOUT ── */
+.fact-callout {
+  background:linear-gradient(135deg,rgba(209,16,19,0.06),rgba(201,168,76,0.06));
+  border:1px solid rgba(209,16,19,0.12);
+  border-radius:4px;
+  padding:32px 36px;
+  margin:48px 0;
+  display:flex;gap:20px;align-items:flex-start;
+}
+.fact-icon{font-size:28px;flex-shrink:0;margin-top:2px;}
+.fact-label{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--lego-red);margin-bottom:6px;}
+.fact-text{font-size:16px;line-height:1.65;color:var(--ink);}
+
+/* ── CLOSING STRIP ── */
+.closing-strip {
+  background:var(--ink);
+  padding:100px 0;
+  text-align:center;
+}
+.closing-strip .q {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,4vw,52px);
+  font-weight:300;
+  font-style:italic;
+  color:#fff;
+  max-width:860px;
+  margin:0 auto 20px;
+  line-height:1.3;
+}
+.closing-strip .q em{color:var(--gold);}
+.closing-strip .qs{font-size:14px;color:rgba(255,255,255,0.4);letter-spacing:0.1em;}
+
+/* ── RADAR CHART SECTION ── */
+.radar-wrap{max-width:540px;margin:0 auto;height:420px;position:relative;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  nav{padding:16px 24px;}
+  .nav-links{display:none;}
+  .container{padding:0 24px;}
+  .section-pad{padding:80px 0;}
+  .hero-inner{padding:0 24px;padding-top:80px;}
+  .about-grid,.cpl-intro-grid,.theta-layout,.alloc-grid,.diag-grid,.sw-grid,.phil-grid,.dilemma-grid{grid-template-columns:1fr;}
+  .hero-meta{flex-direction:column;gap:24px;}
+  .hero-meta-item{border:none;padding:0;}
+  .ventures-grid{grid-template-columns:1fr;}
+  .belief-strip{padding:60px 24px;}
+  .scroll-line{display:none;}
+  .hero-h1{font-size:clamp(42px,9vw,64px);}
+}
+</style>
 </head>
 <body>
-    <div class="hero">
-        <div class="hero-content">
-            <div class="hero-label">Strategy Case Study</div>
-            <h1>When Innovation Lost Its Center</h1>
-            <p class="hero-subtitle">How LEGO's near-collapse revealed that innovation itself can become the problem, and why recovering focus required more than just "returning to basics"</p>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">LEGO × Theta</div>
+  <ul class="nav-links">
+    <li><a href="#innovation">Innovation</a></li>
+    <li><a href="#cpl">Creative Play Lab</a></li>
+    <li><a href="#theta">Theta Map</a></li>
+    <li><a href="#diagnostic">Diagnostic</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow-red"></div>
+  <div class="hero-glow-gold"></div>
+  <div class="hero-inner">
+    <div class="hero-kicker">Theta Framework · Strategic Case Study</div>
+    <h1 class="hero-h1">The company that got rich by<br><em>doing less.</em></h1>
+    <p class="hero-sub">LEGO's most counterintuitive lesson isn't about creativity. It's about the discipline to say no and how that single act of restraint unleashed the most innovative toy company on earth.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Founded</div>
+        <div class="hero-meta-value">1932 · Billund</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Global Employees</div>
+        <div class="hero-meta-value">28,000+</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">2023 Revenue</div>
+        <div class="hero-meta-value">DKK 65.9B</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Theta Archetype</div>
+        <div class="hero-meta-value">Balanced ☑☑☑</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-line">
+    <span>Scroll</span>
+    <div class="scroll-line-bar"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section-white section-pad">
+<div class="container">
+  <div class="about-grid reveal">
+    <div class="about-prose">
+      <div class="section-label">About LEGO</div>
+      <h2 class="display-headline">A toy company built on<br><em>a philosophy, not a product.</em></h2>
+      <p>LEGO makes plastic bricks. That sentence is both completely accurate and entirely misleading. What LEGO actually makes is a system a language of interlocking possibility where every piece ever manufactured since 1958 connects to every piece made today. The brick is not the product. The system is.</p>
+      <p>When Ole Kirk Christiansen named his company "leg godt" play well he was articulating a belief system before the business even had a product. That belief has survived fires, near-bankruptcy, digital disruption, and a generation of children who grew up with screens. Not because LEGO resisted change, but because it understood exactly what it was willing to change and what it would never touch.</p>
+
+      <div class="hidden-fact-card">
+        <div class="label">Something most people don't know</div>
+        <p>LEGO is one of the world's largest tire manufacturers. Not metaphorically literally. The company produces approximately 306 million tiny rubber tires per year, making it larger by unit volume than Michelin, Bridgestone, or Goodyear. The tire isn't even the point of the toy. The brick is. And yet the system demands even the smallest detail be done properly.</p>
+      </div>
+    </div>
+    <div>
+      <div class="stat-grid">
+        <div class="stat-item">
+          <div class="stat-number">915<span>M</span></div>
+          <div class="stat-label">Combinations possible<br>from six standard 2×4 bricks</div>
         </div>
-        <div class="scroll-indicator">Scroll to explore</div>
+        <div class="stat-item">
+          <div class="stat-number">2<span>μm</span></div>
+          <div class="stat-label">Manufacturing tolerance<br>on every brick produced</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">18<span>/M</span></div>
+          <div class="stat-label">Defective bricks per million  <br>their only acceptable failure rate</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">67<span>yr</span></div>
+          <div class="stat-label">Backward compatibility:<br>1958 bricks still click today</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- BELIEF STRIP -->
+<div class="belief-strip reveal">
+  <blockquote>"While most struggling companies chase growth diversifying, expanding, acquiring LEGO did the opposite. They got smaller. Sharper. More intentional. And in doing so, they rediscovered their soul."</blockquote>
+  <cite>On the 2003 Turnaround The moment LEGO chose less</cite>
+</div>
+
+<!-- TIMELINE -->
+<section class="section-paper section-pad" id="innovation">
+<div class="container">
+  <div class="section-label reveal">Innovation Arc</div>
+  <div class="timeline-intro reveal">
+    <h2 class="display-headline">Four eras.<br><em>One constant.</em></h2>
+    <p class="lead-text">LEGO's innovation history isn't a smooth climb. It's a near-death experience that produced one of the most important management lessons of the 21st century.</p>
+  </div>
+
+  <div class="timeline-track reveal">
+    <div class="tl-item">
+      <div class="tl-dot major"></div>
+      <div class="tl-year">1932</div>
+      <div>
+        <div class="tl-phase">Origin</div>
+        <div class="tl-title">Wood, crisis, and a stubborn carpenter</div>
+        <div class="tl-body">Ole Kirk Christiansen starts making wooden toys in Billund during the Depression. No grand vision just a craftsman solving a problem. The company name comes from "leg godt" play well. The philosophy arrives before the product.</div>
+      </div>
     </div>
 
-    <div class="container">
-        <section class="section">
-            <h2>The Problem Wasn't Stopping Innovation</h2>
-            <p class="section-intro">By 2003, LEGO stood at the edge of bankruptcy. The company had diversified aggressively into video games, theme parks, apparel, television shows, but innovation itself became the threat. Without a coherent center, every new idea diluted focus, increased complexity, and burned resources.</p>
-
-            <div class="problem-box">
-                <h3>Innovation as Constraint</h3>
-                <p>LEGO's crisis wasn't about insufficient creativity. It was about losing the disciplined constraint that makes innovation strategic. When everything becomes possible, nothing becomes sustainable.</p>
-            </div>
-
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-year">1932</div>
-                    <div class="timeline-content">Founded in Billund, Denmark, making wooden toys during the Great Depression</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">1958</div>
-                    <div class="timeline-content">Patents the iconic interlocking brick, creating LEGO's foundational product system</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">1978</div>
-                    <div class="timeline-content">Minifigure launch transforms construction into storytelling</div>
-                </div>
-                <div class="timeline-item warning">
-                    <div class="timeline-year">1998-2003</div>
-                    <div class="timeline-content">Aggressive diversification: LEGO Island, theme parks, clothing lines, TV shows. Complexity explodes.</div>
-                </div>
-                <div class="timeline-item warning">
-                    <div class="timeline-year">2003</div>
-                    <div class="timeline-content">Near bankruptcy with $800M debt, operational chaos, identity crisis</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">2004</div>
-                    <div class="timeline-content">Jørgen Vig Knudstorp becomes CEO and initiates strategic refocus</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">2005-2014</div>
-                    <div class="timeline-content">Turnaround through focus: return to core, strategic partnerships, digital integration</div>
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <h2>Why Hub-and-Spoke Became Necessary</h2>
-            <p class="section-intro">As LEGO diversified, initiatives spun off like mini-companies. Complexity exploded, making it impossible to fund, kill, or integrate ideas coherently. The hub-and-spoke model emerged as a necessity.</p>
-
-            <div class="hub-spoke-container">
-                <h3>LEGO's Innovation Architecture</h3>
-                <p class="hub-spoke-description">The brick serves as the strategic hub. The core product system that gives coherence to every initiative. Without this anchor, innovation initiatives fragment into disconnected experiments.</p>
-                
-                <div class="hub-spoke-visual">
-                    <div class="spoke">Education & STEM</div>
-                    <div class="hub">The LEGO Brick</div>
-                    <div class="spoke">Entertainment & Media</div>
-                    <div class="spoke">Digital Ecosystems</div>
-                    <div class="spoke">Sustainable Production</div>
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <h2>Edge Experiments That Didn't Work</h2>
-            <p class="section-intro">Not every edge experiment succeeds. Understanding the pattern of failures reveals where innovation detaches from identity.</p>
-
-            <div class="failure-grid">
-                <div class="failure-card">
-                    <h4>⚠ Digital Detachment</h4>
-                    <p class="product-name">LEGO Worlds (2015-2019)</p>
-                    <p>A fully digital building platform that competed with Minecraft. Built engagement in-game but provided no gravity back to physical bricks.</p>
-                    <p class="why-failed"><strong>Why it failed:</strong> Classified as product rather than experiment, scaled before interface market-fit, evaluated using core product metrics</p>
-                </div>
-
-                <div class="failure-card">
-                    <h4>⚠ AR Fragility</h4>
-                    <p class="product-name">LEGO Hidden Side (2019-2020)</p>
-                    <p>AR-enabled sets where physical builds unlocked digital ghost-hunting games. Innovative concept but execution was fragile.</p>
-                    <p class="why-failed"><strong>Why it failed:</strong> Scaled before validating interfaces, exposed to core performance expectations too early, tech dependencies underestimated</p>
-                </div>
-
-                <div class="failure-card">
-                    <h4>⚠ Growth Model Misfit</h4>
-                    <p class="product-name">LEGO Vidiyo (2021-2022)</p>
-                    <p>Music video creation platform combining physical BeatBits with an AR app. Positioned within mainstream consumer behavior without isolating early adopters or segmenting niche adoption patterns.</p>
-                    <p class="why-failed"><strong>Why it failed:</strong> Treated as an adjacent initiative rather than an exploratory probe, inherited inappropriate growth logic</p>
-                </div>
-            </div>
-
-            <div class="insight-box">
-                <h4>Pattern Recognition</h4>
-                <p>Failures occurred when initiatives that required separation were managed as if they were core-adjacent. These initiatives inherited inappropriate expectations, funding models, and success metrics. The issue wasn't conceptual distance from the brick. It was misclassification, which led to mismanagement.</p>
-            </div>
-        </section>
-
-        <section class="section">
-            <h2>Enter Theta: A Lens for Clarity</h2>
-            <p class="section-intro">Theta doesn't prescribe what to do. It clarifies what you're doing. Theta evaluates whether initiatives are classified, resourced, and governed in line with their risk profile and time horizon. By mapping innovation across Core, Edge, and Beyond zones, LEGO gained the language to classify, fund, and test projects with appropriate discipline before scaling them.</p>
-
-            <div class="theta-table-container">
-                <table class="theta-table">
-                    <thead>
-                        <tr>
-                            <th>Zone</th>
-                            <th>Innovation Type</th>
-                            <th>Example</th>
-                            <th>Outcome</th>
-                            <th>Learning</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <span class="zone-badge">
-                                    <span class="zone-dot zone-core"></span>
-                                    Core
-                                </span>
-                            </td>
-                            <td>Core Innovation</td>
-                            <td>Classic LEGO bricks, themed sets (City, Star Wars, Creator)</td>
-                            <td>Sustained revenue driver</td>
-                            <td><span class="alignment-badge aligned">✓ Scaled Successfully</span></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="zone-badge">
-                                    <span class="zone-dot zone-core"></span>
-                                    Core
-                                </span>
-                            </td>
-                            <td>Adjacent Innovation</td>
-                            <td>LEGO Duplo, LEGO Education, STEM kits</td>
-                            <td>Market expansion success</td>
-                            <td><span class="alignment-badge aligned">✓ Scaled Successfully</span></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="zone-badge">
-                                    <span class="zone-dot zone-edge"></span>
-                                    Edge
-                                </span>
-                            </td>
-                            <td>Architectural Innovation</td>
-                            <td>LEGO Boost (robotics + coding), Super Mario integration</td>
-                            <td>Successful hybrid</td>
-                            <td><span class="alignment-badge aligned">✓ Scaled Successfully</span></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="zone-badge">
-                                    <span class="zone-dot zone-edge"></span>
-                                    Edge
-                                </span>
-                            </td>
-                            <td>Disruptive Innovation</td>
-                            <td>LEGO video games (Star Wars, Batman series)</td>
-                            <td>Cultural expansion</td>
-                            <td><span class="alignment-badge partial">~ Edge Experiment</span></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="zone-badge">
-                                    <span class="zone-dot zone-edge"></span>
-                                    Edge
-                                </span>
-                            </td>
-                            <td>Edge Experiment</td>
-                            <td>LEGO Hidden Side (AR ghost hunting)</td>
-                            <td>Failed to scale</td>
-                            <td><span class="alignment-badge misaligned">✗ Classified as product, not probe</span></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="zone-badge">
-                                    <span class="zone-dot zone-edge"></span>
-                                    Edge
-                                </span>
-                            </td>
-                            <td>Edge Experiment</td>
-                            <td>LEGO Vidiyo (music video AR)</td>
-                            <td>Failed to scale</td>
-                            <td><span class="alignment-badge misaligned">✗ Wrong time horizon & funding model</span></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="zone-badge">
-                                    <span class="zone-dot zone-beyond"></span>
-                                    Beyond
-                                </span>
-                            </td>
-                            <td>Transformational</td>
-                            <td>LEGO Ideas (community co-creation platform)</td>
-                            <td>Ecosystem building</td>
-                            <td><span class="alignment-badge aligned">✓ Scaled Successfully</span></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="zone-badge">
-                                    <span class="zone-dot zone-beyond"></span>
-                                    Beyond
-                                </span>
-                            </td>
-                            <td>Frontier Research</td>
-                            <td>Sustainable materials R&D, digital metaverse exploration</td>
-                            <td>Long-term optionality</td>
-                            <td><span class="alignment-badge partial">~ In Testing Phase</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <section class="section">
-            <h2>Innovation Portfolio Allocation</h2>
-            <p class="section-intro">Strategic clarity emerges not from rigid rules but from intentional allocation. LEGO's portfolio balance reflects disciplined focus on the core while selectively exploring edges.</p>
-
-            <div class="allocation-grid">
-                <div class="allocation-card">
-                    <div class="allocation-label">Core</div>
-                    <div class="allocation-percentage">60%</div>
-                    <p class="allocation-description">Brick-based products and incremental improvements drive revenue and identity</p>
-                </div>
-                <div class="allocation-card">
-                    <div class="allocation-label">Edge</div>
-                    <div class="allocation-percentage">30%</div>
-                    <p class="allocation-description">Digital-physical hybrids, new experiences, market expansion</p>
-                </div>
-                <div class="allocation-card">
-                    <div class="allocation-label">Beyond</div>
-                    <div class="allocation-percentage">10%</div>
-                    <p class="allocation-description">Sustainability R&D, future platforms, long-term optionality</p>
-                </div>
-            </div>
-
-            <div class="chart-container">
-                <div class="chart-title">Why This Allocation Works</div>
-                <p><strong>Core (60%):</strong> Most investment optimizes and extends existing sets. Brick-based products drive revenue and reinforce brand identity. This isn't defensive—it's the gravitational center that makes edges possible.</p>
-                <p><strong>Edge (30%):</strong> Growing aggressively into AR, coding, education, and collaborations like Super Mario and Fortnite. Edge experiments fail often, but successful ones create new growth vectors.</p>
-                <p><strong>Beyond (10%):</strong> Long-term R&D, including materials science and next-gen play systems. These are option bets—small investments that preserve future flexibility without disrupting current operations.</p>
-            </div>
-        </section>
-
-        <!-- Building Without Disrupting Core -->
-        <section class="section">
-            <h2>Building Without Disrupting the Core</h2>
-            <p class="section-intro">Innovation that strengthens rather than replaces. LEGO's strategic insight: the brick isn't a constraint. It's the foundational system that makes everything else possible.</p>
-
-            <div class="insight-box">
-                <h4>Core as Foundation, Not Constraint</h4>
-                <p>The brick isn't nostalgic. It's structural. It provides the interface that makes LEGO recognizable across digital platforms, educational products, and entertainment. Initiatives can be distant from this foundation, provided they are governed with appropriate separation, insulation from core metrics, and aligned time horizons.</p>
-                <p><strong>The question remains: what happens when the market shifts and the brick alone isn't enough?</strong></p>
-            </div>
-
-            <div class="chart-container">
-                <div class="chart-title">Edge vs. Core: Separation, Not Replacement</div>
-                <p><strong>Core = Foundation:</strong> The brick system establishes rules: size, connectivity, modularity. This foundation allows infinite variation within constraints.</p>
-                <p><strong>Edge = Separation:</strong> Digital experiences, educational kits, and entertainment properties can operate with varying degrees of separation from the core. The key is appropriate governance. Super Mario bricks connect to the core system. LEGO video games operate at greater distance but with deliberate insulation from core expectations.</p>
-                <p><strong>Beyond = Optionality:</strong> Sustainability research and metaverse exploration create future options without demanding immediate returns or direct connection to current products. These require the most separation and longest time horizons.</p>
-            </div>
-        </section>
-
-        <!-- Strategic Lessons -->
-        <section class="section">
-            <h2>Strategic Lessons</h2>
-            <p class="section-intro">What LEGO's journey teaches about innovation, focus, and strategic discipline.</p>
-
-            <div class="lessons-grid">
-                <div class="lesson-card">
-                    <h4>Better Questions, Not Perfect Answers</h4>
-                    <p>Theta hones your thinking: Are we extending the foundation or drifting? Are we strengthening the core or running a disconnected experiment? Insight comes before commitment.</p>
-                </div>
-
-                <div class="lesson-card">
-                    <h4>Constraints Enable Creativity</h4>
-                    <p>Constraints guide, they don’t limit. Anchoring innovation to a central system lets LEGO explore widely while staying coherent. But over-relying on constraints is risky if markets change.</p>
-                </div>
-
-                <div class="lesson-card">
-                    <h4>Testing Before Scaling</h4>
-                    <p>Edge experiments need proper evaluation and iteration before scaling. Hidden Side might have worked with a smaller pilot. Separate “test and learn” from “scale and commit.”"</p>
-                </div>
-
-                <div class="lesson-card">
-                    <h4>Identity Isn't Static</h4>
-                    <p>LEGO evolved from wood to plastic to digital hybrids. New elements must strengthen the core, not replace it.</p>
-                </div>
-
-                <div class="lesson-card">
-                    <h4>Failure Is Information</h4>
-                    <p>Fail fast, learn faster. Experiments that teach are more valuable than safe bets that stagnate. Each failure refines scaling decisions.</p>
-                </div>
-
-                <div class="lesson-card">
-                    <h4>Allocation Reflects Strategy</h4>
-                    <p>The 60/30/10 split isn't arbitrary. Core funds the business, edge creates new growth, beyond preserves optionality.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Key Takeaway -->
-        <div class="key-takeaway">
-            <h3>The Turnaround Wasn't About Returning to Basics</h3>
-            <p>It was about recovering the disciplined constraint that makes innovation sustainable. LEGO didn't stop innovating. It learned to innovate with focus, using the brick as the foundational system. But the deeper question remains: LEGO has been dependent on the brick center because everything else worked. What happens when new ways emerge that don't require the brick at all?</p>
-        </div>
-
-        <!-- Conclusion -->
-        <section class="section">
-            <div class="conclusion">
-                <h3>Questions for Leaders</h3>
-                <ul class="conclusion-list">
-                    <li>What is your organization's "brick"? The core system that should anchor innovation? And more importantly, what if that system becomes obsolete?</li>
-                    <li>Are your edge experiments being tested with appropriate criteria, or are you judging breakthrough ideas with core business metrics?</li>
-                    <li>When innovation initiatives fail, do you extract the learning or just move to the next idea?</li>
-                    <li>Does your portfolio allocation reflect stated strategy, or is it just budget inertia?</li>
-                    <li>Are you building coherence around a single center because it works, or because you haven't imagined alternatives?</li>
-                    <li>How is LEGO incorporating AI today, as a fast follower or as an innovation leader?</li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- Final Quote -->
-        <div class="final-quote">
-            <p>Innovation without discipline is a wishlist.<br>Innovation with discipline is strategy.<br>Discipline applied to the right execution, metrics, and growth model turns intent into results.</p>
-        </div>
+    <div class="tl-item">
+      <div class="tl-dot major"></div>
+      <div class="tl-year">1958</div>
+      <div>
+        <div class="tl-phase">The Foundation</div>
+        <div class="tl-title">The patent that still works</div>
+        <div class="tl-body">Godtfred Kirk Christiansen patents the modern interlocking brick with hollow tubes underneath the clutch power mechanism that holds everything together without glue, gravity, or luck. Every brick made since connects to this design. It's the most successful act of constraint in product history.</div>
+        <div class="tl-highlight"><p>The 1958 brick is still fully compatible with LEGO Smart Play bricks unveiled at CES 2026. That's 68 years of backward compatibility a record no tech company has come close to matching.</p></div>
+      </div>
     </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1978</div>
+      <div>
+        <div class="tl-phase">Breakthrough</div>
+        <div class="tl-title">The minifigure changes everything</div>
+        <div class="tl-body">The introduction of the smiling yellow minifigure is LEGO's first great architectural innovation. Not a new brick but a new possibility. Suddenly children aren't just building structures; they're telling stories. The brick becomes a stage. This single addition opens infinite play patterns that didn't exist the day before.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot warning"></div>
+      <div class="tl-year">1993–2003</div>
+      <div>
+        <div class="tl-phase">The Crisis Era</div>
+        <div class="tl-title">Innovation as self-destruction</div>
+        <div class="tl-body">Chasing the digital revolution, LEGO expands into video games, clothing, jewelry, TV shows, and theme parks. The number of unique brick elements explodes from 6,000 to over 14,000. Complexity consumes the company. By 2003, LEGO is losing $1 million a day one of the worst financial crises in European business history.</div>
+        <div class="tl-highlight"><p>The irony: LEGO didn't stop innovating. It innovated too much, in too many directions, without asking whether any of it strengthened the brick. The lesson isn't "innovate less." It's "know what you're innovating for."</p></div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot major"></div>
+      <div class="tl-year">2004</div>
+      <div>
+        <div class="tl-phase">The Turn</div>
+        <div class="tl-title">Jørgen Vig Knudstorp and the smallest possible bet</div>
+        <div class="tl-body">35-year-old Knudstorp becomes CEO. His first act: cut 30% of products, sell the theme parks, reduce brick varieties by half, and ask one radical question does this initiative make the brick more valuable, or does it just use the LEGO logo? Anything that couldn't answer yes was cancelled. In two years, LEGO returns to profit.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">2008</div>
+      <div>
+        <div class="tl-phase">Open Innovation</div>
+        <div class="tl-title">LEGO Ideas: letting go of the invention</div>
+        <div class="tl-body">LEGO launches LEGO Ideas a platform where fans submit set designs, the community votes, and LEGO manufactures the winners with the creator receiving royalties. It's a total inversion of the product pipeline. By 2024, 2.8 million members have submitted over 135,000 ideas. Sets like the NASA Apollo Saturn V and the Women of NASA become cultural moments.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">2014</div>
+      <div>
+        <div class="tl-phase">Cultural Moment</div>
+        <div class="tl-title">Everything is awesome and deeply strategic</div>
+        <div class="tl-body">The LEGO Movie grosses over $468M worldwide without being a film about LEGO. It's a film about creativity, conformity, and what it means to build something that matters. It is the most sophisticated brand advertisement ever made and it never feels like an advertisement. The brick becomes a cultural metaphor.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot major"></div>
+      <div class="tl-year">2020</div>
+      <div>
+        <div class="tl-phase">Digital Foundation</div>
+        <div class="tl-title">Building the invisible infrastructure</div>
+        <div class="tl-body">Atul Bhardwaj is appointed Chief Digital & Technology Officer. Over the next three years, LEGO triples its digital workforce to over 1,800 engineers across Billund, Copenhagen, London, and Shanghai. Most LEGO fans have no idea this is happening. That's the point. The foundation for the next decade of innovation is being laid underground.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot major"></div>
+      <div class="tl-year">2026</div>
+      <div>
+        <div class="tl-phase">The Next Minifigure Moment</div>
+        <div class="tl-title">Smart Play: eight years to change everything</div>
+        <div class="tl-body">At CES January 2026, LEGO unveils Smart Play a standard 2×4 brick with embedded sensors, LED lights, a speaker, and a custom ASIC chip smaller than a single stud. The bricks communicate via proprietary "BrickNet" Bluetooth with no app, no screen, no controller required. Eight years in development inside Creative Play Lab. First sets launch March 2026 anchored by Star Wars.</div>
+        <div class="tl-highlight"><p>"The way to think of this is like a tiny distributed console, but for physical play. One Smart Brick can unlock a huge range of different experiences across potentially thousands of models." Tom Donaldson, SVP LEGO Group</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- INNOVATION PHILOSOPHY -->
+<section class="section-white section-pad">
+<div class="container">
+  <div class="section-label reveal">The Innovation DNA</div>
+  <h2 class="display-headline reveal">What LEGO actually<br><em>believes about innovation.</em></h2>
+  <p class="lead-text reveal" style="margin-bottom:60px;">Innovation at LEGO isn't a department. It's a set of convictions that have been tested against near-death and refined into practice.</p>
+
+  <div class="phil-grid reveal">
+    <div class="phil-card">
+      <div class="phil-number">01</div>
+      <h3 class="phil-title">The Brick Is Always the Hero</h3>
+      <p class="phil-body">Every innovation LEGO has ever made that worked the minifigure, Technic, Mindstorms, Super Mario, Smart Play treated the brick as the medium, not the obstacle. Every initiative that failed Vidiyo, Hidden Side, pre-2003 apparel either abandoned the brick or used it as a logo. This isn't nostalgia. It's systems thinking. The brick is the interface layer that gives everything else meaning.</p>
+      <div class="phil-quote">"We don't ask what we can do with technology. We ask what technology can do for the brick."</div>
+    </div>
+    <div class="phil-card" style="background:var(--paper);">
+      <div class="phil-number">02</div>
+      <h3 class="phil-title">Constraint Creates Freedom</h3>
+      <p class="phil-body">The 2×4 stud grid is a constraint. The clutch power tolerance is a constraint. The compatibility requirement across 67 years is a constraint. And yet within these constraints, 915 million combinations are possible from six bricks alone. LEGO's culture of constraint is not a limitation it is the engine of creativity. The question is never "what's possible?" It's "what's possible within the system?"</p>
+      <div class="phil-quote">"Six standard bricks. 915 million combinations. The constraint is the canvas."</div>
+    </div>
+    <div class="phil-card" style="background:var(--paper);">
+      <div class="phil-number">03</div>
+      <h3 class="phil-title">Prove Yourself Wrong First</h3>
+      <p class="phil-body">Creative Play Lab's methodology is deliberately counter-intuitive: they test with 1,000+ children in their own homes specifically to find what doesn't work. Sam Coates, Head of Interactive Innovation, describes their process as "looking for the rough bits." Smart Play took eight years not because the technology was hard, but because LEGO refused to ship until every rough bit was polished. Most companies find reasons to say yes. LEGO finds reasons to say no.</p>
+      <div class="phil-quote">"We take assumptions and we try to prove ourselves wrong. If I'm only finding things that work, I'm ignoring the problem." Sam Coates, CPL</div>
+    </div>
+    <div class="phil-card">
+      <div class="phil-number">04</div>
+      <h3 class="phil-title">99.99% of Geniuses Work Elsewhere</h3>
+      <p class="phil-body">LEGO's open innovation strategy rests on a deeply humble premise, articulated by Senior Manager Open Innovation Stiven Kerestegian: "99.99% of the world's smartest people don't work for us." LEGO Ideas, the Ambassador Network, BrickLink, and the AFOL community aren't marketing programs. They are a distributed R&D operation run by the most passionate product testers on earth. The company that gets smaller also gets smarter by listening harder.</p>
+      <div class="phil-quote">"99.99% of the world's smartest people don't work for us." Stiven Kerestegian, LEGO Open Innovation</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- FACT CALLOUT -->
+<section class="section-paper" style="padding:60px 0;">
+<div class="container">
+  <div class="fact-callout reveal">
+    <div class="fact-icon">🧩</div>
+    <div>
+      <div class="fact-label">Something genuinely surprising</div>
+      <p class="fact-text">LEGO almost went open source in the 1990s not as strategy, but as accident. When Mindstorms launched in 1998, the hacker community reverse-engineered the firmware within weeks and began publishing modifications online. LEGO's initial legal reaction was to pursue takedowns. Then something shifted: they noticed the hackers were making a better product. LEGO quietly added a clause to its software license allowing non-commercial modifications. It was the first time a toy company institutionalized fan hacking and it seeded everything that became LEGO Ideas a decade later.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- CPL SECTION -->
+<section class="section-white section-pad" id="cpl">
+<div class="container">
+  <div class="section-label reveal">Creative Play Lab</div>
+  <h2 class="display-headline reveal">The 8-year factory<br><em>nobody sees.</em></h2>
+
+  <div class="cpl-intro-grid reveal">
+    <div class="cpl-intro-text">
+      <p>Creative Play Lab is LEGO's protected invention space not a physical lab, but a team and a mandate. Its job, as described by SVP Tom Donaldson: "When we need to discover something new that the audience wants, when we need to discover a new way to play, or when we need to discover how to make technology do what it's supposed to do that's where Creative Play Lab comes in."</p>
+      <p>The CPL sits within the Product & Marketing organization which is unusual. Breakthrough innovation housed inside the commercial function sounds like a recipe for premature pressure. But it works at LEGO because the CPL has explicit protection: its projects are not judged by quarterly metrics. SUPER Mario incubated for five years. Smart Play, eight. The organization accepts this because the culture demands it.</p>
+      <p>What happens inside CPL is also unusual: each proposition is tested with 1,000+ children in real homes, not controlled environments. The team explicitly looks for friction, failure, and "rough bits" before any concept is escalated. The goal at the idea stage is not to validate it's to find every reason the concept could fail before it costs real money to scale.</p>
+    </div>
+    <div class="cpl-quote-block">
+      <blockquote>"We've discovered, every time, things that you would never have found until a bad review starts to show up. We're looking for the small failures so we can polish them out."</blockquote>
+      <cite>Sam Coates, Head of Interactive Innovation · Creative Play Lab</cite>
+    </div>
+  </div>
+
+  <!-- CPL Table -->
+  <div class="cpl-table-wrap reveal">
+    <table class="cpl-table">
+      <thead>
+        <tr>
+          <th>Initiative</th>
+          <th>Incubation</th>
+          <th>Theta Zone</th>
+          <th>Outcome</th>
+          <th>What worked / didn't</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>LEGO Super Mario</strong><br><span style="font-size:13px;color:#888;">Physical figure + app integration</span></td>
+          <td>5 years</td>
+          <td><span style="color:var(--edge-amber);font-weight:600;">Edge · Architectural</span></td>
+          <td><span class="outcome-chip chip-success">Scaled</span></td>
+          <td style="font-size:14px;color:#555;">Digital enhanced physical without replacing it. Mario responded to real bricks. The constraint must feel like LEGO saved it from becoming a Nintendo peripheral.</td>
+        </tr>
+        <tr>
+          <td><strong>LEGO Smart Play</strong><br><span style="font-size:13px;color:#888;">Sensors embedded in standard brick</span></td>
+          <td>8 years</td>
+          <td><span style="color:var(--edge-amber);font-weight:600;">Edge · Architectural</span></td>
+          <td><span class="outcome-chip chip-live">Launching 2026</span></td>
+          <td style="font-size:14px;color:#555;">Works within the exact 2×4 form factor. No app required. "BrickNet" Bluetooth is proprietary. Eight years of rough-bit-removal before any public announcement.</td>
+        </tr>
+        <tr>
+          <td><strong>LEGO Hidden Side</strong><br><span style="font-size:13px;color:#888;">AR ghost-hunting via phone overlay</span></td>
+          <td>~2 years</td>
+          <td><span style="color:var(--edge-amber);font-weight:600;">Edge · Experiment</span></td>
+          <td><span class="outcome-chip chip-fail">Discontinued 2020</span></td>
+          <td style="font-size:14px;color:#555;">Conceptually strong. Failed because AR technology in 2019 wasn't invisible enough pointing a phone at bricks felt awkward in real play. Scaled before the technology was ready. Judged by core product metrics too early.</td>
+        </tr>
+        <tr>
+          <td><strong>LEGO Vidiyo</strong><br><span style="font-size:13px;color:#888;">Music video AR creation platform</span></td>
+          <td>~2 years</td>
+          <td><span style="color:var(--edge-amber);font-weight:600;">Edge · Experiment</span></td>
+          <td><span class="outcome-chip chip-fail">Discontinued 2022</span></td>
+          <td style="font-size:14px;color:#555;">Misclassified as an adjacent initiative rather than exploratory probe. Inherited mainstream revenue expectations. Concept-market misfit: music video creation wasn't a natural LEGO play pattern for its target age group.</td>
+        </tr>
+        <tr>
+          <td><strong>LEGO Mindstorms</strong><br><span style="font-size:13px;color:#888;">Programmable robotics platform</span></td>
+          <td>Long-term</td>
+          <td><span style="color:var(--edge-amber);font-weight:600;">Edge · Disruptive</span></td>
+          <td><span class="outcome-chip chip-fail">Discontinued 2022</span></td>
+          <td style="font-size:14px;color:#555;">Beloved but couldn't cross the chasm from early adopter (hackers, hobbyists, educators) to mass market. The community was passionate but too small. Succeeded as a cultural signal; failed as a commercial product line.</td>
+        </tr>
+        <tr>
+          <td><strong>LEGO Ideas</strong><br><span style="font-size:13px;color:#888;">Fan co-creation platform, 2.8M members</span></td>
+          <td>Ongoing since 2008</td>
+          <td><span style="color:var(--edge-amber);font-weight:600;">Edge · Architectural</span></td>
+          <td><span class="outcome-chip chip-success">Scaled · Permanent</span></td>
+          <td style="font-size:14px;color:#555;">Transformed the innovation pipeline. Fans validate demand before LEGO commits. 148 projects reached 10,000 votes. 50+ sets produced. Women of NASA, Apollo Saturn V, Ship in a Bottle all community-originated, all commercial hits.</td>
+        </tr>
+        <tr>
+          <td><strong>Sustainable Materials R&D</strong><br><span style="font-size:13px;color:#888;">ABS plastic replacement</span></td>
+          <td>Ongoing</td>
+          <td><span style="color:var(--beyond-crimson);font-weight:600;">Beyond · Transformational</span></td>
+          <td><span class="outcome-chip chip-live">In Progress</span></td>
+          <td style="font-size:14px;color:#555;">$400M+ committed. Recycled PET prototype abandoned in 2023 not as failure, but as learning. Fishing net polymers now used for tires. 60% sustainable sourcing target active. The existential urgency: LEGO bricks take up to 1,300 years to decompose in ocean environments.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="fact-callout reveal" style="margin-top:48px;">
+    <div class="fact-icon">⚙️</div>
+    <div>
+      <div class="fact-label">The CPL Integration Model</div>
+      <p class="fact-text">CPL doesn't hand projects off and disappear. It stays with each initiative from seed to scale through discovery, through iterative testing, through commercial viability proof. Only when a concept has survived the "prove yourself wrong" gauntlet and demonstrated real adoption does it transfer to the core product organization. The 5-to-8-year incubation window isn't bureaucracy. It's the price of not getting it wrong in front of 100 million children.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- THETA MAP SECTION -->
+<section class="section-paper section-pad" id="theta">
+<div class="container">
+  <div class="section-label reveal">Theta Innovation Map</div>
+  <h2 class="display-headline reveal">Where LEGO plays  <br><em>and where it doesn't.</em></h2>
+
+  <div class="theta-layout reveal">
+    <div>
+      <div class="zone-pills">
+        <div class="zone-pill core">
+          <div class="zone-dot-pill c"></div>
+          <div>
+            <div class="zone-pill-name">Core Zone · 70%</div>
+            <div class="zone-pill-desc">Existing markets, incremental improvement. The engine that funds everything else. Brick quality, set design, DUPLO, Botanicals, LEGO Insiders. The optimization that looks boring from the outside but is ruthlessly disciplined inside.</div>
+          </div>
+        </div>
+        <div class="zone-pill edge">
+          <div class="zone-dot-pill e"></div>
+          <div>
+            <div class="zone-pill-name">Edge Zone · 20%</div>
+            <div class="zone-pill-desc">Moderate to high tech change, new markets. LEGO's sweet spot. Technic, Mindstorms, Ideas, The LEGO Movie, Super Mario, Smart Play. Architecture reconfigured same bricks, entirely new experiences.</div>
+          </div>
+        </div>
+        <div class="zone-pill beyond">
+          <div class="zone-dot-pill b"></div>
+          <div>
+            <div class="zone-pill-name">Beyond Zone · 10%</div>
+            <div class="zone-pill-desc">Radical bets, speculative horizons. Sustainable materials research, carbon-neutral factories, next-generation digital-physical play. Patient capital from private family ownership makes these possible without earnings pressure.</div>
+          </div>
+        </div>
+      </div>
+      <div class="reading-card">
+        <strong>How to read this map:</strong> The X-axis represents how far from LEGO's existing markets an initiative reaches. The Y-axis shows how much the underlying technology changes. The best LEGO innovations Smart Play, Super Mario, Technic score high on Edge without abandoning the Core. The failures scored high on X without being ready on Y.
+      </div>
+    </div>
+    <div>
+      <div class="chart-wrap">
+        <canvas id="thetaChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- PORTFOLIO ALLOCATION -->
+<section class="section-white section-pad">
+<div class="container">
+  <div class="section-label reveal">Portfolio Allocation</div>
+  <h2 class="display-headline reveal">Where the eggs<br><em>actually go.</em></h2>
+
+  <div class="alloc-grid reveal">
+    <div>
+      <p style="font-size:17px;line-height:1.8;color:#555;margin-bottom:36px;">The Theta Framework uses 70/20/10 as a heuristic not a financial prescription, but a memory device for leadership. The question it forces: are you investing in today, tomorrow, and the future simultaneously, or just optimizing for what already works? For LEGO, the visible evidence of their initiatives suggests an allocation that closely mirrors this benchmark perhaps more intentionally than most companies of their scale and age.</p>
+      <div class="alloc-bars">
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-label" style="color:var(--core-green);">● Core Zone</span>
+            <span class="alloc-bar-pct">~72%</span>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill" style="width:72%;background:var(--core-green);"></div>
+            <div class="alloc-bar-bench" style="left:70%;"></div>
+          </div>
+          <div class="alloc-note">Estimated actual vs. 70% benchmark. Brick manufacturing, set design, DUPLO, Botanicals, LEGO Insiders, retail experience.</div>
+        </div>
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-label" style="color:var(--edge-amber);">● Edge Zone</span>
+            <span class="alloc-bar-pct">~19%</span>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill" style="width:19%;background:var(--edge-amber);"></div>
+            <div class="alloc-bar-bench" style="left:20%;"></div>
+          </div>
+          <div class="alloc-note">Estimated actual vs. 20% benchmark. Creative Play Lab, digital-physical hybrids, Ideas platform, film/entertainment, gaming collaborations.</div>
+        </div>
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-label" style="color:var(--beyond-crimson);">● Beyond Zone</span>
+            <span class="alloc-bar-pct">~9%</span>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill" style="width:9%;background:var(--beyond-crimson);"></div>
+            <div class="alloc-bar-bench" style="left:10%;"></div>
+          </div>
+          <div class="alloc-note">Estimated actual vs. 10% benchmark. Sustainable materials R&D, $1B+ carbon-neutral factories (Vietnam opened 2025, Virginia under construction), next-gen play research.</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-top:16px;font-style:italic;">Note: LEGO does not publicly disclose innovation budget allocation. Figures are interpretive estimates based on observable initiative volume and publicly reported investment. Benchmarks from Theta Framework heuristic, not disclosed targets.</p>
+    </div>
+    <div>
+      <div class="doughnut-wrap">
+        <canvas id="doughnutChart" height="320"></canvas>
+        <div class="doughnut-center">
+          <div class="doughnut-center-label">Zones</div>
+          <div class="doughnut-center-sub">3 Active</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- INNOVATION DILEMMAS -->
+<section class="section-paper section-pad">
+<div class="container">
+  <div class="section-label reveal">The Tensions That Never Resolve</div>
+  <h2 class="display-headline reveal">LEGO's four<br><em>permanent dilemmas.</em></h2>
+  <p class="lead-text reveal" style="margin-bottom:60px;">Every innovative company operates inside contradictions it can't fully resolve only manage. LEGO's are unusually well-defined.</p>
+
+  <div class="dilemma-grid reveal">
+    <div class="dilemma-card">
+      <div class="dilemma-tension">Tension 01</div>
+      <div class="dilemma-title">The Brick Is Forever Until It Isn't</div>
+      <div class="dilemma-body">LEGO's entire coherence comes from the brick. Every successful innovation returns to it; every failure abandoned it. But this creates an existential dependency: what happens if play migrates entirely to digital? What if AI generates custom building instructions that make physical bricks optional? Smart Play is LEGO's most honest attempt to answer this embedding digital intelligence into the brick itself rather than building digital experiences around it. But the question remains open.</div>
+    </div>
+    <div class="dilemma-card">
+      <div class="dilemma-tension">Tension 02</div>
+      <div class="dilemma-title">Patient Capital vs. Commercial Accountability</div>
+      <div class="dilemma-body">Smart Play took eight years. LEGO Super Mario took five. The LEGO Ideas platform took years before producing commercial hits. None of these could survive inside a publicly listed company under quarterly earnings pressure. LEGO's private family ownership (Kirk Kristiansen family through KIRKBI) is not incidental to its innovation success it is structural. The dilemma: as the company grows, how long can that patience hold?</div>
+    </div>
+    <div class="dilemma-card">
+      <div class="dilemma-tension">Tension 03</div>
+      <div class="dilemma-title">Core Metrics vs. Edge Experiments</div>
+      <div class="dilemma-body">Hidden Side and Vidiyo didn't fail because they were bad ideas. They failed because they were judged by the wrong criteria scaled before they were ready, measured by revenue expectations designed for core products. The structural challenge: when Edge experiments graduate from Creative Play Lab to the product organization, they inherit financial expectations that assume mass-market traction. The chasm between experiment and scale has claimed multiple LEGO initiatives that might have worked with more runway.</div>
+    </div>
+    <div class="dilemma-card">
+      <div class="dilemma-tension">Tension 04</div>
+      <div class="dilemma-title">Sustainability vs. The Thing That Makes LEGO LEGO</div>
+      <div class="dilemma-body">LEGO bricks are made from ABS plastic a petroleum product with extraordinary durability and clutch power. LEGO bricks take up to 1,300 years to decompose in ocean environments. The company has invested hundreds of millions into finding a sustainable alternative, abandoned a promising recycled PET prototype in 2023 (it increased carbon footprint to manufacture), and continues the search. The dilemma: what if the material that makes the brick work perfectly is also the material the planet can no longer afford?</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- VENTURES & ECOSYSTEM -->
+<section class="section-white section-pad">
+<div class="container">
+  <div class="section-label reveal">LEGO Ventures & Ecosystem</div>
+  <h2 class="display-headline reveal">The bets LEGO<br><em>makes quietly.</em></h2>
+  <p class="lead-text reveal" style="margin-bottom:20px;">While the world watches the brick, LEGO's investment arm is quietly building positions in the future of digital play and learning not to acquire toy companies, but to stay close to where play is going.</p>
+
+  <div class="fact-callout reveal">
+    <div class="fact-icon">💡</div>
+    <div>
+      <div class="fact-label">LEGO Ventures</div>
+      <p class="fact-text">LEGO Ventures sits under KIRKBI the Kirk Kristiansen family holding company not under the LEGO Group itself. This matters: it means the investments aren't subject to LEGO's operational pressures. The mandate is explicitly about knowledge and relationships first, financial returns second. 15 investments made. 3 exits. Portfolio includes Mod.io (gaming platform, $26M), Jam.gg (social gaming, $12M), and Area9 Lyceum (adaptive learning EdTech). These aren't toy company acquisitions. They're windows into how the next generation plays and learns.</p>
+    </div>
+  </div>
+
+  <div class="ventures-grid reveal">
+    <div class="ventures-card">
+      <div class="ventures-number">15</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">Investments to date</div>
+      <h4>Digital Play</h4>
+      <p>Gaming platforms, social play environments, and interactive digital experiences. LEGO isn't trying to build these it's trying to understand them from the inside.</p>
+    </div>
+    <div class="ventures-card">
+      <div class="ventures-number">3</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">Portfolio exits</div>
+      <h4>Digital Learning</h4>
+      <p>EdTech platforms, adaptive learning systems, and educational tools that align with LEGO Education's mission to make learning tangible and playful.</p>
+    </div>
+    <div class="ventures-card">
+      <div class="ventures-number">$268M</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">Discovery Centres acquisition · March 2026</div>
+      <h4>Brand Experience</h4>
+      <p>LEGO acquired 29 Discovery Centres from Merlin Entertainments. Unlike the pre-2003 theme park ownership that nearly killed the company, these smaller indoor formats serve a specific purpose: deeper engagement and consumer data without the capital intensity of large resorts. Merlin still runs the 11 full Legoland parks.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- SW SECTION -->
+<section class="section-paper section-pad">
+<div class="container">
+  <div class="section-label reveal">Strengths & Weaknesses</div>
+  <h2 class="display-headline reveal">Where LEGO is brilliant.<br><em>Where it is vulnerable.</em></h2>
+
+  <div class="sw-grid reveal">
+    <div class="sw-panel strengths">
+      <div class="sw-panel-label">
+        <div class="dot s"></div>
+        <h3 style="color:var(--core-green);">Genuine Strengths</h3>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker s">S</div>
+        <div class="sw-item-body">
+          <strong>The System Is Unmatchable</strong>
+          <p>67 years of backward compatibility creates a moat no competitor can bridge without starting from 1958. The system isn't the brick it's the promise that your brick today will still work with bricks your children buy decades from now.</p>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker s">S</div>
+        <div class="sw-item-body">
+          <strong>Private Ownership as Innovation Fuel</strong>
+          <p>Family ownership through KIRKBI removes quarterly earnings pressure and allows 8-year incubation cycles. This is structurally impossible for most publicly listed competitors. It's why Smart Play can take 8 years and Hasbro can't.</p>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker s">S</div>
+        <div class="sw-item-body">
+          <strong>Manufacturing Precision as Competitive Moat</strong>
+          <p>A 2-micron tolerance and 18 defects per million is not a quality metric it's a barrier to entry. Adding sensors, firmware, and lifecycle support to Smart Play bricks extends this moat into entirely new territory that generic manufacturers cannot replicate.</p>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker s">S</div>
+        <div class="sw-item-body">
+          <strong>The Community Is the R&D Department</strong>
+          <p>2.8 million Ideas members, the AFOL Ambassador Network since 2005, BrickLink's aftermarket ecosystem LEGO has institutionalized the smartest users in the world as an unpaid, deeply motivated innovation pipeline. The Women of NASA set (community-originated) sold out immediately.</p>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker s">S</div>
+        <div class="sw-item-body">
+          <strong>Intelligent Failure Is Policy, Not Slogan</strong>
+          <p>When the recycled PET plastic prototype increased carbon footprint to manufacture, LEGO cancelled it publicly and called it learning. When Mindstorms was discontinued, the rationale was clear: passionate community, insufficient mass market. The culture treats failure as signal, not verdict.</p>
+        </div>
+      </div>
+    </div>
+    <div class="sw-panel weaknesses">
+      <div class="sw-panel-label">
+        <div class="dot w"></div>
+        <h3 style="color:var(--beyond-crimson);">Real Vulnerabilities</h3>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker w">W</div>
+        <div class="sw-item-body">
+          <strong>The Chasm Is Still the Chasm</strong>
+          <p>Mindstorms had passionate fans for 24 years and never crossed to mainstream. Hidden Side and Vidiyo reached early adopters and stalled. Smart Play is launching in March 2026 with the same fundamental challenge: will it work in real children's hands, not just in CPL test homes?</p>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker w">W</div>
+        <div class="sw-item-body">
+          <strong>Innovation Classification Still Fails at Handoff</strong>
+          <p>The CPL does discovery well. The failure point is transition when Edge experiments move into the core product organization and suddenly inherit revenue expectations, headcount structures, and timelines designed for known products. The structural fix for this is unfinished.</p>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker w">W</div>
+        <div class="sw-item-body">
+          <strong>Digital Capability Built Late</strong>
+          <p>LEGO tripled its digital organization between 2020 and 2023 but the digital revolution started in 1995. The infrastructure enabling Smart Play was laid a generation after it was needed. LEGO was a brilliant fast follower. The question is whether that lag has cost irretrievable ground in AI-native play.</p>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker w">W</div>
+        <div class="sw-item-body">
+          <strong>Geographic Innovation Concentration</strong>
+          <p>Core design and creative work remains heavily concentrated in Billund, Denmark a town of 6,000 people. Manufacturing is expanding globally (Vietnam, Virginia), but the imagination still largely comes from one address. For a company trying to build play for 100 million children across 130 countries, that's a design risk.</p>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker w">W</div>
+        <div class="sw-item-body">
+          <strong>The ABS Problem Has No Clean Solution</strong>
+          <p>The recycled PET experiment failed. Bio-polyethylene works for some elements but not the structural brick. A material that performs identically to ABS while being sustainable has not yet been found after years and hundreds of millions invested. The clock is running.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- DIAGNOSTIC (INK) -->
+<section class="section-ink section-pad" id="diagnostic">
+<div class="container">
+  <div class="section-label reveal" style="color:var(--gold);">Theta Diagnostic</div>
+  <h2 class="display-headline ink-version reveal">Reading the<br><em style="color:var(--gold);">full picture.</em></h2>
+
+  <div class="diag-grid reveal">
+    <div class="diag-card">
+      <div class="diag-card-label">Portfolio Mapping</div>
+      <h4>Core · Edge · Beyond Active</h4>
+      <p>All three zones have real, funded, operational initiatives. Core is optimized without starving the future. Edge is vibrant with Smart Play as a generational architectural innovation. Beyond is deliberate $1B+ in carbon-neutral factories and an honest sustainability R&D program that includes public admissions of failure.</p>
+      <div class="archetype-row">
+        <div class="archetype-box ok">
+          <div class="a-zone">Core</div>
+          <div class="a-icon">☑</div>
+          <div class="a-label">Profitable & Sharp</div>
+        </div>
+        <div class="archetype-box ok">
+          <div class="a-zone">Edge</div>
+          <div class="a-icon">☑</div>
+          <div class="a-label">Active & Vibrant</div>
+        </div>
+        <div class="archetype-box mid">
+          <div class="a-zone">Beyond</div>
+          <div class="a-icon">△</div>
+          <div class="a-label">Deliberate but slow</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="diag-card">
+      <div class="diag-card-label">Leadership & Culture</div>
+      <h4>Mavericks Protected. Failure Celebrated.</h4>
+      <p>The AFOL Ambassador Network has formalized maverick relationships since 2005. The Mindstorms hacker community was initially resisted, then embraced and seeded the entire open innovation model. CPL's explicit "prove yourself wrong" methodology turns failure tolerance from slogan into standard operating procedure. Leadership adapts: Knudstorp's Founder Mode turnaround evolved into Niels B. Christiansen's Scale Mode without losing the founder's discipline.</p>
+    </div>
+
+    <div class="diag-card">
+      <div class="diag-card-label">Customer Signal Alignment</div>
+      <h4>Both Core Customers and Early Adopters Heard</h4>
+      <p>LEGO doesn't choose between optimizing for existing customers and listening to early adopters it has institutionalized both simultaneously. The LEGO Insiders program and core retail data serve existing customers. LEGO Ideas, the Ambassador Network, and LEGO Life capture signals from the passionate edge. CPL tests with real children in real homes, not in labs. Signal detection is not aspirational at LEGO. It is operational.</p>
+    </div>
+
+    <div class="diag-card">
+      <div class="diag-card-label">Critical Tension</div>
+      <h4>The Chasm Is the Enduring Risk</h4>
+      <div class="tension-highlight">
+        <p>LEGO's most persistent structural risk is the transition from Edge experiment to mass-market product. Mindstorms had 24 years and a passionate community and never crossed. Hidden Side and Vidiyo failed at the same gap. <strong>Smart Play is the next test.</strong> The CPL process is excellent at discovery. The handoff to core where commercial expectations reset the clock remains the weakest link in LEGO's innovation chain.</p>
+      </div>
+    </div>
+
+    <div class="diag-card">
+      <div class="diag-card-label">Actual vs. Benchmark</div>
+      <h4>Portfolio Balance (Estimated)</h4>
+      <div class="inline-bars">
+        <div class="ib-row">
+          <div class="ib-zone" style="color:rgba(255,255,255,0.6);">Core</div>
+          <div class="ib-track">
+            <div class="ib-actual" style="width:72%;background:var(--core-green);"></div>
+            <div class="ib-bench-line" style="left:70%;"></div>
+          </div>
+          <div class="ib-pct">72%</div>
+        </div>
+        <div class="ib-row">
+          <div class="ib-zone" style="color:rgba(255,255,255,0.6);">Edge</div>
+          <div class="ib-track">
+            <div class="ib-actual" style="width:19%;background:var(--edge-amber);"></div>
+            <div class="ib-bench-line" style="left:20%;"></div>
+          </div>
+          <div class="ib-pct">19%</div>
+        </div>
+        <div class="ib-row">
+          <div class="ib-zone" style="color:rgba(255,255,255,0.6);">Beyond</div>
+          <div class="ib-track">
+            <div class="ib-actual" style="width:9%;background:var(--beyond-crimson);"></div>
+            <div class="ib-bench-line" style="left:10%;"></div>
+          </div>
+          <div class="ib-pct">9%</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:12px;">Vertical lines mark Theta benchmarks (70/20/10). Estimates only.</p>
+    </div>
+
+    <div class="diag-card">
+      <div class="diag-card-label">Relativity Assessment</div>
+      <h4>Innovator in a Mature Category</h4>
+      <p>LEGO is the dominant incumbent in construction toys globally. Its primary competitive risk is not disruption from a better toy company it is disruption from a fundamentally different definition of play. Against Mattel and Hasbro, LEGO's Edge zone looks transformational. Against Epic Games (Fortnite), Roblox, or an AI-native play platform, it looks measured. The Relativity Principle applies: LEGO's biggest competition may not have a toy product yet.</p>
+    </div>
+
+    <div class="verdict-box">
+      <div class="verdict-label">Theta Verdict</div>
+      <div class="verdict-text">Balanced ☑ ☑ △</div>
+      <div class="verdict-desc">LEGO is a master of Core optimization and one of the most impressive Edge innovators in consumer goods. The Beyond zone while genuine and well-funded is still maturing. The sustainable materials challenge remains unsolved. The digital infrastructure is relatively young. The verdict is Balanced, not Triumphant: a company that has done nearly everything right and still faces questions it hasn't answered.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- CLOSING -->
+<div class="closing-strip reveal">
+  <div class="container">
+    <p class="q">The brick that Ole Christiansen made from wood in 1932<br>still explains the company's<em> most radical innovation in 2026.</em></p>
+    <div class="qs" style="margin-top:20px;">The constraint was never the problem. It was always the point.</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-left"><span class="f-logo">Theta Framework</span> · Strategic Case Study · 2026</div>
+  <div class="f-right">Less Is More LEGO Innovation Analysis</div>
+</footer>
+
+<script>
+// ── INTERSECTION OBSERVER ──
+const reveals = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      obs.unobserve(e.target);
+    }
+  });
+}, {threshold:0.08, rootMargin:'0px 0px -40px 0px'});
+reveals.forEach(r => obs.observe(r));
+
+// ── CHART DEFAULTS ──
+Chart.defaults.font.family = 'DM Sans';
+const TOOLTIP = {
+  backgroundColor:'rgba(14,26,24,0.92)',
+  titleColor:'#fff',
+  bodyColor:'rgba(255,255,255,0.72)',
+  padding:14,
+  cornerRadius:4,
+  displayColors:false
+};
+
+// ── THETA SCATTER ──
+const thetaCtx = document.getElementById('thetaChart').getContext('2d');
+
+const coreData = [
+  {x:1.2, y:1.0, label:'Brick Quality'},
+  {x:1.8, y:1.2, label:'Set Design'},
+  {x:2.2, y:1.5, label:'DUPLO'},
+  {x:2.6, y:1.3, label:'LEGO Insiders'},
+  {x:2.8, y:1.6, label:'Botanicals'},
+  {x:2.4, y:1.1, label:'Braille Bricks'},
+];
+const edgeData = [
+  {x:3.2, y:2.5, label:'Technic'},
+  {x:3.4, y:2.8, label:'Mindstorms'},
+  {x:3.3, y:2.2, label:'LEGO Ideas'},
+  {x:3.6, y:2.9, label:'LEGO Movies'},
+  {x:3.8, y:3.2, label:'Super Mario'},
+  {x:4.0, y:3.5, label:'Smart Play 2026'},
+  {x:3.5, y:3.0, label:'Fortnite Collab'},
+  {x:3.2, y:2.6, label:'Hidden Side'},
+  {x:3.1, y:2.4, label:'Vidiyo'},
+];
+const beyondData = [
+  {x:4.2, y:3.8, label:'Sustainable Materials'},
+  {x:4.4, y:3.6, label:'Carbon-Neutral Factories'},
+  {x:4.6, y:4.2, label:'Next-Gen Digital Play'},
+  {x:4.8, y:4.6, label:'Bio-PE Bricks'},
+];
+
+function pointLabelPlugin() {
+  return {
+    id:'pointLabels',
+    afterDatasetsDraw(chart) {
+      const ctx2 = chart.ctx;
+      chart.data.datasets.forEach((ds, di) => {
+        const meta = chart.getDatasetMeta(di);
+        if(meta.hidden) return;
+        meta.data.forEach((pt, pi) => {
+          const lbl = ds.data[pi].label;
+          if(!lbl) return;
+          ctx2.save();
+          ctx2.fillStyle = 'rgba(30,45,42,0.75)';
+          ctx2.font = '11px DM Sans';
+          ctx2.fillText(lbl, pt.x + 10, pt.y + 4);
+          ctx2.restore();
+        });
+      });
+    }
+  };
+}
+
+new Chart(thetaCtx, {
+  type:'scatter',
+  data:{
+    datasets:[
+      {label:'Core Zone', data:coreData, backgroundColor:'rgba(45,106,79,0.8)', pointRadius:7, pointHoverRadius:9},
+      {label:'Edge Zone', data:edgeData, backgroundColor:'rgba(181,132,26,0.85)', pointRadius:7, pointHoverRadius:9},
+      {label:'Beyond Zone', data:beyondData, backgroundColor:'rgba(139,26,26,0.85)', pointRadius:7, pointHoverRadius:9},
+    ]
+  },
+  plugins:[pointLabelPlugin()],
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom', labels:{padding:20, font:{size:12}, usePointStyle:true}},
+      tooltip:{...TOOLTIP, callbacks:{
+        label:ctx=>`${ctx.dataset.data[ctx.dataIndex].label}: (${ctx.parsed.x.toFixed(1)}, ${ctx.parsed.y.toFixed(1)})`
+      }}
+    },
+    scales:{
+      x:{
+        min:0.5, max:5.5,
+        title:{display:true, text:'Market Reach →  Existing → New → Emerging → Speculative', font:{size:11}, color:'#8A9490'},
+        grid:{color:'rgba(181,132,26,0.06)'},
+        ticks:{display:false},
+        border:{dash:[4,4]}
+      },
+      y:{
+        min:0.5, max:5.0,
+        title:{display:true, text:'Technology Change →  Incremental → Moderate → High → Radical → Extreme', font:{size:11}, color:'#8A9490'},
+        grid:{color:'rgba(181,132,26,0.06)'},
+        ticks:{display:false},
+        border:{dash:[4,4]}
+      }
+    }
+  }
+});
+
+// ── DOUGHNUT ──
+const dCtx = document.getElementById('doughnutChart').getContext('2d');
+new Chart(dCtx, {
+  type:'doughnut',
+  data:{
+    labels:['Core Zone ~72%','Edge Zone ~19%','Beyond Zone ~9%'],
+    datasets:[{
+      data:[72,19,9],
+      backgroundColor:['rgba(45,106,79,0.85)','rgba(181,132,26,0.85)','rgba(139,26,26,0.85)'],
+      borderWidth:0,
+      hoverOffset:8
+    }]
+  },
+  options:{
+    cutout:'68%',
+    plugins:{
+      legend:{position:'bottom', labels:{padding:16, font:{size:12}, usePointStyle:true}},
+      tooltip:{...TOOLTIP}
+    }
+  }
+});
+</script>
 </body>
 </html>
