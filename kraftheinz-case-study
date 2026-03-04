@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kraft Heinz   Disciplined But Hungry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --kh-red: #C8102E;
+    --kh-red-deep: #9B0C22;
+    --kh-gold: #B5841A;
+    --kh-gold-light: #D4A135;
+    --ink: #0E1A18;
+    --ink-soft: #1E2D2A;
+    --paper: #F7F5F0;
+    --paper-warm: #EFEBE2;
+    --muted: #8A9490;
+    --muted-light: #B0BAB5;
+    --core-green: #2D6A4F;
+    --edge-amber: #B5841A;
+    --beyond-crimson: #8B1A1A;
+    --border-light: rgba(200,16,46,0.12);
+    --border-warm: rgba(181,132,26,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    backdrop-filter: blur(16px) saturate(140%);
+    background: rgba(14,26,24,0.82);
+    border-bottom: 1px solid rgba(200,16,46,0.18);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px; height: 58px;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem; font-weight: 500;
+    color: var(--kh-gold-light); letter-spacing: 0.04em;
+  }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 0.68rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted-light);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: #fff; }
+  .nav-tag {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--kh-red);
+    border: 1px solid rgba(200,16,46,0.4);
+    padding: 4px 12px; border-radius: 2px;
+  }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh; position: relative; overflow: hidden;
+    background: var(--ink);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(200,16,46,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,16,46,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridPulse 8s ease-in-out infinite;
+  }
+  @keyframes gridPulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+  .hero-radial {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(200,16,46,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 40% at 20% 20%, rgba(181,132,26,0.06) 0%, transparent 50%);
+  }
+  .hero-noise {
+    position: absolute; inset: 0; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    max-width: 1100px; margin: 0 auto; padding: 0 48px;
+    padding-top: 80px;
+  }
+  .hero-kicker {
+    font-size: 0.68rem; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--kh-red);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 32px;
+    opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-kicker::before {
+    content: ''; display: block; width: 32px; height: 1px; background: var(--kh-red);
+  }
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.2rem, 7vw, 6.2rem);
+    font-weight: 300; line-height: 1.05;
+    color: #fff; margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+  }
+  .hero-headline em {
+    font-style: italic; color: var(--kh-gold-light);
+  }
+  .hero-sub {
+    font-size: 1.05rem; font-weight: 300; line-height: 1.7;
+    color: var(--muted-light); max-width: 600px; margin-bottom: 64px;
+    opacity: 0; animation: fadeUp 0.8s 0.6s forwards;
+  }
+  .hero-meta {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 32px; gap: 32px;
+    opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .meta-item {}
+  .meta-label {
+    font-size: 0.62rem; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .meta-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem; font-weight: 500; color: #fff;
+  }
+  .meta-sub { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+
+  .scroll-line {
+    position: absolute; right: 48px; bottom: 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    opacity: 0; animation: fadeUp 1s 1.2s forwards;
+  }
+  .scroll-line span {
+    font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted); writing-mode: vertical-rl;
+  }
+  .scroll-track {
+    width: 1px; height: 60px; background: rgba(255,255,255,0.1); position: relative; overflow: hidden;
+  }
+  .scroll-bar {
+    position: absolute; top: -100%; width: 100%; height: 40%;
+    background: var(--kh-red);
+    animation: scrollAnim 2s 1.5s ease-in-out infinite;
+  }
+  @keyframes scrollAnim { 0%{top:-40%} 100%{top:140%} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── SECTIONS ── */
+  section { padding: 100px 0; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 48px; }
+
+  .section-label {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--kh-red);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 48px;
+  }
+  .section-label::before { content:''; display:block; width:24px; height:1px; background:var(--kh-red); }
+
+  /* ── ABOUT ── */
+  #about { background: #fff; }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .about-prose p {
+    font-size: 1.0rem; line-height: 1.78; color: #2A3A38;
+    margin-bottom: 24px;
+  }
+  .hidden-fact {
+    background: var(--ink); color: #fff;
+    padding: 28px 32px; border-radius: 4px; margin-top: 36px;
+    border-left: 3px solid var(--kh-gold);
+  }
+  .hidden-fact .fact-label {
+    font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--kh-gold); margin-bottom: 10px;
+  }
+  .hidden-fact p { font-size: 0.9rem; line-height: 1.7; color: #C4CFC8; margin: 0; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--paper-warm); }
+  .stat-box {
+    background: #fff; padding: 32px 28px;
+    transition: background 0.2s;
+  }
+  .stat-box:hover { background: var(--paper); }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem; font-weight: 500; color: var(--ink);
+    line-height: 1;
+  }
+  .stat-num span { color: var(--kh-red); }
+  .stat-desc { font-size: 0.8rem; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+
+  .belief-strip {
+    background: var(--kh-red); color: #fff;
+    padding: 60px 48px; margin-top: 80px; border-radius: 4px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+  .belief-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-style: italic; font-weight: 300;
+    line-height: 1.4; max-width: 780px; margin-bottom: 20px;
+  }
+  .belief-attr { font-size: 0.78rem; letter-spacing: 0.1em; opacity: 0.75; text-transform: uppercase; }
+
+  /* ── TIMELINE ── */
+  #timeline { background: var(--paper-warm); }
+  .tl-container { position: relative; padding-left: 160px; }
+  .tl-line {
+    position: absolute; left: 120px; top: 0; bottom: 0;
+    width: 1px; background: rgba(14,26,24,0.15);
+  }
+  .tl-item {
+    position: relative; margin-bottom: 52px; opacity: 0;
+    transition: opacity 0.5s, transform 0.5s;
+    transform: translateY(16px);
+  }
+  .tl-item.visible { opacity: 1; transform: translateY(0); }
+  .tl-year {
+    position: absolute; left: -160px; top: 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 500; color: var(--ink);
+    line-height: 1; white-space: nowrap;
+  }
+  .tl-dot {
+    position: absolute; left: -46px; top: 6px;
+    width: 12px; height: 12px; border-radius: 50%;
+    border: 2px solid var(--ink); background: var(--paper-warm);
+    transform: translateX(-50%);
+  }
+  .tl-dot.filled { background: var(--kh-red); border-color: var(--kh-red); }
+  .tl-dot.gold { background: var(--kh-gold); border-color: var(--kh-gold); }
+  .tl-phase {
+    display: inline-block; font-size: 0.6rem; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 2px; margin-bottom: 8px;
+  }
+  .phase-cost { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+  .phase-crisis { background: rgba(200,16,46,0.1); color: var(--kh-red); }
+  .phase-pivot { background: rgba(181,132,26,0.12); color: var(--edge-amber); }
+  .phase-transform { background: rgba(45,106,79,0.1); color: var(--core-green); }
+  .tl-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem; font-weight: 500; color: var(--ink); margin-bottom: 8px;
+  }
+  .tl-desc { font-size: 0.88rem; line-height: 1.7; color: #4A5C58; max-width: 560px; }
+  .tl-note {
+    display: inline-block; margin-top: 8px;
+    font-size: 0.75rem; font-style: italic; color: var(--muted);
+  }
+
+  /* ── THETA MAP ── */
+  #theta { background: #fff; }
+  .theta-grid { display: grid; grid-template-columns: 340px 1fr; gap: 64px; align-items: start; }
+  .zone-pills { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+  .zone-pill {
+    padding: 18px 20px; border-radius: 4px; border-left: 3px solid;
+  }
+  .zone-pill.core { background: rgba(45,106,79,0.05); border-color: var(--core-green); }
+  .zone-pill.edge { background: rgba(181,132,26,0.06); border-color: var(--edge-amber); }
+  .zone-pill.beyond { background: rgba(139,26,26,0.05); border-color: var(--beyond-crimson); }
+  .zone-name {
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .core .zone-name { color: var(--core-green); }
+  .edge .zone-name { color: var(--edge-amber); }
+  .beyond .zone-name { color: var(--beyond-crimson); }
+  .zone-desc { font-size: 0.82rem; line-height: 1.55; color: #5A6A66; }
+  .reading-card {
+    background: var(--paper-warm); padding: 20px; border-radius: 4px;
+    border: 1px solid var(--border-warm);
+  }
+  .reading-card h4 {
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink); margin-bottom: 10px;
+  }
+  .reading-card p { font-size: 0.8rem; line-height: 1.6; color: #5A6A66; }
+  .chart-wrap { position: relative; height: 480px; }
+
+  /* ── ALLOCATION ── */
+  #allocation { background: var(--paper-warm); }
+  .alloc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .doughnut-wrap { position: relative; max-width: 320px; margin: 0 auto; }
+  .doughnut-center {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -52%);
+    text-align: center; pointer-events: none;
+  }
+  .doughnut-center .dc-label {
+    font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .doughnut-center .dc-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; font-weight: 500; color: var(--ink); line-height: 1;
+  }
+  .alloc-bars { display: flex; flex-direction: column; gap: 28px; }
+  .alloc-bar-item {}
+  .alloc-bar-header {
+    display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;
+  }
+  .alloc-bar-name {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .alloc-bar-pcts { display: flex; gap: 16px; font-size: 0.78rem; }
+  .pct-actual { font-weight: 600; }
+  .pct-bench { color: var(--muted); }
+  .bar-track {
+    height: 6px; background: rgba(14,26,24,0.08); border-radius: 3px; position: relative; margin-bottom: 8px;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 3px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+  .bar-bench-mark {
+    position: absolute; top: -3px; width: 2px; height: 12px; border-radius: 1px;
+    background: rgba(14,26,24,0.25);
+  }
+  .alloc-comment { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── ERA COMPARISON ── */
+  #eras { background: #fff; }
+  .era-timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--paper-warm); margin-top: 48px; }
+  .era-col {
+    background: #fff; padding: 32px 24px;
+    transition: background 0.2s; cursor: default;
+  }
+  .era-col:hover { background: var(--paper); }
+  .era-year {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem; font-weight: 500; margin-bottom: 6px;
+  }
+  .era-theme {
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 16px; padding: 4px 10px;
+    display: inline-block; border-radius: 2px;
+  }
+  .era-theme.red { background: rgba(200,16,46,0.08); color: var(--kh-red); }
+  .era-theme.amber { background: rgba(181,132,26,0.1); color: var(--edge-amber); }
+  .era-theme.green { background: rgba(45,106,79,0.08); color: var(--core-green); }
+  .era-alloc { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+  .era-bar-row { display: flex; align-items: center; gap: 10px; }
+  .era-bar-label { font-size: 0.68rem; width: 50px; color: var(--muted); }
+  .era-bar-track { flex: 1; height: 4px; background: rgba(14,26,24,0.08); border-radius: 2px; }
+  .era-bar-fill { height: 100%; border-radius: 2px; }
+  .era-bar-pct { font-size: 0.68rem; font-weight: 600; width: 40px; text-align: right; }
+  .era-desc { font-size: 0.82rem; line-height: 1.65; color: #4A5C58; }
+  .era-verdict {
+    margin-top: 16px; font-size: 0.75rem; font-style: italic;
+    color: var(--muted); border-top: 1px solid var(--paper-warm); padding-top: 12px;
+  }
+
+  /* ── COMPETITORS ── */
+  #competitors { background: var(--paper-warm); }
+  .comp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 64px; }
+  .comp-card {
+    background: #fff; padding: 28px 24px; border-radius: 4px;
+    border: 1px solid var(--border-light);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .comp-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(14,26,24,0.08); }
+  .comp-card.featured {
+    border-color: var(--kh-red);
+    background: linear-gradient(135deg, #fff 0%, rgba(200,16,46,0.025) 100%);
+  }
+  .comp-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-weight: 500; margin-bottom: 4px;
+  }
+  .comp-tag {
+    font-size: 0.68rem; letter-spacing: 0.08em; color: var(--muted);
+    text-transform: uppercase; margin-bottom: 20px;
+  }
+  .comp-zone-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .comp-zone-row { display: flex; align-items: flex-start; gap: 10px; font-size: 0.8rem; line-height: 1.5; }
+  .zone-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+  }
+  .zdot-core { background: var(--core-green); }
+  .zdot-edge { background: var(--edge-amber); }
+  .zdot-beyond { background: var(--beyond-crimson); }
+  .zdot-empty { background: rgba(14,26,24,0.15); }
+  .comp-verdict {
+    display: inline-block; font-size: 0.65rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 2px;
+  }
+  .verdict-leader { background: rgba(45,106,79,0.1); color: var(--core-green); }
+  .verdict-builder { background: rgba(181,132,26,0.1); color: var(--edge-amber); }
+  .verdict-defender { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+  .verdict-transitioning { background: rgba(200,16,46,0.08); color: var(--kh-red); }
+
+  .radar-wrap { max-width: 600px; margin: 0 auto; height: 400px; position: relative; }
+
+  /* ── STRENGTHS & WEAKNESSES ── */
+  #swot { background: #fff; }
+  .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  .sw-panel { padding: 36px; border-radius: 4px; }
+  .sw-panel.strengths { background: rgba(45,106,79,0.04); border: 1px solid rgba(45,106,79,0.2); }
+  .sw-panel.weaknesses { background: rgba(200,16,46,0.03); border: 1px solid rgba(200,16,46,0.15); }
+  .sw-panel-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 500; margin-bottom: 28px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .sw-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+  }
+  .strengths .sw-icon { background: var(--core-green); color: #fff; }
+  .weaknesses .sw-icon { background: var(--kh-red); color: #fff; }
+  .sw-items { display: flex; flex-direction: column; gap: 20px; }
+  .sw-item { display: flex; gap: 14px; align-items: flex-start; }
+  .sw-marker {
+    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem; font-weight: 700; margin-top: 1px;
+  }
+  .strengths .sw-marker { background: rgba(45,106,79,0.12); color: var(--core-green); }
+  .weaknesses .sw-marker { background: rgba(200,16,46,0.1); color: var(--kh-red); }
+  .sw-content {}
+  .sw-lead { font-weight: 600; font-size: 0.88rem; margin-bottom: 3px; }
+  .sw-text { font-size: 0.82rem; line-height: 1.6; color: #5A6A66; }
+
+  /* ── DIAGNOSTIC ── */
+  #diagnostic { background: var(--ink); color: #fff; }
+  .diag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+  .diag-block { margin-bottom: 48px; }
+  .diag-block-title {
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--kh-gold);
+    margin-bottom: 16px; padding-bottom: 10px;
+    border-bottom: 1px solid rgba(181,132,26,0.2);
+  }
+  .arch-boxes { display: flex; flex-direction: column; gap: 12px; }
+  .arch-box {
+    display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px;
+    border-radius: 3px; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .arch-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .arch-label { font-size: 0.78rem; font-weight: 600; margin-bottom: 4px; color: #E8F0EE; }
+  .arch-text { font-size: 0.78rem; line-height: 1.55; color: rgba(255,255,255,0.55); }
+  .culture-rows { display: flex; flex-direction: column; gap: 10px; }
+  .culture-row { display: flex; align-items: center; gap: 12px; }
+  .culture-label { font-size: 0.78rem; color: rgba(255,255,255,0.6); width: 160px; flex-shrink: 0; }
+  .culture-dots { display: flex; gap: 5px; }
+  .cdot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .cdot.on { background: var(--kh-gold); }
+  .cdot.mid { background: rgba(181,132,26,0.4); }
+  .cdot.off { background: rgba(255,255,255,0.1); }
+  .tension-box {
+    background: rgba(200,16,46,0.08); border: 1px solid rgba(200,16,46,0.2);
+    padding: 20px; border-radius: 3px;
+  }
+  .tension-box p { font-size: 0.86rem; line-height: 1.65; color: rgba(255,255,255,0.75); }
+  .signal-rows { display: flex; flex-direction: column; gap: 10px; }
+  .signal-row { display: flex; align-items: center; gap: 10px; }
+  .signal-segment { font-size: 0.75rem; color: rgba(255,255,255,0.55); width: 180px; flex-shrink: 0; }
+  .signal-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .signal-fill { height: 100%; border-radius: 2px; }
+  .diag-zone-bars { display: flex; flex-direction: column; gap: 16px; }
+  .dzb { }
+  .dzb-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .dzb-name { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+  .dzb-pcts { font-size: 0.72rem; color: rgba(255,255,255,0.5); }
+  .dzb-track {
+    height: 6px; background: rgba(255,255,255,0.07); border-radius: 3px; position: relative;
+  }
+  .dzb-actual { height: 100%; border-radius: 3px; }
+  .dzb-bench {
+    position: absolute; top: -3px; height: 12px; width: 2px;
+    background: rgba(255,255,255,0.3); border-radius: 1px;
+  }
+  .relativity-items { display: flex; flex-direction: column; gap: 10px; }
+  .rel-item {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.8rem; padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .rel-label { color: rgba(255,255,255,0.6); }
+  .rel-val { font-weight: 600; }
+  .rel-val.behind { color: #E07070; }
+  .rel-val.catching { color: var(--kh-gold); }
+  .rel-val.winning { color: #70C090; }
+
+  .verdict-strip {
+    grid-column: 1/-1; margin-top: 16px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+    padding: 36px; border-radius: 4px; text-align: center;
+  }
+  .verdict-label {
+    font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--kh-gold); margin-bottom: 16px;
+  }
+  .verdict-arch {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem; font-weight: 300; color: #fff; margin-bottom: 16px;
+  }
+  .verdict-icons { font-size: 1.4rem; margin-bottom: 20px; }
+  .verdict-text { font-size: 0.9rem; line-height: 1.7; color: rgba(255,255,255,0.65); max-width: 680px; margin: 0 auto; }
+
+  /* ── INNOVATION DILEMMAS ── */
+  #dilemmas { background: var(--paper-warm); }
+  .dilemma-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+  .dilemma-card {
+    background: #fff; padding: 28px 24px; border-radius: 4px;
+    border: 1px solid var(--border-light); position: relative; overflow: hidden;
+  }
+  .dilemma-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .dilemma-card.dc-1::before { background: var(--kh-red); }
+  .dilemma-card.dc-2::before { background: var(--edge-amber); }
+  .dilemma-card.dc-3::before { background: var(--core-green); }
+  .dilemma-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem; font-weight: 300; color: var(--paper-warm);
+    position: absolute; top: 12px; right: 16px; line-height: 1;
+  }
+  .dilemma-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem; font-weight: 500; margin-bottom: 12px; line-height: 1.3;
+  }
+  .dilemma-text { font-size: 0.84rem; line-height: 1.7; color: #5A6A66; }
+
+  /* ── POTENTIAL ── */
+  #potential { background: #fff; }
+  .potential-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 40px; }
+  .potential-card {
+    padding: 32px; border-radius: 4px;
+    border: 1px solid var(--border-light);
+    transition: box-shadow 0.2s;
+  }
+  .potential-card:hover { box-shadow: 0 8px 32px rgba(14,26,24,0.06); }
+  .pot-zone {
+    font-size: 0.62rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; margin-bottom: 12px;
+    display: inline-block; padding: 3px 10px; border-radius: 2px;
+  }
+  .pot-zone.core { background: rgba(45,106,79,0.08); color: var(--core-green); }
+  .pot-zone.edge { background: rgba(181,132,26,0.08); color: var(--edge-amber); }
+  .pot-zone.beyond { background: rgba(139,26,26,0.08); color: var(--beyond-crimson); }
+  .potential-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-weight: 500; margin-bottom: 10px;
+  }
+  .potential-text { font-size: 0.84rem; line-height: 1.7; color: #5A6A66; }
+  .potential-signal {
+    margin-top: 14px; font-size: 0.75rem; font-style: italic;
+    color: var(--muted); border-top: 1px solid var(--paper-warm); padding-top: 10px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink-soft); color: rgba(255,255,255,0.4);
+    padding: 40px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-left { font-size: 0.75rem; line-height: 1.6; }
+  .footer-right { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; }
+  .footer-fw {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem; font-style: italic; color: var(--kh-gold);
+  }
+
+  /* Fade-up scroll animation */
+  .fade-up {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hero-content { padding: 0 20px; padding-top: 90px; }
+    .hero-meta { grid-template-columns: 1fr 1fr; }
+    .container { padding: 0 20px; }
+    .about-grid, .theta-grid, .alloc-grid, .sw-grid, .diag-grid { grid-template-columns: 1fr; gap: 40px; }
+    .era-timeline { grid-template-columns: 1fr 1fr; }
+    .comp-grid { grid-template-columns: 1fr 1fr; }
+    .dilemma-cards, .potential-grid { grid-template-columns: 1fr; }
+    .tl-container { padding-left: 100px; }
+    .tl-year { left: -100px; font-size: 1.1rem; }
+    .belief-strip { padding: 40px 24px; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .scroll-line { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">KHC × Theta</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#theta">Map</a>
+    <a href="#eras">Eras</a>
+    <a href="#competitors">Peers</a>
+    <a href="#diagnostic">Diagnostic</a>
+  </div>
+  <div class="nav-tag">Theta Framework</div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-radial"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Framework Case Study · Consumer Packaged Goods</div>
+    <h1 class="hero-headline">
+      A company that owns the pantry<br>
+      <em>is now learning to own the future.</em>
+    </h1>
+    <p class="hero-sub">Kraft Heinz is not a food company in decline. It is a 150-year-old institution mid-transformation   finally asking not how to cut costs, but how to stay relevant. The most interesting part? They know exactly what went wrong.</p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">Founded</div>
+        <div class="meta-value">1869 / 2015</div>
+        <div class="meta-sub">Heinz origin / Merger</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Global Presence</div>
+        <div class="meta-value">200+</div>
+        <div class="meta-sub">Countries & territories</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Net Sales</div>
+        <div class="meta-value">$24.9B</div>
+        <div class="meta-sub">FY2025</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Theta Archetype</div>
+        <div class="meta-value" style="color: var(--kh-gold-light);">Transitioning</div>
+        <div class="meta-sub">Core → Edge momentum</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-line">
+    <div class="scroll-track"><div class="scroll-bar"></div></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="section-label">What They Are</div>
+    <div class="about-grid">
+      <div class="about-prose">
+        <p>Kraft Heinz is present in 96% of American households. Not just known   inside your refrigerator, your pantry, your muscle memory of childhood. Eight of its brands generate over a billion dollars annually. That kind of market saturation is a superpower until it becomes a sedative. For a decade, it did exactly that.</p>
+        <p>The 2015 merger, orchestrated by 3G Capital and Berkshire Hathaway, was not a vision for the future   it was an arbitrage of the past. Two beloved legacies were combined and squeezed under a zero-based budgeting regime that measured everything except whether the brands were staying relevant. By 2019, a $15.4 billion write-down made the reckoning public. Consumers had moved on. The brands hadn't. The question now is whether a company built on the deepest moat in food   trust, familiarity, nostalgia   can channel that equity into something new enough to matter.</p>
+        <div class="hidden-fact">
+          <div class="fact-label">⚡ The fact most people don't know</div>
+          <p>Heinz developed its own proprietary tomato seed genetics in California in 1934   and still exports those seeds to select farms worldwide. Only four countries in the world perform every stage of Heinz ketchup production (growing, processing, bottling): Brazil, Egypt, Turkey, and Poland. Heinz doesn't just sell ketchup. It controls the tomato's genetic destiny. In Brazil alone, 7 billion Heinz tomatoes are processed annually.</p>
+        </div>
+      </div>
+      <div>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-num">96<span>%</span></div>
+            <div class="stat-desc">American households contain at least one Kraft Heinz product</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">8<span>+</span></div>
+            <div class="stat-desc">Brands generating over $1 billion in annual sales each</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">70<span>%</span></div>
+            <div class="stat-desc">Retail revenue from brands ranked #1 or #2 in their category</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">$600<span>M</span></div>
+            <div class="stat-desc">Committed in 2026 to marketing, R&D, and rebuilding capabilities</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="belief-strip fade-up">
+      <div class="belief-quote">"We can't do that by continuing to rely on old ads, on the nostalgia of the brands alone. We need to make these brands relevant for today."</div>
+      <div class="belief-attr">  Steve Cahillane, CEO, Kraft Heinz · CAGNY 2026</div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline">
+  <div class="container">
+    <div class="section-label">The Arc</div>
+    <h2 class="fade-up" style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;margin-bottom:60px;line-height:1.2;">From merger<br><em>to reckoning</em> to reinvention.</h2>
+    <div class="tl-container">
+      <div class="tl-line"></div>
+
+      <div class="tl-item">
+        <div class="tl-year">1869</div>
+        <div class="tl-dot"></div>
+        <div><span class="tl-phase phase-cost">Origin</span></div>
+        <div class="tl-title">H.J. Heinz: "Pure food" as a radical act</div>
+        <div class="tl-desc">In an era of adulterated, unlabeled food, Henry J. Heinz built a brand on a then-revolutionary promise: full ingredient transparency. The "57 varieties" tagline   used when the company already had over 60 products   was chosen because 5 and 7 were Heinz's lucky numbers. The brand was never about counting. It was about trust.</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year">1903</div>
+        <div class="tl-dot"></div>
+        <div><span class="tl-phase phase-cost">Origin</span></div>
+        <div class="tl-title">Kraft begins: selling cheese door-to-door in Chicago</div>
+        <div class="tl-desc">J.L. Kraft started with a horse-drawn wagon and $65. By 1916, he had patented the first commercially manufactured processed cheese. The insight was pragmatic: cheese that didn't spoil during transport. Innovation driven not by ambition but by logistics.</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year">2015</div>
+        <div class="tl-dot filled"></div>
+        <div><span class="tl-phase phase-cost">Efficiency Mode</span></div>
+        <div class="tl-title">The merger: the world's fifth-largest food company, born from a financial thesis</div>
+        <div class="tl-desc">3G Capital and Berkshire Hathaway combine Kraft Foods Group and H.J. Heinz. The deal created enormous scale but was engineered around zero-based budgeting   annual cost rebuilding from scratch. The immediate result: 5,000+ job cuts, closed factories, stripped overhead. Adjusted EBITDA soared. R&D and brand investment quietly eroded.</div>
+        <div class="tl-note">→ Core allocation: ~85-90%. Innovation investment: near zero.</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year">2018</div>
+        <div class="tl-dot filled"></div>
+        <div><span class="tl-phase phase-cost">Pressure Builds</span></div>
+        <div class="tl-title">The procurement accounting scheme: 300 transactions, $208 million in manufactured savings</div>
+        <div class="tl-desc">Internally, the pressure to hit cost-saving targets was crushing. Procurement employees began booking supplier discounts that hadn't been earned, creating fictitious contracts to support the entries. This artificially reduced cost of goods sold and inflated EBITDA   the exact metric investors watched. It ran for three years before discovery. Nobody went to prison. The company paid $62 million in civil penalties.</div>
+        <div class="tl-note">⚠ A culture that punishes failure doesn't eliminate it. It hides it.</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year">2019</div>
+        <div class="tl-dot filled"></div>
+        <div><span class="tl-phase phase-crisis">The Reckoning</span></div>
+        <div class="tl-title">$15.4 billion written off. Warren Buffett calls it a mistake.</div>
+        <div class="tl-desc">The write-down of Kraft and Oscar Mayer brands was an accounting confession: these assets were worth far less than what was paid, because the future cash flows they'd generate had been permanently revised downward. Consumers were buying fresher, healthier food. The company had spent four years cutting costs instead of understanding this shift. Stock fell 60%+ from merger highs. $57 billion in market cap erased.</div>
+        <div class="tl-note">→ Buffett: "I was wrong on Kraft Heinz." The most expensive four words in food history.</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year">2021</div>
+        <div class="tl-dot gold"></div>
+        <div><span class="tl-phase phase-pivot">Cautious Pivot</span></div>
+        <div class="tl-title">Pruning, selling, refocusing: Planters goes to Hormel for $3.35 billion</div>
+        <div class="tl-desc">Under new CEO Miguel Patricio, the company began shedding assets that didn't fit a more focused strategy. The Planters sale funded debt reduction and signaled intent to concentrate on fewer, stronger bets. Simultaneously, the Brand Growth System (BGS) was introduced   a framework for understanding consumer expectations before making product decisions. The first genuine attempt to rebuild the innovation muscle.</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year">2022</div>
+        <div class="tl-dot gold"></div>
+        <div><span class="tl-phase phase-pivot">Structural Bet</span></div>
+        <div class="tl-title">TheNotCompany JV: AI meets Oscar Mayer</div>
+        <div class="tl-desc">Kraft Heinz forms a joint venture with NotCo, a Chilean startup using machine learning to reverse-engineer the taste and texture of animal-based products using plants. The AI system   called Giuseppe   analyzes molecular structures to find plant combinations that fool the tongue. This wasn't PR. It was Kraft Heinz's first genuine Edge-to-Beyond bet: disrupting its own core products before someone else did.</div>
+        <div class="tl-note">→ If plant-based hits mainstream: this JV looks prescient. If it doesn't: cheap tuition.</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year">2025</div>
+        <div class="tl-dot filled"></div>
+        <div><span class="tl-phase phase-crisis">Continued Pressure</span></div>
+        <div class="tl-title">$5.6 billion non-cash impairment charge. Net loss: $5.8 billion.</div>
+        <div class="tl-desc">Net sales fell 3.5% to $24.9 billion. Volume dropped 4.1%. Another wave of brand value write-downs acknowledged that more of the portfolio was worth less than carried. The "lean" model had hollowed out the organization's capacity to respond. The impairments are not cash leaving the business   they are the accounting system finally catching up to reality.</div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year">2026</div>
+        <div class="tl-dot gold"></div>
+        <div><span class="tl-phase phase-transform">Committed Reinvention</span></div>
+        <div class="tl-title">$600M investment. Pause the split. Fix the business. CEO Cahillane draws a line.</div>
+        <div class="tl-desc">New CEO Steve Cahillane announces the company will pause its planned split into two entities to concentrate every resource on the core turnaround. Marketing spend rises to 5.5% of net sales. R&D investment increases 20%. The Canada model   focused on a few big bets, executed with discipline   becomes the template for the U.S. The logic: if it worked there, it can work everywhere.</div>
+        <div class="tl-note">→ Target: $2.5B in gross efficiencies by end of 2026, share momentum by H2 2026, growth by 2027.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section id="theta">
+  <div class="container">
+    <div class="section-label">Theta Innovation Map</div>
+    <div class="theta-grid">
+      <div>
+        <div class="zone-pills">
+          <div class="zone-pill core">
+            <div class="zone-name">🟩 Core Zone   70% Benchmark</div>
+            <div class="zone-desc">Existing markets, incremental improvement. The current engine. Optimize and defend. Core funds everything else.</div>
+          </div>
+          <div class="zone-pill edge">
+            <div class="zone-name">🟨 Edge Zone   20% Benchmark</div>
+            <div class="zone-desc">New markets, moderate-to-high tech change. Building the next S-curve. Where architectural and disruptive bets live.</div>
+          </div>
+          <div class="zone-pill beyond">
+            <div class="zone-name">🟥 Beyond Zone   10% Benchmark</div>
+            <div class="zone-desc">Radical bets, speculative horizons. Shaping the future before others do. The zone that separates leaders from optimizers.</div>
+          </div>
+        </div>
+        <div class="reading-card">
+          <h4>Reading the Map</h4>
+          <p>Each point represents an active Kraft Heinz initiative plotted by market reach (X) and technological change (Y). Points clustered in the Core zone reflect strength but signal risk if the Edge and Beyond zones are thin. The diagonal progression   Core → Edge → Beyond   is where portfolio health lives.</p>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="scatterChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section id="allocation">
+  <div class="container">
+    <div class="section-label">Portfolio Allocation</div>
+    <div class="alloc-grid">
+      <div>
+        <div class="doughnut-wrap">
+          <canvas id="doughnutChart" style="max-height:320px;"></canvas>
+          <div class="doughnut-center">
+            <div class="dc-label">Zones Active</div>
+            <div class="dc-value">3</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 class="fade-up" style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;margin-bottom:8px;line-height:1.3;">The portfolio is<br><em>leaning forward.</em></h3>
+        <p style="font-size:0.85rem;color:var(--muted);margin-bottom:32px;line-height:1.6;">A decade of over-investing in Core has created path dependency. The Edge zone is growing but still underweight. Beyond remains the critical gap   under-resourced and under-institutionalized.</p>
+        <div class="alloc-bars">
+          <div class="alloc-bar-item">
+            <div class="alloc-bar-header">
+              <span class="alloc-bar-name" style="color:var(--core-green);">🟩 Core</span>
+              <div class="alloc-bar-pcts">
+                <span class="pct-actual" style="color:var(--core-green);">~78%</span>
+                <span class="pct-bench">Benchmark: 70%</span>
+              </div>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:78%;background:var(--core-green);"></div>
+              <div class="bar-bench-mark" style="left:70%;"></div>
+            </div>
+            <div class="alloc-comment">Overweight by ~8 points. A decade of cost-focus created structural Core dependency that won't unwind overnight.</div>
+          </div>
+          <div class="alloc-bar-item">
+            <div class="alloc-bar-header">
+              <span class="alloc-bar-name" style="color:var(--edge-amber);">🟨 Edge</span>
+              <div class="alloc-bar-pcts">
+                <span class="pct-actual" style="color:var(--edge-amber);">~17%</span>
+                <span class="pct-bench">Benchmark: 20%</span>
+              </div>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:17%;background:var(--edge-amber);"></div>
+              <div class="bar-bench-mark" style="left:20%;"></div>
+            </div>
+            <div class="alloc-comment">Approaching benchmark. 360Crisp and NotCo JV are genuine Edge bets with real traction. Still catching up.</div>
+          </div>
+          <div class="alloc-bar-item">
+            <div class="alloc-bar-header">
+              <span class="alloc-bar-name" style="color:var(--beyond-crimson);">🟥 Beyond</span>
+              <div class="alloc-bar-pcts">
+                <span class="pct-actual" style="color:var(--beyond-crimson);">~5%</span>
+                <span class="pct-bench">Benchmark: 10%</span>
+              </div>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:5%;background:var(--beyond-crimson);"></div>
+              <div class="bar-bench-mark" style="left:10%;"></div>
+            </div>
+            <div class="alloc-comment">Half the benchmark. Kalpana packaging is the lone visible transformational bet. Evolv Ventures ($100M CVC) is scouting but not yet deploying at scale.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ERA COMPARISON -->
+<section id="eras">
+  <div class="container">
+    <div class="section-label">Innovation Through Time</div>
+    <h2 class="fade-up" style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;margin-bottom:12px;line-height:1.2;">How the portfolio<br><em>allocation shifted</em> across four eras.</h2>
+    <p class="fade-up" style="font-size:0.9rem;color:var(--muted);margin-bottom:0;max-width:600px;line-height:1.6;">The numbers tell a story of a company that spent years optimizing itself into a corner   and is now spending its way back to relevance. Each era had a different dominant force. Each left a different mark.</p>
+    <div class="era-timeline">
+      <div class="era-col">
+        <div class="era-year" style="color:var(--beyond-crimson);">2015–18</div>
+        <div><span class="era-theme red">The Squeeze</span></div>
+        <div class="era-alloc">
+          <div class="era-bar-row">
+            <span class="era-bar-label" style="color:var(--core-green);">Core</span>
+            <div class="era-bar-track"><div class="era-bar-fill" style="width:87%;background:var(--core-green);"></div></div>
+            <span class="era-bar-pct" style="color:var(--core-green);">87%</span>
+          </div>
+          <div class="era-bar-row">
+            <span class="era-bar-label" style="color:var(--edge-amber);">Edge</span>
+            <div class="era-bar-track"><div class="era-bar-fill" style="width:9%;background:var(--edge-amber);"></div></div>
+            <span class="era-bar-pct" style="color:var(--edge-amber);">9%</span>
+          </div>
+          <div class="era-bar-row">
+            <span class="era-bar-label" style="color:var(--beyond-crimson);">Beyond</span>
+            <div class="era-bar-track"><div class="era-bar-fill" style="width:4%;background:var(--beyond-crimson);"></div></div>
+            <span class="era-bar-pct" style="color:var(--beyond-crimson);">4%</span>
+          </div>
+        </div>
+        <div class="era-desc">Zero-based budgeting in full force. R&D starved. The procurement fraud emerged in this era   manufactured cost savings filling the gap between targets and reality.</div>
+        <div class="era-verdict">"Optimize today, hope tomorrow takes care of itself."</div>
+      </div>
+      <div class="era-col">
+        <div class="era-year" style="color:var(--kh-red);">2019</div>
+        <div><span class="era-theme red">The Reckoning</span></div>
+        <div class="era-alloc">
+          <div class="era-bar-row">
+            <span class="era-bar-label" style="color:var(--core-green);">Core</span>
+            <div class="era-bar-track"><div class="era-bar-fill" style="width:83%;background:var(--core-green);"></div></div>
+            <span class="era-bar-pct" style="color:var(--core-green);">83%</span>
+          </div>
+          <div class="era-bar-row">
+            <span class="era-bar-label" style="color:var(--edge-amber);">Edge</span>
+            <div class="era-bar-track"><div class="era-bar-fill" style="width:11%;background:var(--edge-amber);"></div></div>
+            <span class="era-bar-pct" style="color:var(--edge-amber);">11%</span>
+          </div>
+          <div class="era-bar-row">
+            <span class="era-bar-label" style="color:var(--beyond-crimson);">Beyond</span>
+            <div class="era-bar-track"><div class="era-bar-fill" style="width:6%;background:var(--beyond-crimson);"></div></div>
+            <span class="era-bar-pct" style="color:var(--beyond-crimson);">6%</span>
+          </div>
+        </div>
+        <div class="era-desc">$15.4B write-down forces a reset. New CEO Miguel Patricio installs consumer-centric language. Brand Growth System introduced. Portfolio pruning begins.</div>
+        <div class="era-verdict">"We see the problem. We're not sure yet how to fix it."</div>
+      </div>
+      <div class="era-col">
+        <div class="era-year" style="color:var(--edge-amber);">2021–24</div>
+        <div><span class="era-theme amber">The Pivot</span></div>
+        <div class="era-alloc">
+          <div class="era-bar-row">
+            <span class="era-bar-label" style="color:var(--core-green);">Core</span>
+            <div class="era-bar-track"><div class="era-bar-fill" style="width:80%;background:var(--core-green);"></div></div>
+            <span class="era-bar-pct" style="color:var(--core-green);">80%</span>
+          </div>
+          <div class="era-bar-row">
+            <span class="era-bar-label" style="color:var(--edge-amber);">Edge</span>
+            <div class="era-bar-track"><div class="era-bar-fill" style="width:14%;background:var(--edge-amber);"></div></div>
+            <span class="era-bar-pct" style="color:var(--edge-amber);">14%</span>
+          </div>
+          <div class="era-bar-row">
+            <span class="era-bar-label" style="color:var(--beyond-crimson);">Beyond</span>
+            <div class="era-bar-track"><div class="era-bar-fill" style="width:6%;background:var(--beyond-crimson);"></div></div>
+            <span class="era-bar-pct" style="color:var(--beyond-crimson);">6%</span>
+          </div>
+        </div>
+        <div class="era-desc">NotCo JV formed. 360Crisp platform emerges. Divestitures free capital. Emerging markets show 13% growth using Heinz brand as lever. First genuine signals of Edge momentum.</div>
+        <div class="era-verdict">"The seeds are in the ground. We don't know yet what grows."</div>
+      </div>
+      <div class="era-col">
+        <div class="era-year" style="color:var(--core-green);">2026→</div>
+        <div><span class="era-theme green">Committed</span></div>
+        <div class="era-alloc">
+          <div class="era-bar-row">
+            <span class="era-bar-label" style="color:var(--core-green);">Core</span>
+            <div class="era-bar-track"><div class="era-bar-fill" style="width:78%;background:var(--core-green);"></div></div>
+            <span class="era-bar-pct" style="color:var(--core-green);">78%</span>
+          </div>
+          <div class="era-bar-row">
+            <span class="era-bar-label" style="color:var(--edge-amber);">Edge</span>
+            <div class="era-bar-track"><div class="era-bar-fill" style="width:17%;background:var(--edge-amber);"></div></div>
+            <span class="era-bar-pct" style="color:var(--edge-amber);">17%</span>
+          </div>
+          <div class="era-bar-row">
+            <span class="era-bar-label" style="color:var(--beyond-crimson);">Beyond</span>
+            <div class="era-bar-track"><div class="era-bar-fill" style="width:5%;background:var(--beyond-crimson);"></div></div>
+            <span class="era-bar-pct" style="color:var(--beyond-crimson);">5%</span>
+          </div>
+        </div>
+        <div class="era-desc">$600M investment committed. R&D up 20%. Marketing to 5.5% of sales. Canada blueprint deployed at scale in U.S. Edge bets beginning to compound. Beyond remains thin.</div>
+        <div class="era-verdict">"The margin floor. 2027 is when growth is expected to show."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section id="competitors">
+  <div class="container">
+    <div class="section-label">Peer Comparison</div>
+    <h2 class="fade-up" style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;margin-bottom:48px;line-height:1.2;">Who is building the future<br><em>in this industry?</em></h2>
+    <div class="comp-grid">
+      <div class="comp-card featured">
+        <div class="comp-name">Kraft Heinz</div>
+        <div class="comp-tag">The Transitioning Transformer</div>
+        <div class="comp-zone-rows">
+          <div class="comp-zone-row"><div class="zone-dot zdot-core"></div><span><strong>Core:</strong> Brand renovation at scale; Heinz Zero, protein-added KD, Lunchables expansion</span></div>
+          <div class="comp-zone-row"><div class="zone-dot zdot-edge"></div><span><strong>Edge:</strong> 360Crisp platform; NotCo JV (AI plant-based); Capri Sun resealable bottles</span></div>
+          <div class="comp-zone-row"><div class="zone-dot zdot-beyond"></div><span><strong>Beyond:</strong> Kalpana nano-packaging; AI formulation engine (early stage); Evolv Ventures CVC ($100M)</span></div>
+        </div>
+        <span class="comp-verdict verdict-transitioning">Transitioning · Right Direction</span>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Nestlé</div>
+        <div class="comp-tag">The Balanced Visionary</div>
+        <div class="comp-zone-rows">
+          <div class="comp-zone-row"><div class="zone-dot zdot-core"></div><span><strong>Core:</strong> Nespresso, Purina (10% growth), Maggi reformulations</span></div>
+          <div class="comp-zone-row"><div class="zone-dot zdot-edge"></div><span><strong>Edge:</strong> Personalized pet nutrition; carbon-neutral Wunda pea milk; CHF 700M plant-based line</span></div>
+          <div class="comp-zone-row"><div class="zone-dot zdot-beyond"></div><span><strong>Beyond:</strong> Biotech R&D (precision fermentation, clinical nutrition); Deep Tech Center opening 2026 (sensors, AI, robotics, VR)</span></div>
+        </div>
+        <span class="comp-verdict verdict-leader">Balanced · Industry Leader</span>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">PepsiCo</div>
+        <div class="comp-tag">The Operational Transformer</div>
+        <div class="comp-zone-rows">
+          <div class="comp-zone-row"><div class="zone-dot zdot-core"></div><span><strong>Core:</strong> Frito-Lay dominance; portion control (60%+ in smaller formats)</span></div>
+          <div class="comp-zone-row"><div class="zone-dot zdot-edge"></div><span><strong>Edge:</strong> poppi acquisition ($1.95B prebiotic); Alani Nu distribution; Siete Foods (permissible snacks)</span></div>
+          <div class="comp-zone-row"><div class="zone-dot zdot-beyond"></div><span><strong>Beyond:</strong> Nvidia Omniverse partnership   digital twins of every machine, belt, and worker path. 20% throughput gain. Operational transformation at scale.</span></div>
+        </div>
+        <span class="comp-verdict verdict-builder">Operational Beyond · Product Edge</span>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">General Mills</div>
+        <div class="comp-tag">The Cautious Builder</div>
+        <div class="comp-zone-rows">
+          <div class="comp-zone-row"><div class="zone-dot zdot-core"></div><span><strong>Core:</strong> Cereal, Blue Buffalo pet care, yogurt; portfolio reshaping ongoing</span></div>
+          <div class="comp-zone-row"><div class="zone-dot zdot-edge"></div><span><strong>Edge:</strong> Blue Buffalo as diversification success; "Remarkability Playbook" targeting bold flavors and better-for-you</span></div>
+          <div class="comp-zone-row"><div class="zone-dot zdot-empty"></div><span><strong>Beyond:</strong> $54M R&D center expansion (infrastructure bet, not product bet). Transformational bets not yet visible.</span></div>
+        </div>
+        <span class="comp-verdict verdict-builder">Building Infrastructure · Bets Pending</span>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Conagra</div>
+        <div class="comp-tag">The Core Defender</div>
+        <div class="comp-zone-rows">
+          <div class="comp-zone-row"><div class="zone-dot zdot-core"></div><span><strong>Core:</strong> Frozen foods; snacks growing 5.3%; clean label by 2027</span></div>
+          <div class="comp-zone-row"><div class="zone-dot zdot-edge"></div><span><strong>Edge:</strong> Catalyst AI project (cost reduction, not innovation); modest snack portfolio expansion</span></div>
+          <div class="comp-zone-row"><div class="zone-dot zdot-empty"></div><span><strong>Beyond:</strong> None visible. No disclosed transformational or frontier research bets.</span></div>
+        </div>
+        <span class="comp-verdict verdict-defender">Core Defender · High Risk Long-Term</span>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Mondelēz</div>
+        <div class="comp-tag">The Snacking Specialist</div>
+        <div class="comp-zone-rows">
+          <div class="comp-zone-row"><div class="zone-dot zdot-core"></div><span><strong>Core:</strong> Oreo, Cadbury, Ritz   global snacking power brands</span></div>
+          <div class="comp-zone-row"><div class="zone-dot zdot-edge"></div><span><strong>Edge:</strong> Wellness and better-for-you snacking; emerging market distribution scaling</span></div>
+          <div class="comp-zone-row"><div class="zone-dot zdot-empty"></div><span><strong>Beyond:</strong> Cocoa farming sustainability (supply chain risk mitigation), but no visible transformational tech bets</span></div>
+        </div>
+        <span class="comp-verdict verdict-builder">Category Focused · Edge Growing</span>
+      </div>
+    </div>
+    <div class="radar-wrap">
+      <canvas id="radarChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- STRENGTHS & WEAKNESSES -->
+<section id="swot">
+  <div class="container">
+    <div class="section-label">Strengths & Weaknesses</div>
+    <div class="sw-grid">
+      <div class="sw-panel strengths">
+        <div class="sw-panel-title">
+          <div class="sw-icon">S</div>
+          Strategic Strengths
+        </div>
+        <div class="sw-items">
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-content">
+              <div class="sw-lead">The 360Crisp platform is architecturally defensible</div>
+              <div class="sw-text">The proprietary microwave heat-circulation technology can't be easily replicated by private label   and it's now scaling across multiple brands including a Taco Bell QSR partnership. This is the rare innovation that is both patentable and commercially proven.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-content">
+              <div class="sw-lead">96% household penetration is a distribution moat unlike almost any other company</div>
+              <div class="sw-text">New products don't need to earn shelf space from scratch   they inherit it. This means every Edge bet costs less to distribute than it would for a startup, and every renovation reaches more consumers faster.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-content">
+              <div class="sw-lead">Brazil's vertical integration is a competitive moat few know about</div>
+              <div class="sw-text">Proprietary Heinz seed genetics, 7 billion tomatoes processed annually, and a fully verticalized supply chain from farm to bottle means Heinz ketchup is structurally cheaper and more quality-consistent to produce than competitors attempting to match it.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-content">
+              <div class="sw-lead">The Canada blueprint works   and it's exportable</div>
+              <div class="sw-text">4% CAGR over three years through simplified focus and "big bets" (Heinz Zero, protein-added Mac & Cheese) proves the model. The U.S. turnaround plan isn't theoretical   it's a replication of a proven playbook from a similar market.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-content">
+              <div class="sw-lead">Open innovation through the Global Innovation Challenge changes the R&D calculus</div>
+              <div class="sw-text">Inviting 80 companies from 25 countries to pitch packaging solutions surfaced the Kalpana nano-barrier technology   something no internal lab would have reached. This model turns the world's innovators into a distributed R&D function at near-zero cost.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-content">
+              <div class="sw-lead">Self-awareness as a genuine organizational asset</div>
+              <div class="sw-text">CEO Cahillane openly stated "we have been operating too lean" at a major investor conference. That level of public accountability signals a leadership culture willing to confront uncomfortable truths   a prerequisite for genuine transformation.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sw-panel weaknesses">
+        <div class="sw-panel-title">
+          <div class="sw-icon">W</div>
+          Structural Weaknesses
+        </div>
+        <div class="sw-items">
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-content">
+              <div class="sw-lead">The Beyond zone is structurally underfunded and underinstitutionalized</div>
+              <div class="sw-text">At ~5% versus a 10% benchmark, the Beyond zone doesn't just need more money   it needs dedicated governance. The Kalpana packaging bet is promising, but a single transformational bet does not constitute a portfolio. There's no visible moonshot culture, no Beyond-specific leadership, and no publicly articulated 10-year vision.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-content">
+              <div class="sw-lead">The turnaround is CEO-dependent in a way that creates succession risk</div>
+              <div class="sw-text">Cahillane is the architect of every major strategic shift. There is no visible institutionalization of the innovation mandate beneath him. If the playbook lives primarily in one person's conviction rather than organizational DNA, it is fragile.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-content">
+              <div class="sw-lead">No clear "future consumer" thesis beyond plant-curious</div>
+              <div class="sw-text">The NotCo JV targets flexitarians and vegans. Kalpana targets sustainability advocates. But functional nutrition (a growing $280B+ category), personalized health, and Gen Z's relationship with food as identity are not visibly addressed in the innovation portfolio. Nestlé is already there.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-content">
+              <div class="sw-lead">Private label is the silent killer of every renovation-led innovation strategy</div>
+              <div class="sw-text">Less sugar, more protein, resealable packaging   these improvements are strategically correct but operationally replicable. Walmart, Kroger, and Costco house brands can mirror any product renovation within a product cycle. The only defensible innovations are platform-level (360Crisp) or supply-chain-based (vertical tomato integration).</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-content">
+              <div class="sw-lead">Evolv Ventures ($100M) is too small relative to the competitive moment</div>
+              <div class="sw-text">PepsiCo spent $1.95 billion on a single functional beverage acquisition. General Mills committed $54M just to expand one R&D facility. Kraft Heinz's entire CVC fund is $100M   enough to scout, not enough to lead. If Evolv discovers a transformational startup, the company may not have the conviction to acquire it at the price it will command.</div>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-content">
+              <div class="sw-lead">A decade of lean created a talent gap that money alone cannot close quickly</div>
+              <div class="sw-text">The company spent ten years cutting people and capabilities. The $600M investment includes "people and capabilities" as a line item   suggesting the talent gaps are real and acknowledged. Data scientists, AI/ML engineers, materials scientists, and innovation leaders don't arrive at scale simply because a budget line opens.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INNOVATION DILEMMAS -->
+<section id="dilemmas">
+  <div class="container">
+    <div class="section-label">Innovation Dilemmas</div>
+    <h2 class="fade-up" style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;margin-bottom:48px;line-height:1.2;">The tensions that<br><em>define the transformation.</em></h2>
+    <div class="dilemma-cards">
+      <div class="dilemma-card dc-1">
+        <div class="dilemma-num">01</div>
+        <div class="dilemma-title">Optimizing for today vs. cannibalizing for tomorrow</div>
+        <div class="dilemma-text">The NotCo JV is designed to replace Oscar Mayer hot dogs with plant-based alternatives that taste identical. This is deliberate self-disruption   but Oscar Mayer is still a core profit driver. How aggressively should the company invest in making its own products obsolete? Every dollar that accelerates plant-based is a dollar that competes with the legacy brands still funding the transformation. The timing of this transition is not optional   but the pace is a judgment call with no right answer.</div>
+      </div>
+      <div class="dilemma-card dc-2">
+        <div class="dilemma-num">02</div>
+        <div class="dilemma-title">Platform innovation vs. brand renovation: which earns the next decade?</div>
+        <div class="dilemma-text">The 360Crisp platform is architecturally defensible and hard to replicate. Heinz Zero is a renovation that private label can mirror within months. The company is simultaneously investing in both   but the resource allocation between them is not public, and the incentive structure historically favors the predictable (renovation) over the novel (platform). If platforms are where the future value lives, the current organizational design   brand P&L accountability   may be systematically under-resourced for the harder, longer bets.</div>
+      </div>
+      <div class="dilemma-card dc-3">
+        <div class="dilemma-num">03</div>
+        <div class="dilemma-title">The geographic paradox: the U.S. is broken, but the playbook was born abroad</div>
+        <div class="dilemma-text">Canada proved that simplified focus and "big bets" works. The UK proved product superiority beats price competition. Emerging markets proved the Heinz name travels farther than the product. But the U.S.   67% of revenue   is a different animal: deeply category-competitive, private-label-aggressive, and home to a consumer that has explicitly moved away from what Kraft Heinz sells. Is an international turnaround blueprint truly transferable to the most demanding retail environment in the world? That's the $600M question.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POTENTIAL -->
+<section id="potential">
+  <div class="container">
+    <div class="section-label">Untapped Potential</div>
+    <h2 class="fade-up" style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;margin-bottom:48px;line-height:1.2;">Where the map<br><em>shows empty space.</em></h2>
+    <div class="potential-grid">
+      <div class="potential-card">
+        <div class="pot-zone beyond">🟥 Beyond Gap</div>
+        <div class="potential-title">Functional Nutrition: The $280B Adjacent Frontier</div>
+        <div class="potential-text">Nestlé has built a clinical nutrition business worth billions. PepsiCo acquired poppi for its prebiotic story. Kraft Heinz   with brands in every meal occasion   has no visible play in functional nutrition, gut health, or longevity-focused food science. Philadelphia cream cheese could become a probiotic platform. Heinz could own a fermented category. The ingredient IP and distribution already exist. The scientific vision does not yet.</div>
+        <div class="potential-signal">Signal: No disclosed R&D in precision fermentation or clinical nutrition. This is Nestlé's moat   and it's widening annually.</div>
+      </div>
+      <div class="potential-card">
+        <div class="pot-zone edge">🟨 Edge Gap</div>
+        <div class="potential-title">Gen Z's Relationship With Food is Cultural, Not Categorical</div>
+        <div class="potential-text">Gen Z doesn't just buy food   they perform identity through it. Lunchables Grilled Cheesies is a clever format innovation, but it's still talking to the same consumers Kraft has always had. The opportunity is in brand narrative: Heinz's "57 varieties" origin as a radical transparency act in a world of adulterated food is genuinely Gen Z-coded. The origin story   pure food, honest ingredients, nothing to hide   is a values alignment hiding in a heritage brand.</div>
+        <div class="potential-signal">Signal: China's "tomato scrambled eggs" campaign generated 170bps of share. Cultural relevance through local meaning works. This thinking hasn't fully arrived in the U.S.</div>
+      </div>
+      <div class="potential-card">
+        <div class="pot-zone beyond">🟥 Beyond Gap</div>
+        <div class="potential-title">Evolv Ventures: Scouting Without the Conviction to Acquire</div>
+        <div class="potential-text">A $100M CVC fund creates option value   exposure to emerging food-tech companies before they become expensive. But the food-tech funding landscape has corrected dramatically (from $49.8B in 2021 to $10.3B in 2024), meaning quality startups are now raising at valuations that are historically cheap. This is precisely the moment to increase the Evolv mandate and move from passive minority investor to strategic acquirer. The window won't stay open.</div>
+        <div class="potential-signal">Signal: The food-tech funding correction is an acquisition opportunity disguised as a market downturn. Competitors who move now get the assets; those who wait pay the premium when the cycle turns.</div>
+      </div>
+      <div class="potential-card">
+        <div class="pot-zone edge">🟨 Edge Gap</div>
+        <div class="potential-title">AI Formulation as a Business Model, Not Just a Tool</div>
+        <div class="potential-text">The AI-powered product formulation engine currently serves Kraft Heinz internally. But the underlying capability   machine learning that optimizes flavor, texture, and nutrition simultaneously   is potentially licensable. If the system matures, it could become an ingredient intelligence platform available to the broader food industry, generating revenue from the very technology being built to fix Kraft Heinz's own innovation deficit. The Glenview Innovation Center could evolve from an internal R&D facility to an industry knowledge hub.</div>
+        <div class="potential-signal">Signal: NVIDIA turned its chip design capability into an AI platform business. The technology Kraft Heinz is building to solve its own problems may have external commercial value.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section id="diagnostic">
+  <div class="container">
+    <div class="section-label" style="color:var(--kh-gold);">Theta Diagnostic</div>
+    <h2 class="fade-up" style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;color:#fff;margin-bottom:60px;line-height:1.2;">The full picture,<br><em style="color:var(--kh-gold-light);">unvarnished.</em></h2>
+    <div class="diag-grid">
+      <div>
+        <div class="diag-block">
+          <div class="diag-block-title">Portfolio Mapping   Current State</div>
+          <div class="arch-boxes">
+            <div class="arch-box">
+              <div class="arch-icon">🟩</div>
+              <div>
+                <div class="arch-label">Core (0–5yr)   Functional, but dependent</div>
+                <div class="arch-text">Current profitable engine is real and generating cash. But after a decade of optimization, the Core is structurally over-indexed. The renovation strategy (less sugar, more protein) is necessary but not sufficient. The question isn't whether Core works   it's whether Core profits are being reinvested fast enough into Edge and Beyond.</div>
+              </div>
+            </div>
+            <div class="arch-box">
+              <div class="arch-icon">🟨</div>
+              <div>
+                <div class="arch-label">Edge (3–7yr)   Proactive, not reactive</div>
+                <div class="arch-text">The 360Crisp platform and NotCo JV were built before crisis forced them   that is the correct posture. Edge traction is real: Capri Sun resealable bottles are 60% incremental to the business in 16,000 new stores. The zone is growing. But the pipeline after these current bets is not publicly visible.</div>
+              </div>
+            </div>
+            <div class="arch-box">
+              <div class="arch-icon">🟥</div>
+              <div>
+                <div class="arch-label">Beyond (7–15yr)   Present but thin</div>
+                <div class="arch-text">Kalpana nano-packaging is a genuine transformational bet. The AI formulation engine has real potential. But one named external bet and one internal tool does not constitute a Beyond portfolio. Visionary leadership is present at the CEO level; operationalizing that vision into a permanent Beyond engine is the unfinished work.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="diag-block">
+          <div class="diag-block-title">Leadership & Culture Assessment</div>
+          <div class="culture-rows">
+            <div class="culture-row">
+              <span class="culture-label">Maverick Protection</span>
+              <div class="culture-dots">
+                <div class="cdot on"></div><div class="cdot on"></div><div class="cdot on"></div><div class="cdot mid"></div><div class="cdot off"></div>
+              </div>
+            </div>
+            <div class="culture-row">
+              <span class="culture-label">Leadership Agility</span>
+              <div class="culture-dots">
+                <div class="cdot on"></div><div class="cdot on"></div><div class="cdot on"></div><div class="cdot on"></div><div class="cdot off"></div>
+              </div>
+            </div>
+            <div class="culture-row">
+              <span class="culture-label">Self-Awareness</span>
+              <div class="culture-dots">
+                <div class="cdot on"></div><div class="cdot on"></div><div class="cdot on"></div><div class="cdot on"></div><div class="cdot on"></div>
+              </div>
+            </div>
+            <div class="culture-row">
+              <span class="culture-label">Failure Tolerance</span>
+              <div class="culture-dots">
+                <div class="cdot on"></div><div class="cdot on"></div><div class="cdot on"></div><div class="cdot mid"></div><div class="cdot off"></div>
+              </div>
+            </div>
+            <div class="culture-row">
+              <span class="culture-label">Beyond Vision</span>
+              <div class="culture-dots">
+                <div class="cdot on"></div><div class="cdot on"></div><div class="cdot mid"></div><div class="cdot off"></div><div class="cdot off"></div>
+              </div>
+            </div>
+            <div class="culture-row">
+              <span class="culture-label">Open Innovation</span>
+              <div class="culture-dots">
+                <div class="cdot on"></div><div class="cdot on"></div><div class="cdot on"></div><div class="cdot on"></div><div class="cdot mid"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="diag-block">
+          <div class="diag-block-title">Critical Tension</div>
+          <div class="tension-box">
+            <p>The $600M investment is large enough to signal genuine commitment but small enough to raise the question: is this a permanent rebalancing of priorities, or a single-cycle investment that reverts under pressure? The real test comes when the next earnings shortfall arrives   and it will. The culture that existed from 2015–2018 was rational given the incentives: cut costs, hit targets, earn bonuses. Those incentives haven't been publicly restructured. If the turnaround takes longer than two years to show results, the question of whether to stay the course or revert will test whether "disciplined but hungry" is genuinely embedded or just a CEO talking point.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="diag-block">
+          <div class="diag-block-title">Customer Signal Alignment</div>
+          <div class="signal-rows">
+            <div class="signal-row">
+              <span class="signal-segment">Core loyalists (50+)</span>
+              <div class="signal-bar"><div class="signal-fill" style="width:85%;background:var(--core-green);"></div></div>
+            </div>
+            <div class="signal-row">
+              <span class="signal-segment">Suburban families</span>
+              <div class="signal-bar"><div class="signal-fill" style="width:75%;background:var(--core-green);"></div></div>
+            </div>
+            <div class="signal-row">
+              <span class="signal-segment">Flexitarians</span>
+              <div class="signal-bar"><div class="signal-fill" style="width:55%;background:var(--edge-amber);"></div></div>
+            </div>
+            <div class="signal-row">
+              <span class="signal-segment">Gen Z / Alpha</span>
+              <div class="signal-bar"><div class="signal-fill" style="width:30%;background:var(--edge-amber);"></div></div>
+            </div>
+            <div class="signal-row">
+              <span class="signal-segment">Health optimizers</span>
+              <div class="signal-bar"><div class="signal-fill" style="width:20%;background:var(--beyond-crimson);"></div></div>
+            </div>
+            <div class="signal-row">
+              <span class="signal-segment">Sustainability advocates</span>
+              <div class="signal-bar"><div class="signal-fill" style="width:35%;background:var(--beyond-crimson);"></div></div>
+            </div>
+          </div>
+          <p style="font-size:0.76rem;color:rgba(255,255,255,0.4);margin-top:12px;line-height:1.5;">Signal strength represents estimated degree of product portfolio alignment with each consumer segment's evolving needs.</p>
+        </div>
+        <div class="diag-block">
+          <div class="diag-block-title">Zone Allocation vs. Benchmark</div>
+          <div class="diag-zone-bars">
+            <div class="dzb">
+              <div class="dzb-header">
+                <span class="dzb-name" style="color:#7DC4A0;">Core</span>
+                <span class="dzb-pcts">Actual ~78% · Benchmark 70%</span>
+              </div>
+              <div class="dzb-track">
+                <div class="dzb-actual" style="width:78%;background:var(--core-green);"></div>
+                <div class="dzb-bench" style="left:70%;"></div>
+              </div>
+            </div>
+            <div class="dzb">
+              <div class="dzb-header">
+                <span class="dzb-name" style="color:#D4A135;">Edge</span>
+                <span class="dzb-pcts">Actual ~17% · Benchmark 20%</span>
+              </div>
+              <div class="dzb-track">
+                <div class="dzb-actual" style="width:17%;background:var(--edge-amber);"></div>
+                <div class="dzb-bench" style="left:20%;"></div>
+              </div>
+            </div>
+            <div class="dzb">
+              <div class="dzb-header">
+                <span class="dzb-name" style="color:#E07070;">Beyond</span>
+                <span class="dzb-pcts">Actual ~5% · Benchmark 10%</span>
+              </div>
+              <div class="dzb-track">
+                <div class="dzb-actual" style="width:5%;background:var(--beyond-crimson);"></div>
+                <div class="dzb-bench" style="left:10%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="diag-block">
+          <div class="diag-block-title">Relativity Assessment</div>
+          <div class="relativity-items">
+            <div class="rel-item">
+              <span class="rel-label">vs. Nestlé (industry gold standard)</span>
+              <span class="rel-val behind">Behind</span>
+            </div>
+            <div class="rel-item">
+              <span class="rel-label">vs. PepsiCo (functional snacking)</span>
+              <span class="rel-val behind">Behind</span>
+            </div>
+            <div class="rel-item">
+              <span class="rel-label">vs. General Mills</span>
+              <span class="rel-val catching">Comparable</span>
+            </div>
+            <div class="rel-item">
+              <span class="rel-label">vs. Conagra (direct peer)</span>
+              <span class="rel-val winning">Ahead</span>
+            </div>
+            <div class="rel-item">
+              <span class="rel-label">vs. Internal trajectory (2018→2026)</span>
+              <span class="rel-val winning">Transforming</span>
+            </div>
+            <div class="rel-item">
+              <span class="rel-label">vs. Consumer expectations</span>
+              <span class="rel-val catching">Responding</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="verdict-strip">
+        <div class="verdict-label">Theta Archetype Verdict</div>
+        <div class="verdict-arch">Disciplined but Hungry   <em style="color:var(--kh-gold-light);">Transitioning</em></div>
+        <div class="verdict-icons">☑ △ ×</div>
+        <div class="verdict-text">Core is functional and funding the reinvestment. Edge is gaining genuine traction with defensible platform bets. Beyond remains the critical gap   structurally underfunded, insufficiently institutionalized, and dependent on a single named external bet. Kraft Heinz is not stagnant. It is not balanced. It is in motion   which is the most interesting and precarious place a company can be. The next 24 months determine whether this becomes a genuine turnaround or a well-funded pause before the next decline.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-fw">Theta Innovation Framework</div>
+    <div>Strategic Case Study · 2026</div>
+  </div>
+  <div class="footer-right">Kraft Heinz Company · KHC</div>
+</footer>
+
+<script>
+// ── SCROLL ANIMATIONS ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.fade-up, .tl-item').forEach(el => observer.observe(el));
+
+// ── SCATTER CHART ──
+const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+
+const pointLabelPlugin = {
+  id: 'pointLabels',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    ctx.save();
+    chart.data.datasets.forEach((dataset, di) => {
+      const meta = chart.getDatasetMeta(di);
+      meta.data.forEach((point, pi) => {
+        const label = dataset.labels ? dataset.labels[pi] : '';
+        if (!label) return;
+        ctx.font = '500 10px DM Sans';
+        ctx.fillStyle = 'rgba(14,26,24,0.65)';
+        ctx.textAlign = 'left';
+        ctx.fillText(label, point.x + 10, point.y + 3);
+      });
+    });
+    ctx.restore();
+  }
+};
+
+Chart.register(pointLabelPlugin);
+
+new Chart(scatterCtx, {
+  type: 'scatter',
+  data: {
+    datasets: [
+      {
+        label: '🟩 Core',
+        data: [
+          { x: 1.1, y: 1.2 },
+          { x: 1.4, y: 1.3 },
+          { x: 1.6, y: 1.5 },
+          { x: 1.8, y: 1.4 },
+        ],
+        labels: ['Heinz Zero / KD Protein', 'Jell-O Reformulation', 'Lunchables Grilled Cheesies', 'Heinz Beanz Pizza (UK)'],
+        backgroundColor: 'rgba(45,106,79,0.7)',
+        pointRadius: 7, pointHoverRadius: 9,
+      },
+      {
+        label: '🟨 Edge',
+        data: [
+          { x: 2.3, y: 2.5 },
+          { x: 2.1, y: 2.2 },
+          { x: 2.7, y: 2.8 },
+        ],
+        labels: ['360Crisp Platform', 'Capri Sun Resealable', 'NotCo JV (Plant-Based AI)'],
+        backgroundColor: 'rgba(181,132,26,0.8)',
+        pointRadius: 7, pointHoverRadius: 9,
+      },
+      {
+        label: '🟥 Beyond',
+        data: [
+          { x: 3.1, y: 3.6 },
+          { x: 3.3, y: 3.3 },
+        ],
+        labels: ['Kalpana Nano-Packaging', 'AI Formulation Engine'],
+        backgroundColor: 'rgba(139,26,26,0.8)',
+        pointRadius: 7, pointHoverRadius: 9,
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { font: { family: 'DM Sans', size: 12 }, padding: 20, boxWidth: 12 }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        titleFont: { family: 'DM Sans', size: 12 },
+        bodyFont: { family: 'DM Sans', size: 11 },
+        padding: 12,
+        callbacks: {
+          label(ctx) {
+            const ds = ctx.dataset;
+            const label = ds.labels ? ds.labels[ctx.dataIndex] : '';
+            return ' ' + label;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        min: 0.5, max: 4.2,
+        title: { display: true, text: 'Market Reach  →  Existing · New · Emerging · Speculative', font: { family: 'DM Sans', size: 11 }, color: '#8A9490' },
+        grid: { color: 'rgba(200,16,46,0.05)' },
+        ticks: { display: false },
+        border: { color: 'rgba(14,26,24,0.12)' }
+      },
+      y: {
+        min: 0.5, max: 4.5,
+        title: { display: true, text: 'Tech Change  →  Incremental · Moderate · High · Radical', font: { family: 'DM Sans', size: 11 }, color: '#8A9490' },
+        grid: { color: 'rgba(200,16,46,0.05)' },
+        ticks: { display: false },
+        border: { color: 'rgba(14,26,24,0.12)' }
+      }
+    }
+  }
+});
+
+// ── DOUGHNUT CHART ──
+const dCtx = document.getElementById('doughnutChart').getContext('2d');
+new Chart(dCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Core (~78%)', 'Edge (~17%)', 'Beyond (~5%)'],
+    datasets: [{
+      data: [78, 17, 5],
+      backgroundColor: [
+        'rgba(45,106,79,0.85)',
+        'rgba(181,132,26,0.85)',
+        'rgba(139,26,26,0.85)'
+      ],
+      borderWidth: 0,
+      cutout: '68%'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { font: { family: 'DM Sans', size: 12 }, padding: 16, boxWidth: 12 }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        titleFont: { family: 'DM Sans', size: 12 },
+        bodyFont: { family: 'DM Sans', size: 11 },
+        padding: 12
+      }
+    }
+  }
+});
+
+// ── RADAR CHART ──
+const rCtx = document.getElementById('radarChart').getContext('2d');
+new Chart(rCtx, {
+  type: 'radar',
+  data: {
+    labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'AI Readiness', 'Brand Trust', 'Global Scale'],
+    datasets: [
+      {
+        label: 'Nestlé',
+        data: [88, 82, 90, 85, 90, 95],
+        borderColor: 'rgba(45,106,79,0.9)', backgroundColor: 'rgba(45,106,79,0.08)',
+        borderWidth: 2, pointRadius: 3
+      },
+      {
+        label: 'PepsiCo',
+        data: [85, 80, 72, 88, 80, 90],
+        borderColor: 'rgba(30,80,160,0.85)', backgroundColor: 'rgba(30,80,160,0.06)',
+        borderWidth: 2, pointRadius: 3
+      },
+      {
+        label: 'Kraft Heinz',
+        data: [78, 58, 45, 55, 85, 80],
+        borderColor: 'rgba(200,16,46,0.9)', backgroundColor: 'rgba(200,16,46,0.07)',
+        borderWidth: 2, pointRadius: 3
+      },
+      {
+        label: 'Conagra',
+        data: [72, 38, 20, 42, 60, 55],
+        borderColor: 'rgba(181,132,26,0.8)', backgroundColor: 'rgba(181,132,26,0.05)',
+        borderWidth: 2, pointRadius: 3
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { font: { family: 'DM Sans', size: 12 }, padding: 20, boxWidth: 12 }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        titleFont: { family: 'DM Sans', size: 12 },
+        bodyFont: { family: 'DM Sans', size: 11 },
+        padding: 12
+      }
+    },
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { display: false },
+        grid: { color: 'rgba(14,26,24,0.08)' },
+        angleLines: { color: 'rgba(14,26,24,0.08)' },
+        pointLabels: {
+          font: { family: 'DM Sans', size: 11 },
+          color: '#5A6A66'
+        }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
