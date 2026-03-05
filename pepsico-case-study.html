@@ -1,0 +1,2108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PepsiCo / Theta Innovation Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --pepsi-blue: #004B93;
+  --pepsi-red: #E3000B;
+  --pepsi-accent: #B8860B;
+  --ink: #0A1628;
+  --ink-soft: #1A2840;
+  --paper: #F7F5F0;
+  --paper-warm: #EFEBE2;
+  --muted: #8A9490;
+  --core-green: #1A5C3A;
+  --edge-amber: #B5841A;
+  --beyond-crimson: #8B1A1A;
+  --border: rgba(0, 75, 147, 0.12);
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 0 48px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10, 22, 40, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 75, 147, 0.2);
+}
+
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.nav-logo span {
+  color: var(--pepsi-accent);
+  font-style: italic;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--pepsi-accent); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  background: var(--ink);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px 80px 80px;
+  overflow: hidden;
+}
+
+.hero-noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+  pointer-events: none;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(0,75,147,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,75,147,0.08) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  animation: gridPulse 8s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.hero-radial {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 70% at 70% 40%, rgba(0,75,147,0.18) 0%, transparent 60%),
+              radial-gradient(ellipse 40% 40% at 20% 80%, rgba(227,0,11,0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.hero-kicker {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--pepsi-accent);
+  margin-bottom: 28px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.8s ease forwards 0.3s;
+}
+
+.hero-headline {
+  font-family: var(--font-serif);
+  font-size: clamp(44px, 6vw, 88px);
+  font-weight: 300;
+  color: #fff;
+  line-height: 1.08;
+  max-width: 820px;
+  margin-bottom: 28px;
+  opacity: 0;
+  transform: translateY(24px);
+  animation: fadeUp 0.9s ease forwards 0.5s;
+}
+
+.hero-headline em {
+  font-style: italic;
+  color: var(--pepsi-accent);
+  font-weight: 400;
+}
+
+.hero-sub {
+  font-size: 17px;
+  color: rgba(255,255,255,0.55);
+  max-width: 560px;
+  line-height: 1.65;
+  margin-bottom: 64px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.9s ease forwards 0.7s;
+  font-weight: 300;
+}
+
+.hero-meta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  max-width: 720px;
+  padding-top: 40px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  opacity: 0;
+  animation: fadeUp 0.9s ease forwards 0.9s;
+}
+
+.hero-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meta-label {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+
+.meta-value {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  color: #fff;
+  font-weight: 500;
+}
+
+.scroll-indicator {
+  position: absolute;
+  right: 48px;
+  bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: fadeUp 1s ease forwards 1.2s;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 48px;
+  background: rgba(255,255,255,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-line::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--pepsi-accent);
+  animation: scrollDown 2s ease-in-out infinite;
+}
+
+@keyframes scrollDown {
+  0% { top: -100%; }
+  100% { top: 100%; }
+}
+
+.scroll-text {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  writing-mode: vertical-rl;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* SECTIONS */
+.section { padding: 96px 80px; }
+.section-white { background: #fff; }
+.section-warm { background: var(--paper-warm); }
+.section-ink { background: var(--ink); color: #fff; }
+
+.section-label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--pepsi-accent);
+  margin-bottom: 16px;
+  display: block;
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 4vw, 54px);
+  font-weight: 300;
+  line-height: 1.15;
+  margin-bottom: 40px;
+}
+
+.section-title em {
+  font-style: italic;
+  color: var(--pepsi-accent);
+}
+
+/* FADE IN OBSERVER */
+.fade-up {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ABOUT SECTION */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  margin-bottom: 64px;
+}
+
+.about-prose p {
+  font-size: 16.5px;
+  line-height: 1.8;
+  color: #2a2a2a;
+  margin-bottom: 20px;
+}
+
+.hidden-fact {
+  margin-top: 32px;
+  background: var(--ink);
+  border-left: 3px solid var(--pepsi-accent);
+  padding: 28px 32px;
+  border-radius: 0 4px 4px 0;
+}
+
+.hidden-fact-label {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--pepsi-accent);
+  margin-bottom: 10px;
+}
+
+.hidden-fact p {
+  font-size: 14.5px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.7;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.stat-card {
+  background: var(--paper-warm);
+  padding: 28px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.stat-num {
+  font-family: var(--font-serif);
+  font-size: 44px;
+  font-weight: 500;
+  color: var(--pepsi-blue);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* BELIEF STRIP */
+.belief-strip {
+  background: var(--pepsi-blue);
+  padding: 64px 80px;
+  text-align: center;
+}
+
+.belief-strip blockquote {
+  font-family: var(--font-serif);
+  font-size: clamp(22px, 3vw, 38px);
+  font-weight: 300;
+  font-style: italic;
+  color: #fff;
+  line-height: 1.5;
+  max-width: 800px;
+  margin: 0 auto 20px;
+}
+
+.belief-strip cite {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  font-style: normal;
+}
+
+/* TIMELINE */
+.timeline-container {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 110px;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--pepsi-accent) 10%, var(--pepsi-accent) 90%, transparent);
+}
+
+.timeline-entry {
+  display: grid;
+  grid-template-columns: 100px 24px 1fr;
+  gap: 0 24px;
+  margin-bottom: 44px;
+  align-items: start;
+}
+
+.timeline-year {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--pepsi-accent);
+  text-align: right;
+  padding-top: 2px;
+}
+
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--pepsi-accent);
+  background: var(--paper-warm);
+  margin-top: 6px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-dot.filled {
+  background: var(--pepsi-accent);
+}
+
+.timeline-content {}
+
+.timeline-phase {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--pepsi-accent);
+  margin-bottom: 4px;
+}
+
+.timeline-event-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.timeline-event-desc {
+  font-size: 14.5px;
+  color: #555;
+  line-height: 1.65;
+}
+
+/* THETA MAP SECTION */
+.theta-map-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.zone-legend { display: flex; flex-direction: column; gap: 20px; }
+
+.zone-pill {
+  padding: 20px 24px;
+  border-radius: 6px;
+  border-left: 4px solid;
+}
+
+.zone-pill.core { border-color: var(--core-green); background: rgba(26, 92, 58, 0.06); }
+.zone-pill.edge { border-color: var(--edge-amber); background: rgba(181, 132, 26, 0.06); }
+.zone-pill.beyond { border-color: var(--beyond-crimson); background: rgba(139, 26, 26, 0.06); }
+
+.zone-pill-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.zone-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.zone-pill-desc {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.reading-card {
+  margin-top: 24px;
+  padding: 20px 24px;
+  background: var(--paper-warm);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.reading-card p {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.65;
+}
+
+.chart-wrap {
+  position: relative;
+  background: #fff;
+  border-radius: 8px;
+  padding: 32px;
+  border: 1px solid rgba(0,0,0,0.07);
+}
+
+/* PORTFOLIO SECTION */
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.donut-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.donut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.donut-center-text {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.zone-bars { display: flex; flex-direction: column; gap: 28px; }
+
+.zone-bar-item {}
+
+.zone-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.zone-bar-name {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.zone-bar-pcts {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.bar-track {
+  height: 6px;
+  background: rgba(0,0,0,0.07);
+  border-radius: 99px;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  position: relative;
+}
+
+.bar-benchmark {
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 14px;
+  background: rgba(0,0,0,0.25);
+  border-radius: 1px;
+}
+
+.zone-bar-commentary {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.55;
+  font-style: italic;
+}
+
+/* COMPETITORS */
+.competitor-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 56px;
+}
+
+.competitor-card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 24px 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.competitor-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+}
+
+.competitor-card.featured {
+  border-color: var(--pepsi-blue);
+  background: rgba(0, 75, 147, 0.03);
+  box-shadow: 0 0 0 1px var(--pepsi-blue);
+}
+
+.comp-name {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+
+.comp-tag {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.comp-zones { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+
+.comp-zone-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #444;
+}
+
+.comp-zone-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.verdict-chip {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-weight: 500;
+}
+
+.chip-green { background: rgba(26,92,58,0.1); color: var(--core-green); }
+.chip-amber { background: rgba(181,132,26,0.1); color: var(--edge-amber); }
+.chip-red { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+.chip-blue { background: rgba(0,75,147,0.1); color: var(--pepsi-blue); }
+
+/* STRENGTHS / WEAKNESSES */
+.sw-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.sw-panel {
+  border-radius: 8px;
+  padding: 32px;
+}
+
+.sw-panel.strengths {
+  border: 1px solid rgba(26,92,58,0.2);
+  background: rgba(26,92,58,0.03);
+}
+
+.sw-panel.weaknesses {
+  border: 1px solid rgba(139,26,26,0.2);
+  background: rgba(139,26,26,0.03);
+}
+
+.sw-panel-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+.sw-item {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.sw-marker {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.strengths .sw-marker { background: rgba(26,92,58,0.1); color: var(--core-green); }
+.weaknesses .sw-marker { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+
+.sw-content {}
+
+.sw-lead {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+
+.sw-detail {
+  font-size: 13.5px;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* DIAGNOSTIC */
+.diag-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+}
+
+.diag-block {
+  margin-bottom: 36px;
+}
+
+.diag-block-title {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pepsi-accent);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.archetype-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.archetype-box {
+  padding: 14px 16px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  text-align: center;
+}
+
+.archetype-box.ok { border-color: rgba(26,92,58,0.5); background: rgba(26,92,58,0.1); }
+.archetype-box.mid { border-color: rgba(181,132,26,0.5); background: rgba(181,132,26,0.1); }
+.archetype-box.low { border-color: rgba(139,26,26,0.4); background: rgba(139,26,26,0.08); }
+
+.arch-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 4px;
+}
+
+.arch-score {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.culture-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  font-size: 14px;
+}
+
+.culture-label { color: rgba(255,255,255,0.65); }
+
+.culture-score {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+.score-high { background: rgba(26,92,58,0.25); color: #6fcf97; }
+.score-mid { background: rgba(181,132,26,0.25); color: #f2c94c; }
+.score-low { background: rgba(139,26,26,0.25); color: #eb5757; }
+
+.inline-zone-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.inline-bar-label {
+  width: 60px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  flex-shrink: 0;
+}
+
+.inline-bar-track {
+  flex: 1;
+  height: 5px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 99px;
+  position: relative;
+}
+
+.inline-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+}
+
+.inline-bar-pct {
+  width: 36px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  text-align: right;
+}
+
+.tension-box {
+  background: rgba(139,26,26,0.15);
+  border: 1px solid rgba(139,26,26,0.4);
+  border-radius: 4px;
+  padding: 18px 20px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.7;
+}
+
+.tension-box strong {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #eb5757;
+  margin-bottom: 6px;
+}
+
+.verdict-block {
+  margin-top: 56px;
+  padding: 40px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.verdict-label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--pepsi-accent);
+  margin-bottom: 12px;
+}
+
+.verdict-title {
+  font-family: var(--font-serif);
+  font-size: 36px;
+  font-weight: 300;
+  font-style: italic;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.verdict-symbols {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.verdict-desc {
+  font-size: 15px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.7;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* LEADER ERA SECTION */
+.era-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+.era-entry {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 40px;
+  padding: 40px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.era-entry:last-child { border-bottom: none; }
+
+.era-left {}
+
+.era-years {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--pepsi-accent);
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.era-leader {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.era-mode {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+.era-right {}
+
+.era-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.era-desc {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+
+.era-zones {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.era-zone-badge {
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+/* MARKETING SECTION */
+.marketing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 56px;
+}
+
+.marketing-card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 8px;
+  padding: 28px;
+  transition: transform 0.2s;
+}
+
+.marketing-card:hover { transform: translateY(-2px); }
+
+.mcard-year {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--pepsi-accent);
+  margin-bottom: 6px;
+}
+
+.mcard-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.mcard-desc {
+  font-size: 13.5px;
+  color: #555;
+  line-height: 1.65;
+}
+
+/* INNOVATION DILEMMA SECTION */
+.dilemma-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.dilemma-card {
+  padding: 32px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.dilemma-num {
+  font-family: var(--font-serif);
+  font-size: 48px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.1);
+  line-height: 1;
+  margin-bottom: -10px;
+}
+
+.dilemma-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.dilemma-desc {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.7;
+}
+
+/* QUOTE PULL */
+.pull-quote {
+  border-left: 3px solid var(--pepsi-accent);
+  padding: 20px 28px;
+  margin: 32px 0;
+}
+
+.pull-quote p {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.pull-quote cite {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 10px;
+  font-style: normal;
+}
+
+/* CEO QUESTIONS */
+.ceo-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.ceo-q-item {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 24px;
+  padding: 32px 0;
+  border-bottom: 1px solid rgba(0, 75, 147, 0.1);
+  align-items: start;
+}
+
+.ceo-q-item:last-child { border-bottom: none; }
+
+.ceo-q-num {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 600;
+  color: rgba(0, 75, 147, 0.15);
+  line-height: 1;
+  padding-top: 4px;
+}
+
+.ceo-q-content {}
+
+.ceo-q-text {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+
+.ceo-q-why {
+  font-size: 14px;
+  color: #5a5a5a;
+  line-height: 1.7;
+}
+
+/* FOOTER */
+footer {
+  background: var(--ink);
+  padding: 40px 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.footer-left {
+  font-size: 13px;
+  color: rgba(255,255,255,0.35);
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+.footer-right {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  nav { padding: 0 24px; }
+  .nav-links { display: none; }
+  .hero { padding: 100px 24px 60px; }
+  .hero-meta { grid-template-columns: 1fr 1fr; }
+  .section { padding: 64px 24px; }
+  .about-grid, .portfolio-grid, .sw-grid, .diag-grid, .theta-map-grid { grid-template-columns: 1fr; }
+  .competitor-grid { grid-template-columns: 1fr 1fr; }
+  .belief-strip { padding: 48px 24px; }
+  .marketing-grid { grid-template-columns: 1fr; }
+  .dilemma-cards { grid-template-columns: 1fr; }
+  footer { flex-direction: column; gap: 12px; text-align: center; padding: 32px 24px; }
+  .era-entry { grid-template-columns: 1fr; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Theta <span>Framework</span></div>
+  <ul class="nav-links">
+    <li><a href="#about">Overview</a></li>
+    <li><a href="#innovation-eras">Leadership</a></li>
+    <li><a href="#theta-map">Innovation Map</a></li>
+    <li><a href="#competitors">Competitors</a></li>
+    <li><a href="#ceo-questions">The Questions</a></li>
+    <li><a href="#diagnostic">Diagnostic</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-noise"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-radial"></div>
+
+  <span class="hero-kicker">Theta Innovation Case Study &nbsp;/&nbsp; Consumer Packaged Goods</span>
+
+  <h1 class="hero-headline">
+    The empire that sells <em>joy</em> is quietly running out of time to sell the <em>future.</em>
+  </h1>
+
+  <p class="hero-sub">
+    PepsiCo is the world's most disciplined snack-and-beverage machine. But discipline, under the wrong conditions, is indistinguishable from paralysis. This is the story of what it means to optimize brilliantly while the next century waits.
+  </p>
+
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <span class="meta-label">Founded</span>
+      <span class="meta-value">1898</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="meta-label">Employees</span>
+      <span class="meta-value">~306K</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="meta-label">Market Cap</span>
+      <span class="meta-value">~$232B</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="meta-label">Theta Verdict</span>
+      <span class="meta-value" style="color: var(--pepsi-accent); font-style: italic;">Transitioning</span>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section section-white fade-up" id="about">
+  <span class="section-label">The Company</span>
+  <h2 class="section-title">Not a soda company.<br><em>A civilization of snacking.</em></h2>
+
+  <div class="about-grid">
+    <div class="about-prose">
+      <p>PepsiCo did not build a beverage. It built a distribution empire with beverages as its Trojan horse. When Pepsi-Cola merged with Frito-Lay in 1965, the resulting company quietly became something entirely different from its rival Coca-Cola: a company that owned both the drink in your hand and the chip on your tongue, delivered by one of the most formidable supply chains ever assembled. Today, 23 of its brands each generate over one billion dollars in annual retail sales, and none of them feel like they belong to the same parent company.</p>
+      <p>That invisibility is the strategy. PepsiCo operates like a portfolio of independent republics, each brand sovereign in its category. Lay's doesn't remind you it's PepsiCo's. Neither does Doritos, or Gatorade, or Quaker. The corporate name recedes; the brand experience rules. In this way, PepsiCo has more in common with LVMH than with Coca-Cola. It is a House of Brands, not a branded house, and that structural choice has everything to do with how it innovates, acquires, and competes.</p>
+
+      <div class="hidden-fact">
+        <div class="hidden-fact-label">Something most people don't know</div>
+        <p>Pepsi-Cola was originally marketed in 1898 as a digestive aid and energy tonic, not a soft drink. Its name was derived from "dyspepsia," meaning indigestion, and the drink was formulated to mimic the effect of the pepsin enzyme. The first official slogan was "Exhilarating, Invigorating, Aids Digestion." In an ironic full circle, the company's most ambitious current innovation bets are in prebiotics and gut health. Over 125 years later, Pepsi has arrived back at the same destination it began, only this time with the science to back it up.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-num">23</div>
+          <div class="stat-label">Billion-dollar brands in the portfolio</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">200+</div>
+          <div class="stat-label">Countries and territories served</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">$99B</div>
+          <div class="stat-label">Revenue guidance for fiscal 2026</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">50+</div>
+          <div class="stat-label">Consecutive years of dividend increases</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BELIEF STRIP 1 -->
+<div class="belief-strip fade-up">
+  <blockquote>"If consumers are changing, and we don't change, we're going to be out of business."</blockquote>
+  <cite>Indra Nooyi, CEO 2006-2018</cite>
+</div>
+
+<!-- INNOVATION ERAS TIMELINE -->
+<section class="section section-warm fade-up" id="innovation-eras">
+  <span class="section-label">The Innovation Arc</span>
+  <h2 class="section-title">Five S-curves. <em>One recurring question:</em><br>Is the next one being built?</h2>
+
+  <p style="max-width: 680px; font-size: 16px; color: #555; line-height: 1.8; margin-bottom: 56px;">
+    In the Theta framework, innovation follows the lifecycle of an S-curve: slow at the start, steep in the middle, flat at the top. The fatal mistake is not seeing the flatness coming. PepsiCo has ridden five distinct S-curves since 1898, and each transition was triggered not by comfort, but by crisis.
+  </p>
+
+  <div class="era-timeline">
+    <!-- Era 1 -->
+    <div class="era-entry fade-up">
+      <div class="era-left">
+        <div class="era-years">1898<br>1960s</div>
+        <div class="era-leader">Caleb Bradham &amp; Charles Guth</div>
+        <div class="era-mode">Survival Mode</div>
+      </div>
+      <div class="era-right">
+        <div class="era-title">From apothecary to affordability machine</div>
+        <p class="era-desc">Pepsi-Cola was born in a pharmacy as a health tonic. It survived bankruptcy twice. The decisive innovation was not chemistry but pricing: in 1931, Charles Guth began selling a 12-ounce bottle for a nickel, exactly twice the volume of Coca-Cola for the same price. It was not a product innovation. It was an architectural one. The same liquid, a new format, a new value proposition. It saved the company and planted the idea that smart repositioning can do what superior product cannot.</p>
+        <div class="era-zones">
+          <span class="era-zone-badge" style="background:rgba(26,92,58,0.12);color:var(--core-green);">Core: Product defense</span>
+          <span class="era-zone-badge" style="background:rgba(181,132,26,0.12);color:var(--edge-amber);">Edge: Pricing architecture</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Era 2 -->
+    <div class="era-entry fade-up">
+      <div class="era-left">
+        <div class="era-years">1965<br>2000s</div>
+        <div class="era-leader">Donald Kendall &amp; Herman Lay</div>
+        <div class="era-mode">Expansion Mode</div>
+      </div>
+      <div class="era-right">
+        <div class="era-title">The merger that created a new category</div>
+        <p class="era-desc">The 1965 merger between Pepsi-Cola and Frito-Lay was a Beyond-level insight hidden inside a practical business deal. No one had built a company that owned both a major beverage and the dominant salty snack portfolio simultaneously. The combined entity created leverage competitors could not replicate: the same trucks, the same retail relationships, the same shelf negotiations. Acquisitions of Tropicana in 1998 and Quaker Oats (and with it, Gatorade) in 2001 deepened the model. PepsiCo became a category of one.</p>
+        <div class="era-zones">
+          <span class="era-zone-badge" style="background:rgba(26,92,58,0.12);color:var(--core-green);">Core: Scale &amp; distribution</span>
+          <span class="era-zone-badge" style="background:rgba(181,132,26,0.12);color:var(--edge-amber);">Edge: Category architecture</span>
+          <span class="era-zone-badge" style="background:rgba(139,26,26,0.12);color:var(--beyond-crimson);">Beyond: New category creation</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Era 3 -->
+    <div class="era-entry fade-up">
+      <div class="era-left">
+        <div class="era-years">2006<br>2018</div>
+        <div class="era-leader">Indra Nooyi</div>
+        <div class="era-mode">Vision Mode</div>
+      </div>
+      <div class="era-right">
+        <div class="era-title">Performance with Purpose: the deliberately uncomfortable decade</div>
+        <p class="era-desc">Nooyi arrived as CEO in 2006 seeing a curve that no one else wanted to call flat. Soda volumes were slowing. Obesity was becoming a political issue. The company's Core was generating profit, but she read the signals that the market was changing underneath it. She introduced "Performance with Purpose" and meant it literally: reduce sugar, cut sodium, reformulate trans fats, acquire challenger brands in health and wellness, and prove that doing good was not separate from doing well. Revenue grew from $35 billion to $63.5 billion over her tenure. Healthier products grew from 38% to nearly 50% of portfolio revenue. She planted seeds she knew she would not harvest.</p>
+        <div class="pull-quote">
+          <p>"I thought about the company the way a mother thinks about her family. You protect. You invest. And sometimes you have to say hard things."</p>
+          <cite>Indra Nooyi</cite>
+        </div>
+        <div class="era-zones">
+          <span class="era-zone-badge" style="background:rgba(26,92,58,0.12);color:var(--core-green);">Core: Reformulation at scale</span>
+          <span class="era-zone-badge" style="background:rgba(181,132,26,0.12);color:var(--edge-amber);">Edge: Health acquisitions (KeVita, Bare)</span>
+          <span class="era-zone-badge" style="background:rgba(139,26,26,0.12);color:var(--beyond-crimson);">Beyond: Regenerative &amp; sustainability vision</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Era 4 -->
+    <div class="era-entry fade-up">
+      <div class="era-left">
+        <div class="era-years">2018<br>2024</div>
+        <div class="era-leader">Ramon Laguarta</div>
+        <div class="era-mode">Operator Mode</div>
+      </div>
+      <div class="era-right">
+        <div class="era-title">Winning with Purpose: tighter, faster, fewer</div>
+        <p class="era-desc">Laguarta inherited Nooyi's vision and chose to narrow it. His mandate was operational clarity: identify the power brands, invest behind them, and reduce the tail that consumed attention without generating returns. The acquisitions under his watch became more surgical. SodaStream brought a new channel: home carbonation for consumers, then SodaStream Professional, which recombined the same asset into offices, hotels, and food service, turning a consumer gadget into a recurring commercial revenue stream. Bubly disrupted the sparkling water category from the inside. The language shifted from "doing good" to "winning with purpose." Both were correct for their moment. Nooyi planted. Laguarta harvested. The question his critics ask is whether he also stopped planting.</p>
+        <div class="era-zones">
+          <span class="era-zone-badge" style="background:rgba(26,92,58,0.12);color:var(--core-green);">Core: Brand portfolio focus</span>
+          <span class="era-zone-badge" style="background:rgba(181,132,26,0.12);color:var(--edge-amber);">Edge: SodaStream, Bubly, Gatorade Zero</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Era 5 -->
+    <div class="era-entry fade-up">
+      <div class="era-left">
+        <div class="era-years">2025<br>Present</div>
+        <div class="era-leader">Laguarta + Elliott</div>
+        <div class="era-mode">Pressure Mode</div>
+      </div>
+      <div class="era-right">
+        <div class="era-title">The activist reset: surgery as strategy</div>
+        <p class="era-desc">In September 2025, hedge fund Elliott Management acquired a roughly $4 billion stake in PepsiCo and diagnosed the company as suffering from strategic drift and margin erosion. What followed was the most accelerated operational transformation in PepsiCo's recent history: 20% of the product lineup cut, three plants closed, manufacturing lines consolidated. The logic was a closed loop: Core efficiency savings would fund targeted Edge investments. poppi acquired for $1.95 billion. Siete acquired for $1.2 billion. Pepsi Prebiotic launched. The bet is clean and rational. Whether it is also visionary is a different question.</p>
+        <div class="era-zones">
+          <span class="era-zone-badge" style="background:rgba(26,92,58,0.12);color:var(--core-green);">Core: Aggressive simplification</span>
+          <span class="era-zone-badge" style="background:rgba(181,132,26,0.12);color:var(--edge-amber);">Edge: poppi, Siete, prebiotics, protein</span>
+          <span class="era-zone-badge" style="background:rgba(139,26,26,0.12);color:var(--beyond-crimson);">Beyond: Structurally underfunded</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKETING SECTION -->
+<section class="section section-white fade-up" id="marketing">
+  <span class="section-label">The Marketing Engine</span>
+  <h2 class="section-title">For a challenger brand, marketing<br><em>was never optional.</em></h2>
+
+  <p style="max-width: 720px; font-size: 16px; color: #444; line-height: 1.8; margin-bottom: 48px;">
+    PepsiCo's marketing history is a masterclass in what the Theta framework calls architectural innovation applied to brand perception. When you are permanently second in the beverage category, you cannot win by playing the same game. You have to change the rules. And repeatedly, PepsiCo did. What is less often noticed is how marketing shaped product innovation itself, not the other way around.
+  </p>
+
+  <div class="marketing-grid">
+    <div class="marketing-card fade-up">
+      <div class="mcard-year">1975</div>
+      <div class="mcard-title">The Pepsi Challenge</div>
+      <p class="mcard-desc">Blind taste tests in shopping malls revealed that most consumers preferred Pepsi's sweeter profile over Coca-Cola. The marketing was "elegantly simple, brutally effective, and impossibly difficult to counter." More importantly, it put the consumer in the role of judge. This was not advertising. It was a scientific provocation. The fallout was seismic: Coca-Cola's panic response, New Coke, became the greatest unforced error in brand history.</p>
+    </div>
+    <div class="marketing-card fade-up">
+      <div class="mcard-year">1992</div>
+      <div class="mcard-title">Cindy Crawford at the Vending Machine</div>
+      <p class="mcard-desc">A single Super Bowl ad, no product specs, no claims. Just supermodel Cindy Crawford stopping traffic to drink a Pepsi in the desert sun while two boys watch slack-jawed, then agree: "Is that a great new Pepsi can, or what?" The ad sold youth, aspiration, and irreverence in thirty seconds. It was so embedded in culture that Pepsi recreated it with Crawford in 2018, over two decades later, to the same effect.</p>
+    </div>
+    <div class="marketing-card fade-up">
+      <div class="mcard-year">2026</div>
+      <div class="mcard-title">The Polar Bear Gambit</div>
+      <p class="mcard-desc">For Super Bowl LX, Pepsi ran an ad directed by Taika Waititi in which a polar bear, one of Coca-Cola's most recognizable mascots since 1993, is presented with two unmarked cola cups. The bear tastes both and definitively chooses Pepsi Zero Sugar. It is the most audacious brand provocation in the category's history. According to Ipsos recall data, Pepsi achieved 12 million spontaneous brand recollections the next day, second only to Budweiser.</p>
+    </div>
+  </div>
+
+  <div class="pull-quote fade-up" style="max-width: 700px;">
+    <p>"Marketing does not follow innovation at PepsiCo. It precedes it. The Pepsi Challenge did not advertise a product; it forced Pepsi to become the product people actually preferred."</p>
+    <cite>Theta Framework Analysis, 2026</cite>
+  </div>
+
+  <p style="max-width: 720px; font-size: 16px; color: #444; line-height: 1.8; margin-top: 16px;">
+    In 2024, PepsiCo announced that 85 to 90 percent of its media investment would move to digital channels, explicitly stepping away from linear broadcast television. This was not merely a budget reallocation. It was a signal that the company's innovation in go-to-market was outpacing its innovation in products. The challenge for PepsiCo is whether marketing brilliance can continue to compensate for Edge and Beyond portfolios that are still catching up.
+  </p>
+</section>
+
+<!-- THETA MAP -->
+<section class="section section-warm fade-up" id="theta-map">
+  <span class="section-label">Theta Innovation Map</span>
+  <h2 class="section-title">Where PepsiCo's bets<br><em>actually sit.</em></h2>
+
+  <div class="theta-map-grid">
+    <div>
+      <div class="zone-legend">
+        <div class="zone-pill core">
+          <div class="zone-pill-label">
+            <div class="zone-dot" style="background:var(--core-green)"></div>
+            Core Zone (65%)
+          </div>
+          <div class="zone-pill-desc">Existing markets, incremental improvements. Pepsi Zero Sugar, Gatorade Zero, Frito-Lay operational efficiency, SKU rationalization, DSD digitization. The engine room.</div>
+        </div>
+        <div class="zone-pill edge">
+          <div class="zone-pill-label">
+            <div class="zone-dot" style="background:var(--edge-amber)"></div>
+            Edge Zone (25%)
+          </div>
+          <div class="zone-pill-desc">Architectural and disruptive bets. Pepsi Prebiotic, poppi, SodaStream Professional, Doritos Protein, Siete Foods. The next S-curve under construction.</div>
+        </div>
+        <div class="zone-pill beyond">
+          <div class="zone-pill-label">
+            <div class="zone-dot" style="background:var(--beyond-crimson)"></div>
+            Beyond Zone (10%)
+          </div>
+          <div class="zone-pill-desc">Regenerative agriculture, alternative protein R&D, biodegradable packaging pilots, AI-driven flavor prediction. Present, but structurally orphaned.</div>
+        </div>
+      </div>
+
+      <div class="reading-card" style="margin-top:24px;">
+        <p><strong>A note on reading this map:</strong> The Beyond zone at PepsiCo contains a critical subtlety. Much of what appears as "transformational innovation" is actually defensive Core protection in disguise. Regenerative agriculture is supply chain resilience against climate risk. Biodegradable packaging is regulatory anticipation. The offensive moonshots, the bets on new categories that do not yet exist, remain largely invisible.</p>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <canvas id="thetaScatter" height="400"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO ALLOCATION -->
+<section class="section section-white fade-up" id="portfolio">
+  <span class="section-label">Portfolio Allocation</span>
+  <h2 class="section-title">The funding reality<br><em>behind the narrative.</em></h2>
+
+  <div class="portfolio-grid">
+    <div class="donut-wrap">
+      <canvas id="donutChart" style="width:100%;max-width:340px;"></canvas>
+      <div class="donut-center">
+        <div class="donut-center-text">3 zones<br>active</div>
+      </div>
+    </div>
+
+    <div class="zone-bars">
+      <div class="zone-bar-item">
+        <div class="zone-bar-header">
+          <span class="zone-bar-name" style="color:var(--core-green);">Core Zone</span>
+          <span class="zone-bar-pcts">Actual 65% vs. Benchmark 70%</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:65%;background:var(--core-green);"></div>
+          <div class="bar-benchmark" style="left:70%;"></div>
+        </div>
+        <p class="zone-bar-commentary">Slightly below benchmark, which is unusual. The activist-driven SKU rationalization is pulling resources toward efficiency, temporarily compressing Core's share as a percentage of innovation spend while growing absolute Core output.</p>
+      </div>
+
+      <div class="zone-bar-item">
+        <div class="zone-bar-header">
+          <span class="zone-bar-name" style="color:var(--edge-amber);">Edge Zone</span>
+          <span class="zone-bar-pcts">Actual 25% vs. Benchmark 20%</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:25%;background:var(--edge-amber);"></div>
+          <div class="bar-benchmark" style="left:20%;"></div>
+        </div>
+        <p class="zone-bar-commentary">Above benchmark, driven by poppi and Siete acquisitions. The question is whether acquisition-led Edge counts the same as organically built Edge. Buying poppi gives distribution, not the science behind prebiotic formulation.</p>
+      </div>
+
+      <div class="zone-bar-item">
+        <div class="zone-bar-header">
+          <span class="zone-bar-name" style="color:var(--beyond-crimson);">Beyond Zone</span>
+          <span class="zone-bar-pcts">Actual 10% vs. Benchmark 10%</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:10%;background:var(--beyond-crimson);"></div>
+          <div class="bar-benchmark" style="left:10%;"></div>
+        </div>
+        <p class="zone-bar-commentary">On paper, at benchmark. In practice, much of this spend is defensive sustainability rather than offensive transformation. No ring-fenced Beyond fund exists. No stage-appropriate metrics exist. The 10% is fragile.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section class="section section-warm fade-up" id="competitors">
+  <span class="section-label">Competitive Landscape</span>
+  <h2 class="section-title">Who is building the<br><em>next decade of food?</em></h2>
+
+  <p style="max-width: 720px; font-size: 16px; color: #555; line-height: 1.8; margin-bottom: 40px;">
+    The competitive comparison that matters is not PepsiCo versus Coca-Cola in share of cola sales. It is PepsiCo versus the entire field in share of where food and beverage is going: personalized nutrition, functional ingredients, food as medicine, and sustainable supply chains. On that map, the competition is more uneven than the headlines suggest.
+  </p>
+
+  <div class="competitor-grid">
+    <div class="competitor-card featured">
+      <div class="comp-name">PepsiCo</div>
+      <div class="comp-tag">Acquisition-led acquirer; functional pivot in progress</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div> Core: Frito-Lay, Gatorade, Zero Sugar</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div> Edge: poppi, Siete, Pepsi Prebiotic, Doritos Protein</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson)"></div> Beyond: Regenerative ag, packaging pilots</div>
+      </div>
+      <span class="verdict-chip chip-blue">Disciplined Transformer</span>
+    </div>
+
+    <div class="competitor-card">
+      <div class="comp-name">Coca-Cola</div>
+      <div class="comp-tag">Digital-experience-led; thin science pipeline</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div> Core: Classic beverages, packaging reform</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div> Edge: AI flavors (Y3000), metaverse experiences</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:rgba(139,26,26,0.3)"></div> Beyond: Digital acceleration only</div>
+      </div>
+      <span class="verdict-chip chip-amber">Brand Innovator, Science Gap</span>
+    </div>
+
+    <div class="competitor-card">
+      <div class="comp-name">Nestlé</div>
+      <div class="comp-tag">Deep-science-led; strongest Beyond portfolio in CPG</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div> Core: Coffee, dairy, nutrition</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div> Edge: Healthy ageing (Vital), gut health</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson)"></div> Beyond: Microbiome science, biological ageing</div>
+      </div>
+      <span class="verdict-chip chip-green">Science-Led Leader</span>
+    </div>
+
+    <div class="competitor-card">
+      <div class="comp-name">Monster</div>
+      <div class="comp-tag">Marketing-led; zero visible Beyond investment</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div> Core: Energy drinks, zero-sugar Ultra</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div> Edge: FLRT (women), demographic expansion</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:rgba(139,26,26,0.2)"></div> Beyond: None identified</div>
+      </div>
+      <span class="verdict-chip chip-amber">Core Dominant, No Vision</span>
+    </div>
+
+    <div class="competitor-card">
+      <div class="comp-name">Unilever</div>
+      <div class="comp-tag">AI-infrastructure-led; betting on data as the next moat</div>
+      <div class="comp-zones">
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div> Core: AI-driven SKU optimization</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div> Edge: Google Cloud AI, plant-based challenge</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson)"></div> Beyond: Agentic commerce, conversational AI</div>
+      </div>
+      <span class="verdict-chip chip-blue">Data-Driven Modernizer</span>
+    </div>
+  </div>
+
+  <!-- Radar Chart -->
+  <div class="chart-wrap fade-up" style="max-width: 700px; margin: 0 auto;">
+    <canvas id="radarChart" height="400"></canvas>
+  </div>
+
+  <div class="pull-quote fade-up" style="max-width: 700px; margin-top: 40px;">
+    <p>"What's Edge for PepsiCo is already Core for poppi. PepsiCo didn't build the prebiotic soda category. It bought its way into a category that challengers proved. You can buy distribution. You cannot buy a decade of science."</p>
+    <cite>Theta Competitive Analysis, 2026</cite>
+  </div>
+</section>
+
+<!-- STRENGTHS AND WEAKNESSES -->
+<section class="section section-white fade-up" id="sw">
+  <span class="section-label">Strengths &amp; Weaknesses</span>
+  <h2 class="section-title">Intellectual honesty<br><em>is the prerequisite.</em></h2>
+
+  <div class="sw-grid">
+    <div class="sw-panel strengths">
+      <div class="sw-panel-title" style="color:var(--core-green);">Where PepsiCo is genuinely formidable</div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <div class="sw-lead">The DSD network as an irreplaceable moat</div>
+          <div class="sw-detail">Direct-Store-Delivery means PepsiCo employees stock shelves themselves. This is not logistics efficiency. It is merchandising intelligence, real-time shelf data, and a physical presence that no challenger brand can match without decades of capital and relationships.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <div class="sw-lead">Frito-Lay as a perpetual growth engine</div>
+          <div class="sw-detail">While analysts focus on soda volumes, Frito-Lay's snack portfolio generates a disproportionate share of PepsiCo's North American profit. The savory snack category is structurally resilient. People do not stop eating chips during recessions; they trade down within the category, which PepsiCo still dominates.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <div class="sw-lead">The self-financing innovation loop</div>
+          <div class="sw-detail">The 2026 model of using operational savings to fund Edge acquisitions is structurally sound. PepsiCo can cut its way to funding its future, a luxury most challenger brands do not have. The $3 billion in cost savings from the activist-influenced reset will fund the next wave of functional bets.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <div class="sw-lead">Acquired brand curation as a capability</div>
+          <div class="sw-detail">poppi and Siete represent a different kind of acquisition skill: identifying challenger brands that have already crossed the early-adopter chasm and giving them PepsiCo-scale distribution without destroying their soul. This is harder than it looks. Rockstar proved that.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <div class="sw-lead">The Nooyi legacy as a living asset</div>
+          <div class="sw-detail">The health-and-wellness pivots of 2006 to 2018 planted the institutional muscle for today's functional beverage bets. The teams, the supplier relationships, the consumer insight infrastructure built under "Performance with Purpose" are the foundation that poppi is being integrated into.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sw-panel weaknesses">
+      <div class="sw-panel-title" style="color:var(--beyond-crimson);">Where the gaps are real</div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <div class="sw-lead">Beyond is structurally orphaned</div>
+          <div class="sw-detail">No ring-fenced Beyond fund. No chief futurist. No stage-appropriate metrics for transformational bets. No visible university research collaborations. What Nestlé spends building proprietary microbiome science, PepsiCo spends acquiring proof-of-concept brands that someone else already de-risked.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <div class="sw-lead">Acquisition dependency as an innovation model</div>
+          <div class="sw-detail">PepsiCo's Edge strategy relies on the startup ecosystem continuously generating viable acquisition targets. If challenger brands consolidate with competitors first, or if the next prebiotic category is built by a company Pepsi fails to identify in time, the pipeline stalls. Building externally is faster. It is also more fragile.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <div class="sw-lead">Quarterly pressure compresses long-horizon thinking</div>
+          <div class="sw-detail">Elliott's influence, however collaborative in tone, has anchored innovation to a 12 to 24 month ROI expectation. Transformational innovation operates on 7 to 15 year cycles. The same board that approves the poppi integration also reviews quarterly volume trends. These are incompatible evaluation windows for the same leadership team.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <div class="sw-lead">The AI gap relative to peers</div>
+          <div class="sw-detail">Unilever has committed to a multi-year Google Cloud AI partnership for agentic commerce and demand prediction. Coca-Cola is using AI to co-create flavors and consumer experiences. PepsiCo's visible AI investments are operational, not product-facing, not consumer-visible. In a world where the next category may be personalized nutrition powered by AI, this is a meaningful lag.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <div class="sw-lead">Maverick culture under pressure</div>
+          <div class="sw-detail">The 20% SKU reduction and plant closures signal an environment where ROI discipline is rewarded and experimentation is not. Low failure rates in an innovation portfolio do not mean the team is doing exceptional work. They often mean the team has stopped taking risks worth failing at.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INNOVATION DILEMMAS -->
+<section class="section section-ink fade-up" id="dilemmas">
+  <span class="section-label" style="color:var(--pepsi-accent);">The Hard Questions</span>
+  <h2 class="section-title" style="color:#fff;">Innovation dilemmas that<br><em>have no clean answers.</em></h2>
+
+  <p style="max-width: 680px; font-size: 16px; color: rgba(255,255,255,0.55); line-height: 1.8; margin-bottom: 48px;">
+    The Theta framework does not offer comfortable prescriptions. It surfaces the tensions that every company at PepsiCo's stage must hold simultaneously without resolving them prematurely. These are PepsiCo's.
+  </p>
+
+  <div class="dilemma-cards">
+    <div class="dilemma-card fade-up">
+      <div class="dilemma-num">01</div>
+      <div class="dilemma-title">The Acquirer's Paradox</div>
+      <p class="dilemma-desc">PepsiCo's innovation model is built on acquiring companies that have already proven their market. This is efficient. It de-risks the Edge. But the Theta S-curve teaches that the companies which build their next curve from within, rather than purchasing it from outside, develop institutional muscle that cannot be bought. Tesla tore out Mobileye and built from scratch. The breakup became the catalyst for a 10-year advantage. PepsiCo has not yet had its Mobileye moment. The question is whether it needs one.</p>
+    </div>
+
+    <div class="dilemma-card fade-up">
+      <div class="dilemma-num">02</div>
+      <div class="dilemma-title">The Activist's Clock vs. The Future's Timeline</div>
+      <p class="dilemma-desc">Elliott Management's presence forces quarterly accountability on a company whose most important innovation bets operate on 7 to 15 year timelines. The Beyond zone has no natural constituency in PepsiCo's stakeholder map. The board wants 3 to 5 year returns. Institutional shareholders want quarterly improvement. Long-term family holders barely exist in PepsiCo's widely held structure. The question is not whether transformational innovation matters. It is: who in the room is willing to wait for it?</p>
+    </div>
+
+    <div class="dilemma-card fade-up">
+      <div class="dilemma-num">03</div>
+      <div class="dilemma-title">Defense Disguised as Vision</div>
+      <p class="dilemma-desc">Regenerative agriculture is being positioned as Beyond innovation. But it is also, primarily, supply chain resilience against climate disruption to PepsiCo's corn, potato, and oat inputs. Biodegradable packaging is being positioned as transformational. But it is mostly regulatory anticipation. When defensive necessity is relabeled as visionary ambition, the Beyond zone fills with the wrong bets, and the truly speculative seeds never get planted. The risk is confusing survival with moonshots.</p>
+    </div>
+
+    <div class="dilemma-card fade-up">
+      <div class="dilemma-num">04</div>
+      <div class="dilemma-title">The Nestlé Warning</div>
+      <p class="dilemma-desc">Nestlé is conducting longitudinal clinical studies with Cleveland Clinic and UC Irvine into gut microbiome science and biological ageing. They have proprietary bioactive compounds, patented protein technologies, and a 10-year head start in therapeutic nutrition. If food becomes medicine at scale, as the evidence trajectory strongly suggests, PepsiCo will be in the position of acquiring proof-of-concept companies that Nestlé's science helped make possible. The question is whether that is a viable long-term position.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CEO QUESTIONS -->
+<section class="section section-warm fade-up" id="ceo-questions">
+  <span class="section-label">What the Theta Framework Asks</span>
+  <h2 class="section-title">Questions we would put<br><em>in front of the CEO.</em></h2>
+
+  <p style="max-width: 680px; font-size: 16px; color: #555; line-height: 1.8; margin-bottom: 56px;">
+    The Theta framework is not a performance review. It is a diagnostic. These are the questions it surfaces about PepsiCo that a press release cannot answer and a quarterly earnings call will not ask. They are not accusations. They are the kind of questions a company that intends to be relevant in 2035 needs to be able to answer today.
+  </p>
+
+  <div class="ceo-questions">
+    <div class="ceo-q-item fade-up">
+      <div class="ceo-q-num">01</div>
+      <div class="ceo-q-content">
+        <div class="ceo-q-text">"If poppi succeeds entirely, what percentage of North American beverage revenue will it represent in five years? And what is the plan if it doesn't?"</div>
+        <div class="ceo-q-why">PepsiCo's Edge strategy is currently concentrated in functional beverages, and poppi is the centerpiece acquisition. A single-bet Edge is not a portfolio. It is a wager. The framework asks whether the architecture of the bet matches the ambition behind it.</div>
+      </div>
+    </div>
+
+    <div class="ceo-q-item fade-up">
+      <div class="ceo-q-num">02</div>
+      <div class="ceo-q-content">
+        <div class="ceo-q-text">"Who at PepsiCo is currently employed to think about 2038, what is their reporting line, and what is their budget?"</div>
+        <div class="ceo-q-why">This question is not rhetorical. In the Theta framework, the Beyond zone requires a named champion with protected funding and a timeline insulated from quarterly review. If the answer is "no one specifically," that is the diagnostic. The governance gap is not a leadership failure. It is a structural one. And structural problems require structural answers.</div>
+      </div>
+    </div>
+
+    <div class="ceo-q-item fade-up">
+      <div class="ceo-q-num">03</div>
+      <div class="ceo-q-content">
+        <div class="ceo-q-text">"Nestlé is running longitudinal clinical trials on gut microbiome science and biological ageing. What is PepsiCo's equivalent? And if there isn't one, is that a deliberate choice or an oversight?"</div>
+        <div class="ceo-q-why">The distinction matters. A deliberate choice to let Nestlé own the science while PepsiCo owns the distribution is a coherent strategy. An oversight is a vulnerability. The Theta framework requires knowing which one it is, because the responses are entirely different.</div>
+      </div>
+    </div>
+
+    <div class="ceo-q-item fade-up">
+      <div class="ceo-q-num">04</div>
+      <div class="ceo-q-content">
+        <div class="ceo-q-text">"What would a successful intelligent failure in the Beyond zone look like at PepsiCo, and when did we last have one?"</div>
+        <div class="ceo-q-why">The Theta framework holds that low failure rates in an innovation portfolio are not a sign of excellence. They are often a sign that the team has stopped taking risks worth failing at. If PepsiCo cannot name a Beyond-zone experiment that failed well, taught the organization something material, and was celebrated rather than buried, then the Beyond zone is not being used. It is being performed.</div>
+      </div>
+    </div>
+
+    <div class="ceo-q-item fade-up">
+      <div class="ceo-q-num">05</div>
+      <div class="ceo-q-content">
+        <div class="ceo-q-text">"After the 20% SKU cut, how many of the remaining products are genuinely differentiated, and how many are simply the ones we did not have the courage to cut?"</div>
+        <div class="ceo-q-why">Simplification is not the same as focus. The Theta framework distinguishes between eliminating complexity and building clarity. The question is whether the remaining portfolio represents PepsiCo's best thinking about where consumers are going, or simply its most defensible thinking about where consumers have been.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA DIAGNOSTIC -->
+<section class="section section-ink fade-up" id="diagnostic">
+  <span class="section-label" style="color:var(--pepsi-accent);">Theta Diagnostic</span>
+  <h2 class="section-title" style="color:#fff;">The full picture<br><em>requires honesty.</em></h2>
+
+  <div class="diag-grid">
+    <!-- LEFT COLUMN -->
+    <div>
+      <div class="diag-block">
+        <div class="diag-block-title">Portfolio Mapping</div>
+        <div class="archetype-grid">
+          <div class="archetype-box ok">
+            <div class="arch-label">Core</div>
+            <div class="arch-score">Strong</div>
+          </div>
+          <div class="archetype-box ok">
+            <div class="arch-label">Edge</div>
+            <div class="arch-score">Building</div>
+          </div>
+          <div class="archetype-box mid">
+            <div class="arch-label">Beyond</div>
+            <div class="arch-score">Fragile</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Leadership &amp; Culture Assessment</div>
+        <div class="culture-row"><span class="culture-label">Leadership Mode</span><span class="culture-score score-mid">Operator+ (Activist Edge)</span></div>
+        <div class="culture-row"><span class="culture-label">Agility</span><span class="culture-score score-mid">Operational: High / Innovation: Moderate</span></div>
+        <div class="culture-row"><span class="culture-label">Consciousness</span><span class="culture-score score-high">High</span></div>
+        <div class="culture-row"><span class="culture-label">Courage</span><span class="culture-score score-high">High</span></div>
+        <div class="culture-row"><span class="culture-label">Failure Tolerance</span><span class="culture-score score-low">Declining Post-Elliott</span></div>
+        <div class="culture-row"><span class="culture-label">Maverick Tolerance</span><span class="culture-score score-mid">ROI-Constrained</span></div>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Mavericks &amp; Risk Tolerance</div>
+        <p style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.7;">Mavericks exist at PepsiCo, but the post-Elliott environment rewards those who can prove ROI within 12 months. The internal innovator who championed Pepsi Prebiotic exists. So does the acquisition team behind poppi. But the internal skunkworks, the protected autonomous team working on something that will not pay off for a decade, is not visible. As the Theta framework warns: low failure rates in an innovation portfolio are not a sign of excellence. They are often a sign that the team has stopped taking risks worth failing at.</p>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div>
+      <div class="diag-block">
+        <div class="diag-block-title">Customer Signal Alignment</div>
+        <p style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:12px;">PepsiCo listens to core customers through scanner data, loyalty programs, and retail feedback with precision. It listens to early adopters through acquisition targets. poppi showed them that prebiotic soda had a market before PepsiCo's own teams had validated it. The gap is the absence of a systematized Customer Signal Ops function. Unscripted insights from the frontline do not flow formally into product strategy. The company buys signals rather than building the antenna.</p>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Critical Tension</div>
+        <div class="tension-box">
+          <strong>The Structural Risk</strong>
+          The Beyond zone at PepsiCo has no natural champion, no ring-fenced funding, no stage-appropriate metrics, and no timeline insulation from quarterly pressure. This is not a leadership failure. It is a governance failure. Until the board explicitly ring-fences Beyond investment with multi-year evaluation windows, transformational innovation will continue to be crowded out by the very efficiency gains designed to fund it.
+        </div>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Zone Allocation vs. Benchmark</div>
+        <div class="inline-zone-bar">
+          <span class="inline-bar-label">Core</span>
+          <div class="inline-bar-track">
+            <div class="inline-bar-fill" style="width:65%;background:var(--core-green);"></div>
+          </div>
+          <span class="inline-bar-pct">65% / 70%</span>
+        </div>
+        <div class="inline-zone-bar">
+          <span class="inline-bar-label">Edge</span>
+          <div class="inline-bar-track">
+            <div class="inline-bar-fill" style="width:25%;background:var(--edge-amber);"></div>
+          </div>
+          <span class="inline-bar-pct">25% / 20%</span>
+        </div>
+        <div class="inline-zone-bar">
+          <span class="inline-bar-label">Beyond</span>
+          <div class="inline-bar-track">
+            <div class="inline-bar-fill" style="width:10%;background:var(--beyond-crimson);"></div>
+          </div>
+          <span class="inline-bar-pct">10% / 10%</span>
+        </div>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Relativity Assessment</div>
+        <p style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.7;">In a mature CPG industry, transformational means something different than in tech. PepsiCo's Beyond investments are appropriate to their industry context. Regenerative agriculture is genuinely transformational for a company whose supply chain depends on commodity crops. But relative to Nestlé's biological ageing science, PepsiCo's Beyond zone looks like what it is: a company innovating at the ceiling of what its shareholder base will tolerate, rather than the ceiling of what the category requires.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERDICT -->
+  <div class="verdict-block fade-up">
+    <div class="verdict-label">Theta Verdict</div>
+    <div class="verdict-title">Balanced but Vulnerable</div>
+    <div class="verdict-symbols">☑ ☑ △</div>
+    <p class="verdict-desc">PepsiCo's Core is strong and self-aware. Its Edge is actively being built through disciplined acquisition and targeted functional bets. Its Beyond is present on paper but fragile in practice, underfunded by governance rather than ambition. The company is not in danger of the near term. It is in danger of the far term arriving sooner than the board is willing to look. The Theta insight is this: the angle of change is steepest when you are looking away from the future. PepsiCo is looking at the next three years with exceptional clarity. The question is who is looking at 2035.</p>
+  </div>
+</section>
+
+<!-- CLOSING BELIEF STRIP -->
+<div class="belief-strip fade-up" style="background:var(--ink);border-top:1px solid rgba(0,75,147,0.3);">
+  <blockquote style="color:rgba(255,255,255,0.9);">"If you only build what is obvious, you will miss what is inevitable."</blockquote>
+  <cite style="color:rgba(255,255,255,0.35);">The Theta Framework / Corporate Startup Handbook</cite>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Theta Framework &nbsp;/ &nbsp;2026</div>
+  <div class="footer-right">Strategic Innovation Case Study &nbsp;/&nbsp; PepsiCo Inc.</div>
+</footer>
+
+<script>
+// INTERSECTION OBSERVER
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// CHART DEFAULTS
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+
+// THETA SCATTER CHART
+const scatterCtx = document.getElementById('thetaScatter').getContext('2d');
+
+const pointLabels = {
+  id: 'pointLabels',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    chart.data.datasets.forEach((dataset, i) => {
+      const meta = chart.getDatasetMeta(i);
+      meta.data.forEach((point, j) => {
+        const label = dataset.data[j].label;
+        if (label) {
+          ctx.save();
+          ctx.fillStyle = dataset.borderColor;
+          ctx.font = "11px 'DM Sans', sans-serif";
+          ctx.fillText(label, point.x + 10, point.y + 4);
+          ctx.restore();
+        }
+      });
+    });
+  }
+};
+
+new Chart(scatterCtx, {
+  type: 'scatter',
+  plugins: [pointLabels],
+  data: {
+    datasets: [
+      {
+        label: 'Core Zone',
+        data: [
+          { x: 1.2, y: 1.1, label: 'Pepsi Zero Sugar' },
+          { x: 1.6, y: 1.4, label: 'Gatorade Zero' },
+          { x: 1.0, y: 0.9, label: 'SKU Optimization' },
+          { x: 1.8, y: 1.2, label: "Lay's Avocado Oil" },
+        ],
+        backgroundColor: 'rgba(26, 92, 58, 0.7)',
+        borderColor: 'rgba(26, 92, 58, 1)',
+        pointRadius: 8,
+        pointHoverRadius: 10,
+      },
+      {
+        label: 'Edge Zone',
+        data: [
+          { x: 2.8, y: 2.6, label: 'poppi' },
+          { x: 2.4, y: 2.8, label: 'Pepsi Prebiotic' },
+          { x: 3.1, y: 2.3, label: 'Doritos Protein' },
+          { x: 2.6, y: 2.1, label: 'SodaStream Pro' },
+          { x: 2.9, y: 3.0, label: 'Siete Foods' },
+        ],
+        backgroundColor: 'rgba(181, 132, 26, 0.7)',
+        borderColor: 'rgba(181, 132, 26, 1)',
+        pointRadius: 8,
+        pointHoverRadius: 10,
+      },
+      {
+        label: 'Beyond Zone',
+        data: [
+          { x: 3.8, y: 3.7, label: 'Regenerative Ag' },
+          { x: 4.2, y: 4.0, label: 'Alt Protein R&D' },
+          { x: 3.5, y: 4.3, label: 'AI Flavor Prediction' },
+          { x: 4.5, y: 3.4, label: 'Circular Packaging' },
+        ],
+        backgroundColor: 'rgba(139, 26, 26, 0.7)',
+        borderColor: 'rgba(139, 26, 26, 1)',
+        pointRadius: 8,
+        pointHoverRadius: 10,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { padding: 20, usePointStyle: true, pointStyleWidth: 10, font: { size: 12 } }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(10, 22, 40, 0.92)',
+        titleColor: '#fff',
+        bodyColor: 'rgba(255,255,255,0.7)',
+        padding: 12,
+        callbacks: {
+          label: (ctx) => ` ${ctx.raw.label || 'Initiative'}`
+        }
+      }
+    },
+    scales: {
+      x: {
+        min: 0, max: 5,
+        title: { display: true, text: 'Market Reach  →  Existing → New → Emerging → Speculative', color: '#888', font: { size: 11 } },
+        ticks: { display: false },
+        grid: { color: 'rgba(0,75,147,0.08)' },
+        border: { display: false }
+      },
+      y: {
+        min: 0, max: 5,
+        title: { display: true, text: 'Technology Change  →  Incremental → Moderate → High → Radical', color: '#888', font: { size: 11 } },
+        ticks: { display: false },
+        grid: { color: 'rgba(0,75,147,0.08)' },
+        border: { display: false }
+      }
+    }
+  }
+});
+
+// DONUT CHART
+const donutCtx = document.getElementById('donutChart').getContext('2d');
+new Chart(donutCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Core (65%)', 'Edge (25%)', 'Beyond (10%)'],
+    datasets: [{
+      data: [65, 25, 10],
+      backgroundColor: [
+        'rgba(26, 92, 58, 0.85)',
+        'rgba(181, 132, 26, 0.85)',
+        'rgba(139, 26, 26, 0.85)',
+      ],
+      borderWidth: 0,
+      hoverOffset: 4
+    }]
+  },
+  options: {
+    cutout: '68%',
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { padding: 20, usePointStyle: true, pointStyleWidth: 10, font: { size: 12 } }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(10, 22, 40, 0.92)',
+        titleColor: '#fff',
+        bodyColor: 'rgba(255,255,255,0.7)',
+        padding: 12,
+      }
+    }
+  }
+});
+
+// RADAR CHART
+const radarCtx = document.getElementById('radarChart').getContext('2d');
+new Chart(radarCtx, {
+  type: 'radar',
+  data: {
+    labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'AI Readiness', 'Distribution Scale', 'Science Depth'],
+    datasets: [
+      {
+        label: 'PepsiCo',
+        data: [82, 70, 42, 44, 92, 38],
+        borderColor: 'rgba(0, 75, 147, 0.9)',
+        backgroundColor: 'rgba(0, 75, 147, 0.12)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(0,75,147,0.9)',
+        pointRadius: 4,
+      },
+      {
+        label: 'Coca-Cola',
+        data: [80, 55, 35, 60, 85, 30],
+        borderColor: 'rgba(227, 0, 11, 0.8)',
+        backgroundColor: 'rgba(227, 0, 11, 0.07)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(227,0,11,0.8)',
+        pointRadius: 4,
+      },
+      {
+        label: 'Nestlé',
+        data: [74, 72, 82, 52, 76, 88],
+        borderColor: 'rgba(181, 132, 26, 0.9)',
+        backgroundColor: 'rgba(181, 132, 26, 0.1)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(181,132,26,0.9)',
+        pointRadius: 4,
+      },
+      {
+        label: 'Unilever',
+        data: [72, 60, 58, 78, 74, 42],
+        borderColor: 'rgba(139, 26, 26, 0.8)',
+        backgroundColor: 'rgba(139, 26, 26, 0.07)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(139,26,26,0.8)',
+        pointRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { display: false, stepSize: 20 },
+        grid: { color: 'rgba(0,0,0,0.07)' },
+        angleLines: { color: 'rgba(0,0,0,0.07)' },
+        pointLabels: { font: { size: 11, family: "'DM Sans', sans-serif" }, color: '#555' }
+      }
+    },
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { padding: 20, usePointStyle: true, pointStyleWidth: 10, font: { size: 12 } }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(10, 22, 40, 0.92)',
+        titleColor: '#fff',
+        bodyColor: 'rgba(255,255,255,0.7)',
+        padding: 12,
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
