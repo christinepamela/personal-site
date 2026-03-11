@@ -1,0 +1,2276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unilever | The Theta Framework Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --uni-blue: #1E3C72;
+    --uni-red: #C41E3A;
+    --uni-gold: #B8942A;
+    --ink: #0E1420;
+    --ink-soft: #1C2B3A;
+    --paper: #F7F5F0;
+    --paper-warm: #EFEBE2;
+    --muted: #7A8A96;
+    --core-green: #2D6A4F;
+    --edge-amber: #B5841A;
+    --beyond-crimson: #8B1A1A;
+    --border: rgba(30,60,114,0.12);
+    --border-warm: rgba(184,148,42,0.2);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 18px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(14,20,32,0.88);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--uni-gold);
+    letter-spacing: 0.04em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--uni-gold); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    background: var(--ink);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 60px 80px;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(30,60,114,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30,60,114,0.07) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridPulse 8s ease-in-out infinite;
+  }
+
+  @keyframes gridPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+
+  .hero-radial {
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(30,60,114,0.22) 0%, transparent 70%);
+    top: -200px; right: -100px;
+    pointer-events: none;
+  }
+
+  .hero-radial-2 {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(196,30,58,0.1) 0%, transparent 70%);
+    bottom: -100px; left: 100px;
+    pointer-events: none;
+  }
+
+  .hero-noise {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+  }
+
+  .hero-kicker {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--uni-gold);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .hero-kicker::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--uni-gold);
+    opacity: 0.6;
+  }
+
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 6vw, 5.2rem);
+    font-weight: 300;
+    color: #fff;
+    line-height: 1.08;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero-headline em {
+    font-style: italic;
+    color: var(--uni-gold);
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    max-width: 560px;
+    line-height: 1.75;
+    margin-bottom: 64px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 36px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .hero-meta-item {
+    flex: 1;
+    padding-right: 32px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    margin-right: 32px;
+  }
+
+  .hero-meta-item:last-child {
+    border-right: none;
+    margin-right: 0;
+  }
+
+  .hero-meta-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 6px;
+  }
+
+  .hero-meta-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.85);
+    font-weight: 400;
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    right: 60px;
+    bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.2s forwards;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--uni-gold), transparent);
+    animation: scrollDrop 2s 1.5s ease-in-out infinite;
+  }
+
+  .scroll-text {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    writing-mode: vertical-rl;
+  }
+
+  @keyframes scrollDrop {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTION COMMONS */
+  section { padding: 100px 60px; }
+
+  .section-white { background: #fff; }
+  .section-paper { background: var(--paper-warm); }
+  .section-ink { background: var(--ink); color: #fff; }
+
+  .section-label {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--uni-gold);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: var(--uni-gold);
+    opacity: 0.6;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+
+  .section-title em { font-style: italic; color: var(--uni-gold); }
+
+  .section-intro {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 640px;
+    line-height: 1.8;
+    margin-bottom: 60px;
+  }
+
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .about-left p {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: #333;
+    margin-bottom: 24px;
+  }
+
+  .hidden-fact {
+    background: var(--ink);
+    color: #fff;
+    padding: 32px;
+    border-left: 3px solid var(--uni-gold);
+    margin-top: 36px;
+    border-radius: 2px;
+  }
+
+  .hidden-fact-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--uni-gold);
+    margin-bottom: 10px;
+  }
+
+  .hidden-fact p {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: rgba(255,255,255,0.75);
+  }
+
+  .about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .stat-box {
+    background: var(--paper-warm);
+    padding: 32px 28px;
+    border: 1px solid var(--border);
+  }
+
+  .stat-box:nth-child(2) { background: var(--uni-blue); color: #fff; }
+  .stat-box:nth-child(4) { background: var(--ink); color: #fff; }
+
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 8px;
+    color: var(--uni-gold);
+  }
+
+  .stat-box:nth-child(1) .stat-number { color: var(--uni-blue); }
+
+  .stat-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    opacity: 0.7;
+  }
+
+  /* BELIEF STRIP */
+  .belief-strip {
+    background: var(--uni-blue);
+    padding: 80px 60px;
+    text-align: center;
+  }
+
+  .belief-strip blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+    font-weight: 300;
+    font-style: italic;
+    color: #fff;
+    max-width: 860px;
+    margin: 0 auto 20px;
+    line-height: 1.4;
+  }
+
+  .belief-strip cite {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--uni-gold);
+  }
+
+  /* TIMELINE */
+  .timeline {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .timeline-spine {
+    position: absolute;
+    left: 80px;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--border-warm), var(--border-warm));
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 0 40px;
+    margin-bottom: 52px;
+    position: relative;
+  }
+
+  .timeline-year {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-align: right;
+    padding-top: 4px;
+    letter-spacing: 0.03em;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: 75px;
+    top: 8px;
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: var(--paper-warm);
+    border: 2px solid var(--border-warm);
+  }
+
+  .timeline-item.major .timeline-dot {
+    background: var(--uni-gold);
+    border-color: var(--uni-gold);
+    width: 14px; height: 14px;
+    left: 73px; top: 6px;
+  }
+
+  .timeline-item.tension .timeline-dot {
+    background: var(--uni-red);
+    border-color: var(--uni-red);
+    width: 14px; height: 14px;
+    left: 73px; top: 6px;
+  }
+
+  .timeline-body {
+    padding-left: 8px;
+  }
+
+  .timeline-phase {
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .phase-build { color: var(--core-green); }
+  .phase-expand { color: var(--edge-amber); }
+  .phase-crisis { color: var(--uni-red); }
+  .phase-pivot { color: var(--uni-blue); }
+  .phase-transform { color: var(--beyond-crimson); }
+
+  .timeline-event {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .timeline-desc {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #555;
+  }
+
+  /* THETA MAP */
+  .theta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .zone-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .zone-pill {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px 20px;
+    border-radius: 3px;
+  }
+
+  .zone-pill.core { background: rgba(45,106,79,0.06); border: 1px solid rgba(45,106,79,0.2); }
+  .zone-pill.edge { background: rgba(181,132,26,0.06); border: 1px solid rgba(181,132,26,0.2); }
+  .zone-pill.beyond { background: rgba(139,26,26,0.06); border: 1px solid rgba(139,26,26,0.2); }
+
+  .zone-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .zone-dot.core { background: var(--core-green); }
+  .zone-dot.edge { background: var(--edge-amber); }
+  .zone-dot.beyond { background: var(--beyond-crimson); }
+
+  .zone-text strong {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+
+  .zone-text span { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+  .reading-card {
+    background: var(--ink);
+    padding: 24px;
+    border-radius: 3px;
+    margin-top: 8px;
+  }
+
+  .reading-card p {
+    font-size: 0.83rem;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.65;
+  }
+
+  .chart-container {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+  }
+
+  /* ALLOCATION */
+  .allocation-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .doughnut-wrap {
+    position: relative;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .doughnut-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .doughnut-center-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+
+  .doughnut-center-sub {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .allocation-bars { display: flex; flex-direction: column; gap: 36px; }
+
+  .alloc-item {}
+
+  .alloc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+
+  .alloc-name {
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .alloc-pcts {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .bar-track {
+    height: 8px;
+    background: rgba(0,0,0,0.07);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bar-actual {
+    height: 100%;
+    border-radius: 4px;
+    position: absolute;
+    top: 0; left: 0;
+    transition: width 1.2s ease;
+  }
+
+  .bar-target {
+    height: 100%;
+    border-radius: 4px;
+    position: absolute;
+    top: 0; left: 0;
+    opacity: 0.3;
+  }
+
+  .alloc-comment {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.55;
+  }
+
+  /* INNOVATION JOURNEY - ERA DEEP DIVE */
+  .era-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+  }
+
+  .era-card {
+    padding: 40px 32px;
+    position: relative;
+  }
+
+  .era-card.polman { background: rgba(45,106,79,0.05); border: 1px solid rgba(45,106,79,0.15); }
+  .era-card.jope { background: rgba(181,132,26,0.05); border: 1px solid rgba(181,132,26,0.15); }
+  .era-card.fernandez { background: rgba(30,60,114,0.05); border: 1px solid rgba(30,60,114,0.15); }
+
+  .era-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .era-years {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .era-balance {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .era-zone-chip {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .era-zone-chip.strong { background: rgba(45,106,79,0.15); color: var(--core-green); }
+  .era-zone-chip.warn { background: rgba(181,132,26,0.15); color: var(--edge-amber); }
+  .era-zone-chip.weak { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+
+  .era-desc {
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: #444;
+    margin-bottom: 20px;
+  }
+
+  .era-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--muted);
+    border-left: 2px solid var(--border-warm);
+    padding-left: 14px;
+  }
+
+  /* COMPETITORS */
+  .comp-cards {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px;
+    margin-bottom: 60px;
+  }
+
+  .comp-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 28px 22px;
+    position: relative;
+  }
+
+  .comp-card.featured {
+    border: 2px solid rgba(30,60,114,0.4);
+    background: rgba(30,60,114,0.03);
+  }
+
+  .comp-card-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .comp-card-tag {
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-bottom: 18px;
+    font-style: italic;
+  }
+
+  .comp-zone-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.78rem;
+  }
+
+  .comp-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .comp-dot.strong { background: var(--core-green); }
+  .comp-dot.mid { background: var(--edge-amber); }
+  .comp-dot.weak { background: rgba(0,0,0,0.2); }
+
+  .comp-verdict {
+    margin-top: 16px;
+    padding: 6px 10px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  .verdict-green { background: rgba(45,106,79,0.1); color: var(--core-green); }
+  .verdict-amber { background: rgba(181,132,26,0.1); color: var(--edge-amber); }
+  .verdict-red { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+
+  .radar-wrap {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* TENSIONS */
+  .tension-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .tension-card {
+    padding: 36px;
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tension-card.dilemma {
+    background: rgba(196,30,58,0.04);
+    border: 1px solid rgba(196,30,58,0.18);
+  }
+
+  .tension-card.paradox {
+    background: rgba(181,132,26,0.04);
+    border: 1px solid rgba(181,132,26,0.18);
+  }
+
+  .tension-card.question {
+    background: rgba(30,60,114,0.04);
+    border: 1px solid rgba(30,60,114,0.18);
+  }
+
+  .tension-card.signal {
+    background: rgba(45,106,79,0.04);
+    border: 1px solid rgba(45,106,79,0.18);
+  }
+
+  .tension-icon {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    margin-bottom: 16px;
+    line-height: 1;
+    opacity: 0.4;
+  }
+
+  .tension-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+
+  .tension-body {
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: #444;
+  }
+
+  /* CULTURAL DIAGNOSTIC - DARK SECTION */
+  .diagnostic-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+  }
+
+  .diag-block { margin-bottom: 40px; }
+
+  .diag-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .diag-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .diag-status {
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    letter-spacing: 0.05em;
+  }
+
+  .status-yes { background: rgba(45,106,79,0.2); color: #5CB38A; }
+  .status-partial { background: rgba(181,132,26,0.2); color: #D4A843; }
+  .status-no { background: rgba(196,30,58,0.2); color: #E06080; }
+
+  .diag-text {
+    font-size: 0.87rem;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .trifecta-scores {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+    margin-top: 20px;
+  }
+
+  .score-block {
+    background: rgba(255,255,255,0.04);
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .score-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem;
+    font-weight: 300;
+    color: var(--uni-gold);
+    line-height: 1;
+  }
+
+  .score-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-top: 6px;
+  }
+
+  /* ZONE BAR */
+  .zone-bar-wrap { margin: 36px 0; }
+
+  .zone-bar-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .zone-bar-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    width: 60px;
+    color: rgba(255,255,255,0.7);
+    flex-shrink: 0;
+  }
+
+  .zone-bar-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    position: relative;
+  }
+
+  .zone-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    position: absolute;
+    top: 0; left: 0;
+  }
+
+  .zone-bar-pcts {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.4);
+    width: 90px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ARCHETYPE */
+  .archetype-verdict {
+    margin-top: 40px;
+    padding: 36px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 3px;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .archetype-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--uni-gold);
+    margin-bottom: 10px;
+  }
+
+  .archetype-desc {
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: rgba(255,255,255,0.6);
+    max-width: 600px;
+  }
+
+  /* SIGNALS */
+  .signals-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .signal-card {
+    padding: 30px 26px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: #fff;
+  }
+
+  .signal-type {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .signal-type.beyond { color: var(--beyond-crimson); }
+  .signal-type.edge { color: var(--edge-amber); }
+  .signal-type.core { color: var(--core-green); }
+
+  .signal-card h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  .signal-card p {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #555;
+  }
+
+  /* ONE QUESTION */
+  .one-question {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 100px 60px;
+  }
+
+  .oq-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--uni-gold);
+    margin-bottom: 32px;
+    display: block;
+  }
+
+  .oq-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 300;
+    line-height: 1.35;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 32px;
+  }
+
+  .oq-text em {
+    font-style: italic;
+    color: var(--uni-gold);
+  }
+
+  .oq-sub {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.7;
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  /* STRENGTHS/WEAKNESSES */
+  .sw-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .sw-panel { padding: 40px 36px; border-radius: 3px; }
+  .sw-strengths { background: rgba(45,106,79,0.05); border: 1px solid rgba(45,106,79,0.2); }
+  .sw-weaknesses { background: rgba(196,30,58,0.04); border: 1px solid rgba(196,30,58,0.15); }
+
+  .sw-panel-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid currentColor;
+    opacity: 0.7;
+  }
+
+  .sw-strengths .sw-panel-title { color: var(--core-green); }
+  .sw-weaknesses .sw-panel-title { color: var(--uni-red); }
+
+  .sw-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+
+  .sw-marker {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .sw-strengths .sw-marker { background: rgba(45,106,79,0.12); color: var(--core-green); }
+  .sw-weaknesses .sw-marker { background: rgba(196,30,58,0.1); color: var(--uni-red); }
+
+  .sw-content strong {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .sw-content span {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: #555;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    padding: 48px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .footer-left {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.04em;
+  }
+
+  .footer-left strong {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--uni-gold);
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+
+  .footer-right {
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+  }
+
+  /* MARKETING SECTION */
+  .marketing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .marketing-left p {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: #333;
+    margin-bottom: 24px;
+  }
+
+  .marketing-stat {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 32px;
+  }
+
+  .mstat {
+    background: var(--paper-warm);
+    border: 1px solid var(--border);
+    padding: 24px 20px;
+    border-radius: 2px;
+  }
+
+  .mstat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--uni-blue);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .mstat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .creator-visual {
+    background: var(--ink);
+    border-radius: 3px;
+    padding: 40px 36px;
+    color: #fff;
+  }
+
+  .creator-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-bottom: 24px;
+    color: rgba(255,255,255,0.9);
+  }
+
+  .creator-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 2px;
+    border-left: 2px solid transparent;
+  }
+
+  .flow-step.s1 { border-left-color: var(--uni-gold); }
+  .flow-step.s2 { border-left-color: var(--uni-blue); }
+  .flow-step.s3 { border-left-color: var(--core-green); }
+
+  .flow-step-num {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--uni-gold);
+    width: 20px;
+    flex-shrink: 0;
+  }
+
+  .flow-step-text {
+    font-size: 0.83rem;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+  }
+
+  .flow-arrow {
+    text-align: center;
+    color: rgba(255,255,255,0.2);
+    font-size: 0.8rem;
+    margin: -4px 0;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    section { padding: 70px 24px; }
+    .hero { padding: 100px 24px 70px; }
+    .hero-meta { flex-direction: column; gap: 20px; }
+    .hero-meta-item { border-right: none; margin-right: 0; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 20px; }
+    .about-grid, .allocation-grid, .theta-grid, .comp-cards,
+    .era-grid, .sw-grid, .tension-grid, .diagnostic-grid,
+    .marketing-grid, .signals-grid { grid-template-columns: 1fr; }
+    .comp-cards { grid-template-columns: 1fr 1fr; }
+    .trifecta-scores { grid-template-columns: 1fr; }
+    .scroll-indicator { display: none; }
+    .about-stats { margin-top: 40px; }
+    .belief-strip { padding: 60px 24px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">The Theta Framework</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#journey">Journey</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#culture">Culture</a></li>
+    <li><a href="#diagnosis">Diagnosis</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-radial"></div>
+  <div class="hero-radial-2"></div>
+  <div class="hero-noise"></div>
+
+  <div class="hero-content">
+    <div class="hero-kicker">The Theta Framework &nbsp;|&nbsp; Strategic Case Study</div>
+    <h1 class="hero-headline">
+      A company that <em>touches everything</em><br>
+      and must now <em>transform itself</em>
+    </h1>
+    <p class="hero-sub">
+      Unilever has been in your home your entire life. The question isn't whether they understand consumers.
+      It's whether a company built on scale can become a company built on speed, courage, and genuine breakthrough.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Founded</div>
+        <div class="hero-meta-value">1929 &nbsp; Port Sunlight</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Revenue (2024)</div>
+        <div class="hero-meta-value">&euro;60.8 Billion</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Presence</div>
+        <div class="hero-meta-value">190+ Countries</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Theta Archetype</div>
+        <div class="hero-meta-value">The Disciplined Explorer</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <div class="scroll-text">Scroll</div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section-white" id="about">
+  <div class="section-label">Who They Are</div>
+  <h2 class="section-title">Not a consumer goods company.<br><em>A daily habit company.</em></h2>
+
+  <div class="about-grid fade-up">
+    <div class="about-left">
+      <p>Unilever was born from an unlikely logic: soap and margarine share the same raw material. When British soapmaker Lever Brothers merged with Dutch margarine producer Margarine Unie in 1929, it was supply chain strategy, not vision. Nearly a century later, the company that emerged from palm oil efficiencies now owns Dove, Knorr, Rexona, Hellmann's, Vaseline, and nearly 400 more brands. It is in the showers, kitchens, and medicine cabinets of more than 3.4 billion people every day.</p>
+      <p>That reach is both its greatest asset and its deepest challenge. At the scale where you serve one in three humans on the planet, every innovation decision carries consequences. A reformulated shampoo is not just a product update. It is a supply chain reconfiguration. A sustainability pledge is not just a press release. It is a renegotiation of sourcing relationships across 190 countries. This is the paradox at Unilever's core: the very scale that makes it powerful makes it slow.</p>
+
+      <div class="hidden-fact">
+        <div class="hidden-fact-label">Something you probably didn't know</div>
+        <p>Unilever invented the sachet. In the 1980s, Hindustan Unilever pioneered the single-use sachet in rural India to make shampoo and detergent accessible to people who could not afford full-size bottles. It was a genuine breakthrough in inclusive commerce. Today, Unilever manufactures an estimated 53 billion sachets per year. Less than 0.2% of its plastic packaging is reusable. The company that democratised personal care also created one of the most intractable plastic waste problems in the developing world. The innovator became the dilemma.</p>
+      </div>
+    </div>
+
+    <div class="about-stats">
+      <div class="stat-box">
+        <div class="stat-number">400+</div>
+        <div class="stat-label">Brands across 190 countries</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">30</div>
+        <div class="stat-label">Power brands driving 78%+ of turnover</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">3.4B</div>
+        <div class="stat-label">People who use a Unilever product daily</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">&euro;900M</div>
+        <div class="stat-label">Annual R&amp;D investment across 6 global hubs</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BELIEF STRIP 1 -->
+<div class="belief-strip">
+  <blockquote>"The era of big-brand broadcasting is over. Today, brands must rely on lots of littles."</blockquote>
+  <cite>Fernando Fernandez, CEO, Unilever &mdash; CAGNY 2026</cite>
+</div>
+
+<!-- TIMELINE -->
+<section class="section-paper" id="journey">
+  <div class="section-label">The Innovation Arc</div>
+  <h2 class="section-title">Nearly a century of <em>building, breaking,<br>and rebuilding</em> the growth logic</h2>
+  <p class="section-intro">Unilever's innovation history is not a straight line. It is a series of bets, collapses, and reinventions. Each era rewrote what innovation was supposed to be.</p>
+
+  <div class="timeline fade-up">
+    <div class="timeline-spine"></div>
+
+    <div class="timeline-item major">
+      <div class="timeline-year">1929</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-body">
+        <div class="timeline-phase phase-build">Foundation</div>
+        <div class="timeline-event">Two companies merge over palm oil</div>
+        <div class="timeline-desc">Lever Brothers and Margarine Unie share the same raw ingredient. The merger is logistics, not vision. But the combined distribution reach would eventually become Unilever's most powerful competitive weapon.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">1950s</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-body">
+        <div class="timeline-phase phase-expand">Expansion</div>
+        <div class="timeline-event">The brand accumulation era begins</div>
+        <div class="timeline-desc">Unilever expands aggressively across categories and geographies. Dove launches in 1957 as a beauty bar with one-quarter moisturising cream. It would become the world's bestselling beauty brand. The accumulation of hundreds of brands begins, a strategy that would eventually require radical pruning six decades later.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item major">
+      <div class="timeline-year">1980s</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-body">
+        <div class="timeline-phase phase-build">Reverse Innovation</div>
+        <div class="timeline-event">Hindustan Unilever invents the sachet</div>
+        <div class="timeline-desc">In rural India, Hindustan Unilever pioneers single-use sachets of shampoo and detergent so that consumers earning less than a dollar a day can afford quality products. Mobile cinema vans travel to villages for in-home demonstrations. This is Unilever at its genuine innovation best: solving a real problem for underserved people. The sachet would later become its most controversial legacy.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2000</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-body">
+        <div class="timeline-phase phase-expand">Portfolio</div>
+        <div class="timeline-event">Ben &amp; Jerry's joins the family with its values intact</div>
+        <div class="timeline-desc">Unilever acquires Ben &amp; Jerry's and, unusually, agrees to preserve the brand's independent social mission board. It is a progressive acquisition model that will later become a case study in the limits of corporate purpose when commercial interests collide.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item major">
+      <div class="timeline-year">2004</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-body">
+        <div class="timeline-phase phase-build">Brand Purpose Pioneer</div>
+        <div class="timeline-event">Dove launches Real Beauty. Purpose becomes competitive strategy.</div>
+        <div class="timeline-desc">Dove's Campaign for Real Beauty challenges decades of beauty advertising with unretouched photographs of real women. It is not just a marketing campaign. It is a category reframe. Dove grows from a &euro;2 billion brand to nearly &euro;6 billion over the following decade. Purpose, at Unilever, is proven to be a growth lever, not just a values statement.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item major">
+      <div class="timeline-year">2009</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-body">
+        <div class="timeline-phase phase-transform">Transformation</div>
+        <div class="timeline-event">Paul Polman takes over. Cancels quarterly earnings guidance on day one.</div>
+        <div class="timeline-desc">Polman tells investors seeking quarterly returns to "take their money elsewhere." He launches the Unilever Sustainable Living Plan, a 10-year commitment to double growth while halving environmental impact. Some dismiss it as idealism. It proves to be 10 years of institutional capability building in sustainability that competitors are still catching up to.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year">2016</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-body">
+        <div class="timeline-phase phase-expand">Edge Bet</div>
+        <div class="timeline-event">Dollar Shave Club acquisition brings direct-to-consumer capability in-house</div>
+        <div class="timeline-desc">Unilever acquires Dollar Shave Club for $1 billion, signalling that it understands the shift in distribution. The acquisition struggles with integration. But the capability transfer, understanding subscription models and digital-first brand building, proves valuable.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item tension">
+      <div class="timeline-year">2021</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-body">
+        <div class="timeline-phase phase-crisis">The Tension Point</div>
+        <div class="timeline-event">Ben &amp; Jerry's boycott, failed GSK bid, and the limits of purpose at scale</div>
+        <div class="timeline-desc">Ben &amp; Jerry's independent board votes to exit Israeli-occupied territories, triggering legal threats, shareholder anger, and a test of Unilever's commitment to the values it had acquired. Simultaneously, Unilever bids £50 billion for GlaxoSmithKline's consumer health business. GSK rejects it as "fundamentally mispriced." The stock drops. Activist investor Nelson Peltz takes a board seat. The year reveals a company whose reach exceeds its strategic clarity.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item major">
+      <div class="timeline-year">2023</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-body">
+        <div class="timeline-phase phase-pivot">Disciplined Pivot</div>
+        <div class="timeline-event">Hein Schumacher introduces "fewer things, done better, with greater impact"</div>
+        <div class="timeline-desc">The sprawling brand portfolio begins its most aggressive rationalisation in company history. 400+ brands will be reduced to 30 focused Power Brands. The Ice Cream division (Magnum, Wall's, Ben &amp; Jerry's) is identified as non-core and slated for separation. It is painful, but it is honest.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item major">
+      <div class="timeline-year">2024</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-body">
+        <div class="timeline-phase phase-transform">AI Age</div>
+        <div class="timeline-event">Fernando Fernandez arrives. Technology moves to the core of value creation.</div>
+        <div class="timeline-desc">Fernandez, a 37-year Unilever veteran, takes over with a clear mandate: premium, digital, AI-first. A five-year partnership with Google Cloud is announced, creating what Unilever calls an "AI-first digital backbone." The company trains 23,000 employees in AI usage. The era of agentic commerce, where AI agents shop on behalf of consumers, becomes a serious strategic consideration. 2025 brings bioCNG from palm oil mill effluent at an Indonesia plant. 2026 brings quantum computing partnerships with IBM. The portfolio is rebuilding itself.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ERA COMPARISON -->
+<section class="section-white">
+  <div class="section-label">Leadership and the Innovation Balance</div>
+  <h2 class="section-title">Three leaders.<br><em>Three very different definitions</em> of the future.</h2>
+  <p class="section-intro">The 70-20-10 balance between Core, Edge, and Beyond is not fixed. It shifts with every leader. Each era at Unilever tells you what leadership believed innovation was for.</p>
+
+  <div class="era-grid fade-up">
+    <div class="era-card polman">
+      <div class="era-name">Polman Era</div>
+      <div class="era-years">2009 &ndash; 2019</div>
+      <div class="era-balance">
+        <span class="era-zone-chip strong">Core ✓</span>
+        <span class="era-zone-chip strong">Edge ✓</span>
+        <span class="era-zone-chip strong">Beyond ✓</span>
+      </div>
+      <div class="era-desc">Polman believed that purpose was not separate from profit, it was the engine of it. He protected long-term Beyond bets on sustainability when every analyst argued for short-term returns. He launched the Unilever Sustainable Living Plan and refused quarterly earnings guidance. His legacy is a decade of institutional capability building that competitors are still trying to replicate. Dove's Real Beauty, The Vegetarian Butcher concept, sustainable palm oil traceability systems. These didn't happen despite Polman's long view. They happened because of it.</div>
+      <div class="era-quote">"Investors who don't buy into this long-term model can sell their shares."</div>
+    </div>
+
+    <div class="era-card jope">
+      <div class="era-name">Jope Era</div>
+      <div class="era-years">2019 &ndash; 2023</div>
+      <div class="era-balance">
+        <span class="era-zone-chip strong">Core ✓✓</span>
+        <span class="era-zone-chip warn">Edge ⚠</span>
+        <span class="era-zone-chip weak">Beyond ✗</span>
+      </div>
+      <div class="era-desc">Jope inherited Polman's ambition and met activist investors, the Ben &amp; Jerry's boycott, a rejected acquisition bid, and a greenwashing investigation. The pendulum swung hard toward Core. The 70-20-10 balance shifted to roughly 80-15-5 under performance pressure. Edge initiatives faced steeper ROI scrutiny. Beyond bets on frontier technology were less visible and less protected. The "disciplined experimentation" language of this era was accurate, but discipline had become constraint. The platform for breakthrough was being narrowed.</div>
+      <div class="era-quote">"Our strategy is about doing less, better."</div>
+    </div>
+
+    <div class="era-card fernandez">
+      <div class="era-name">Fernandez Era</div>
+      <div class="era-years">2024 &ndash; Present</div>
+      <div class="era-balance">
+        <span class="era-zone-chip strong">Core ✓</span>
+        <span class="era-zone-chip strong">Edge ✓</span>
+        <span class="era-zone-chip strong">Beyond ✓</span>
+      </div>
+      <div class="era-desc">Fernandez has done something strategically elegant: he reframed Beyond as infrastructure. By declaring that "technology has moved to the core of value creation," he made the Google Cloud partnership, the quantum computing experiments, and the AI-for-Science platform feel essential rather than speculative. This framing is powerful because it protects long-term bets from short-term budget cycles. The Growth Action Plan 2030 targets Beauty and Wellbeing at 50% of turnover, with the US and India as primary engines. The architecture is clearer than it has been in a decade.</div>
+      <div class="era-quote">"We are outfitting this company for the AI age, not just the next quarter."</div>
+    </div>
+  </div>
+</section>
+
+<!-- BELIEF STRIP 2 -->
+<div class="belief-strip" style="background: var(--paper-warm); border-top: 1px solid var(--border-warm); border-bottom: 1px solid var(--border-warm);">
+  <blockquote style="color: var(--ink);">"Innovation is like planting a forest. The seeds you plant today won't bear fruit tomorrow, but they will mould your company's future."</blockquote>
+  <cite style="color: var(--edge-amber);">The Theta Framework &nbsp;| &nbsp; Christine Pamela Chandrakasan</cite>
+</div>
+
+<!-- THETA MAP -->
+<section class="section-white" id="portfolio">
+  <div class="section-label">The Theta Innovation Map</div>
+  <h2 class="section-title">Where Unilever is<br><em>actually placing its bets</em></h2>
+  <p class="section-intro">Each initiative mapped by market reach and technology change. The pattern reveals more than any earnings call.</p>
+
+  <div class="theta-grid fade-up">
+    <div>
+      <div class="zone-legend">
+        <div class="zone-pill core">
+          <div class="zone-dot core"></div>
+          <div class="zone-text">
+            <strong>Core Zone &nbsp;70% Benchmark</strong>
+            <span>Existing markets, incremental improvement. Dove Crumbl collab. Vaseline ProVitaB3 serum. Cold-water laundry formulations. Axe Fine Fragrance.</span>
+          </div>
+        </div>
+        <div class="zone-pill edge">
+          <div class="zone-dot edge"></div>
+          <div class="zone-text">
+            <strong>Edge Zone &nbsp;20% Benchmark</strong>
+            <span>New segments, architectural reconfiguration. The Vegetarian Butcher. Degree Inclusive. Whole-Body Deodorants. Minimalist (India acquisition). Prestige beauty (Paula's Choice, Nutrafol).</span>
+          </div>
+        </div>
+        <div class="zone-pill beyond">
+          <div class="zone-dot beyond"></div>
+          <div class="zone-text">
+            <strong>Beyond Zone &nbsp;10% Benchmark</strong>
+            <span>Speculative, long-horizon bets. AI-for-Science molecular discovery. BioCNG from palm oil effluent. Quantum computing (IBM, Hartree Centre). CreaSolv recycling for sachets.</span>
+          </div>
+        </div>
+      </div>
+      <div class="reading-card">
+        <p>The map reveals a portfolio that spans all three zones. This is Unilever's genuine strength against competitors. But it also shows the Core cluster is heavier than optimal, the Edge zone has strong breadth but uneven depth of investment, and Beyond bets exist but are not yet systematic. The white space: personalised nutrition at scale, longevity innovation, and a true ecosystem play beyond product sales.</p>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="scatterChart" height="340"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section class="section-paper">
+  <div class="section-label">Portfolio Allocation</div>
+  <h2 class="section-title">The 70-20-10 reality<br>versus <em>stated ambition</em></h2>
+  <p class="section-intro">The gap between where Unilever says it invests and where money actually flows tells the story of institutional gravity pulling toward the present.</p>
+
+  <div class="allocation-grid fade-up">
+    <div>
+      <div class="doughnut-wrap">
+        <canvas id="doughnutChart" width="300" height="300"></canvas>
+        <div class="doughnut-center">
+          <div class="doughnut-center-title">All Three<br>Zones Active</div>
+          <div class="doughnut-center-sub">Actual Balance</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="allocation-bars">
+      <div class="alloc-item">
+        <div class="alloc-header">
+          <div class="alloc-name" style="color: var(--core-green);">Core Zone</div>
+          <div class="alloc-pcts">Actual ~78% &nbsp;|&nbsp; Benchmark 70%</div>
+        </div>
+        <div class="bar-track">
+          <div class="bar-target" style="width: 70%; background: var(--core-green);"></div>
+          <div class="bar-actual" style="width: 78%; background: var(--core-green); opacity: 0.8;"></div>
+        </div>
+        <div class="alloc-comment">Slightly overweight. A residue of the Jope era under activist pressure. Core brands (Dove, Knorr, OMO) are the cash engine, but over-concentration here is the classic path to optimising into irrelevance.</div>
+      </div>
+
+      <div class="alloc-item">
+        <div class="alloc-header">
+          <div class="alloc-name" style="color: var(--edge-amber);">Edge Zone</div>
+          <div class="alloc-pcts">Actual ~16% &nbsp;|&nbsp; Benchmark 20%</div>
+        </div>
+        <div class="bar-track">
+          <div class="bar-target" style="width: 20%; background: var(--edge-amber);"></div>
+          <div class="bar-actual" style="width: 16%; background: var(--edge-amber); opacity: 0.8;"></div>
+        </div>
+        <div class="alloc-comment">Underweight by approximately 4 points. The Vegetarian Butcher was sold. Degree Inclusive needs more fuel. Whole-body deodorants are promising but not yet a fully-funded franchise. The next S-curve is visible but underpowered.</div>
+      </div>
+
+      <div class="alloc-item">
+        <div class="alloc-header">
+          <div class="alloc-name" style="color: var(--beyond-crimson);">Beyond Zone</div>
+          <div class="alloc-pcts">Actual ~6% &nbsp;|&nbsp; Benchmark 10%</div>
+        </div>
+        <div class="bar-track">
+          <div class="bar-target" style="width: 10%; background: var(--beyond-crimson);"></div>
+          <div class="bar-actual" style="width: 6%; background: var(--beyond-crimson); opacity: 0.8;"></div>
+        </div>
+        <div class="alloc-comment">Underweight by approximately 4 points. Quantum computing and AI-for-Science exist, but they need ring-fencing from budget cycles. Beyond bets only survive when leadership actively builds a firewall around them.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKETING AND INNOVATION -->
+<section class="section-white">
+  <div class="section-label">The Marketing-Innovation Loop</div>
+  <h2 class="section-title">Why the marketing game<br><em>is the innovation game</em></h2>
+  <p class="section-intro">At Unilever, marketing is not the wrapper around innovation. It is the signal detection system, the chasm-crossing mechanism, and increasingly, the innovation itself.</p>
+
+  <div class="marketing-grid fade-up">
+    <div class="marketing-left">
+      <p>When Vaseline's R&D team discovered that consumers were complaining online about the "grease gap," the stickiness of petroleum jelly that left them feeling coated and uncomfortable, they didn't commission a traditional focus group. They used social listening at scale to identify an unmet formulation need. The result was Vaseline ProVitaB3 Serum-Burst Lotion, which grew brand volume by 12%. The signal came from the noise of unscripted consumer conversation. The innovation followed the signal.</p>
+      <p>This is the new marketing-innovation relationship. The Dove x Crumbl Cookies collaboration, which became Dove's number one launch of the year and attracted over 50% new buyers, was not born from a product roadmap. It was born from cultural listening: a viral dessert trend, a beauty brand's insight that consumers don't separate sensory pleasure into categories, and the willingness to move from idea to shelf faster than traditional launch cycles allow.</p>
+      <p>With 300,000 content creators globally and a declared strategy of "lots of littles" replacing the single annual campaign, Unilever is building a continuous signal detection infrastructure. The question is whether those signals are being routed into the right innovation pipelines, or whether they are accumulating faster than the organisation can absorb them.</p>
+
+      <div class="marketing-stat">
+        <div class="mstat">
+          <div class="mstat-num">&euro;9B</div>
+          <div class="mstat-label">Annual brand and marketing investment (16% of revenue)</div>
+        </div>
+        <div class="mstat">
+          <div class="mstat-num">300K</div>
+          <div class="mstat-label">Content creators in global network, a new kind of innovation antenna</div>
+        </div>
+        <div class="mstat">
+          <div class="mstat-num">87%</div>
+          <div class="mstat-label">Content cost reduction via digital twins (TRESemme Thailand)</div>
+        </div>
+        <div class="mstat">
+          <div class="mstat-num">50%</div>
+          <div class="mstat-label">Content production time saved through AI-powered packaging tools</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="creator-visual">
+      <div class="creator-title">The "Seed-Ignite-Amplify" Innovation Signal Loop</div>
+      <div class="creator-flow">
+        <div class="flow-step s1">
+          <div class="flow-step-num">01</div>
+          <div class="flow-step-text"><strong>Seed</strong> &nbsp; Niche communities (Reddit, specialist forums, early adopter groups) surface unmet needs through unscripted conversation. Social listening captures the signal before it is mainstream.</div>
+        </div>
+        <div class="flow-arrow">&#8595;</div>
+        <div class="flow-step s2">
+          <div class="flow-step-num">02</div>
+          <div class="flow-step-text"><strong>Ignite</strong> &nbsp; Creator partnerships test cultural resonance before full product commitment. The Dove Crumbl collab was validated socially before it became a Core launch. Failure here is cheap. Learning is fast.</div>
+        </div>
+        <div class="flow-arrow">&#8595;</div>
+        <div class="flow-step s3">
+          <div class="flow-step-num">03</div>
+          <div class="flow-step-text"><strong>Amplify</strong> &nbsp; Proven signals become product innovation or brand extensions. AI compresses the production pipeline. Digital twins of products halve content costs. What was once a 12-month launch cycle compresses to weeks.</div>
+        </div>
+      </div>
+      <div style="margin-top: 28px; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 2px;">
+        <p style="font-size: 0.82rem; color: rgba(255,255,255,0.5); line-height: 1.6;">The risk: when marketing drives product development, the tendency is toward what resonates culturally today, not what will be needed strategically in five years. The loop must be balanced with longer-horizon signal detection from innovators and early adopters, not just the cultural mainstream.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section class="section-paper" id="competitors">
+  <div class="section-label">Competitive Landscape</div>
+  <h2 class="section-title">Where Unilever leads,<br>where it is <em>being outrun</em></h2>
+  <p class="section-intro">Unilever's greatest competitive advantage is portfolio balance. Its greatest competitive risk is that focused rivals are moving faster in the zones where balance is not enough.</p>
+
+  <div class="comp-cards fade-up">
+    <div class="comp-card featured">
+      <div class="comp-card-name">Unilever</div>
+      <div class="comp-card-tag">The Disciplined Explorer</div>
+      <div class="comp-zone-row"><div class="comp-dot strong"></div>Core: Power brands, premium push</div>
+      <div class="comp-zone-row"><div class="comp-dot mid"></div>Edge: Whole-body deo, prestige beauty</div>
+      <div class="comp-zone-row"><div class="comp-dot mid"></div>Beyond: AI-Science, quantum, BioCNG</div>
+      <div class="comp-verdict verdict-green">All zones active</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-card-name">P&amp;G</div>
+      <div class="comp-card-tag">The Core Optimizer</div>
+      <div class="comp-zone-row"><div class="comp-dot strong"></div>Core: Unrivalled executional depth</div>
+      <div class="comp-zone-row"><div class="comp-dot mid"></div>Edge: Premiumisation, AI molecules</div>
+      <div class="comp-zone-row"><div class="comp-dot weak"></div>Beyond: Limited frontier bets</div>
+      <div class="comp-verdict verdict-amber">Core dominant</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-card-name">Reckitt</div>
+      <div class="comp-card-tag">The Agile Explorer</div>
+      <div class="comp-zone-row"><div class="comp-dot strong"></div>Core: 11 Powerbrands, health focus</div>
+      <div class="comp-zone-row"><div class="comp-dot strong"></div>Edge: AI cuts dev time by 70%</div>
+      <div class="comp-zone-row"><div class="comp-dot mid"></div>Beyond: FDA NDA (Mucinex 12hr)</div>
+      <div class="comp-verdict verdict-green">Speed threat</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-card-name">L'Or&eacute;al</div>
+      <div class="comp-card-tag">The Sustainability Explorer</div>
+      <div class="comp-zone-row"><div class="comp-dot strong"></div>Core: Global beauty leadership</div>
+      <div class="comp-zone-row"><div class="comp-dot mid"></div>Edge: Clean beauty, biotech</div>
+      <div class="comp-zone-row"><div class="comp-dot strong"></div>Beyond: &euro;100M accelerator, 13 startups</div>
+      <div class="comp-verdict verdict-green">Beyond ecosystem threat</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-card-name">Nestl&eacute;</div>
+      <div class="comp-card-tag">The Focused Builder</div>
+      <div class="comp-zone-row"><div class="comp-dot strong"></div>Core: Coffee, Petcare dominance</div>
+      <div class="comp-zone-row"><div class="comp-dot mid"></div>Edge: GLP-1 foods, premium coffee</div>
+      <div class="comp-zone-row"><div class="comp-dot mid"></div>Beyond: Microbiome research</div>
+      <div class="comp-verdict verdict-amber">Pillar focus wins</div>
+    </div>
+  </div>
+
+  <div class="radar-wrap fade-up">
+    <canvas id="radarChart" height="400"></canvas>
+  </div>
+</section>
+
+<!-- INNOVATION DILEMMAS -->
+<section class="section-white">
+  <div class="section-label">The Innovation Tensions</div>
+  <h2 class="section-title">The dilemmas that<br><em>no strategy deck will solve</em></h2>
+  <p class="section-intro">Every company says it values innovation. The real test is what it does when innovation collides with something it values more. These are Unilever's live tensions.</p>
+
+  <div class="tension-grid fade-up">
+    <div class="tension-card dilemma">
+      <div class="tension-icon">&#9878;</div>
+      <div class="tension-title">The Sachet Paradox</div>
+      <div class="tension-body">Unilever invented the sachet to democratise access for the world's poorest consumers. Today they produce 53 billion per year, and less than 0.2% of their plastic packaging is reusable. They have been working on sachet phase-out pilots for over a decade. There is no credible commercial roadmap. The business model in emerging markets depends on sachet affordability. The company that created inclusive commerce also created one of the most difficult plastic problems in existence. Both things are equally true. The path out requires a business model reinvention, not just a materials science breakthrough.</div>
+    </div>
+
+    <div class="tension-card paradox">
+      <div class="tension-icon">&#8734;</div>
+      <div class="tension-title">The Volume Growth Contradiction</div>
+      <div class="tension-body">Unilever has committed to net-zero emissions by 2039. It has also committed to 2%+ volume growth annually. More products sold means more packaging, more shipping, more energy, more water. Efficiency gains are real and measurable. But absolute environmental impact rises when growth outpaces them. This is not greenwashing. It is the fundamental contradiction at the heart of consumer goods at scale. No competitor has solved it. Few have named it this honestly. Unilever's stated 2035 target for fully circular flexible packaging admits the problem exists. Admitting the problem is step one. Step two does not yet have a map.</div>
+    </div>
+
+    <div class="tension-card question">
+      <div class="tension-icon">&#9684;</div>
+      <div class="tension-title">The Ben &amp; Jerry's Test</div>
+      <div class="tension-body">In 2021, Ben &amp; Jerry's independent board voted to exit Israeli-occupied territories. Unilever, which had promised to preserve that independent social mission when it acquired the brand in 2000, sold the Israeli business to a local licensee instead. The Ben &amp; Jerry's board accused Unilever of being "deceitful." Co-founder Ben Cohen called for the brand to be freed entirely. What this episode revealed is not a failure of ethics but a structural impossibility: can you genuinely hold a subsidiary's independent social mission while your own commercial interests diverge? The question matters beyond Palestine. It applies to every purpose-led brand inside a conglomerate.</div>
+    </div>
+
+    <div class="tension-card signal">
+      <div class="tension-icon">&#8635;</div>
+      <div class="tension-title">The Deforestation Distance Problem</div>
+      <div class="tension-body">Despite two decades of palm oil traceability commitments and blockchain-based auditing partnerships, a November 2025 Global Witness investigation linked Unilever-adjacent supply chains to cocoa deforestation in Liberia. The mechanism is structural: rural traders buy beans without origin screening, exporters blend certified and uncertified beans, brands buy the blend and market it as sustainable. This is not a Unilever-specific failure. It is an agricultural commodity transparency problem that no single company can solve alone. But Unilever's scale, its sourcing commitments, and its sustainability positioning make it the most visible target when the gap between pledge and reality surfaces.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNALS AND POTENTIALS -->
+<section class="section-paper">
+  <div class="section-label">Emerging Signals and Potentials</div>
+  <h2 class="section-title">What is being built<br>at the <em>edge of what's visible</em></h2>
+
+  <div class="signals-grid fade-up">
+    <div class="signal-card">
+      <div class="signal-type beyond">Beyond Signal</div>
+      <h4>The AI-for-Science Platform</h4>
+      <p>Unilever's R&D team is using AI to compress molecular screening from years to months. The system scans potential new preservatives, predicts skin sensitivity reactions, and identifies ingredient combinations faster than any laboratory could. In partnerships with Deep Potential and Insilico Medicine in China, and with the IBM Quantum Network in the UK, the company is exploring whether quantum computing can discover entirely new molecular configurations for skin and hair science. The commercial outcome is unknown. The capability being built is not.</p>
+    </div>
+
+    <div class="signal-card">
+      <div class="signal-type beyond">Beyond Signal</div>
+      <h4>BioCNG from Palm Oil Waste</h4>
+      <p>At the UOI plant in North Sumatra, Unilever is now capturing methane from palm oil mill effluent (a greenhouse gas that would otherwise be released) and converting it into biomethane to power the facility. This is not a pilot project. It is a working industrial installation. If the model scales across Unilever's palm oil supply chain, it transforms one of the most criticised aspects of their environmental footprint into a circular energy source. The Gandhidham factory in India, recognised by the World Economic Forum as a Sustainability Lighthouse, reduced water use by 17% and Scope 1 and 2 emissions by 90% using AI and IoT. These are not press release numbers. They are engineering results.</p>
+    </div>
+
+    <div class="signal-card">
+      <div class="signal-type edge">Edge Signal</div>
+      <h4>Whole-Body Deodorants: A New Category</h4>
+      <p>Developed using one of the world's largest microbiome datasets and AI analysis of sweat biology across different body areas, Whole-Body Deodorants are now Unilever's largest cross-brand, cross-market innovation. This is genuine category creation. Not a line extension. Not a premiumised formulation. A new consumer behaviour being normalised. The chasm between early adopters (health-conscious, hygiene-obsessed) and the early majority (who want proof and reliability) is where this innovation currently sits. Unilever's distribution strength is its primary chasm-crossing tool.</p>
+    </div>
+
+    <div class="signal-card">
+      <div class="signal-type edge">Edge Signal</div>
+      <h4>Agentic Commerce: The Next Disruption</h4>
+      <p>The Google Cloud partnership includes building capability for "agentic commerce," where AI agents shop on behalf of consumers based on preferences, budgets, and past behaviour. If this becomes mainstream, the consumer's relationship with brands shifts from emotional to algorithmic. A brand that has won your loyalty may be swapped by your agent for a more efficiently profiled alternative. This changes the innovation game entirely: brands will need to win the trust of algorithms, not just humans. Unilever's data assets and scale could be an advantage here. But only if it moves before the channel hardens.</p>
+    </div>
+
+    <div class="signal-card">
+      <div class="signal-type edge">Edge Signal</div>
+      <h4>Reverse Innovation: South Flowing North</h4>
+      <p>The most underappreciated dynamic in Unilever's portfolio is how emerging market innovations are beginning to flow back to developed markets. The refill models being piloted in response to the sachet problem in India are becoming templates for circular retail in Europe. The AI-driven water stewardship at the Gandhidham factory, born from necessity in a water-scarce region, is being adapted globally. The Minimalist acquisition in India, a premium actives-led brand that makes clinical ingredients accessible at non-premium prices, is a model for how to enter premium segments without intimidating value-oriented consumers. Constraint is proving to be a better innovation driver than comfort.</p>
+    </div>
+
+    <div class="signal-card">
+      <div class="signal-type core">White Space</div>
+      <h4>Longevity: The Gap No One Has Claimed</h4>
+      <p>Nutrafol (hair health) and Paula's Choice (actives-led skincare) have positioned Unilever in functional beauty. But the longevity and healthy-ageing category, spanning mobility, cognitive function, metabolic health, and skin-from-within nutrition, remains largely unclaimed by any major CPG company at scale. Kenvue is moving into it via digital health ecosystems. Nestl&eacute; is approaching it through GLP-1-friendly foods. Unilever's science capabilities, its consumer trust in brands like Vaseline and Dove, and its emerging nutritional supplement portfolio (through Nutrafol and Olly) give it a credible entry point. This is a white space with a closing window.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CULTURAL DIAGNOSTIC -->
+<section class="section-ink" id="culture">
+  <div class="section-label" style="color: var(--uni-gold);">The Theta Cultural Diagnostic</div>
+  <h2 class="section-title" style="color: #fff;">The portfolio is ready.<br><em>Is the culture?</em></h2>
+  <p class="section-intro" style="color: rgba(255,255,255,0.5);">This is where the Theta Framework goes beneath the strategy. The cultural diagnostics reveal the gap between what Unilever says it values and what the organisation actually rewards.</p>
+
+  <div class="diagnostic-grid fade-up">
+    <div>
+      <div class="diag-block">
+        <div class="diag-title">The Maverick Inventory</div>
+        <div class="diag-item">
+          <span class="diag-status status-yes">Yes</span>
+          <div class="diag-text">Mavericks exist. The team that created Degree Inclusive consulted directly with the disabled community rather than relying on traditional market research. The AI-for-Science team combines biology, chemistry, and computer science across disciplines. The Vegetarian Butcher founders stayed and brought entrepreneurial culture inside a 100-year-old company.</div>
+        </div>
+        <div class="diag-item">
+          <span class="diag-status status-partial">Partial</span>
+          <div class="diag-text">Mavericks are protected within R&D and acquired startups. They are not yet systematically protected from Core performance pressures across the broader organisation. There is no formal Maverick Fellowship or structured "roaming free" programme.</div>
+        </div>
+        <div class="diag-item">
+          <span class="diag-status status-partial">Partial</span>
+          <div class="diag-text">Mavericks are celebrated when their bets pay off publicly (Degree Inclusive won awards). They are less visible when their work is long-horizon and unproven. The Crumbl collab team likely receives more organisational celebration than the quantum computing team.</div>
+        </div>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-title">Three Stages of Innovation</div>
+        <div class="diag-item">
+          <span class="diag-status status-partial">Partial</span>
+          <div class="diag-text">Stage 1 (Chaos/Maverick Mode): Seed-collecting spaces exist in R&D hubs and acquired startups. But true unstructured exploration is rare outside those enclaves. Curiosity is rewarded in R&D and operations rewards execution.</div>
+        </div>
+        <div class="diag-item">
+          <span class="diag-status status-yes">Strong</span>
+          <div class="diag-text">Stage 2 (Skunkworks/Build Mode): Autonomous teams for Whole-Body Deodorants, AI platforms, and acquired prestige brands operate with real independence. Goals are clear, execution is flexible, and the path from Edge to Core is mapped.</div>
+        </div>
+        <div class="diag-item">
+          <span class="diag-status status-partial">Partial</span>
+          <div class="diag-text">Stage 3 (Open Source/Scale Mode): Unilever partners widely with Google, NVIDIA, IBM, and NGOs. But true ecosystem thinking, where external partners build on Unilever platforms, is rare. Monetisation remains product-centric, not ecosystem-centric.</div>
+        </div>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-title">The Leadership Trifecta</div>
+        <div class="trifecta-scores">
+          <div class="score-block">
+            <div class="score-num">3.8</div>
+            <div class="score-label">Agility /5</div>
+          </div>
+          <div class="score-block">
+            <div class="score-num">3.5</div>
+            <div class="score-label">Consciousness /5</div>
+          </div>
+          <div class="score-block">
+            <div class="score-num">3.5</div>
+            <div class="score-label">Courage /5</div>
+          </div>
+        </div>
+        <p style="margin-top: 16px; font-size: 0.83rem; color: rgba(255,255,255,0.5); line-height: 1.65;">Agility is highest: the shift from broadcast marketing to creator-led ecosystems, the Ice Cream separation, the Google Cloud pivot. These are genuine adaptations. Consciousness scores are lower: the GSK bid revealed unquestioned assumptions. The Ben &amp; Jerry's situation revealed limits of self-awareness under commercial pressure. Courage is present in bold structural moves but rare in public vulnerability about failure.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="diag-block">
+        <div class="diag-title">Failure Intelligence Audit</div>
+        <div class="diag-item">
+          <span class="diag-status status-partial">Partial</span>
+          <div class="diag-text">Major failures (The Laundress recall from bacteria contamination, the GSK bid, Fair &amp; Lovely's reputational crisis) are tracked and result in strategic changes. Smaller, intelligent failures are not systematically captured.</div>
+        </div>
+        <div class="diag-item">
+          <span class="diag-status status-no">No</span>
+          <div class="diag-text">There is no evidence of a Failure Library. Learnings from failed experiments do not appear to be codified and shared across brands and geographies. The organisation is siloed enough that a failure in Indonesia is unlikely to inform an innovation in Germany.</div>
+        </div>
+        <div class="diag-item">
+          <span class="diag-status status-no">Rare</span>
+          <div class="diag-text">Leaders modelling vulnerability about failure is rare publicly. The GSK bid was a clear strategic misstep. The public language around it was not reflective or instructive. Companies that cannot name their failures clearly cannot learn from them systematically.</div>
+        </div>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-title">Psychological Safety Score</div>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 4rem; color: var(--uni-gold); font-weight: 300; line-height: 1; margin-bottom: 12px;">2.8<span style="font-size: 1.5rem; color: rgba(255,255,255,0.3);"> /5</span></div>
+        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.7;">People feel adequate but not exceptional safety to disagree, challenge, or voice unpopular ideas. Bad news tends to be filtered before reaching senior leadership. Mistakes are discussed in retrospect, not in real time. This score sits below what breakthrough innovation consistently requires. The most transformative ideas are almost always uncomfortable before they are validated. An organisation scoring 2.8 on psychological safety is leaving a significant proportion of its innovation potential unrealised.</p>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-title">Zone Allocation vs. Benchmark</div>
+        <div class="zone-bar-wrap">
+          <div class="zone-bar-item">
+            <div class="zone-bar-label">Core</div>
+            <div class="zone-bar-track">
+              <div class="zone-bar-fill" style="width: 78%; background: var(--core-green);"></div>
+            </div>
+            <div class="zone-bar-pcts">78% vs 70%</div>
+          </div>
+          <div class="zone-bar-item">
+            <div class="zone-bar-label">Edge</div>
+            <div class="zone-bar-track">
+              <div class="zone-bar-fill" style="width: 16%; background: var(--edge-amber);"></div>
+            </div>
+            <div class="zone-bar-pcts">16% vs 20%</div>
+          </div>
+          <div class="zone-bar-item">
+            <div class="zone-bar-label">Beyond</div>
+            <div class="zone-bar-track">
+              <div class="zone-bar-fill" style="width: 6%; background: var(--beyond-crimson);"></div>
+            </div>
+            <div class="zone-bar-pcts">6% vs 10%</div>
+          </div>
+        </div>
+        <p style="font-size: 0.8rem; color: rgba(255,255,255,0.4); line-height: 1.6; margin-top: 8px;">The gap is not dramatic. But the direction matters. If the Jope-era contraction left a 10-point gap in Edge and Beyond, and Fernandez's rebalancing closes 4 to 5 points over three years, the 2030 portfolio target of 50% Beauty and Wellbeing requires faster movement than current allocation implies.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="archetype-verdict fade-up">
+    <div class="archetype-name">The Disciplined Explorer</div>
+    <div class="archetype-desc">Unilever occupies the archetype of a company that has earned its right to explore by maintaining an exceptional Core, while placing genuine bets across Edge and Beyond zones. It is not a Balanced Builder because Edge and Beyond are still underweight relative to stated ambition. It is not a Legacy-Rich, Vision-Poor company because the quantum computing partnerships, the AI-for-Science platform, and the agentic commerce positioning demonstrate real foresight. It is a company that knows where it wants to go and has built much of the infrastructure to get there. The gap is in the soil beneath the strategy: the psychological safety to voice uncomfortable truths, the failure intelligence to learn from them, and the maverick protection to ensure the rebels who will build the next S-curve are not quietly ground down by the organisation's gravitational pull toward the familiar.</div>
+  </div>
+</section>
+
+<!-- STRENGTHS AND WEAKNESSES -->
+<section class="section-paper" id="diagnosis">
+  <div class="section-label">Strengths and Weaknesses</div>
+  <h2 class="section-title">Specific, evidence-based.<br><em>No generic observations.</em></h2>
+
+  <div class="sw-grid fade-up">
+    <div class="sw-panel sw-strengths">
+      <div class="sw-panel-title">Where Unilever Genuinely Leads</div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <strong>The only CPG competitor with all three Theta zones active</strong>
+          <span>P&G wins on Core execution. L'Or&eacute;al wins on sustainability Beyond bets. Reckitt wins on AI velocity in Edge. Unilever is the only major player with genuinely funded initiatives across all three zones simultaneously. This balance is hard to replicate and slow to disrupt.</span>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <strong>Emerging market innovation flowing in both directions</strong>
+          <span>The Gandhidham factory's water stewardship AI, the Indian refill pilots, and the Minimalist acquisition are proving that resource constraints in emerging markets produce solutions that developed markets will need. This reverse innovation pipeline is structurally unique to a company with Unilever's geographic depth.</span>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <strong>Inclusive design as a genuine Edge capability</strong>
+          <span>Degree Inclusive, designed with the disabled community using non-traditional research methods, has no equivalent among competitors. The removal of the word "normal" from all beauty and personal care products, applied across hundreds of brands globally, signals systemic inclusion rather than isolated marketing gestures.</span>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <strong>Marketing infrastructure as an innovation signal system</strong>
+          <span>The 300,000-creator global network and the social listening capability that identified the Vaseline "grease gap" from unscripted consumer complaints represent a continuous real-world sensing system that laboratory R&D alone cannot replicate. When this signal detection is connected to the right innovation pipelines, it compresses the time from need to solution.</span>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <strong>AI embedded in operations, not just marketing</strong>
+          <span>LeverEdge (AI-powered sales system used by 10,000+ sales reps), digital twins of factories, autonomous supply chain compression from seven years to four, and the AI-for-Science platform are operational transformations, not capability theatre. The Google Cloud backbone is being built on real functional foundations.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sw-panel sw-weaknesses">
+      <div class="sw-panel-title">Where the Gaps Are Real</div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <strong>Psychological safety is the invisible ceiling on innovation</strong>
+          <span>A score of 2.8 out of 5 means that a significant proportion of Unilever's employees do not feel safe to voice uncomfortable truths, challenge leaders, or surface bad news quickly. This is the organisation's most underappreciated constraint on breakthrough innovation. The most transformative ideas rarely arrive comfortably.</span>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <strong>Failure intelligence is reactive, not systematic</strong>
+          <span>The Laundress bacteria recall, the GSK bid, the Fair and Lovely reputational crisis, the Ben &amp; Jerry's structural impossibility. These are expensive lessons. There is no evidence of a Failure Library where learnings are codified and shared across 400 brands and 190 countries. Every failed experiment that does not generate shared intelligence is tuition paid without the education.</span>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <strong>The sachet problem has no credible roadmap</strong>
+          <span>53 billion sachets per year. A 2035 deadline for circular flexible packaging. A business model in emerging markets that depends on sachet affordability. The gap between the commitment and the mechanism is the most honest test of whether Unilever's sustainability ambitions are strategic or reputational. No competitor has solved this either. That is not a defence.</span>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <strong>Reckitt is compressing innovation cycle times that Unilever has not</strong>
+          <span>Reckitt's AI concept generator reduces development time by 70% and doubles success rates versus traditional methods. Unilever's AI investments are more strategic and longer-horizon, but in the categories where they compete directly on Edge (health, hygiene, personal care), the speed differential creates real exposure.</span>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <strong>L'Or&eacute;al's Beyond ecosystem is more systematic than Unilever's</strong>
+          <span>L'Or&eacute;al's &euro;100 million L'AcceleratOR programme, with 13 startups from 1,000 applicants across 101 countries working on next-generation packaging and bio-ingredients, is a structured approach to Beyond exploration. Unilever's BioCNG and CreaSolv are excellent individual projects. But individual projects are not an ecosystem. The difference matters when the Beyond window closes.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE ONE QUESTION -->
+<section class="section-ink">
+  <div class="one-question fade-up">
+    <span class="oq-label">The Theta One Question</span>
+    <div class="oq-text">
+      Is your culture evolving <em>fast enough</em> to match the ambition of your strategy, and brave enough to confront the gaps it would rather not name?
+    </div>
+    <p class="oq-sub">
+      Unilever has the portfolio logic, the technology partnerships, the emerging market depth, and the leadership intent to become what it says it wants to be. What it does not yet fully have is the cultural foundation that makes breakthrough possible at scale: the psychological safety to surface uncomfortable signals, the failure intelligence to learn from them systematically, and the maverick protection to ensure the people who see the next curve are not quietly absorbed into the organisation that built the last one.
+    </p>
+    <div style="margin-top: 48px; padding: 32px; border: 1px solid rgba(184,148,42,0.25); border-radius: 3px; max-width: 700px; margin-left: auto; margin-right: auto;">
+      <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-style: italic; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 16px;">"Perhaps the question is not whether your company can afford to innovate. It is whether it can afford not to."</p>
+      <span style="font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--uni-gold);">The Theta Framework &nbsp;|&nbsp; Christine Pamela Chandrakasan</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <strong>The Theta Framework</strong>
+    Strategic Case Study &nbsp;|&nbsp; Unilever &nbsp;|&nbsp; 2026
+  </div>
+  <div class="footer-right">By Christine Pamela Chandrakasan</div>
+</footer>
+
+<script>
+  // FADE UP OBSERVER
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) {
+        el.target.classList.add('visible');
+        observer.unobserve(el.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // CHART DEFAULTS
+  Chart.defaults.font.family = "'DM Sans', sans-serif";
+  const tooltip = {
+    backgroundColor: 'rgba(14,20,32,0.92)',
+    titleColor: '#fff',
+    bodyColor: 'rgba(255,255,255,0.7)',
+    padding: 12,
+    cornerRadius: 2
+  };
+
+  // SCATTER CHART
+  const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+
+  const labelPlugin = {
+    id: 'labelPlugin',
+    afterDatasetsDraw(chart) {
+      const ctx = chart.ctx;
+      ctx.save();
+      ctx.font = '11px DM Sans, sans-serif';
+      ctx.fillStyle = '#555';
+      chart.data.datasets.forEach((dataset, di) => {
+        const meta = chart.getDatasetMeta(di);
+        meta.data.forEach((point, i) => {
+          const label = dataset.labels ? dataset.labels[i] : '';
+          if (label) {
+            ctx.fillStyle = dataset.borderColor;
+            ctx.fillText(label, point.x + 8, point.y + 4);
+          }
+        });
+      });
+      ctx.restore();
+    }
+  };
+
+  new Chart(scatterCtx, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Core Zone',
+          data: [
+            {x: 1.2, y: 1.3}, {x: 1.5, y: 1.0}, {x: 1.8, y: 1.5}, {x: 1.1, y: 1.8}
+          ],
+          labels: ['Vaseline ProVitaB3', 'Dove Crumbl Collab', 'Cold-Water Laundry', 'Axe Fine Fragrance'],
+          backgroundColor: 'rgba(45,106,79,0.7)',
+          borderColor: 'rgba(45,106,79,1)',
+          pointRadius: 8,
+          pointHoverRadius: 10
+        },
+        {
+          label: 'Edge Zone',
+          data: [
+            {x: 3.0, y: 3.2}, {x: 3.4, y: 3.0}, {x: 3.2, y: 3.6}, {x: 2.8, y: 2.8}
+          ],
+          labels: ['Vegetarian Butcher', 'Degree Inclusive', 'Whole-Body Deo', 'Prestige Beauty'],
+          backgroundColor: 'rgba(181,132,26,0.7)',
+          borderColor: 'rgba(181,132,26,1)',
+          pointRadius: 8,
+          pointHoverRadius: 10
+        },
+        {
+          label: 'Beyond Zone',
+          data: [
+            {x: 4.5, y: 4.6}, {x: 4.8, y: 4.2}, {x: 4.3, y: 4.8}, {x: 4.6, y: 4.4}
+          ],
+          labels: ['AI-for-Science', 'Quantum Computing', 'BioCNG from POME', 'CreaSolv Recycling'],
+          backgroundColor: 'rgba(139,26,26,0.7)',
+          borderColor: 'rgba(139,26,26,1)',
+          pointRadius: 8,
+          pointHoverRadius: 10
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip,
+        legend: {
+          position: 'bottom',
+          labels: { padding: 20, usePointStyle: true, pointStyleWidth: 10 }
+        }
+      },
+      scales: {
+        x: {
+          min: 0, max: 6,
+          title: { display: true, text: 'Market Reach: Existing  \u2192  New  \u2192  Emerging  \u2192  Speculative', font: { size: 10 }, color: '#888' },
+          ticks: { display: false },
+          grid: { color: 'rgba(30,60,114,0.08)' }
+        },
+        y: {
+          min: 0, max: 6,
+          title: { display: true, text: 'Technology Change: Incremental \u2192 High \u2192 Radical \u2192 Extreme', font: { size: 10 }, color: '#888' },
+          ticks: { display: false },
+          grid: { color: 'rgba(30,60,114,0.08)' }
+        }
+      }
+    },
+    plugins: [labelPlugin]
+  });
+
+  // DOUGHNUT CHART
+  const doughnutCtx = document.getElementById('doughnutChart').getContext('2d');
+  new Chart(doughnutCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Core (~78%)', 'Edge (~16%)', 'Beyond (~6%)'],
+      datasets: [{
+        data: [78, 16, 6],
+        backgroundColor: ['rgba(45,106,79,0.75)', 'rgba(181,132,26,0.75)', 'rgba(139,26,26,0.75)'],
+        borderWidth: 0,
+        cutout: '68%'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip,
+        legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true } }
+      }
+    }
+  });
+
+  // RADAR CHART
+  const radarCtx = document.getElementById('radarChart').getContext('2d');
+  new Chart(radarCtx, {
+    type: 'radar',
+    data: {
+      labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'AI Integration', 'Sustainability', 'Innovation Speed'],
+      datasets: [
+        {
+          label: 'Unilever',
+          data: [78, 65, 58, 70, 72, 62],
+          backgroundColor: 'rgba(30,60,114,0.12)',
+          borderColor: 'rgba(30,60,114,0.8)',
+          pointBackgroundColor: 'rgba(30,60,114,1)',
+          pointRadius: 4,
+          borderWidth: 2
+        },
+        {
+          label: 'P&G',
+          data: [90, 52, 38, 68, 55, 72],
+          backgroundColor: 'rgba(181,132,26,0.08)',
+          borderColor: 'rgba(181,132,26,0.7)',
+          pointBackgroundColor: 'rgba(181,132,26,1)',
+          pointRadius: 4,
+          borderWidth: 2
+        },
+        {
+          label: 'Reckitt',
+          data: [70, 80, 50, 78, 60, 90],
+          backgroundColor: 'rgba(45,106,79,0.08)',
+          borderColor: 'rgba(45,106,79,0.7)',
+          pointBackgroundColor: 'rgba(45,106,79,1)',
+          pointRadius: 4,
+          borderWidth: 2
+        },
+        {
+          label: "L'Or\u00e9al",
+          data: [85, 68, 82, 62, 88, 65],
+          backgroundColor: 'rgba(139,26,26,0.08)',
+          borderColor: 'rgba(139,26,26,0.7)',
+          pointBackgroundColor: 'rgba(139,26,26,1)',
+          pointRadius: 4,
+          borderWidth: 2
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        r: {
+          min: 0, max: 100,
+          ticks: { display: false },
+          grid: { color: 'rgba(0,0,0,0.07)' },
+          angleLines: { color: 'rgba(0,0,0,0.08)' },
+          pointLabels: { font: { size: 11 }, color: '#555' }
+        }
+      },
+      plugins: {
+        tooltip,
+        legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } }
+      }
+    }
+  });
+</script>
+</body>
+</html>
