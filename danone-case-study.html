@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Danone: Theta Innovation Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #E30614;
+    --primary-soft: rgba(227,6,20,0.12);
+    --primary-subtle: rgba(227,6,20,0.06);
+    --accent: #C9963A;
+    --ink: #0E1A18;
+    --ink-soft: #1E2D2A;
+    --paper: #F7F5F0;
+    --paper-warm: #EFEBE2;
+    --muted: #8A9490;
+    --muted-light: #B0B8B4;
+    --core-green: #2D6A4F;
+    --core-green-bg: rgba(45,106,79,0.10);
+    --edge-amber: #B5841A;
+    --edge-amber-bg: rgba(181,132,26,0.10);
+    --beyond-crimson: #8B1A1A;
+    --beyond-crimson-bg: rgba(139,26,26,0.10);
+    --border: rgba(227,6,20,0.12);
+    --border-soft: rgba(14,26,24,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* TYPOGRAPHY */
+  h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; font-weight: 500; line-height: 1.15; }
+  p { font-family: 'DM Sans', sans-serif; line-height: 1.75; font-weight: 300; }
+
+  .serif { font-family: 'Cormorant Garamond', serif; }
+  .serif-italic { font-family: 'Cormorant Garamond', serif; font-style: italic; }
+  .kicker {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /* NAVIGATION */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 3rem;
+    height: 60px;
+    background: rgba(14,26,24,0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(227,6,20,0.18);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--primary);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--primary); }
+
+  /* HERO */
+  #hero {
+    position: relative;
+    width: 100%; height: 100vh;
+    min-height: 680px;
+    background: var(--ink);
+    overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(227,6,20,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(227,6,20,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    animation: gridDrift 40s linear infinite;
+  }
+  @keyframes gridDrift {
+    0% { background-position: 0 0; }
+    100% { background-position: 80px 80px; }
+  }
+
+  .hero-noise {
+    position: absolute; inset: 0; z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+
+  .hero-radial {
+    position: absolute; inset: 0; z-index: 2;
+    background: radial-gradient(ellipse 60% 60% at 80% 40%, rgba(227,6,20,0.13) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 20% 70%, rgba(201,150,58,0.07) 0%, transparent 60%);
+  }
+
+  .hero-content {
+    position: relative; z-index: 5;
+    padding: 0 6rem;
+    max-width: 1100px;
+  }
+
+  .hero-kicker {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.7s 0.2s forwards;
+  }
+
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 5.5vw, 5.5rem);
+    font-weight: 400;
+    color: #fff;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero-headline em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    max-width: 580px;
+    line-height: 1.65;
+    margin-bottom: 3.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-meta {
+    position: absolute; bottom: 0; left: 0; right: 0; z-index: 5;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+
+  .hero-meta-item {
+    padding: 1.5rem 2rem;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+  .hero-meta-item:last-child { border-right: none; }
+
+  .hero-meta-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 0.4rem;
+  }
+  .hero-meta-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #fff;
+  }
+
+  .scroll-indicator {
+    position: absolute; right: 2.5rem; top: 50%; z-index: 10;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    opacity: 0;
+    animation: fadeUp 1s 1.2s forwards;
+  }
+  .scroll-indicator span {
+    font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    writing-mode: vertical-rl;
+  }
+  .scroll-line {
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, rgba(227,6,20,0.8), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTION UTILITIES */
+  .section { padding: 7rem 6rem; }
+  .section-white { background: #fff; }
+  .section-paper { background: var(--paper-warm); }
+  .section-ink { background: var(--ink); color: #fff; }
+
+  .section-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  .section-heading {
+    font-size: clamp(2.4rem, 3.5vw, 3.6rem);
+    font-weight: 400;
+    margin-bottom: 1.2rem;
+    line-height: 1.1;
+  }
+
+  .section-heading em { font-style: italic; color: var(--accent); }
+
+  .section-intro {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 660px;
+    line-height: 1.7;
+    margin-bottom: 3.5rem;
+    font-weight: 300;
+  }
+
+  .fade-up {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 5rem;
+    align-items: start;
+    margin-bottom: 4rem;
+  }
+
+  .about-prose p { font-size: 1.02rem; color: #2a2a2a; margin-bottom: 1.5rem; font-weight: 300; }
+
+  .hidden-fact {
+    background: var(--ink-soft);
+    border-left: 3px solid var(--primary);
+    border-radius: 4px;
+    padding: 1.6rem 1.8rem;
+    margin-top: 2rem;
+  }
+  .hidden-fact-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 0.6rem;
+  }
+  .hidden-fact p { color: rgba(255,255,255,0.8); font-size: 0.93rem; font-weight: 300; }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .stat-item {
+    background: var(--paper-warm);
+    padding: 2rem 1.5rem;
+  }
+
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.4rem;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+    display: block;
+  }
+  .stat-num sup { font-size: 1.4rem; vertical-align: super; }
+
+  .stat-desc { font-size: 0.78rem; color: var(--muted); font-weight: 400; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .belief-strip {
+    background: var(--primary);
+    padding: 3.5rem 6rem;
+    margin: 0 -6rem;
+    text-align: center;
+  }
+  .belief-strip blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 2.5vw, 2.5rem);
+    font-style: italic;
+    font-weight: 400;
+    color: #fff;
+    line-height: 1.4;
+    max-width: 900px;
+    margin: 0 auto 1rem;
+  }
+  .belief-strip cite { font-size: 0.78rem; color: rgba(255,255,255,0.65); letter-spacing: 0.12em; text-transform: uppercase; font-style: normal; }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 160px; max-width: 900px; margin: 0 auto; }
+  .timeline-line {
+    position: absolute; left: 120px; top: 0; bottom: 0;
+    width: 1px; background: rgba(227,6,20,0.2);
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 3.5rem;
+    padding-left: 2.5rem;
+  }
+
+  .timeline-year {
+    position: absolute;
+    left: -160px; top: 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 300;
+    color: var(--ink);
+    width: 130px;
+    text-align: right;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -12px; top: 6px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    background: var(--paper-warm);
+    z-index: 2;
+  }
+  .timeline-dot.filled { background: var(--primary); }
+
+  .timeline-phase {
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+
+  .timeline-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--ink);
+  }
+
+  .timeline-desc { font-size: 0.9rem; color: #555; line-height: 1.65; font-weight: 300; max-width: 560px; }
+
+  /* INNOVATION CULTURE */
+  .era-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    margin-bottom: 4rem;
+  }
+
+  .era-card {
+    background: #fff;
+    padding: 2.5rem 2rem;
+    border-top: 3px solid transparent;
+    transition: border-color 0.25s, transform 0.25s;
+    cursor: default;
+  }
+  .era-card:hover { border-color: var(--primary); transform: translateY(-4px); }
+  .era-card.accent-edge { border-top-color: var(--edge-amber); }
+  .era-card.accent-beyond { border-top-color: var(--beyond-crimson); }
+
+  .era-period {
+    font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 0.5rem;
+  }
+  .era-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 500;
+    margin-bottom: 1rem;
+  }
+  .era-desc { font-size: 0.88rem; color: #555; line-height: 1.65; font-weight: 300; }
+
+  .pull-quote {
+    background: var(--paper-warm);
+    border-left: 4px solid var(--accent);
+    padding: 2rem 2.5rem;
+    margin: 3rem 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .pull-quote blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.45rem;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--ink);
+    margin-bottom: 0.7rem;
+  }
+  .pull-quote cite { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-style: normal; }
+
+  /* INNOVATION DILEMMAS */
+  .dilemmas-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    margin-top: 3rem;
+  }
+
+  .dilemma-card {
+    background: #fff;
+    padding: 2.8rem 2.5rem;
+    transition: transform 0.25s;
+    cursor: default;
+  }
+  .dilemma-card:hover { transform: translateY(-4px); }
+
+  .dilemma-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4rem; font-weight: 300;
+    color: rgba(227,6,20,0.12);
+    line-height: 1;
+    margin-bottom: -0.5rem;
+  }
+
+  .dilemma-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.55rem; font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+  }
+
+  .dilemma-body { font-size: 0.91rem; color: #555; line-height: 1.7; font-weight: 300; }
+  .dilemma-tension {
+    margin-top: 1.5rem;
+    font-size: 0.78rem;
+    color: var(--primary);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* THETA MAP */
+  .map-grid {
+    display: grid;
+    grid-template-columns: 0.55fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .zone-pill {
+    display: flex; align-items: flex-start; gap: 0.8rem;
+    padding: 1rem 1.2rem;
+    border-radius: 4px;
+    margin-bottom: 0.8rem;
+  }
+  .zone-pill.core { background: var(--core-green-bg); }
+  .zone-pill.edge { background: var(--edge-amber-bg); }
+  .zone-pill.beyond { background: var(--beyond-crimson-bg); }
+
+  .zone-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .zone-dot.core { background: var(--core-green); }
+  .zone-dot.edge { background: var(--edge-amber); }
+  .zone-dot.beyond { background: var(--beyond-crimson); }
+
+  .zone-pill-title { font-size: 0.75rem; font-weight: 600; margin-bottom: 0.2rem; letter-spacing: 0.04em; }
+  .zone-pill-desc { font-size: 0.78rem; color: var(--muted); font-weight: 300; line-height: 1.5; }
+
+  .map-instructions {
+    background: var(--paper-warm);
+    border-radius: 4px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 1.5rem;
+  }
+  .map-instructions p { font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
+
+  .chart-container { position: relative; width: 100%; }
+  .chart-wrap { position: relative; width: 100%; height: 440px; }
+
+  /* ALLOCATION */
+  .allocation-grid {
+    display: grid;
+    grid-template-columns: 0.7fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .doughnut-wrap {
+    position: relative;
+    width: 260px; height: 260px;
+    margin: 0 auto;
+  }
+  .doughnut-center {
+    position: absolute;
+    inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+  .doughnut-center-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; font-weight: 500;
+  }
+  .doughnut-center-sub {
+    font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  }
+
+  .alloc-bars { display: flex; flex-direction: column; gap: 2rem; }
+
+  .alloc-bar-item {}
+  .alloc-bar-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 0.5rem;
+  }
+  .alloc-bar-label { font-size: 0.78rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; }
+  .alloc-bar-nums { font-size: 0.78rem; color: var(--muted); }
+
+  .alloc-bar-track {
+    height: 6px; background: var(--paper-warm); border-radius: 3px; overflow: hidden;
+    position: relative; margin-bottom: 0.5rem;
+  }
+  .alloc-bar-fill {
+    height: 100%; border-radius: 3px;
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .alloc-bar-bench {
+    position: absolute; top: 0; height: 100%; width: 2px;
+    background: rgba(14,26,24,0.25);
+  }
+
+  .alloc-bar-comment { font-size: 0.78rem; color: var(--muted); font-weight: 300; }
+
+  /* COMPETITORS */
+  .competitor-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5px;
+    margin-bottom: 4rem;
+  }
+
+  .competitor-card {
+    background: #fff;
+    padding: 1.8rem 1.4rem;
+    transition: transform 0.25s;
+  }
+  .competitor-card:hover { transform: translateY(-4px); }
+  .competitor-card.featured {
+    border: 2px solid var(--primary);
+    background: rgba(227,6,20,0.03);
+  }
+
+  .comp-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem; font-weight: 500;
+    margin-bottom: 0.2rem;
+  }
+  .comp-tag { font-size: 0.7rem; color: var(--muted); margin-bottom: 1.2rem; }
+
+  .comp-zone-row {
+    display: flex; align-items: center; gap: 0.6rem;
+    margin-bottom: 0.5rem;
+  }
+  .comp-zone-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .comp-zone-text { font-size: 0.75rem; color: #444; }
+
+  .comp-verdict {
+    margin-top: 1.2rem;
+    display: inline-block;
+    font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.3rem 0.6rem;
+    border-radius: 2px;
+    background: var(--paper-warm);
+    color: var(--muted);
+  }
+
+  .radar-wrap { height: 420px; }
+
+  /* S&W */
+  .sw-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .sw-panel { background: #fff; padding: 2.5rem 2rem; }
+  .sw-panel.strength { border-top: 3px solid var(--core-green); }
+  .sw-panel.weakness { border-top: 3px solid var(--beyond-crimson); }
+
+  .sw-panel-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-weight: 500;
+    margin-bottom: 1.5rem;
+  }
+
+  .sw-item {
+    display: flex; gap: 1rem; align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+  .sw-marker {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 600;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .sw-marker.s { background: var(--core-green-bg); color: var(--core-green); }
+  .sw-marker.w { background: var(--beyond-crimson-bg); color: var(--beyond-crimson); }
+
+  .sw-item-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .sw-item-desc { font-size: 0.83rem; color: #555; line-height: 1.6; font-weight: 300; }
+
+  /* DIAGNOSTIC */
+  .diagnostic-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+
+  .diag-block { margin-bottom: 2.5rem; }
+  .diag-block-title {
+    font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 1rem; padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .archetype-box {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.6rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .archetype-box-label { font-size: 0.82rem; color: rgba(255,255,255,0.7); }
+  .archetype-box-rating {
+    font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.25rem 0.6rem; border-radius: 2px;
+    font-weight: 500;
+  }
+  .rating-strong { background: rgba(45,106,79,0.35); color: #74c69d; }
+  .rating-active { background: rgba(181,132,26,0.35); color: #ffd166; }
+  .rating-partial { background: rgba(139,26,26,0.35); color: #ff9999; }
+
+  .diag-text { font-size: 0.88rem; color: rgba(255,255,255,0.6); line-height: 1.65; font-weight: 300; }
+
+  .diag-bar-item {
+    margin-bottom: 1rem;
+  }
+  .diag-bar-header {
+    display: flex; justify-content: space-between;
+    font-size: 0.78rem; color: rgba(255,255,255,0.55);
+    margin-bottom: 0.4rem;
+  }
+  .diag-bar-track {
+    height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;
+    position: relative;
+  }
+  .diag-bar-fill { height: 100%; border-radius: 2px; }
+  .diag-bar-bench {
+    position: absolute; top: 0; height: 100%; width: 2px;
+    background: rgba(255,255,255,0.3);
+  }
+
+  .critical-tension {
+    background: rgba(227,6,20,0.15);
+    border: 1px solid rgba(227,6,20,0.3);
+    border-radius: 4px;
+    padding: 1.4rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .critical-tension-title {
+    font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--primary); margin-bottom: 0.5rem;
+  }
+  .critical-tension-text { font-size: 0.88rem; color: rgba(255,255,255,0.75); line-height: 1.6; font-weight: 300; }
+
+  .relativity-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.82rem;
+  }
+  .relativity-label { color: rgba(255,255,255,0.5); }
+  .relativity-chip {
+    font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.2rem 0.55rem; border-radius: 2px;
+  }
+  .chip-above { background: rgba(45,106,79,0.3); color: #74c69d; }
+  .chip-ontarget { background: rgba(181,132,26,0.3); color: #ffd166; }
+  .chip-below { background: rgba(139,26,26,0.3); color: #ff9999; }
+  .chip-improving { background: rgba(45,106,79,0.2); color: #74c69d; }
+
+  .verdict-box {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    padding: 2rem 2rem;
+    margin-top: 3rem;
+    text-align: center;
+  }
+  .verdict-archetype {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem; font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+  .verdict-status { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted-light); margin-bottom: 1rem; }
+  .verdict-text { font-size: 0.88rem; color: rgba(255,255,255,0.65); line-height: 1.65; font-weight: 300; max-width: 700px; margin: 0 auto; }
+
+  .theta-verdict-quote {
+    margin-top: 2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: rgba(255,255,255,0.4);
+  }
+
+  /* CLOSING */
+  .closing-section {
+    background: var(--paper-warm);
+    padding: 7rem 6rem;
+    text-align: center;
+  }
+  .closing-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 3vw, 3rem);
+    font-weight: 400;
+    font-style: italic;
+    max-width: 860px;
+    margin: 0 auto 1.5rem;
+    color: var(--ink);
+    line-height: 1.35;
+  }
+  .closing-attribution { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    padding: 2rem 6rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-left { font-size: 0.68rem; color: rgba(255,255,255,0.3); letter-spacing: 0.1em; text-transform: uppercase; }
+  .footer-right { font-size: 0.68rem; color: rgba(255,255,255,0.3); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav .nav-links { display: none; }
+    .section { padding: 5rem 2rem; }
+    .hero-content { padding: 0 2rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .belief-strip { padding: 3rem 2rem; margin: 0 -2rem; }
+    .map-grid { grid-template-columns: 1fr; }
+    .allocation-grid { grid-template-columns: 1fr; }
+    .competitor-grid { grid-template-columns: 1fr 1fr; }
+    .sw-grid { grid-template-columns: 1fr; }
+    .diagnostic-grid { grid-template-columns: 1fr; }
+    .dilemmas-grid { grid-template-columns: 1fr; }
+    .era-grid { grid-template-columns: 1fr; }
+    .hero-meta { grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; gap: 0.5rem; padding: 2rem; }
+    .scroll-indicator { display: none; }
+    .closing-section { padding: 5rem 2rem; }
+  }
+</style>
+</head>
+<body>
+<!-- NAVIGATION -->
+<nav>
+  <a class="nav-logo" href="#">Danone</a>
+  <div class="nav-links">
+    <a href="#about">Overview</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#culture">Culture</a>
+    <a href="#dilemmas">Dilemmas</a>
+    <a href="#theta-map">Theta Map</a>
+    <a href="#competitors">Competitors</a>
+    <a href="#diagnostic">Diagnostic</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-radial"></div>
+
+  <div class="hero-content">
+    <div class="kicker hero-kicker" style="color:var(--primary);">Theta Innovation Framework &nbsp;&middot;&nbsp; Strategic Case Study</div>
+    <h1 class="hero-headline">
+      The science was always right.<br>
+      The question is whether the<br>
+      <em>organization is built</em><br>
+      to receive it.
+    </h1>
+    <p class="hero-subtitle">Danone has spent a century turning food into a health intervention. What follows is a structural reading of where that ambition lives in the company today, where it is protected, where it is at risk, and what the next decade will actually test.</p>
+  </div>
+
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Founded</div>
+      <div class="hero-meta-value serif">1919, Barcelona</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Employees</div>
+      <div class="hero-meta-value serif">~102,000</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">2025 Revenue</div>
+      <div class="hero-meta-value serif">&#8364;27.3B</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Theta Archetype</div>
+      <div class="hero-meta-value serif">Disciplined Explorer</div>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section section-white">
+  <span class="section-label fade-up">What Danone Actually Does</span>
+  <h2 class="section-heading fade-up">The yogurt jar was always a <em>delivery mechanism</em></h2>
+
+  <div class="about-grid">
+    <div class="about-prose fade-up">
+      <p>Most people know Danone as the company behind Activia and evian. What most people do not know is that Danone was founded in a Barcelona pharmacy in 1919, selling yogurt not as a food but as a therapeutic product, prescribed by doctors to treat childhood digestive disorders. The first "customer" was a pediatrician, not a grocer. That founding instinct, that food can intervene in human biology, is the quiet engine behind everything that has followed: the microbiome labs, the medical nutrition acquisitions, the GLP-1 formulations. The shelf is different. The idea is the same.</p>
+      <p>Today Danone operates across three platforms: Essential Dairy and Plant-Based, Specialized Nutrition (infant, medical, and adult), and Waters. With close to 90 percent of its portfolio scoring highly on independent nutritional benchmarks, it is not trying to be in every aisle. It is trying to own the conversation about what food is supposed to do for you. That is the business. Everything else is distribution strategy.</p>
+
+      <div class="hidden-fact fade-up">
+        <div class="hidden-fact-label">The fact almost nobody knows</div>
+        <p>Isaac Carasso named the company "Danone" after his son Daniel's childhood nickname. When Daniel expanded the brand to the United States in 1942, it became "Dannon" because Americans kept mispronouncing "Danone." For decades, the US business was legally a different brand name, a different country, the same jar. The two identities did not fully reconcile until the modern era of global brand alignment. Danone grew into a global giant while quietly running two names for its most famous product.</p>
+      </div>
+    </div>
+
+    <div class="fade-up">
+      <div class="stat-grid">
+        <div class="stat-item">
+          <span class="stat-num serif">&#8364;447<sup>M</sup></span>
+          <span class="stat-desc">Annual R&D investment</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num serif">5,000<sup>+</sup></span>
+          <span class="stat-desc">Active patents held</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num serif">2,000<sup>+</sup></span>
+          <span class="stat-desc">Scientists and researchers</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num serif">29<sup>%</sup></span>
+          <span class="stat-desc">Operating margin, China &amp; North Asia</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="belief-strip fade-up">
+    <blockquote>"Food innovation is no longer about flavor or packaging. It is about physiological impact and microbiological data. Each person has a unique microbiome, like a fingerprint. The right food, adapted to an individual's biological profile, can have a direct and measurable impact on health."</blockquote>
+    <cite>Isabelle Esser, Chief Research, Innovation, Quality and Food Safety Officer</cite>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline" class="section section-paper">
+  <span class="section-label fade-up">The Full Arc</span>
+  <h2 class="section-heading fade-up">A hundred years of <em>reinvention</em></h2>
+  <p class="section-intro fade-up">Danone has not simply grown. It has periodically shed its entire skin and rebuilt from a different premise. Understanding those inflection points explains why the current bets are not random and why some of the structural tensions are actually very old.</p>
+
+  <div class="timeline fade-up">
+    <div class="timeline-line"></div>
+
+    <div class="timeline-item">
+      <div class="timeline-year serif">1919</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Origin</div>
+      <div class="timeline-title">Yogurt as medicine</div>
+      <div class="timeline-desc">Isaac Carasso begins producing yogurt in a Barcelona pharmacy, inspired by Nobel laureate Elie Metchnikoff's research on gut bacteria and longevity. The product is sold through pharmacies, not food stores. Innovation and health are inseparable from the very first day.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year serif">1929</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">Expansion</div>
+      <div class="timeline-title">Paris, then New York</div>
+      <div class="timeline-desc">Daniel Carasso expands to France in 1929. By 1942 the brand reaches the United States as "Dannon," quietly creating the naming bifurcation that would last for decades. The export of French health culture begins.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year serif">1972</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Inflection Point I</div>
+      <div class="timeline-title">The Dual Project speech</div>
+      <div class="timeline-desc">Antoine Riboud delivers a landmark address in Marseille, articulating that a business carries a dual responsibility: to shareholders and to society. This speech, delivered fifty years before ESG became a boardroom word, is the moral DNA of Danone. It is still referenced internally today. It is also why the company became a "Societe a Mission" in 2021 without anyone finding it incoherent.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year serif">1973</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">Merger</div>
+      <div class="timeline-title">BSN merger creates a French food giant</div>
+      <div class="timeline-desc">The merger of Danone with BSN, a glassmaker turned food company, creates the base for what will eventually become one of Europe's most powerful food enterprises. The portfolio at this stage still spans biscuits, beverages, and dairy, a sprawl the company will spend thirty years editing down.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year serif">1994</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">Identity</div>
+      <div class="timeline-title">The company renames itself Danone</div>
+      <div class="timeline-desc">The BSN holding company officially takes the Danone name, anchoring the corporate identity to its most health-resonant brand. The rebranding is not cosmetic. It signals a deliberate shift toward a more focused, health-centric portfolio that will take another decade to fully execute.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year serif">2007</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Inflection Point II</div>
+      <div class="timeline-title">Royal Numico acquisition</div>
+      <div class="timeline-desc">The acquisition of Royal Numico for approximately 12 billion euros is the most consequential bet in the company's modern history. It brings Nutricia and Milupa into the fold, giving Danone world-class expertise in infant and medical nutrition. This is the moment Danone stops being a dairy company with health ambitions and starts being a health company that happens to make dairy.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year serif">2013</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">Crisis</div>
+      <div class="timeline-title">China infant formula contamination scare</div>
+      <div class="timeline-desc">Danone's Dumex brand is caught in a contamination scandal in China at the worst possible moment, as Chinese parents are hypersensitive to infant formula safety following the melamine crisis of 2008. Revenue collapses in China. Trust in the brand takes years to rebuild. The crisis accelerates a hard examination of how the company manages quality governance across markets it does not fully control culturally.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year serif">2017</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Inflection Point III</div>
+      <div class="timeline-title">WhiteWave acquisition shifts the portfolio</div>
+      <div class="timeline-desc">The 12.5 billion dollar acquisition of WhiteWave adds Alpro, Silk, and So Delicious to the Danone portfolio, making it the global leader in plant-based alternatives almost overnight. Danone does not invent the category. It buys leadership in it. That distinction matters for how we read the innovation culture: Danone scouts and acquires Edge-zone assets; it rarely builds them from zero.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year serif">2021</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">Crisis and Reset</div>
+      <div class="timeline-title">CEO Emmanuel Faber ousted</div>
+      <div class="timeline-desc">Activist investors remove CEO Emmanuel Faber, who had championed the mission-driven identity and B Corp ambition, citing underperformance versus peers. The episode exposes the core tension of a purpose-driven public company: the mission is genuine, but the income statement still governs. New CEO Antoine de Saint-Affrique inherits a company that believes in its purpose but needs to prove it can also grow.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year serif">2022</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-phase">Turnaround</div>
+      <div class="timeline-title">Renew Danone strategy launches</div>
+      <div class="timeline-desc">De Saint-Affrique's plan is deceptively simple: put brands at the center, become obsessive about execution, and reconnect with profitable growth. It is a turnaround plan, but one that preserves the innovation architecture. The question it leaves open is whether disciplined execution and breakthrough ambition can coexist in the same culture at the same time.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-year serif">2025</div>
+      <div class="timeline-dot filled"></div>
+      <div class="timeline-phase">Now</div>
+      <div class="timeline-title">OneBiome Lab opens; Oikos Fusion launches</div>
+      <div class="timeline-desc">Two moves that reveal the dual clock Danone is running. The OneBiome Lab at Paris-Saclay is a 10 to 20 year bet on microbiome science. Oikos Fusion, a yogurt drink reformulated for people using GLP-1 weight-loss drugs, goes from market signal to national US rollout in eighteen months. Danone is simultaneously planting a forest and harvesting this season's crop.</div>
+    </div>
+
+  </div>
+</section>
+<!-- INNOVATION CULTURE -->
+<section id="culture" class="section section-white">
+  <span class="section-label fade-up">How the Innovation Instinct Evolved</span>
+  <h2 class="section-heading fade-up">Three different companies, <em>one compulsion</em></h2>
+  <p class="section-intro fade-up">Danone's innovation culture did not grow in a straight line. It fractured under pressure, reformed under new leadership, and quietly transferred its deepest habits from one generation of management to the next. What looks like continuity is actually a series of near-breaks, each of which tested whether the founding idea, that food and health are the same discipline, would survive contact with financial reality.</p>
+
+  <div class="era-grid fade-up">
+    <div class="era-card">
+      <div class="era-period">1919 to 1972</div>
+      <div class="era-title serif">The Pharmacy Instinct</div>
+      <div class="era-desc">The founding generation did not separate science from product. Isaac Carasso read the academic literature on fermentation and gut bacteria before he made a single jar. The innovation philosophy of this era was not a strategy; it was a belief system. Food was a form of medicine. That instinct was personal, craft-driven, and almost entirely absent of formal R&D process. It was, in Theta terms, pure Chaos stage: a Maverick with a thesis and a small space to work in.</div>
+    </div>
+    <div class="era-card accent-edge">
+      <div class="era-period">1973 to 2007</div>
+      <div class="era-title serif">The Empire Builder Era</div>
+      <div class="era-desc">Under the BSN merger and the subsequent decades of portfolio expansion, Danone grew by acquiring and integrating. Innovation in this era was primarily Adjacent: taking existing capabilities in dairy and applying them to new formats, markets, and consumer occasions. The Riboud "Dual Project" speech ensured the social mission was institutionalized even as the company got bigger and more financially complex. But Mavericks in this era had to navigate a French corporate hierarchy that respected expertise above disruption.</div>
+    </div>
+    <div class="era-card accent-beyond">
+      <div class="era-period">2007 to present</div>
+      <div class="era-title serif">The Science Platform Era</div>
+      <div class="era-desc">The Royal Numico acquisition fundamentally changed what Danone thinks it is. For the first time, the company owned clinical nutrition, a category where scientific proof is not a marketing claim but a regulatory requirement. This forced a qualitative upgrade in the company's R&D infrastructure. The twin research centers in Paris-Saclay and Utrecht were expanded. The team of 2,000 scientists emerged. And for the first time, innovation had to pass a different test: not "does this taste good?" but "does this work biologically?"</div>
+    </div>
+  </div>
+
+  <div class="pull-quote fade-up">
+    <blockquote>"All food is anchored in local culture. People want flavor, emotional memory, recognition. But it is science that makes it possible to deliver health through these foods. The next food revolution will come from science and culture. And Danone wants to be positioned at the intersection of these two forces."</blockquote>
+    <cite>Isabelle Esser, Chief Research, Innovation, Quality and Food Safety Officer</cite>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem;" class="fade-up">
+    <div style="background:var(--paper-warm);padding:2.2rem;border-radius:4px;">
+      <div class="kicker" style="color:var(--edge-amber);margin-bottom:0.8rem;">The Shotgun Approach</div>
+      <div class="serif" style="font-size:1.2rem;margin-bottom:0.8rem;font-weight:500;">Continuous improvement at every level</div>
+      <p style="font-size:0.88rem;color:#555;line-height:1.65;font-weight:300;">Danone empowers hundreds of employees across all functions to solve problems in their immediate work areas using basic Lean Six Sigma tools. This "shotgun" model, many people firing at many nearby targets, does not produce billion-dollar wins. It produces a culture of agency. A team that reduced a cost-center creation process from 11.5 days to 5.25 days will not make the annual report, but the people who did it will spend the next five years looking for the next thing to fix. That is the point. Engagement is the output, not efficiency.</p>
+    </div>
+    <div style="background:var(--paper-warm);padding:2.2rem;border-radius:4px;">
+      <div class="kicker" style="color:var(--beyond-crimson);margin-bottom:0.8rem;">The Cathedral Approach</div>
+      <div class="serif" style="font-size:1.2rem;margin-bottom:0.8rem;font-weight:500;">Centralized science with a 20-year mandate</div>
+      <p style="font-size:0.88rem;color:#555;line-height:1.65;font-weight:300;">The OneBiome Lab at Paris-Saclay is the opposite of the shotgun. It is a single, precise, long-range bet on decoding the human microbiome, with a database of over 70,000 microbiome profiles and a 10 to 20 year time horizon explicitly built into its mandate. The Akkermansia acquisition, bringing a next-generation beneficial bacterium and its patent estate into Danone, is the most visible expression of this strategy. These are not experiments. They are commitments. The question the Theta framework asks is whether the company has genuinely protected these commitments from quarterly pressure, or whether they will eventually be asked to justify themselves on a spreadsheet.</p>
+    </div>
+  </div>
+
+  <div class="pull-quote fade-up" style="margin-top:3rem;">
+    <blockquote>"If Danone wants to be a global leader, it must be big in India. The company's focus there is specialized nutrition, because that is where the science meets the market need."</blockquote>
+    <cite>Antoine de Saint-Affrique, CEO, Danone</cite>
+  </div>
+
+  <div style="margin-top:2.5rem;" class="fade-up">
+    <div class="kicker" style="margin-bottom:1rem;">The Marketing-Innovation Loop Nobody Talks About</div>
+    <p style="font-size:1rem;color:#333;line-height:1.75;max-width:880px;margin-bottom:1.2rem;font-weight:300;">Danone's marketing function is not downstream from innovation. It is structural to it. When the Oikos brand crossed one billion dollars in annual retail revenue in 2024, driven by a 40 percent surge in sales, that number was not primarily a consequence of product innovation. It was a consequence of brand architecture. The "high protein" positioning, championed by the marketing organization, created a platform that the innovation team could then build specific formulations on. Oikos Fusion for GLP-1 users exists because Oikos already owned a credible corner of the nutrition conversation. You cannot retrofit that kind of brand permission. You have to build it over years, which is why Chief Marketing and Digital Officer Christine Siemssen's agenda, rebuilding Danone into what she calls a "Marketing Powerhouse," is not a communications project. It is an innovation infrastructure project.</p>
+    <p style="font-size:1rem;color:#333;line-height:1.75;max-width:880px;font-weight:300;">The same logic applies to the AI tools being deployed through the D-Lab in Singapore. The Iron Tracker for anemia and the Stool Tracker for infant health are not standalone tech experiments. They are instruments that generate early adopter engagement data, the kind of signal data that tells the R&D teams in Utrecht and Paris-Saclay what the market is actually asking for before it knows how to ask. Marketing and digital, in Danone's model, function as the company's nervous system for signal detection.</p>
+  </div>
+
+  <div style="margin-top:2.5rem;padding:2.2rem 2.5rem;background:var(--paper-warm);border-left:4px solid var(--primary);border-radius:0 6px 6px 0;" class="fade-up">
+    <div class="kicker" style="color:var(--primary);margin-bottom:0.8rem;">Why Mavericks Don't Exist Beyond R&D: A Structural Inheritance Problem</div>
+    <p style="font-size:0.95rem;color:#444;line-height:1.75;font-weight:300;max-width:860px;">The gap between where Mavericks thrive at Danone and where they disappear is not a personality issue or a hiring failure. It is a consequence of two completely different organizational contracts, written in different eras for different purposes. The R&D culture in Utrecht and Paris-Saclay was built over decades by scientists who were recruited explicitly for unconventional thinking, given long mandates, and evaluated on the quality of their questions rather than the speed of their answers. That culture has its own grammar: tolerance for dead ends, curiosity as a professional value, and the unspoken understanding that a ten-year project that fails in year seven is not a waste but a contribution to knowledge. The commercial culture, by contrast, was largely forged during the Renew turnaround, a period when predictability and execution discipline were existential requirements for a company under activist pressure. The people who rebuilt Danone's commercial engine between 2022 and 2025 were hired and promoted for their ability to deliver, not to question. These are not incompatible values in principle. But they produce profoundly different organizational instincts in practice. A Maverick who crosses from R&D into a commercial function does not just change their desk. They change their contract with the company. That is not a gap that closes with a training program. It is a cultural inheritance that has to be consciously redesigned at the level of what the organization rewards and what it quietly punishes.</p>
+  </div>
+</section>
+
+<!-- DILEMMAS -->
+<section id="dilemmas" class="section section-paper">
+  <span class="section-label fade-up">Strategic Tensions</span>
+  <h2 class="section-heading fade-up">Four dilemmas that <em>do not have answers</em></h2>
+  <p class="section-intro fade-up">These are not problems with solutions. They are structural tensions that reveal how Danone actually thinks, what it values under pressure, and where the gaps between aspiration and architecture become visible. Understanding them is more useful than solving them.</p>
+
+  <div class="dilemmas-grid">
+    <div class="dilemma-card fade-up">
+      <div class="dilemma-number serif">01</div>
+      <div class="dilemma-title serif">The China Profit Paradox</div>
+      <div class="dilemma-body">Danone's China, North Asia and Oceania region generates a 29 percent operating margin: more than double the group average and roughly triple what it earns in North America. The company's headline profitability is, in significant ways, a China story. This creates a dependency that the boardroom acknowledges but cannot easily resolve. Every infant formula recall, every geopolitical escalation, every move by a local competitor carries asymmetric risk for the group's reported margin. In early 2026 the Dumex contamination scare in Thailand sent the ADR price down nearly 8 percent in a single session. The company said the financial impact was "not material." Investors disagreed immediately. The gap between what is financially immaterial and what is perceptually catastrophic in this region is the structural tension. Danone is not over-reliant on China because of bad strategy. It is over-reliant because China is where the premium specialized nutrition category, Danone's highest-margin business, has its most loyal and growing consumer base. There is no clever rebalancing that dissolves this.</div>
+      <div class="dilemma-tension">Tension: Profit concentration vs. geopolitical resilience</div>
+    </div>
+
+    <div class="dilemma-card fade-up">
+      <div class="dilemma-number serif">02</div>
+      <div class="dilemma-title serif">The Microbiome Monobet</div>
+      <div class="dilemma-body">The OneBiome Lab, the Akkermansia acquisition, the AI-driven formulation platform: these are not scattered experiments. They are arrows pointing at a single thesis. Danone has decided that the microbiome is the organizing principle of the next 20 years of human nutrition science. That coherence is a strategic strength. It is also a concentration risk. If the microbiome revolution takes 30 years instead of 10, or if a pharmaceutical company or a technology platform solves the personalization problem first through a different mechanism, Danone's Edge zone effectively collapses. The company has not hedged this thesis in any visible way. There is no equivalent Beyond bet in a different scientific domain. Synthetic biology, cultivated ingredients, nutrigenomics, epigenetics: none of these appear to have the same structural investment behind them. This is not necessarily wrong. Coherence requires sacrifice. But the Theta framework would ask: when your primary Beyond bet has a 20-year horizon, what is the contingency architecture if year 8 shows the thesis was premature?</div>
+      <div class="dilemma-tension">Tension: Strategic coherence vs. Beyond zone diversification</div>
+    </div>
+
+    <div class="dilemma-card fade-up">
+      <div class="dilemma-number serif">03</div>
+      <div class="dilemma-title serif">The Mission Costs Money</div>
+      <div class="dilemma-body">Danone became the first listed French company to achieve "Societe a Mission" status in 2021, legally embedding its social and environmental goals into its corporate charter. It achieved global B Corp certification in 2025. These are not marketing moves. They represent genuine structural constraints: the company has made it harder to make certain short-term financial decisions by making those decisions publicly accountable to a purpose standard. The tension arrived quietly in 2025 and 2026, as the GLP-1 opportunity demanded rapid scaling of high-protein production. The 138 million dollar investment in the Minster, Ohio facility is a bet on demand that already exists. But producing whey protein and leucine at industrial scale is resource-intensive in ways that sit awkwardly against a sustainability charter. The deeper dilemma is not a single investment. It is that Danone's fastest-growing innovation category (high-protein, GLP-1-adjacent nutrition) and its deepest stated commitment (sustainable food systems) are not yet speaking the same language. Nobody has written the bridge between these two agendas yet, and the company is moving fast enough that the gap is widening before the bridge is built.</div>
+      <div class="dilemma-tension">Tension: Mission integrity vs. growth velocity</div>
+    </div>
+
+    <div class="dilemma-card fade-up">
+      <div class="dilemma-number serif">04</div>
+      <div class="dilemma-title serif">The Failure Void at the Center</div>
+      <div class="dilemma-body">Danone celebrates wins loudly. The Oikos Fusion rollout, the Akkermansia acquisition, the "Connected Worker" efficiency gains: these are visible, communicated, and built into the cultural narrative. What the company does not visibly celebrate is intelligent failure. There is no public evidence of a "Failure Library." There is no indication that a failed microbiome formulation in Utrecht is systematically shared with the marketing team in Paris or the digital team in Singapore. This matters because the Renew strategy, the turnaround phase that stabilized the company between 2022 and 2025, required execution discipline and accountability. Those are the enemies of failure tolerance. The cultural muscle that saved Danone from the activist investors is the same muscle that makes it harder to fund the kind of exploratory, messy, intellectually unglamorous experimentation that produces breakthroughs. CEO Antoine de Saint-Affrique is transparent in earnings calls, but public transparency about financial results is not the same thing as internal vulnerability about scientific dead ends. The question is not whether Danone tolerates failure. It is whether it learns from it systematically enough to compound that learning into competitive advantage over a 20-year microbiome horizon.</div>
+      <div class="dilemma-tension">Tension: Execution culture vs. exploration culture</div>
+    </div>
+  </div>
+</section>
+<!-- THETA MAP -->
+<section id="theta-map" class="section section-white">
+  <span class="section-label fade-up">Theta Innovation Map</span>
+  <h2 class="section-heading fade-up">Where Danone's bets <em>actually sit</em></h2>
+  <p class="section-intro fade-up">Plotting Danone's current portfolio across market reach and technology change reveals a company with deliberate balance, but also a visible asymmetry: Edge is anchored on a single scientific thesis, and Beyond is thin beyond that thesis. The white spaces are not accidental. They are choices.</p>
+
+  <div class="map-grid fade-up">
+    <div>
+      <div class="zone-pill core">
+        <div class="zone-dot core"></div>
+        <div>
+          <div class="zone-pill-title" style="color:var(--core-green);">Core Zone</div>
+          <div class="zone-pill-desc">Existing markets, incremental to moderate tech change. Optimize and defend. 70% benchmark allocation.</div>
+        </div>
+      </div>
+      <div class="zone-pill edge">
+        <div class="zone-dot edge"></div>
+        <div>
+          <div class="zone-pill-title" style="color:var(--edge-amber);">Edge Zone</div>
+          <div class="zone-pill-desc">New markets, moderate to high tech change. Build the next S-curve. 20% benchmark allocation.</div>
+        </div>
+      </div>
+      <div class="zone-pill beyond">
+        <div class="zone-dot beyond"></div>
+        <div>
+          <div class="zone-pill-title" style="color:var(--beyond-crimson);">Beyond Zone</div>
+          <div class="zone-pill-desc">Speculative horizons, radical tech change. Shape the future. 10% benchmark allocation.</div>
+        </div>
+      </div>
+
+      <div class="map-instructions">
+        <p><strong>How to read this map:</strong> The X-axis shows how far from Danone's current customer base each initiative reaches. The Y-axis shows how much the underlying technology departs from what the company already knows how to do. Initiatives in the top-right are the most speculative and the highest leverage, if they work.</p>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-wrap">
+        <canvas id="thetaScatter"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO ALLOCATION -->
+<section id="allocation" class="section section-paper">
+  <span class="section-label fade-up">Portfolio Allocation</span>
+  <h2 class="section-heading fade-up">The 70-20-10 question: <em>close, but not quite</em></h2>
+  <p class="section-intro fade-up">Danone's allocation roughly tracks the Theta benchmark. The slight overweight in Core is intentional and defensible during a turnaround phase. The underweight in Edge and Beyond is where the conversation gets harder.</p>
+
+  <div class="allocation-grid fade-up">
+    <div>
+      <div class="doughnut-wrap">
+        <canvas id="allocDoughnut"></canvas>
+        <div class="doughnut-center">
+          <div class="doughnut-center-label serif">All 3</div>
+          <div class="doughnut-center-sub">Zones active</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alloc-bars">
+      <div class="alloc-bar-item">
+        <div class="alloc-bar-header">
+          <span class="alloc-bar-label" style="color:var(--core-green);">Core Zone</span>
+          <span class="alloc-bar-nums">Actual ~78% &nbsp;|&nbsp; Benchmark 70%</span>
+        </div>
+        <div class="alloc-bar-track">
+          <div class="alloc-bar-fill" style="width:78%;background:var(--core-green);" id="core-bar"></div>
+          <div class="alloc-bar-bench" style="left:70%;"></div>
+        </div>
+        <div class="alloc-bar-comment">The Renew execution focus has pushed Core allocation above benchmark. Profitable in the short term. The risk is that the Core machine crowds out the exploratory space that should be growing the next category.</div>
+      </div>
+
+      <div class="alloc-bar-item">
+        <div class="alloc-bar-header">
+          <span class="alloc-bar-label" style="color:var(--edge-amber);">Edge Zone</span>
+          <span class="alloc-bar-nums">Actual ~16% &nbsp;|&nbsp; Benchmark 20%</span>
+        </div>
+        <div class="alloc-bar-track">
+          <div class="alloc-bar-fill" style="width:16%;background:var(--edge-amber);" id="edge-bar"></div>
+          <div class="alloc-bar-bench" style="left:20%;"></div>
+        </div>
+        <div class="alloc-bar-comment">Edge investment is real and intentional, but concentrated. The OneBiome Lab and Akkermansia are the primary vehicles. A second or third distinct Edge thesis is visibly absent. If the microbiome bet needs more time than expected, there is no hedge in this zone.</div>
+      </div>
+
+      <div class="alloc-bar-item">
+        <div class="alloc-bar-header">
+          <span class="alloc-bar-label" style="color:var(--beyond-crimson);">Beyond Zone</span>
+          <span class="alloc-bar-nums">Actual ~6% &nbsp;|&nbsp; Benchmark 10%</span>
+        </div>
+        <div class="alloc-bar-track">
+          <div class="alloc-bar-fill" style="width:6%;background:var(--beyond-crimson);" id="beyond-bar"></div>
+          <div class="alloc-bar-bench" style="left:10%;"></div>
+        </div>
+        <div class="alloc-bar-comment">The most underfunded zone. Danone Manifesto Ventures and the 10-to-20-year microbiome mandate represent genuine Beyond thinking. But there is no Frontier Lab with a 15-year mandate and protected budget asking: what does eating mean in 2040? That question has no owner yet.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section id="competitors" class="section section-white">
+  <span class="section-label fade-up">Competitive Landscape</span>
+  <h2 class="section-heading fade-up">Who else is playing <em>this game</em></h2>
+  <p class="section-intro fade-up">The competitive field for Danone is not a single category. It is three overlapping battles: dairy, plant-based, and medical nutrition. The most dangerous competitors are not always the most obvious ones.</p>
+
+  <div class="competitor-grid fade-up">
+    <div class="competitor-card featured">
+      <div class="comp-name serif">Danone</div>
+      <div class="comp-tag">Disciplined Explorer</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green);"></div><div class="comp-zone-text">Core: Strong dairy + plant-based execution</div></div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber);"></div><div class="comp-zone-text">Edge: Microbiome science, GLP-1, medical nutrition</div></div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson);"></div><div class="comp-zone-text">Beyond: OneBiome Lab, Akkermansia, 20-year thesis</div></div>
+      <div class="comp-verdict" style="background:var(--primary-soft);color:var(--primary);">Subject Company</div>
+    </div>
+
+    <div class="competitor-card">
+      <div class="comp-name serif">Nestle</div>
+      <div class="comp-tag">Disciplined Explorer (larger scale)</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green);"></div><div class="comp-zone-text">Core: Dominant in infant, adult nutrition globally</div></div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber);"></div><div class="comp-zone-text">Edge: Biomedical nutrition, cell health science</div></div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson);"></div><div class="comp-zone-text">Beyond: Cellular agriculture investments, gut-brain axis</div></div>
+      <div class="comp-verdict">Well-funded across all three zones</div>
+    </div>
+
+    <div class="competitor-card">
+      <div class="comp-name serif">Abbott</div>
+      <div class="comp-tag">The Pharma-Adjacent Threat</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green);"></div><div class="comp-zone-text">Core: Ensure, Pedialyte, established medical nutrition</div></div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber);"></div><div class="comp-zone-text">Edge: Continuous glucose monitoring + nutrition integration</div></div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson);"></div><div class="comp-zone-text">Beyond: Biosensor-guided personal nutrition</div></div>
+      <div class="comp-verdict">Dangerous in medical nutrition overlap</div>
+    </div>
+
+    <div class="competitor-card">
+      <div class="comp-name serif">Unilever</div>
+      <div class="comp-tag">Retreating from the Fight</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green);"></div><div class="comp-zone-text">Core: Ice cream, spreads, some dairy-adjacent</div></div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber);"></div><div class="comp-zone-text">Edge: Plant-based food tech, but retreating post-overinvestment</div></div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson);"></div><div class="comp-zone-text">Beyond: Limited since restructuring began</div></div>
+      <div class="comp-verdict">Less competitive since portfolio reset</div>
+    </div>
+
+    <div class="competitor-card">
+      <div class="comp-name serif">Huel / Athletic Greens</div>
+      <div class="comp-tag">The Edge-Native Challenger</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green);"></div><div class="comp-zone-text">Core: Minimal, still building base category</div></div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber);"></div><div class="comp-zone-text">Edge: Functional nutrition direct-to-consumer, GLP-1 adjacent</div></div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson);"></div><div class="comp-zone-text">Beyond: Community-driven nutrition science with subscribers</div></div>
+      <div class="comp-verdict">Threat is brand speed, not science depth</div>
+    </div>
+  </div>
+
+  <div class="chart-wrap radar-wrap fade-up">
+    <canvas id="competitorRadar"></canvas>
+  </div>
+  <p style="font-size:0.75rem;color:var(--muted);margin-top:1.2rem;font-style:italic;text-align:center;">Scores are relative assessments across six dimensions, calibrated against the four-company peer group in this study. They are not absolute industry benchmarks and are intended to show directional posture rather than precise measurement.</p>
+</section>
+
+<!-- STRENGTHS AND WEAKNESSES -->
+<section id="sw" class="section section-paper">
+  <span class="section-label fade-up">Evidence-Based Assessment</span>
+  <h2 class="section-heading fade-up">What is actually <em>true</em> about Danone</h2>
+
+  <div class="sw-grid fade-up">
+    <div class="sw-panel strength">
+      <div class="sw-panel-title serif">Where Danone Genuinely Leads</div>
+
+      <div class="sw-item">
+        <div class="sw-marker s">S</div>
+        <div>
+          <div class="sw-item-title">A coherent scientific thesis, not a scattered portfolio</div>
+          <div class="sw-item-desc">The microbiome bet is not a trend. It is a 70,000-profile database, 5,000 patents, and a newly acquired bacterial strain with a full patent estate. This is scientific depth that most food companies cannot acquire quickly.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker s">S</div>
+        <div>
+          <div class="sw-item-title">The fastest large-company pivot to the GLP-1 category</div>
+          <div class="sw-item-desc">Oikos Fusion went from market signal to national US distribution in approximately 18 months. For a 27-billion-euro public company, that is startup-speed execution. It also generated a 40 percent brand sales surge and crossed the one billion dollar annual revenue threshold for the Oikos line.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker s">S</div>
+        <div>
+          <div class="sw-item-title">China as a structural profit engine, not just a market</div>
+          <div class="sw-item-desc">A 29 percent operating margin in China, North Asia and Oceania, delivered on a base of specialized nutrition science, is not easily replicated. It represents decades of regulatory relationships, clinical trust, and brand-building in a market where parents are extremely attentive to health credentials.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker s">S</div>
+        <div>
+          <div class="sw-item-title">Mission as structural architecture, not marketing</div>
+          <div class="sw-item-desc">The "Societe a Mission" status means purpose is embedded in the corporate charter. This is not a brand value. It is a legal constraint. Combined with B Corp certification, Danone has made its purpose harder to abandon under financial pressure than almost any other comparable public company.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker s">S</div>
+        <div>
+          <div class="sw-item-title">The marketing-innovation feedback loop is becoming structural</div>
+          <div class="sw-item-desc">Danone's "Marketing Powerhouse" initiative, combined with AI tools from the Singapore D-Lab and genAI experimentation in the marketing organization, is building the nervous system the company needs to detect early adopter signals before competitors do. This is infrastructure, not campaign.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sw-panel weakness">
+      <div class="sw-panel-title serif">Where the Architecture Has Gaps</div>
+
+      <div class="sw-item">
+        <div class="sw-marker w">W</div>
+        <div>
+          <div class="sw-item-title">No visible Failure Intelligence system</div>
+          <div class="sw-item-desc">After a decade of making 10 to 20 year science bets, there is no public or internal evidence of a "Failure Library" where what did not work is systematically captured and shared. In a company making microbiome bets that will fail hundreds of times before they succeed, this is a structural knowledge leak.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker w">W</div>
+        <div>
+          <div class="sw-item-title">Plant-based growth has plateaued in core markets</div>
+          <div class="sw-item-desc">The category Danone paid 12.5 billion dollars to lead in 2017 is experiencing volume stagnation in the US and Europe. Consumer concern about ultra-processing and high ingredient costs has cooled the category faster than expected. The next act for plant-based is not yet defined.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker w">W</div>
+        <div>
+          <div class="sw-item-title">Maverick habitat exists in R&D but not beyond it</div>
+          <div class="sw-item-desc">The scientists in Utrecht and Paris-Saclay have structural protection for unconventional thinking. A commercially-minded Maverick in Marketing or Supply Chain who wants to build a new category from scratch has no equivalent infrastructure. The organizational innovation system is not evenly distributed.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker w">W</div>
+        <div>
+          <div class="sw-item-title">The translation layer from lab to shelf is underspecified</div>
+          <div class="sw-item-desc">The OneBiome Lab will generate discoveries. The question of who owns the journey from microbiome finding to consumer product to marketing claim to retail shelf, and how fast that journey can run, is not clearly articulated in any public strategy document. The bridge between Beyond and Core has no named owner.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker w">W</div>
+        <div>
+          <div class="sw-item-title">Beyond zone is a single thesis with no contingency architecture</div>
+          <div class="sw-item-desc">The company has bet its long-range future on the microbiome. This is coherent and defensible. It is also a concentration risk. There is no second or third speculative domain receiving structural investment. If the microbiome thesis matures slower than expected, the Beyond zone effectively goes dark.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- DIAGNOSTIC -->
+<section id="diagnostic" class="section section-ink">
+  <span class="section-label fade-up" style="color:var(--primary);">Theta Diagnostic</span>
+  <h2 class="section-heading fade-up" style="color:#fff;">The full picture: <em style="color:var(--accent);">where the map leads</em></h2>
+  <p class="section-intro fade-up" style="color:rgba(255,255,255,0.5);">This is the synthesis. Not a score. A structural reading of what Danone has built, what it is still building, and where the architecture has gaps that strategic ambition alone cannot fill.</p>
+
+  <div class="diagnostic-grid fade-up">
+    <div>
+      <!-- Portfolio Mapping -->
+      <div class="diag-block">
+        <div class="diag-block-title">Portfolio Mapping: Archetype Assessment</div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">Core Zone</span>
+          <span class="archetype-box-rating rating-strong">Strong</span>
+        </div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">Edge Zone</span>
+          <span class="archetype-box-rating rating-active">Active but concentrated</span>
+        </div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">Beyond Zone</span>
+          <span class="archetype-box-rating rating-partial">Funded, not diversified</span>
+        </div>
+      </div>
+
+      <!-- Leadership -->
+      <div class="diag-block">
+        <div class="diag-block-title">Leadership Trifecta</div>
+        <div class="diag-bar-item">
+          <div class="diag-bar-header"><span>Agility</span><span>4 / 5</span></div>
+          <div class="diag-bar-track"><div class="diag-bar-fill" style="width:80%;background:var(--accent);"></div></div>
+        </div>
+        <div class="diag-bar-item">
+          <div class="diag-bar-header"><span>Consciousness</span><span>4 / 5</span></div>
+          <div class="diag-bar-track"><div class="diag-bar-fill" style="width:80%;background:var(--accent);"></div></div>
+        </div>
+        <div class="diag-bar-item">
+          <div class="diag-bar-header"><span>Courage</span><span>3.5 / 5</span></div>
+          <div class="diag-bar-track"><div class="diag-bar-fill" style="width:70%;background:var(--accent);"></div></div>
+        </div>
+        <p class="diag-text" style="margin-top:0.8rem;">De Saint-Affrique pivoted a struggling company with clarity and speed. The "Renew" turnaround is evidence of agility. The "Societe a Mission" structure is evidence of consciousness. The courage score reflects a real question: is the company willing to make a billion-dollar bet on something that will not pay off for a decade, inside a public company structure? The OneBiome Lab is close. But the truly speculative, "what if we are wrong about everything" bet has not yet been funded.</p>
+      </div>
+
+      <!-- Mavericks -->
+      <div class="diag-block">
+        <div class="diag-block-title">Mavericks and Risk Tolerance</div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">Maverick Presence</span>
+          <span class="archetype-box-rating rating-strong">High in R&D</span>
+        </div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">Maverick Protection</span>
+          <span class="archetype-box-rating rating-active">Partial</span>
+        </div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">Risk Tolerance (Innovation)</span>
+          <span class="archetype-box-rating rating-active">Bifurcated</span>
+        </div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">Failure Intelligence System</span>
+          <span class="archetype-box-rating rating-partial">Not visible</span>
+        </div>
+        <p class="diag-text" style="margin-top:0.8rem;">Risk tolerance at Danone is bifurcated in the right direction: high for intelligent innovation failure at the frontier level, very low for operational and quality failures. The problem is that the bifurcation does not yet extend below the senior scientific leadership. A junior researcher in marketing who has a wild idea about a new business model has no clear path to test it without it immediately becoming a performance management conversation.</p>
+      </div>
+    </div>
+
+    <div>
+      <!-- Customer Signal -->
+      <div class="diag-block">
+        <div class="diag-block-title">Customer Signal Architecture</div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">Early Adopter Listening (Beyond signals)</span>
+          <span class="archetype-box-rating rating-partial">Low</span>
+        </div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">Edge Signal Detection</span>
+          <span class="archetype-box-rating rating-active">Emerging via D-Lab</span>
+        </div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">Core Customer Listening</span>
+          <span class="archetype-box-rating rating-strong">Well-established</span>
+        </div>
+        <p class="diag-text" style="margin-top:0.8rem;">Danone listens extremely well to the Early and Late Majority, the mainstream consumer. The GLP-1 signal was caught through social listening and market data, which is early adopter territory. But there is no structured community of the most experimental, most-confused, most-outlier customers, the people who are DIY-testing microbiome diets and asking questions no one has formulated yet. Those people are the early warning system for what Danone's Beyond zone should be building. They are not yet in the room.</p>
+      </div>
+
+      <!-- S-Curve -->
+      <div class="diag-block">
+        <div class="diag-block-title">S-Curve Position by Business Unit</div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">Essential Dairy (developed markets)</span>
+          <span class="archetype-box-rating rating-partial">Maturity</span>
+        </div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">Plant-Based Alternatives</span>
+          <span class="archetype-box-rating rating-active">Growth plateau</span>
+        </div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">Waters</span>
+          <span class="archetype-box-rating rating-partial">Maturity in core formats</span>
+        </div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">Specialized Nutrition</span>
+          <span class="archetype-box-rating rating-strong">Active growth</span>
+        </div>
+        <div class="archetype-box">
+          <span class="archetype-box-label">High-Protein / GLP-1 Adjacent</span>
+          <span class="archetype-box-rating rating-strong">Early growth curve</span>
+        </div>
+      </div>
+
+      <!-- Critical Tension -->
+      <div class="diag-block">
+        <div class="diag-block-title">The Critical Structural Tension</div>
+        <div class="critical-tension">
+          <div class="critical-tension-title">The translation gap between Beyond and Core</div>
+          <div class="critical-tension-text">Danone has the science. It has the brands. What it does not yet have is a clearly named, resourced, and protected process for turning a 10-year laboratory discovery into a product that someone buys at a supermarket and a marketing team can explain in two sentences. The Oikos Fusion example shows it can be done at Edge speed. The microbiome category will require something harder: the patience to let Beyond-zone science mature without rushing it into commercialization, and the infrastructure to transfer that science into Core-zone products when it is ready. Those two timelines run at completely different speeds, and nobody has publicly said who reconciles them.</div>
+        </div>
+      </div>
+
+      <!-- Relativity -->
+      <div class="diag-block">
+        <div class="diag-block-title">Relativity Assessment</div>
+        <div class="relativity-row"><span class="relativity-label">vs. Food industry peers</span><span class="relativity-chip chip-above">Above</span></div>
+        <div class="relativity-row"><span class="relativity-label">vs. Technology sector</span><span class="relativity-chip chip-below">Below</span></div>
+        <div class="relativity-row"><span class="relativity-label">vs. Stated health leadership ambition</span><span class="relativity-chip chip-ontarget">On track</span></div>
+        <div class="relativity-row"><span class="relativity-label">vs. Danone 10 years ago</span><span class="relativity-chip chip-improving">Significantly improved</span></div>
+        <div class="relativity-row"><span class="relativity-label">vs. What is possible in biotech frontier</span><span class="relativity-chip chip-below">Catching up</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verdict -->
+  <div class="verdict-box fade-up">
+    <div class="verdict-archetype serif">The Disciplined Explorer</div>
+    <div class="verdict-status">Theta Archetype &nbsp;|&nbsp; Transitioning from Turnaround to Platform</div>
+    <div class="verdict-text">Danone is a company that has done the hard work of editing. It has stopped trying to be everything to everyone and has focused on what it believes will matter most: the science of what food does inside a human body. The "Renew" strategy gave it stability. The "Renew" culture, however, built muscles that are optimized for execution and not yet for the kind of intelligent, systematic failure-learning that 20-year science bets require. The single most important thing Danone does not yet have is a system for turning the knowledge generated by its failures, at the lab bench, in the market, in the clinical trial, into institutional memory that compounds. The company is not lacking ambition. It is lacking the cultural infrastructure to make that ambition durable across leadership generations. If that gap closes, the Disciplined Explorer becomes a Balanced Builder. If it does not, the title remains accurate in the most limiting sense of the word: disciplined, yes, but always just on the exploring side of the threshold that separates interesting science from category-defining power.</div>
+    <div class="theta-verdict-quote serif-italic">The only way to survive is to build your next S-curve before the current one collapses. That means using your Core to fund your Edge and Beyond.</div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<div class="closing-section fade-up">
+  <div class="kicker" style="color:var(--primary);margin-bottom:1.5rem;">The One Question Danone Must Never Stop Asking</div>
+  <blockquote class="closing-quote">
+    If your 10-year microbiome bet fails in ways you did not expect, what will you have learned that no one else in the world knows? And will anyone outside your lab ever find out?
+  </blockquote>
+  <div class="closing-attribution">Theta Innovation Framework &nbsp;|&nbsp; Christine Pamela Chandrakasan</div>
+</div>
+
+<footer>
+  <div class="footer-left">Theta Innovation Framework &copy; 2025 &nbsp;|&nbsp; Christine Pamela Chandrakasan</div>
+  <div class="footer-right">Danone &nbsp;|&nbsp; Strategic Case Study &nbsp;|&nbsp; Disciplined Explorer</div>
+</footer>
+<script>
+// ===== SCROLL ANIMATIONS =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(el => {
+    if (el.isIntersecting) {
+      el.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// ===== THETA SCATTER CHART =====
+const scatterCtx = document.getElementById('thetaScatter').getContext('2d');
+
+const coreData = [
+  { x: 1.2, y: 1.0, label: 'Brand refreshes (Activia, Actimel)' },
+  { x: 1.8, y: 1.5, label: 'evian / Volvic pack efficiency' },
+  { x: 2.2, y: 1.8, label: '"Connected Worker" digital mfg.' },
+  { x: 2.5, y: 2.0, label: 'Supply chain cost optimization' },
+  { x: 3.0, y: 2.2, label: 'Alpro Meal to Go (Europe)' },
+];
+
+const edgeData = [
+  { x: 4.5, y: 3.5, label: 'Oikos Fusion (GLP-1 users)' },
+  { x: 5.0, y: 4.0, label: 'Kate Farms (plant-based med. nutrition)' },
+  { x: 5.5, y: 4.8, label: 'Akkermansia acquisition' },
+  { x: 4.8, y: 4.2, label: 'AI "in silico" formulation' },
+  { x: 4.2, y: 3.8, label: 'D-Lab Singapore (Iron / Stool Tracker)' },
+];
+
+const beyondData = [
+  { x: 7.2, y: 7.0, label: 'OneBiome Lab (10-20yr microbiome)' },
+  { x: 8.0, y: 6.5, label: 'Microbiome-based med. nutrition (pipeline)' },
+  { x: 7.8, y: 8.2, label: 'Synthetic / precision fermentation' },
+  { x: 6.8, y: 7.5, label: 'Danone Manifesto Ventures' },
+];
+
+const afterPlugin = {
+  id: 'afterLabels',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.font = '600 11px "DM Sans", sans-serif';
+    chart.data.datasets.forEach((dataset, di) => {
+      const meta = chart.getDatasetMeta(di);
+      meta.data.forEach((pt, i) => {
+        const lbl = dataset.data[i].label;
+        const x = pt.x + 12;
+        const y = pt.y + 4;
+        ctx.fillStyle = dataset.borderColor;
+        ctx.fillText(lbl, x, y);
+      });
+    });
+    ctx.restore();
+  }
+};
+
+new Chart(scatterCtx, {
+  type: 'scatter',
+  plugins: [afterPlugin],
+  data: {
+    datasets: [
+      {
+        label: 'Core Zone',
+        data: coreData,
+        backgroundColor: 'rgba(45,106,79,0.85)',
+        borderColor: '#2D6A4F',
+        pointRadius: 7,
+        pointHoverRadius: 9,
+      },
+      {
+        label: 'Edge Zone',
+        data: edgeData,
+        backgroundColor: 'rgba(181,132,26,0.85)',
+        borderColor: '#B5841A',
+        pointRadius: 8,
+        pointHoverRadius: 10,
+      },
+      {
+        label: 'Beyond Zone',
+        data: beyondData,
+        backgroundColor: 'rgba(139,26,26,0.85)',
+        borderColor: '#8B1A1A',
+        pointRadius: 9,
+        pointHoverRadius: 11,
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { right: 180, top: 20, bottom: 20 } },
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          font: { family: "'DM Sans', sans-serif", size: 12 },
+          color: '#1E2D2A',
+          padding: 20,
+          usePointStyle: true,
+          pointStyleWidth: 10,
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        titleFont: { family: "'DM Sans', sans-serif", size: 12 },
+        bodyFont: { family: "'DM Sans', sans-serif", size: 11 },
+        callbacks: {
+          label: (ctx) => ctx.raw.label || ''
+        }
+      }
+    },
+    scales: {
+      x: {
+        min: 0, max: 10,
+        title: {
+          display: true,
+          text: 'Market Reach    Existing  →  New  →  Emerging  →  Speculative',
+          font: { family: "'DM Sans', sans-serif", size: 11, style: 'italic' },
+          color: '#8A9490',
+          padding: { top: 10 }
+        },
+        grid: { color: 'rgba(227,6,20,0.05)' },
+        ticks: { display: false },
+        border: { display: false }
+      },
+      y: {
+        min: 0, max: 10,
+        title: {
+          display: true,
+          text: 'Technology Change    Incremental  →  Moderate  →  High  →  Radical  →  Extreme',
+          font: { family: "'DM Sans', sans-serif", size: 11, style: 'italic' },
+          color: '#8A9490',
+          padding: { bottom: 10 }
+        },
+        grid: { color: 'rgba(227,6,20,0.05)' },
+        ticks: { display: false },
+        border: { display: false }
+      }
+    }
+  }
+});
+
+// ===== DOUGHNUT CHART =====
+const doughCtx = document.getElementById('allocDoughnut').getContext('2d');
+new Chart(doughCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Core (~78%)', 'Edge (~16%)', 'Beyond (~6%)'],
+    datasets: [{
+      data: [78, 16, 6],
+      backgroundColor: ['#2D6A4F', '#B5841A', '#8B1A1A'],
+      borderWidth: 0,
+      hoverOffset: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '68%',
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          font: { family: "'DM Sans', sans-serif", size: 12 },
+          color: '#1E2D2A',
+          padding: 16,
+          usePointStyle: true,
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        titleFont: { family: "'DM Sans', sans-serif" },
+        bodyFont: { family: "'DM Sans', sans-serif" },
+      }
+    }
+  }
+});
+
+// ===== RADAR CHART =====
+const radarCtx = document.getElementById('competitorRadar').getContext('2d');
+new Chart(radarCtx, {
+  type: 'radar',
+  data: {
+    labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'AI Readiness', 'Global Scale', 'Innovation Culture'],
+    datasets: [
+      {
+        label: 'Danone',
+        data: [82, 72, 65, 68, 78, 70],
+        backgroundColor: 'rgba(227,6,20,0.12)',
+        borderColor: 'rgba(227,6,20,0.8)',
+        pointBackgroundColor: 'rgba(227,6,20,0.8)',
+        pointRadius: 4,
+        borderWidth: 2,
+      },
+      {
+        label: 'Nestle',
+        data: [90, 75, 72, 74, 95, 65],
+        backgroundColor: 'rgba(45,106,79,0.10)',
+        borderColor: 'rgba(45,106,79,0.7)',
+        pointBackgroundColor: 'rgba(45,106,79,0.7)',
+        pointRadius: 4,
+        borderWidth: 2,
+      },
+      {
+        label: 'Abbott',
+        data: [80, 78, 68, 80, 75, 62],
+        backgroundColor: 'rgba(181,132,26,0.10)',
+        borderColor: 'rgba(181,132,26,0.7)',
+        pointBackgroundColor: 'rgba(181,132,26,0.7)',
+        pointRadius: 4,
+        borderWidth: 2,
+      },
+      {
+        label: 'Huel / DTC Challengers',
+        data: [35, 82, 55, 75, 28, 85],
+        backgroundColor: 'rgba(139,26,26,0.10)',
+        borderColor: 'rgba(139,26,26,0.6)',
+        pointBackgroundColor: 'rgba(139,26,26,0.6)',
+        pointRadius: 4,
+        borderWidth: 2,
+        borderDash: [4, 3],
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          font: { family: "'DM Sans', sans-serif", size: 12 },
+          color: '#1E2D2A',
+          padding: 20,
+          usePointStyle: true,
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        titleFont: { family: "'DM Sans', sans-serif" },
+        bodyFont: { family: "'DM Sans', sans-serif" },
+      }
+    },
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { display: false },
+        grid: { color: 'rgba(14,26,24,0.08)' },
+        angleLines: { color: 'rgba(14,26,24,0.08)' },
+        pointLabels: {
+          font: { family: "'DM Sans', sans-serif", size: 12 },
+          color: '#555',
+        }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
