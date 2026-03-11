@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>General Mills — The Theta Framework Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --gm-blue: #003DA5;
+    --gm-yellow: #FFD700;
+    --gm-accent: #C8972B;
+    --ink: #0A1628;
+    --ink-soft: #1A2A40;
+    --paper: #F8F6F1;
+    --paper-warm: #F0EBE0;
+    --muted: #8A9099;
+    --core-green: #1A6B3C;
+    --edge-amber: #B5841A;
+    --beyond-crimson: #8B1A1A;
+    --border: rgba(0,61,165,0.12);
+    --gold: #C8972B;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,22,40,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(200,151,43,0.2);
+    padding: 0 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem; font-weight: 500; letter-spacing: 0.08em;
+    color: var(--gold); text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex; gap: 24px; list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: rgba(255,255,255,0.6);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    background: var(--ink);
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 0 80px;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(200,151,43,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,151,43,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridshift 20s linear infinite;
+  }
+  @keyframes gridshift {
+    0% { background-position: 0 0; }
+    100% { background-position: 60px 60px; }
+  }
+  .hero-radial {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 30% 40%, rgba(0,61,165,0.25) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 50% at 80% 70%, rgba(200,151,43,0.12) 0%, transparent 60%);
+  }
+  .hero-noise {
+    position: absolute; inset: 0; opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: 0 80px;
+    max-width: 1200px;
+  }
+  .hero-kicker {
+    font-size: 0.7rem; font-weight: 500; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 28px; opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.3s;
+  }
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 6vw, 6.5rem);
+    font-weight: 300; line-height: 1.08;
+    color: #fff; margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 0.9s ease forwards 0.5s;
+  }
+  .hero-headline em {
+    font-style: italic; color: var(--gold);
+  }
+  .hero-subtitle {
+    font-size: 1.05rem; font-weight: 300; line-height: 1.7;
+    color: rgba(255,255,255,0.65);
+    max-width: 620px; margin-bottom: 60px;
+    opacity: 0; animation: fadeUp 0.9s ease forwards 0.7s;
+  }
+  .hero-meta {
+    display: flex; gap: 0; border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 32px;
+    opacity: 0; animation: fadeUp 0.9s ease forwards 0.9s;
+  }
+  .hero-meta-item {
+    flex: 1; padding-right: 32px; margin-right: 32px;
+    border-right: 1px solid rgba(255,255,255,0.1);
+  }
+  .hero-meta-item:last-child { border-right: none; }
+  .hero-meta-label {
+    font-size: 0.62rem; font-weight: 500; letter-spacing: 0.15em;
+    text-transform: uppercase; color: rgba(255,255,255,0.35);
+    margin-bottom: 6px;
+  }
+  .hero-meta-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem; font-weight: 500; color: #fff;
+  }
+  .scroll-indicator {
+    position: absolute; right: 48px; bottom: 80px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    opacity: 0; animation: fadeUp 1s ease forwards 1.2s;
+  }
+  .scroll-label {
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(255,255,255,0.3); writing-mode: vertical-rl;
+  }
+  .scroll-line {
+    width: 1px; height: 48px;
+    background: linear-gradient(to bottom, rgba(200,151,43,0.8), transparent);
+    animation: scrollpulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollpulse {
+    0%, 100% { opacity: 1; transform: scaleY(1); }
+    50% { opacity: 0.3; transform: scaleY(0.6); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* FADE UP ON SCROLL */
+  .reveal {
+    opacity: 0; transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* SECTIONS */
+  section { padding: 100px 80px; }
+
+  .section-label {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 16px; display: block;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 3.5vw, 3.2rem);
+    font-weight: 400; line-height: 1.15;
+    color: var(--ink); margin-bottom: 20px;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+  .section-intro {
+    font-size: 1.05rem; font-weight: 300; line-height: 1.8;
+    color: #4A5568; max-width: 680px; margin-bottom: 60px;
+  }
+
+  /* ABOUT SECTION */
+  .about-section { background: #fff; }
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    align-items: start;
+  }
+  .about-prose p {
+    font-size: 1rem; font-weight: 300; line-height: 1.85;
+    color: #3A4A5A; margin-bottom: 20px;
+  }
+  .hidden-fact {
+    background: var(--ink); color: #fff;
+    padding: 32px; border-radius: 4px;
+    margin-top: 32px;
+    border-left: 3px solid var(--gold);
+  }
+  .hidden-fact-label {
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 12px; font-weight: 500;
+  }
+  .hidden-fact p {
+    font-size: 0.92rem; line-height: 1.75; color: rgba(255,255,255,0.8);
+  }
+  .stat-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+  }
+  .stat-card {
+    background: var(--paper-warm); padding: 32px 28px;
+  }
+  .stat-card:nth-child(2) { background: var(--ink); }
+  .stat-card:nth-child(2) .stat-label,
+  .stat-card:nth-child(2) .stat-note { color: rgba(255,255,255,0.5); }
+  .stat-card:nth-child(2) .stat-number { color: var(--gold); }
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem; font-weight: 500; line-height: 1;
+    color: var(--ink); margin-bottom: 8px;
+  }
+  .stat-label {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .stat-note {
+    font-size: 0.82rem; color: var(--muted); line-height: 1.5;
+  }
+
+  /* BELIEF STRIP */
+  .belief-strip {
+    background: var(--gm-blue);
+    padding: 72px 80px;
+    text-align: center;
+  }
+  .belief-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 3vw, 2.8rem);
+    font-weight: 300; font-style: italic; line-height: 1.4;
+    color: #fff; max-width: 900px; margin: 0 auto 24px;
+  }
+  .belief-quote span { color: var(--gold); }
+  .belief-attribution {
+    font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: rgba(255,255,255,0.45); font-weight: 500;
+  }
+
+  /* TIMELINE */
+  .timeline-section { background: var(--paper-warm); }
+  .timeline-container { max-width: 800px; }
+  .timeline-item {
+    display: grid; grid-template-columns: 80px 1px 1fr;
+    gap: 0 32px; margin-bottom: 0; position: relative;
+  }
+  .timeline-year {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem; font-weight: 500; color: var(--ink);
+    padding-top: 4px; text-align: right; line-height: 1;
+  }
+  .timeline-line-col {
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .timeline-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    margin-top: 6px;
+    background: var(--paper-warm); border: 2px solid var(--muted);
+  }
+  .timeline-dot.filled {
+    background: var(--gold); border-color: var(--gold);
+  }
+  .timeline-dot.milestone {
+    width: 14px; height: 14px; margin-top: 4px;
+    background: var(--gm-blue); border-color: var(--gm-blue);
+    box-shadow: 0 0 0 4px rgba(0,61,165,0.15);
+  }
+  .timeline-connector {
+    flex: 1; width: 1px; background: rgba(0,0,0,0.12);
+    min-height: 40px;
+  }
+  .timeline-body { padding: 0 0 44px; }
+  .timeline-phase {
+    font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 4px;
+  }
+  .timeline-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem; font-weight: 500; color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .timeline-desc {
+    font-size: 0.88rem; font-weight: 300; line-height: 1.7;
+    color: #5A6A7A;
+  }
+
+  /* THETA MAP SECTION */
+  .map-section { background: #fff; }
+  .map-grid {
+    display: grid; grid-template-columns: 320px 1fr; gap: 60px;
+    align-items: start;
+  }
+  .zone-legend { margin-bottom: 40px; }
+  .zone-pill {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 16px 0; border-bottom: 1px solid var(--border);
+  }
+  .zone-pill:last-child { border-bottom: none; }
+  .zone-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 5px;
+  }
+  .zone-dot.core { background: var(--core-green); }
+  .zone-dot.edge { background: var(--edge-amber); }
+  .zone-dot.beyond { background: var(--beyond-crimson); }
+  .zone-name {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 3px;
+  }
+  .zone-desc { font-size: 0.82rem; font-weight: 300; color: var(--muted); line-height: 1.5; }
+  .reading-card {
+    background: var(--paper-warm); padding: 20px 22px;
+    border-left: 3px solid var(--gold);
+  }
+  .reading-card-label {
+    font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+  }
+  .reading-card p {
+    font-size: 0.82rem; font-weight: 300; line-height: 1.65; color: #5A6A7A;
+  }
+  .chart-container { position: relative; height: 460px; }
+
+  /* ALLOCATION SECTION */
+  .allocation-section { background: var(--paper-warm); }
+  .allocation-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    align-items: start;
+  }
+  .donut-wrap { position: relative; height: 320px; }
+  .donut-center {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center; pointer-events: none;
+  }
+  .donut-center-label {
+    font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .donut-center-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem; font-weight: 500; color: var(--ink);
+  }
+  .allocation-bars { margin-top: 8px; }
+  .alloc-bar-item { margin-bottom: 32px; }
+  .alloc-bar-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .alloc-bar-zone {
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .alloc-bar-nums { font-size: 0.82rem; color: var(--muted); }
+  .alloc-bar-track {
+    height: 6px; background: rgba(0,0,0,0.08); border-radius: 3px;
+    overflow: visible; position: relative; margin-bottom: 10px;
+  }
+  .alloc-bar-fill {
+    height: 100%; border-radius: 3px;
+    transition: width 1.2s cubic-bezier(0.16,1,0.3,1);
+  }
+  .alloc-bar-benchmark {
+    position: absolute; top: -4px; height: 14px; width: 2px;
+    background: var(--ink); opacity: 0.3; border-radius: 1px;
+  }
+  .alloc-bar-comment {
+    font-size: 0.8rem; font-weight: 300; line-height: 1.6; color: #5A6A7A;
+    font-style: italic;
+  }
+
+  /* COMPETITORS */
+  .competitors-section { background: #fff; }
+  .comp-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 3px; margin-bottom: 60px;
+  }
+  .comp-card {
+    background: var(--paper); padding: 24px 20px;
+    border-top: 3px solid transparent;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .comp-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+  .comp-card.featured {
+    background: #fff;
+    border-top-color: var(--gm-blue);
+    box-shadow: 0 0 0 1px rgba(0,61,165,0.15);
+  }
+  .comp-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem; font-weight: 600; margin-bottom: 4px; color: var(--ink);
+  }
+  .comp-tag {
+    font-size: 0.68rem; font-weight: 500; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 20px;
+  }
+  .comp-zone-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px; font-size: 0.78rem; color: #4A5568;
+  }
+  .comp-zone-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .verdict-chip {
+    display: inline-block; margin-top: 16px;
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 0.62rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .verdict-chip.strong { background: rgba(26,107,60,0.1); color: var(--core-green); }
+  .verdict-chip.mid { background: rgba(181,132,26,0.1); color: var(--edge-amber); }
+  .verdict-chip.concern { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+  .radar-wrap { height: 400px; max-width: 680px; margin: 0 auto; }
+
+  /* SW SECTION */
+  .sw-section { background: var(--paper-warm); }
+  .sw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .sw-panel { padding: 36px 32px; }
+  .sw-panel.strengths { border: 1.5px solid rgba(26,107,60,0.2); background: rgba(26,107,60,0.03); }
+  .sw-panel.weaknesses { border: 1.5px solid rgba(139,26,26,0.2); background: rgba(139,26,26,0.03); }
+  .sw-panel-title {
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .sw-panel.strengths .sw-panel-title { color: var(--core-green); }
+  .sw-panel.weaknesses .sw-panel-title { color: var(--beyond-crimson); }
+  .sw-item { display: flex; gap: 16px; margin-bottom: 24px; align-items: flex-start; }
+  .sw-marker {
+    width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.62rem; font-weight: 700; margin-top: 2px;
+  }
+  .sw-panel.strengths .sw-marker { background: rgba(26,107,60,0.12); color: var(--core-green); }
+  .sw-panel.weaknesses .sw-marker { background: rgba(139,26,26,0.12); color: var(--beyond-crimson); }
+  .sw-item-text { flex: 1; }
+  .sw-item-lead { font-weight: 600; font-size: 0.9rem; color: var(--ink); margin-bottom: 4px; }
+  .sw-item-body { font-size: 0.84rem; font-weight: 300; line-height: 1.65; color: #5A6A7A; }
+
+  /* DIAGNOSTIC SECTION */
+  .diagnostic-section {
+    background: var(--ink);
+    color: #fff;
+    padding: 100px 80px;
+  }
+  .diagnostic-section .section-title { color: #fff; }
+  .diagnostic-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 60px;
+  }
+  .diag-block { margin-bottom: 48px; }
+  .diag-block-title {
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px; padding-bottom: 12px;
+    border-bottom: 1px solid rgba(200,151,43,0.2);
+  }
+  .diag-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.84rem;
+  }
+  .diag-row-label { color: rgba(255,255,255,0.6); font-weight: 300; }
+  .diag-row-value { font-weight: 500; color: #fff; }
+  .diag-score-bar {
+    height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px;
+    margin: 6px 0 12px; position: relative;
+  }
+  .diag-score-fill { height: 100%; border-radius: 2px; background: var(--gold); }
+  .tension-card {
+    background: rgba(139,26,26,0.15); border: 1px solid rgba(139,26,26,0.3);
+    padding: 24px; border-radius: 2px; margin-top: 8px;
+  }
+  .tension-card p { font-size: 0.88rem; font-weight: 300; line-height: 1.75; color: rgba(255,255,255,0.8); }
+  .zone-compare-bar { margin-bottom: 16px; }
+  .zone-compare-label {
+    display: flex; justify-content: space-between;
+    font-size: 0.72rem; margin-bottom: 6px;
+  }
+  .zone-compare-label span:first-child { color: rgba(255,255,255,0.5); }
+  .zone-compare-label span:last-child { color: rgba(255,255,255,0.3); font-size: 0.68rem; }
+  .zone-compare-track {
+    height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px;
+    position: relative; overflow: visible;
+  }
+  .zone-compare-actual { height: 100%; border-radius: 2px; }
+  .zone-compare-bench {
+    position: absolute; top: -6px; height: 16px; width: 2px;
+    background: rgba(255,255,255,0.3); border-radius: 1px;
+  }
+  .archetype-verdict {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+    padding: 28px; margin-top: 32px;
+  }
+  .archetype-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem; font-weight: 400; color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .archetype-check { font-size: 0.88rem; margin-bottom: 12px; color: rgba(255,255,255,0.6); }
+  .archetype-desc { font-size: 0.88rem; font-weight: 300; line-height: 1.75; color: rgba(255,255,255,0.65); }
+  .relativity-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .relativity-table td { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.84rem; vertical-align: top; }
+  .relativity-table td:first-child { color: rgba(255,255,255,0.5); font-weight: 300; padding-right: 16px; width: 55%; }
+  .relativity-table td:last-child { text-align: right; }
+  .rel-tag {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 0.62rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .rel-tag.above { background: rgba(26,107,60,0.2); color: #5CBF85; }
+  .rel-tag.at { background: rgba(181,132,26,0.2); color: #D4A843; }
+  .rel-tag.behind { background: rgba(139,26,26,0.2); color: #D4716B; }
+  .rel-tag.far { background: rgba(139,26,26,0.15); color: #C47A75; }
+
+  /* INNOVATION CULTURE SECTION */
+  .culture-section { background: #fff; }
+  .culture-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+  .culture-prose p {
+    font-size: 1rem; font-weight: 300; line-height: 1.85;
+    color: #3A4A5A; margin-bottom: 20px;
+  }
+  .quote-block {
+    padding: 28px 32px; background: var(--paper-warm);
+    border-left: 4px solid var(--gold); margin: 32px 0;
+  }
+  .quote-block p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem; font-style: italic; font-weight: 400;
+    line-height: 1.65; color: var(--ink); margin-bottom: 0 !important;
+  }
+  .quote-block cite {
+    display: block; margin-top: 12px;
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted); font-style: normal;
+  }
+  .stage-cards { display: flex; flex-direction: column; gap: 3px; }
+  .stage-card { padding: 24px 28px; }
+  .stage-card.chaos { background: rgba(139,26,26,0.05); border-left: 3px solid var(--beyond-crimson); }
+  .stage-card.build { background: rgba(181,132,26,0.05); border-left: 3px solid var(--edge-amber); }
+  .stage-card.scale { background: rgba(26,107,60,0.05); border-left: 3px solid var(--core-green); }
+  .stage-card-title { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px; }
+  .stage-card.chaos .stage-card-title { color: var(--beyond-crimson); }
+  .stage-card.build .stage-card-title { color: var(--edge-amber); }
+  .stage-card.scale .stage-card-title { color: var(--core-green); }
+  .stage-card p { font-size: 0.84rem; font-weight: 300; line-height: 1.65; color: #5A6A7A; }
+
+  /* ONE QUESTION */
+  .question-section { background: var(--ink); padding: 100px 80px; }
+  .question-inner { max-width: 860px; margin: 0 auto; text-align: center; }
+  .question-section .section-label { color: var(--gold); text-align: center; }
+  .question-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+    font-weight: 300; font-style: italic; line-height: 1.35;
+    color: #fff; margin: 20px 0 40px;
+  }
+  .question-text em { color: var(--gold); font-style: normal; }
+  .question-note { font-size: 0.88rem; font-weight: 300; line-height: 1.8; color: rgba(255,255,255,0.5); }
+
+  /* MARKETING SECTION */
+  .marketing-section { background: var(--paper-warm); }
+  .marketing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+  .marketing-section p {
+    font-size: 1rem; font-weight: 300; line-height: 1.85; color: #3A4A5A; margin-bottom: 20px;
+  }
+  .marketing-insight-list { list-style: none; margin-top: 24px; }
+  .marketing-insight-list li {
+    display: flex; gap: 14px; align-items: flex-start; padding: 14px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.08); font-size: 0.88rem; font-weight: 300; color: #5A6A7A;
+  }
+  .mi-marker { color: var(--gold); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+  .ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+  .ai-card { background: #fff; padding: 24px 22px; }
+  .ai-card-icon { font-size: 1.4rem; margin-bottom: 12px; }
+  .ai-card-title { font-weight: 600; font-size: 0.88rem; color: var(--ink); margin-bottom: 6px; }
+  .ai-card-body { font-size: 0.8rem; font-weight: 300; line-height: 1.6; color: var(--muted); }
+  .ai-stat { color: var(--gm-blue); font-weight: 600; }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink-soft); padding: 40px 80px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-left { font-size: 0.72rem; color: rgba(255,255,255,0.3); letter-spacing: 0.08em; }
+  .footer-left strong { color: var(--gold); display: block; margin-bottom: 4px; font-weight: 500; }
+  .footer-right { font-size: 0.72rem; color: rgba(255,255,255,0.3); letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* INTERNATIONAL SECTION */
+  .international-section { background: #fff; }
+  .international-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    section { padding: 64px 24px; }
+    .hero-content { padding: 0 24px; }
+    .hero { padding: 0 0 64px; }
+    .hero-meta { flex-wrap: wrap; gap: 20px; }
+    .hero-meta-item { border-right: none; flex: 45%; }
+    .about-grid, .allocation-grid, .map-grid,
+    .sw-grid, .diagnostic-grid, .culture-grid,
+    .marketing-grid, .international-grid, .comp-grid { grid-template-columns: 1fr; }
+    .comp-grid { grid-template-columns: 1fr 1fr; }
+    .ai-grid { grid-template-columns: 1fr 1fr; }
+    .belief-strip { padding: 56px 24px; }
+    .question-section { padding: 64px 24px; }
+    footer { padding: 32px 24px; flex-direction: column; gap: 16px; text-align: center; }
+    .scroll-indicator { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Theta Framework</div>
+  <ul class="nav-links">
+    <li><a href="#about">Overview</a></li>
+    <li><a href="#history">History</a></li>
+    <li><a href="#map">Portfolio</a></li>
+    <li><a href="#culture">Culture</a></li>
+    <li><a href="#international">International</a></li>
+    <li><a href="#competitors">Competitors</a></li>
+    <li><a href="#diagnostic">Diagnostic</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-radial"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Framework Case Study &nbsp;&bull;&nbsp; Packaged Foods</div>
+    <h1 class="hero-headline">
+      A Century of <em>Knowing</em><br>and the Weight<br>of What Comes Next
+    </h1>
+    <p class="hero-subtitle">General Mills has fed generations, built billion-dollar brands, and adapted through every disruption the twentieth century could throw at it. The question the twenty-first century is asking is one the company has never faced quite like this before.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Founded</div>
+        <div class="hero-meta-value">1866, Minneapolis</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">FY2025 Revenue</div>
+        <div class="hero-meta-value">$19.5 Billion</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Global Employees</div>
+        <div class="hero-meta-value">~33,000</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Theta Archetype</div>
+        <div class="hero-meta-value">Disciplined Explorer</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-label">Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="about-section">
+  <div class="reveal">
+    <span class="section-label">What They Are</span>
+    <h2 class="section-title">Not Just a Food Company.<br><em>A Platform for Trust.</em></h2>
+  </div>
+  <div class="about-grid">
+    <div class="about-prose reveal">
+      <p>When people buy a box of Cheerios, they are not buying cereal. They are buying a decision they don't have to make in a grocery aisle already overwhelmed with choices. General Mills has spent 158 years building that psychological shortcut. Its portfolio of over 100 brands is less a collection of products and more a map of American domestic life: what families eat when they wake up, what they pack in lunchboxes, what they reach for when they want comfort, and increasingly, what they feed their dogs.</p>
+      <p>That breadth is both the company's greatest strength and the source of its deepest tension. A brand like Cheerios carries decades of nutritional credibility. Blue Buffalo carries the promise of loving your pet as a family member. Häagen-Dazs carries pure, unapologetic pleasure. Managing all three simultaneously, across changing consumer habits and volatile cost environments, requires a kind of organizational discipline that few companies can sustain. General Mills has sustained it. Whether it can evolve it is the more interesting question.</p>
+      <div class="hidden-fact">
+        <div class="hidden-fact-label">A Fact Most People Don't Know</div>
+        <p>Before General Mills became a food company, it was a toy empire. By the late 1970s under CEO E. Robert Kinney, the company owned Parker Brothers, Kenner Toys, and a fleet of fashion and restaurant brands. At its diversified peak, it employed over 71,000 people. The company that makes Cheerios today was once the company that made Monopoly.</p>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Consecutive Dividend Years</div>
+          <div class="stat-number">56</div>
+          <div class="stat-note">Uninterrupted payments through recessions, pandemics, and structural industry shifts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">301 Inc Investments</div>
+          <div class="stat-number">36</div>
+          <div class="stat-note">Venture bets made since 2012, including Beyond Meat's IPO. Now paused.</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Annual R&amp;D Spend</div>
+          <div class="stat-number">$350M</div>
+          <div class="stat-note">Dedicated annually to innovation, despite margin pressure in FY2025</div>
+        </div>
+        <div class="stat-card" style="background:var(--ink)">
+          <div class="stat-label" style="color:rgba(255,255,255,0.4)">Stock Decline</div>
+          <div class="stat-number" style="color:var(--gold)">-25%</div>
+          <div class="stat-note" style="color:rgba(255,255,255,0.4)">Share price over the past year. The market is asking questions.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BELIEF STRIP -->
+<div class="belief-strip reveal">
+  <p class="belief-quote">"Make food the world loves." <span>That's the mission. Three words. The tension is in whether 'the world' still means what it meant when they wrote it.</span></p>
+  <div class="belief-attribution">General Mills Purpose Statement &nbsp;&bull;&nbsp; Interpreted through the Theta Lens</div>
+</div>
+
+<!-- TIMELINE -->
+<section id="history" class="timeline-section">
+  <span class="section-label reveal">Innovation Through Time</span>
+  <h2 class="section-title reveal">How the <em>Hunger to Build</em><br>Got Complicated</h2>
+  <p class="section-intro reveal">General Mills has reinvented itself repeatedly. But the nature of each reinvention reveals something about how the company thinks about risk, ambition, and what "innovation" actually means.</p>
+
+  <div class="timeline-container">
+    <div class="timeline-item reveal">
+      <div class="timeline-year">1866</div>
+      <div class="timeline-line-col"><div class="timeline-dot milestone"></div><div class="timeline-connector"></div></div>
+      <div class="timeline-body">
+        <div class="timeline-phase">Origin</div>
+        <div class="timeline-title">The Flour Mill That Would Become a Media Company</div>
+        <p class="timeline-desc">Cadwallader Washburn founds a Minneapolis flour mill. The innovation at this stage was industrial: moving from stone grinding to roller milling gave General Mills a quality advantage that would define its first century. Proximity to North American wheat fields made Minneapolis the "Flour Capital of the World."</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">1921</div>
+      <div class="timeline-line-col"><div class="timeline-dot filled"></div><div class="timeline-connector"></div></div>
+      <div class="timeline-body">
+        <div class="timeline-phase">Brand Creation</div>
+        <div class="timeline-title">Betty Crocker: Marketing as Product</div>
+        <p class="timeline-desc">General Mills creates Betty Crocker, a fictional persona to respond to consumer letters. She becomes one of the most recognized women in America. This was an early, remarkable insight: the brand experience can be the product. Consumer trust, not ingredients, would be the company's most durable asset.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">1941</div>
+      <div class="timeline-line-col"><div class="timeline-dot filled"></div><div class="timeline-connector"></div></div>
+      <div class="timeline-body">
+        <div class="timeline-phase">Core Innovation</div>
+        <div class="timeline-title">Cheerios Launches. A Simple Circle Becomes an Icon.</div>
+        <p class="timeline-desc">Originally called CheeriOats, it becomes the first oat-based, ready-to-eat cereal. Over the following decades it earns FDA heart-health claims, becoming the best-selling cereal in America. The innovation was not just food science. It was positioning a breakfast product as a health decision at a time when no one had done that before.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">1977</div>
+      <div class="timeline-line-col"><div class="timeline-dot milestone"></div><div class="timeline-connector"></div></div>
+      <div class="timeline-body">
+        <div class="timeline-phase">Conglomerate Peak and Pivot</div>
+        <div class="timeline-title">The Company That Made Monopoly</div>
+        <p class="timeline-desc">At its diversified height, General Mills owns Parker Brothers, Kenner Toys (Star Wars action figures), the Talbot's clothing chain, and Olive Garden. Employment peaks at 71,000. It is a beyond-zone explorer by necessity, not strategy. The experiment teaches a painful lesson: diversification without focus is drift dressed as ambition.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">1995</div>
+      <div class="timeline-line-col"><div class="timeline-dot filled"></div><div class="timeline-connector"></div></div>
+      <div class="timeline-body">
+        <div class="timeline-phase">Focused Return</div>
+        <div class="timeline-title">Stephen Sanger Begins Rebuilding a Food Company</div>
+        <p class="timeline-desc">Over two decades of leadership, Sanger divests non-food assets, acquires Pillsbury in a landmark 2001 deal, overtakes Kellogg's in US cereal share, and reshapes the company around the portfolio it is known for today. Focus becomes the core competency. The innovation machine narrows, and in narrowing, strengthens.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">2012</div>
+      <div class="timeline-line-col"><div class="timeline-dot filled"></div><div class="timeline-connector"></div></div>
+      <div class="timeline-body">
+        <div class="timeline-phase">Venture Ambition</div>
+        <div class="timeline-title">301 Inc Opens: The Company Bets on Startups</div>
+        <p class="timeline-desc">General Mills launches 301 Inc, its corporate venture arm. Over a decade, it makes 36 investments including an early stake in Beyond Meat. The portfolio signals an organization aware of disruption and genuinely curious about the edges of the food category. The venture arm is the company's most deliberate attempt to listen to the future.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">2018</div>
+      <div class="timeline-line-col"><div class="timeline-dot milestone"></div><div class="timeline-connector"></div></div>
+      <div class="timeline-body">
+        <div class="timeline-phase">Platform Expansion</div>
+        <div class="timeline-title">Blue Buffalo: A $8B Bet on the Pet Humanization Trend</div>
+        <p class="timeline-desc">The acquisition of Blue Buffalo reshapes the company. For $8 billion, General Mills enters the pet food category at scale, capturing the cultural shift of treating pets as family members. It is arguably the company's most successful recent strategic move: a high-growth segment now generating over $2.5 billion annually, still expanding.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">2019</div>
+      <div class="timeline-line-col"><div class="timeline-dot filled"></div><div class="timeline-connector"></div></div>
+      <div class="timeline-body">
+        <div class="timeline-phase">Internal Venture</div>
+        <div class="timeline-title">G-Works Launches: Building From Within</div>
+        <p class="timeline-desc">An internal venture studio, G-Works is built to incubate new businesses outside the core portfolio. It produces Carbe Diem pasta and Bold Cultr dairy alternatives. It represents the company's clearest attempt to build a Chaos-stage innovation structure: protected teams, flexible mandates, new categories. Its closure in March 2025 reveals the structural limits of that ambition inside a quarterly-reporting machine.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-year">2025</div>
+      <div class="timeline-line-col"><div class="timeline-dot milestone"></div><div class="timeline-connector"></div></div>
+      <div class="timeline-body">
+        <div class="timeline-phase">Turbulence</div>
+        <div class="timeline-title">301 Inc Paused. G-Works Closed. Guidance Cut Twice.</div>
+        <p class="timeline-desc">Facing the steepest consumer headwinds in a generation, General Mills pauses new venture investments and closes its internal incubator. Revenue declines. Volumes fall 9% year-on-year in some categories. The company retreats toward the core at exactly the moment structural disruption demands exploration. This is the central tension the Theta Framework illuminates.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INNOVATION CULTURE -->
+<section id="culture" class="culture-section">
+  <span class="section-label reveal">Innovation Culture</span>
+  <h2 class="section-title reveal">The Three Stages of<br><em>What Innovation Requires</em></h2>
+  <p class="section-intro reveal">The Theta Framework asks whether a company has the right structures for each stage of innovation: the chaos of discovery, the discipline of building, and the openness of scale. General Mills has different answers for each.</p>
+  <div class="culture-grid">
+    <div class="reveal">
+      <div class="culture-prose">
+        <p>General Mills is an execution culture. Its Holistic Margin Management program, which it has run for over two decades, is proof of what happens when a large organization optimizes relentlessly for efficiency. It has saved hundreds of millions. It has also created a company where the implicit reward for asking "what if we did something completely different?" is polite silence.</p>
+        <p>The Mavericks the Theta Framework looks for are present at General Mills, but they are hidden. They sit in the Bell Institute of Health and Nutrition, the longest-running nutrition science lab in the food industry. They work on the digital teams running AI-powered consumer research. They built 301 Inc and G-Works from scratch. The question is not whether they exist. It is whether the organization protects them or gradually promotes them into management until the edge is gone.</p>
+        <p>The evidence from G-Works is instructive. The studio launched in 2019 with a genuine mandate to build new businesses. It produced real products. Then the fiscal pressure arrived, and the question changed from "what are these teams learning?" to "what revenue are they generating?" Measured against a Core metric, every Edge project will eventually fail. That is not a judgment. It is arithmetic.</p>
+      </div>
+      <div class="quote-block">
+        <p>"Innovation does not come from playing it safe. It comes from failing intelligently, learning quickly, and adapting."</p>
+        <cite>The Theta Framework &nbsp;&bull;&nbsp; Failure Intelligence Principle</cite>
+      </div>
+      <div class="culture-prose">
+        <p>What makes the G-Works story complicated is that it was not a failure of innovation. Bold Cultr and Carbe Diem were coherent products in real emerging categories. They were a failure of innovation accounting: the company was measuring a Build-stage project with Scale-stage expectations. Learning velocity, early adopter feedback, and strategic optionality were not the metrics being tracked. Revenue was. And revenue in year one of a new category almost never arrives on schedule.</p>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="stage-cards">
+        <div class="stage-card chaos">
+          <div class="stage-card-title">Stage 1: Chaos (Maverick Mode)</div>
+          <p>Space for unstructured exploration: Partial. AI sandbox exists, but it solves known problems rather than generating genuinely new questions. Curiosity is rewarded in pockets; execution is rewarded everywhere. Seed-collecting spaces are effectively absent. The closure of G-Works removed the most visible home for internal rebels.</p>
+        </div>
+        <div class="stage-card build">
+          <div class="stage-card-title">Stage 2: Build (Skunkworks Mode)</div>
+          <p>Clear goals with flexible execution: Yes, when projects get this far. The GHOST collaboration and GLP-1 protein line show a team given a clear direction and some creative latitude. But insulation from Core bureaucracy is incomplete, and metrics remain revenue-oriented rather than learning-oriented. A clear path back to Core exists and works, which is both a strength and a constraint.</p>
+        </div>
+        <div class="stage-card scale">
+          <div class="stage-card-title">Stage 3: Scale (Open Source Mode)</div>
+          <p>This is where General Mills is most comfortable. The company knows how to take a proven innovation and route it through a global distribution machine. What it has not built is an ecosystem around its products. The GHOST deal is a licensing arrangement, not a movement. Open source principles, building shared ownership, inviting external co-creation, are not part of the operating model.</p>
+        </div>
+      </div>
+      <div class="quote-block" style="margin-top:28px">
+        <p>"Innovation is neither a sprint nor a funnel. You need to know when to push, when to build, and when to invite others in."</p>
+        <cite>The Theta Framework &nbsp;&bull;&nbsp; Stage Architecture</cite>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section id="map" class="map-section">
+  <span class="section-label reveal">Theta Innovation Map</span>
+  <h2 class="section-title reveal">Where the <em>Bets Are Placed</em><br>and Where They Aren't</h2>
+  <p class="section-intro reveal">Each dot on this map is an active General Mills initiative. The clustering tells the real story: the company is protecting the present more than it is building the future.</p>
+  <div class="map-grid reveal">
+    <div>
+      <div class="zone-legend">
+        <div class="zone-pill">
+          <div class="zone-dot core"></div>
+          <div>
+            <div class="zone-name" style="color:var(--core-green)">Core Zone</div>
+            <div class="zone-desc">Existing markets, existing technology. The engine that funds everything else. Heavy, necessary, and currently under siege.</div>
+          </div>
+        </div>
+        <div class="zone-pill">
+          <div class="zone-dot edge"></div>
+          <div>
+            <div class="zone-name" style="color:var(--edge-amber)">Edge Zone</div>
+            <div class="zone-desc">New markets, elevated technology change. The next S-curve is being built here, if anywhere. Currently underfunded by roughly 8 percentage points.</div>
+          </div>
+        </div>
+        <div class="zone-pill">
+          <div class="zone-dot beyond"></div>
+          <div>
+            <div class="zone-name" style="color:var(--beyond-crimson)">Beyond Zone</div>
+            <div class="zone-desc">Radical bets. Speculative horizons. Seeds for 2035. With G-Works closed and 301 Inc paused, this zone is nearly empty and getting emptier.</div>
+          </div>
+        </div>
+      </div>
+      <div class="reading-card">
+        <div class="reading-card-label">Reading This Map</div>
+        <p>Dot size represents investment weight. The X-axis moves from existing to speculative market reach. The Y-axis tracks the degree of technology change required. Notice the empty upper-right quadrant. That is where the future lives. General Mills has almost nothing there.</p>
+      </div>
+    </div>
+    <div class="chart-container">
+      <canvas id="thetaMap"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section class="allocation-section">
+  <span class="section-label reveal">Portfolio Allocation</span>
+  <h2 class="section-title reveal">The 70-20-10 <em>Reality Check</em></h2>
+  <p class="section-intro reveal">The Theta Framework benchmarks a healthy portfolio at 70% Core, 20% Edge, 10% Beyond. What General Mills is actually running looks very different from what a long-term sustainable growth strategy demands.</p>
+  <div class="allocation-grid">
+    <div class="reveal">
+      <div class="donut-wrap">
+        <canvas id="donutChart"></canvas>
+        <div class="donut-center">
+          <div class="donut-center-label">Zones Active</div>
+          <div class="donut-center-value" style="font-size:1rem;color:var(--muted)">Core/Edge/Beyond</div>
+        </div>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="allocation-bars">
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-zone" style="color:var(--core-green)">Core Zone</span>
+            <span class="alloc-bar-nums">Actual ~85% &nbsp;|&nbsp; Target 70%</span>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill" style="width:85%;background:var(--core-green)"></div>
+            <div class="alloc-bar-benchmark" style="left:70%"></div>
+          </div>
+          <p class="alloc-bar-comment">Over-invested by approximately 15 points. The company is funding a price war against private label brands with promotional spend that produces volume without building equity. This is running faster to stay in place.</p>
+        </div>
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-zone" style="color:var(--edge-amber)">Edge Zone</span>
+            <span class="alloc-bar-nums">Actual ~12% &nbsp;|&nbsp; Target 20%</span>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill" style="width:12%;background:var(--edge-amber)"></div>
+            <div class="alloc-bar-benchmark" style="left:20%"></div>
+          </div>
+          <p class="alloc-bar-comment">Underweight by 8 points. The GLP-1 nutrition platform and Fresh Pet initiative are the right bets. They are not receiving the funding the opportunity demands. The next S-curve is being seeded, not planted.</p>
+        </div>
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-zone" style="color:var(--beyond-crimson)">Beyond Zone</span>
+            <span class="alloc-bar-nums">Actual ~3% &nbsp;|&nbsp; Target 10%</span>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill" style="width:3%;background:var(--beyond-crimson)"></div>
+            <div class="alloc-bar-benchmark" style="left:10%"></div>
+          </div>
+          <p class="alloc-bar-comment">Critically underweight. With G-Works shuttered and 301 Inc paused, the Beyond zone is represented almost entirely by AI process capabilities. That is infrastructure, not innovation. The seeds for 2035 have not been planted.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKETING + AI -->
+<section class="marketing-section">
+  <span class="section-label reveal">Marketing as Innovation Engine</span>
+  <h2 class="section-title reveal">Why What They Say<br><em>Shapes What They Build</em></h2>
+  <p class="section-intro reveal">General Mills is one of the most sophisticated marketing organizations in consumer goods. This is not just about advertising. The way the company listens to consumers, builds trust, and signals its intent directly determines which innovations get funded and which ideas get permission to exist.</p>
+  <div class="marketing-grid">
+    <div class="reveal">
+      <p>Marketing at General Mills has always been upstream of product. Betty Crocker did not follow a product; she preceded one. The character was created to build trust before there was a product ready to carry it. That logic still runs through the organization. When the company launches Cheerios Protein or a GHOST collaboration, the marketing question is not "how do we sell this?" It is "which identity are we borrowing, and does it give us permission to play here?"</p>
+      <p>The Theta Framework's customer signal architecture reveals that General Mills is excellent at hearing the Early and Late Majority: price-sensitive, habit-driven consumers looking for familiar products at accessible price points. The digital infrastructure built around Salesforce Data Cloud, loyalty programs, and recipe sites generates a rich picture of who is buying and why. The company reports a 3x increase in consumer engagement from this system and 40% growth in "buy now" conversions.</p>
+      <p>But signal strength is not the same as signal range. Where the company appears to listen less acutely is at the edges of its consumer base: the GLP-1 patient navigating what to eat after appetite suppression, the aging consumer whose relationship with food has changed but whose brand loyalty hasn't, the younger consumer who sees processed food as morally complicated. These are not fringe customers. They are early indicators of where the mainstream is heading.</p>
+      <ul class="marketing-insight-list">
+        <li><span class="mi-marker">01</span> The GHOST collaboration is not primarily a product innovation. It is a permission structure. By co-branding with a fitness lifestyle brand, General Mills signals to protein-seeking consumers that Lucky Charms can belong in their nutritional identity. Marketing is doing the category expansion work that product alone cannot do.</li>
+        <li><span class="mi-marker">02</span> Box Tops for Education's transformation from paper coupons to a mobile app is one of the company's most under-discussed digital innovations. It turned a redemption mechanic into a loyalty data asset, connecting purchase behavior to family identity.</li>
+        <li><span class="mi-marker">03</span> The commitment to remove artificial colors across K-12 school foods is marketing-led innovation. Consumer perception of clean labels drove a formulation mandate across a significant portion of the portfolio.</li>
+      </ul>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <p style="font-weight:600;font-size:0.9rem;color:var(--ink);margin-bottom:16px;letter-spacing:0.02em">AI Integration: Reactive or Embedded?</p>
+      <p>General Mills has assessed its own AI maturity using an external academic framework (the Carlson Analytics Maturity Model) and found clear leaders and meaningful gaps. The language from leadership is deliberate: AI is a strategic pillar of the "Accelerate" strategy, not a pilot program.</p>
+      <div class="ai-grid" style="margin-top:24px">
+        <div class="ai-card">
+          <div class="ai-card-icon">◎</div>
+          <div class="ai-card-title">Consumer Personalization</div>
+          <div class="ai-card-body">Salesforce Data Cloud and Einstein AI analyze purchase data from loyalty and recipe platforms. Result: <span class="ai-stat">3x engagement growth</span> and <span class="ai-stat">40% lift</span> in purchase intent.</div>
+        </div>
+        <div class="ai-card">
+          <div class="ai-card-icon">◎</div>
+          <div class="ai-card-title">Innovation Pipeline Speed</div>
+          <div class="ai-card-body">Digital consumer personas and AI prototyping compress concept-to-testing cycles. The company calls this "innovating how we innovate," not just what they innovate.</div>
+        </div>
+        <div class="ai-card">
+          <div class="ai-card-icon">◎</div>
+          <div class="ai-card-title">Supply Chain Optimization</div>
+          <div class="ai-card-body">End-to-end analytics from ingredient sourcing to shelf delivery. Feeds directly into the HMM cost-savings program that has protected margins through inflationary cycles.</div>
+        </div>
+        <div class="ai-card">
+          <div class="ai-card-icon">△</div>
+          <div class="ai-card-title">The Honest Caveat</div>
+          <div class="ai-card-body">AI is making the existing system faster, not creating new categories. Accelerating the Core is valuable. It is not the same as building the Edge. Process innovation and product innovation serve different futures.</div>
+        </div>
+      </div>
+      <div class="quote-block" style="margin-top:28px">
+        <p>"But articulated needs are lagging indicators. By the time a customer can tell you what they want, the market has already moved. The real innovation leverage comes from needs customers cannot yet express."</p>
+        <cite>The Theta Framework &nbsp;&bull;&nbsp; Unarticulated Needs Principle</cite>
+      </div>
+      <p style="font-size:0.88rem;font-weight:300;line-height:1.8;color:#5A6A7A;margin-top:20px">General Mills' signal system is exceptional at hearing what people say. The next frontier is hearing what they cannot. The GLP-1 user who needs permission to eat, not just a list of nutrients. The aging consumer whose relationship with food has quietly changed but whose brand loyalty has not. The parent who wants their child to eat better but does not have the energy to fight about it at dinner. These are not niche segments. They are early signals of where the mainstream is already heading. Articulated needs produce incremental innovation. Unarticulated ones produce the next S-curve.</p>
+      <div class="quote-block" style="margin-top:28px">
+        <p>"If you want to build future-ready systems, don't just listen to your best customers. Listen to your most confused ones."</p>
+        <cite>The Theta Framework &nbsp;&bull;&nbsp; Customer Signal Architecture</cite>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERNATIONAL -->
+<section id="international" class="international-section">
+  <span class="section-label reveal">International as Innovation Engine</span>
+  <h2 class="section-title reveal">The Growth That Is<br><em>Not Being Fully Heard</em></h2>
+  <p class="section-intro reveal">While North America Retail declined 7% in FY2025, International grew nearly 3%. With 301 Inc paused and G-Works closed, International has quietly become the company's most active Edge learning lab. The question is whether anyone back in Minneapolis is systematically listening to what it is teaching.</p>
+  <div class="international-grid reveal">
+    <div>
+      <div class="culture-prose">
+        <p>China's Häagen-Dazs operation is one of the most instructive innovation stories inside General Mills right now, and it is barely discussed in US analyst coverage. The team localized production, brought costs down without compromising the premium positioning, doubled the distribution network, and identified that handheld formats account for over 60% of global ice cream consumption and are growing at 8% annually. Häagen-Dazs had historically under-indexed in that format. They fixed it. The result was double-digit retail growth in a challenging macroeconomic environment.</p>
+        <p>Wanchai Ferry, the Chinese dumpling brand, is expanding from its core category into steamed buns, built around a health-plus-regionalization platform. Blue Buffalo is entering China, Taiwan, and South Korea using the US playbook adapted for local dynamics. Brazil and India are accelerating. These are not isolated wins. They are a pattern: local teams, given real autonomy and real mandates, adapting global platforms to local realities and finding growth that the US portfolio cannot currently generate.</p>
+        <p>The strategic irony is pointed. Kraft Heinz explicitly codes its Canadian and UK operations as innovation blueprints for the US. Their Canada business, running a simplified model with concentrated bets, has produced a 4% compound annual growth rate that management now wants to replicate in the US. General Mills has arguably better international results and no equivalent transfer mechanism. The lessons from Shanghai and São Paulo are staying in Shanghai and São Paulo.</p>
+      </div>
+      <div class="quote-block">
+        <p>"The only way to survive is to build your next S-curve before the current one collapses. That means using your Core to fund your Edge and Beyond."</p>
+        <cite>The Theta Framework &nbsp;&bull;&nbsp; S-Curve Principle</cite>
+      </div>
+    </div>
+    <div>
+      <div style="margin-bottom:8px">
+        <div style="font-size:0.65rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid rgba(200,151,43,0.2)">International as Learning Lab: The Gap</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:0.83rem;">
+            <thead>
+              <tr style="border-bottom:2px solid var(--border)">
+                <th style="text-align:left;padding:10px 12px 10px 0;font-weight:600;color:var(--ink);font-size:0.7rem;letter-spacing:0.06em;text-transform:uppercase">Market</th>
+                <th style="text-align:left;padding:10px 12px;font-weight:600;color:var(--ink);font-size:0.7rem;letter-spacing:0.06em;text-transform:uppercase">What Is Working</th>
+                <th style="text-align:left;padding:10px 0 10px 12px;font-weight:600;color:var(--ink);font-size:0.7rem;letter-spacing:0.06em;text-transform:uppercase">Transferable to US?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid var(--border)">
+                <td style="padding:12px 12px 12px 0;color:var(--ink);font-weight:500">China</td>
+                <td style="padding:12px;color:#5A6A7A;font-weight:300">Handheld ice cream format, local production cost reduction, Wanchai Ferry category expansion</td>
+                <td style="padding:12px 0 12px 12px"><span style="background:rgba(26,107,60,0.1);color:var(--core-green);padding:3px 10px;border-radius:12px;font-size:0.65rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase">Yes</span></td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--border)">
+                <td style="padding:12px 12px 12px 0;color:var(--ink);font-weight:500">Brazil</td>
+                <td style="padding:12px;color:#5A6A7A;font-weight:300">Bold flavor profiles, social-media-first launches, Yoki and Kitano local brand momentum</td>
+                <td style="padding:12px 0 12px 12px"><span style="background:rgba(26,107,60,0.1);color:var(--core-green);padding:3px 10px;border-radius:12px;font-size:0.65rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase">Yes</span></td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--border)">
+                <td style="padding:12px 12px 12px 0;color:var(--ink);font-weight:500">Europe</td>
+                <td style="padding:12px;color:#5A6A7A;font-weight:300">Cleaner labels, smaller portion formats, earlier adoption of GLP-1 adjacent positioning</td>
+                <td style="padding:12px 0 12px 12px"><span style="background:rgba(26,107,60,0.1);color:var(--core-green);padding:3px 10px;border-radius:12px;font-size:0.65rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase">Yes</span></td>
+              </tr>
+              <tr>
+                <td style="padding:12px 12px 12px 0;color:var(--ink);font-weight:500">Transfer Mechanism</td>
+                <td style="padding:12px;color:#5A6A7A;font-weight:300">No formal Global Innovation Transfer function exists. Insights stay local.</td>
+                <td style="padding:12px 0 12px 12px"><span style="background:rgba(139,26,26,0.1);color:var(--beyond-crimson);padding:3px 10px;border-radius:12px;font-size:0.65rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase">Missing</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div style="background:var(--paper-warm);padding:24px 28px;margin-top:28px;border-left:3px solid var(--edge-amber)">
+        <div style="font-size:0.6rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--edge-amber);margin-bottom:10px">The Structural Gap</div>
+        <p style="font-size:0.86rem;font-weight:300;line-height:1.7;color:#5A6A7A">With 301 Inc paused and G-Works shuttered, International is now the de facto Edge learning lab for the entire company. But it was not designed to play that role, is not resourced to play that role, and has no formal mandate to systematize its learnings for the US portfolio. The growth is real. The knowledge transfer is not happening.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section id="competitors" class="competitors-section">
+  <span class="section-label reveal">Competitive Landscape</span>
+  <h2 class="section-title reveal">The Innovation Positions<br><em>of Five Different Bets</em></h2>
+  <p class="section-intro reveal">Every major player in packaged foods is solving the same problem differently. The Theta lens reveals not just who is winning, but what kind of future each company is building toward.</p>
+  <div class="comp-grid reveal">
+    <div class="comp-card featured">
+      <div class="comp-name">General Mills</div>
+      <div class="comp-tag">Disciplined Explorer</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div> Core: Renovating, defending, promoting</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div> Edge: GLP-1, Fresh Pet, Bold Flavors</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:rgba(139,26,26,0.25)"></div> Beyond: Effectively empty. 301 Inc paused.</div>
+      <span class="verdict-chip mid">At Crossroads</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">Nestlé</div>
+      <div class="comp-tag">Balanced Builder</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div> Core: Fewer, bigger launches. Disciplined pruning.</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div> Edge: Air fryer, cold coffee, Gen Z snacking</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson)"></div> Beyond: Cocoa-free chocolate via ChoViva partnership</div>
+      <span class="verdict-chip strong">Genuine Beyond Bet</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">Kraft Heinz</div>
+      <div class="comp-tag">Turnaround Mode</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div> Core: $600M investment in US portfolio repair</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div> Edge: Global market "blueprints" (Canada, UK, China)</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:rgba(139,26,26,0.2)"></div> Beyond: No visible activity. Paused on long-term bets.</div>
+      <span class="verdict-chip concern">Core-Only Bet</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">PepsiCo</div>
+      <div class="comp-tag">Scale Operator</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div> Core: Everyday value, SKU reduction, brand refresh</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div> Edge: Doritos Protein, Simply NKD clean-label line</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:rgba(139,26,26,0.2)"></div> Beyond: Automation and digitalization (process, not product)</div>
+      <span class="verdict-chip mid">Edge Active, Beyond Thin</span>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">Conagra</div>
+      <div class="comp-tag">Focused Doubler</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div> Core: Defending frozen and shelf-stable leadership</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div> Edge: $220M in Mega Chicken Filet capacity. QSR displacement play.</div>
+      <div class="comp-zone-row"><div class="comp-zone-dot" style="background:rgba(139,26,26,0.2)"></div> Beyond: Not visible at scale</div>
+      <span class="verdict-chip strong">Executing One Bet Well</span>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <p style="font-size:0.88rem;font-weight:300;color:var(--muted);text-align:center;margin-bottom:32px;font-style:italic">Radar comparison across six Theta-aligned dimensions. General Mills shown in blue.</p>
+    <div class="radar-wrap">
+      <canvas id="radarChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- S&W -->
+<section class="sw-section">
+  <span class="section-label reveal">Strengths and Tensions</span>
+  <h2 class="section-title reveal">What the Company <em>Does Best</em><br>and What It Cannot Afford to Ignore</h2>
+  <div class="sw-grid reveal">
+    <div class="sw-panel strengths">
+      <div class="sw-panel-title">Structural Strengths</div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-item-text">
+          <div class="sw-item-lead">56 years of uninterrupted dividends</div>
+          <div class="sw-item-body">Through recessions, pandemics, ingredient crises, and structural market shifts, General Mills has never missed a dividend payment. This is not just financial discipline. It is organizational trust, a culture of meeting commitments that runs through every operating decision.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-item-text">
+          <div class="sw-item-lead">Blue Buffalo as a growth engine with room to run</div>
+          <div class="sw-item-body">The $8B acquisition has delivered. Over $2.5B in annual revenue, growing, with the fresh pet initiative ("Love Made Fresh") now in nearly 5,000 retail coolers. The pet humanization trend is structural, not cyclical. This segment is the clearest example of a successful edge bet executed and scaled.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-item-text">
+          <div class="sw-item-lead">Marketing infrastructure that genuinely listens</div>
+          <div class="sw-item-body">The combination of Salesforce Data Cloud, Betty Crocker and Pillsbury recipe engagement, Box Tops loyalty data, and AI-driven personalization gives General Mills one of the deepest consumer signal systems in packaged food. The data exists. The question is whether it is asking the right questions.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-item-text">
+          <div class="sw-item-lead">International as a genuine growth engine</div>
+          <div class="sw-item-body">While North America Retail declined 7% in FY2025, International grew 3%. China's Häagen-Dazs business achieved double-digit growth after localizing production. Wanchai Ferry is expanding categories. Brazil and India are accelerating. The company has a working global engine that most of its US-focused investors are not pricing correctly.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-item-text">
+          <div class="sw-item-lead">A leadership team willing to have uncomfortable conversations</div>
+          <div class="sw-item-body">The CAGNY 2026 presentation was a notable act of transparency. Jeff Harmening laid out the challenges without defensive positioning: consumer weakness, structural shifts, the cost of volume recovery. That quality of honesty with external stakeholders is not common in packaged food. It suggests a culture capable of internal honesty too.</div>
+        </div>
+      </div>
+    </div>
+    <div class="sw-panel weaknesses">
+      <div class="sw-panel-title">Strategic Tensions</div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-item-text">
+          <div class="sw-item-lead">The external innovation engine was dismantled at the worst possible time</div>
+          <div class="sw-item-body">G-Works and 301 Inc were not frills. They were the company's early warning system and its mechanism for building the Beyond zone. A company that stops listening to startups during a downturn is a company that will miss the next upturn. The signals are weakest precisely when they matter most. 301 Inc was General Mills' mechanism for hearing them. It is now silent.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-item-text">
+          <div class="sw-item-lead">GLP-1 is the $12 billion question with no clear answer yet</div>
+          <div class="sw-item-body">GLP-1 users consume 40% fewer calories on average. Dessert consumption drops 84% for active users. EY-Parthenon estimates potential snack revenue loss of up to $12B over the next decade. General Mills has the right instinct (protein, fiber, small portions) but has not built a distinct brand architecture or a medical nutrition platform that credibly owns this space.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-item-text">
+          <div class="sw-item-lead">Quarterly reporting as a structural innovation tax</div>
+          <div class="sw-item-body">Every time the guidance is cut, the stock drops, analyst coverage turns cautious, and the implicit message to the organization is: protect margins first. This is the same structural trap that Unilever's Paul Polman escaped by eliminating quarterly guidance entirely, which was only possible because UK listing rules permitted it. US-listed companies do not have that option. The tax is real and ongoing.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-item-text">
+          <div class="sw-item-lead">No genuine Beyond zone activity after G-Works closure</div>
+          <div class="sw-item-body">Nestlé is partnering with startups to build cocoa-free chocolate. The technology is fermentation-based, the market is climate-resilient, the consumer is Gen Z. General Mills, the company with the Bell Institute and $350M in annual R&D, has no visible equivalent. The seeds for 2035 are not planted.</div>
+        </div>
+      </div>
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-item-text">
+          <div class="sw-item-lead">International growth is not yet a learning system</div>
+          <div class="sw-item-body">China's Häagen-Dazs business cracked the code on handheld format, local production, and accessible premium pricing. These are transferable insights. But without a formal Global Innovation Transfer function, each market's lessons stay local. Kraft Heinz explicitly uses Canada and the UK as strategic blueprints for US repair. General Mills has the results but not yet the mechanism to systematize them.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section id="diagnostic" class="diagnostic-section">
+  <span class="section-label reveal" style="color:var(--gold)">Theta Diagnostic</span>
+  <h2 class="section-title reveal" style="color:#fff">The Full Picture:<br><em>Where the Company Stands</em></h2>
+  <div class="diagnostic-grid reveal">
+    <div>
+      <div class="diag-block">
+        <div class="diag-block-title">Portfolio Mapping</div>
+        <div class="diag-row"><span class="diag-row-label">Core Zone</span><span class="diag-row-value">Strong, Over-Defended</span></div>
+        <div class="diag-row"><span class="diag-row-label">Edge Zone</span><span class="diag-row-value">Active but Underfunded</span></div>
+        <div class="diag-row"><span class="diag-row-label">Beyond Zone</span><span class="diag-row-value">Critically Absent</span></div>
+        <div class="diag-row"><span class="diag-row-label">S-Curve Readiness</span><span class="diag-row-value">Partial</span></div>
+        <div class="diag-row"><span class="diag-row-label">Timeline Alignment</span><span class="diag-row-value">0-5yr Strong / 5yr+ Weak</span></div>
+      </div>
+      <div class="diag-block">
+        <div class="diag-block-title">Leadership Trifecta</div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:5px"><span style="color:rgba(255,255,255,0.6)">Agility</span><span style="color:#fff">3.5 / 5</span></div>
+          <div class="diag-score-bar"><div class="diag-score-fill" style="width:70%"></div></div>
+          <div style="font-size:0.76rem;color:rgba(255,255,255,0.4);font-weight:300">Adapting to the new value reality. Still tethered to the old model's assumptions.</div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:5px"><span style="color:rgba(255,255,255,0.6)">Consciousness</span><span style="color:#fff">3.75 / 5</span></div>
+          <div class="diag-score-bar"><div class="diag-score-fill" style="width:75%"></div></div>
+          <div style="font-size:0.76rem;color:rgba(255,255,255,0.4);font-weight:300">Self-aware. Acknowledges structural tensions publicly. Seeks feedback and acts on it.</div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:5px"><span style="color:rgba(255,255,255,0.6)">Courage</span><span style="color:#fff">4.0 / 5</span></div>
+          <div class="diag-score-bar"><div class="diag-score-fill" style="width:80%"></div></div>
+          <div style="font-size:0.76rem;color:rgba(255,255,255,0.4);font-weight:300">Willing to have hard conversations. Bold enough for incremental bets. The transformational leap is still ahead.</div>
+        </div>
+      </div>
+      <div class="diag-block">
+        <div class="diag-block-title">Mavericks and Culture</div>
+        <div class="diag-row"><span class="diag-row-label">Maverick Presence</span><span class="diag-row-value">Hidden</span></div>
+        <div class="diag-row"><span class="diag-row-label">Maverick Protection</span><span class="diag-row-value">Structured Only</span></div>
+        <div class="diag-row"><span class="diag-row-label">Psychological Safety</span><span class="diag-row-value">Safe for Incremental</span></div>
+        <div class="diag-row"><span class="diag-row-label">Failure Intelligence</span><span class="diag-row-value">Low</span></div>
+        <div class="diag-row"><span class="diag-row-label">Open Source Ethos</span><span class="diag-row-value">Closed Model</span></div>
+        <div class="diag-row"><span class="diag-row-label">Detachment Capacity</span><span class="diag-row-value">Very Low</span></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="diag-block">
+        <div class="diag-block-title">Zone Allocation vs. Benchmark</div>
+        <div class="zone-compare-bar">
+          <div class="zone-compare-label"><span>Core Zone</span><span>85% actual / 70% target</span></div>
+          <div class="zone-compare-track">
+            <div class="zone-compare-actual" style="width:85%;background:var(--core-green)"></div>
+            <div class="zone-compare-bench" style="left:70%"></div>
+          </div>
+        </div>
+        <div class="zone-compare-bar">
+          <div class="zone-compare-label"><span>Edge Zone</span><span>12% actual / 20% target</span></div>
+          <div class="zone-compare-track">
+            <div class="zone-compare-actual" style="width:12%;background:var(--edge-amber)"></div>
+            <div class="zone-compare-bench" style="left:20%"></div>
+          </div>
+        </div>
+        <div class="zone-compare-bar">
+          <div class="zone-compare-label"><span>Beyond Zone</span><span>3% actual / 10% target</span></div>
+          <div class="zone-compare-track">
+            <div class="zone-compare-actual" style="width:3%;background:var(--beyond-crimson)"></div>
+            <div class="zone-compare-bench" style="left:10%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">The Adjacent Possible: Assets Not Yet Deployed</div>
+        <p style="font-size:0.8rem;font-weight:300;line-height:1.65;color:rgba(255,255,255,0.5);margin-bottom:16px">General Mills holds assets with significant unrealized innovation potential. The gap between current use and adjacent possibility is one of the most uncomfortable things this map reveals.</p>
+        <table style="width:100%;border-collapse:collapse;font-size:0.78rem;">
+          <thead>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.1)">
+              <th style="text-align:left;padding:8px 10px 8px 0;font-weight:500;color:rgba(255,255,255,0.4);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase">Asset</th>
+              <th style="text-align:left;padding:8px 10px;font-weight:500;color:rgba(255,255,255,0.4);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase">Current Use</th>
+              <th style="text-align:left;padding:8px 0 8px 10px;font-weight:500;color:var(--gold);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase">Adjacent Possible</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+              <td style="padding:11px 10px 11px 0;color:#fff;font-weight:500">Bell Institute</td>
+              <td style="padding:11px 10px;color:rgba(255,255,255,0.5);font-weight:300">Core reformulation, existing brand nutrition claims</td>
+              <td style="padding:11px 0 11px 10px;color:rgba(255,255,255,0.75);font-weight:300">Clinical trials for GLP-1 positioned products; proprietary health claims; personalized nutrition algorithms</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+              <td style="padding:11px 10px 11px 0;color:#fff;font-weight:500">Häagen-Dazs</td>
+              <td style="padding:11px 10px;color:rgba(255,255,255,0.5);font-weight:300">Super-premium ice cream, global retail and parlors</td>
+              <td style="padding:11px 0 11px 10px;color:rgba(255,255,255,0.75);font-weight:300">GLP-1 permissible indulgence platform; high-protein small-format DTC; "permission to enjoy" positioning for medically managed consumers</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+              <td style="padding:11px 10px 11px 0;color:#fff;font-weight:500">Pillsbury Network</td>
+              <td style="padding:11px 10px;color:rgba(255,255,255,0.5);font-weight:300">National refrigerated dough distribution</td>
+              <td style="padding:11px 0 11px 10px;color:rgba(255,255,255,0.75);font-weight:300">Fresh prepared meals for aging consumers; par-baked artisan lines; cold-chain delivery for adjacent fresh categories</td>
+            </tr>
+            <tr>
+              <td style="padding:11px 10px 11px 0;color:#fff;font-weight:500">Blue Buffalo R&amp;D</td>
+              <td style="padding:11px 10px;color:rgba(255,255,255,0.5);font-weight:300">Pet nutrition science, ingredient sourcing at scale</td>
+              <td style="padding:11px 0 11px 10px;color:rgba(255,255,255,0.75);font-weight:300">Transfer learnings on real-ingredient positioning and fresh formats directly into the human nutrition portfolio</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Critical Tension</div>
+        <div class="tension-card">
+          <p>The company is paying an invisible innovation tax to the public markets. It is forced to overweight Core not because it lacks ideas, but because quarterly expectations create a structural pressure against funding the future at the expense of the present. The gap between knowing what to do and having the organizational permission to do it is where General Mills currently lives. The closure of G-Works and the pause of 301 Inc did not happen because the company doesn't understand innovation. They happened because the current system makes it extremely costly to prioritize the long term when the short term is under pressure.</p>
+        </div>
+      </div>
+
+      <div class="diag-block">
+        <div class="diag-block-title">Relativity Assessment</div>
+        <table class="relativity-table">
+          <tr><td>vs. Direct competitors (CPG peers)</td><td><span class="rel-tag at">At Par</span></td></tr>
+          <tr><td>vs. Tech sector and digital natives</td><td><span class="rel-tag far">Far Behind</span></td></tr>
+          <tr><td>vs. Stated ambition (sustainable growth)</td><td><span class="rel-tag behind">Behind</span></td></tr>
+          <tr><td>vs. Historical self (5-10 years ago)</td><td><span class="rel-tag behind">Declining</span></td></tr>
+          <tr><td>vs. Frontier (food science, fermentation)</td><td><span class="rel-tag far">Far</span></td></tr>
+        </table>
+      </div>
+
+      <div class="archetype-verdict">
+        <div class="archetype-name">The Disciplined Explorer</div>
+        <div class="archetype-check">Core ✓ &nbsp; Edge ⚠ &nbsp; Beyond ✗</div>
+        <p class="archetype-desc">General Mills knows where it needs to go. The strategies are coherent, the leadership is clear-eyed, and the execution on Core is disciplined. But the Disciplined Explorer is only one drift away from becoming Legacy-Rich, Vision-Poor. The discipline is currently winning over the exploration. Restoring that balance, not on paper but in actual capital allocation, is the defining leadership challenge of the next three years.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ONE QUESTION -->
+<section class="question-section">
+  <div class="question-inner">
+    <span class="section-label">The Theta One Question</span>
+    <p class="question-text">
+      "How do we aggressively fund the transition from a <em>defensive Remarkability playbook</em> to an offensive Reinvention playbook before the Core erodes faster than the Edge can grow?"
+    </p>
+    <p class="question-note">This is not a question about intent. General Mills knows what the future requires. It is a question about system design and courage: whether the company can sacrifice enough short-term profit to buy a better long-term position, whether it can rebuild its external innovation engine while the core is under pressure, and whether its investors will extend the patience that transformation demands. The Theta Framework names this the gap between knowing and doing. For General Mills right now, that gap is filled with quarterly earnings reports, a paused venture arm, a shuttered incubator, and the gravitational pull of a $19.5 billion Core that demands to be defended every 90 days.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <strong>The Theta Framework</strong>
+    By Christine Pamela &nbsp;&bull;&nbsp; Strategic Case Study 2025
+  </div>
+  <div class="footer-right">General Mills &nbsp;&bull;&nbsp; Innovation Diagnostic</div>
+</footer>
+
+<script>
+// INTERSECTION OBSERVER
+const reveals = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.08 });
+reveals.forEach(r => io.observe(r));
+
+// CHART DEFAULTS
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+const tooltip = {
+  backgroundColor: 'rgba(10,22,40,0.92)',
+  titleColor: '#fff',
+  bodyColor: 'rgba(255,255,255,0.7)',
+  borderColor: 'rgba(200,151,43,0.3)',
+  borderWidth: 1,
+  padding: 12,
+  cornerRadius: 2
+};
+
+// THETA MAP SCATTER
+const mapCtx = document.getElementById('thetaMap').getContext('2d');
+
+const coreData = [
+  {x:1.2, y:1.1, label:'Taste Renovations'},
+  {x:1.5, y:1.3, label:'Packaging Updates'},
+  {x:1.8, y:1.4, label:'Color Removal'},
+  {x:2.2, y:1.6, label:'Bold Flavor Extensions'},
+  {x:2.0, y:1.2, label:'Old El Paso Birria'},
+];
+const edgeData = [
+  {x:2.8, y:2.8, label:'Cheerios Protein'},
+  {x:3.1, y:3.0, label:'GHOST Collaboration'},
+  {x:3.4, y:2.6, label:'Fiber One GLP-1'},
+  {x:3.8, y:3.5, label:'Fresh Pet Food'},
+  {x:2.6, y:2.4, label:'Small Pack Sizes'},
+];
+const beyondData = [
+  {x:4.2, y:3.8, label:'AI-Integrated NPD'},
+];
+
+function makePlugin(ctx) {
+  return {
+    id: 'labelPlugin',
+    afterDatasetsDraw(chart) {
+      const ctx2 = chart.ctx;
+      ctx2.save();
+      chart.data.datasets.forEach((ds, di) => {
+        const meta = chart.getDatasetMeta(di);
+        meta.data.forEach((point, pi) => {
+          const label = ds.data[pi].label;
+          ctx2.fillStyle = 'rgba(50,60,70,0.75)';
+          ctx2.font = "300 11px 'DM Sans', sans-serif";
+          ctx2.fillText(label, point.x + 10, point.y + 4);
+        });
+      });
+      ctx2.restore();
+    }
+  };
+}
+
+new Chart(mapCtx, {
+  type: 'scatter',
+  plugins: [makePlugin(mapCtx)],
+  data: {
+    datasets: [
+      {
+        label: 'Core Zone',
+        data: coreData,
+        backgroundColor: 'rgba(26,107,60,0.75)',
+        pointRadius: 8,
+        pointHoverRadius: 10
+      },
+      {
+        label: 'Edge Zone',
+        data: edgeData,
+        backgroundColor: 'rgba(181,132,26,0.8)',
+        pointRadius: 9,
+        pointHoverRadius: 11
+      },
+      {
+        label: 'Beyond Zone',
+        data: beyondData,
+        backgroundColor: 'rgba(139,26,26,0.75)',
+        pointRadius: 8,
+        pointHoverRadius: 10
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, pointStyleWidth: 8, font: { size: 11 } } },
+      tooltip: { ...tooltip, callbacks: { label: ctx => ' ' + ctx.raw.label } }
+    },
+    scales: {
+      x: {
+        min: 0.5, max: 5.5,
+        title: { display: true, text: 'Market Reach: Existing  →  Emerging  →  Speculative', color: '#8A9099', font: { size: 11, weight: '300' }, padding: 12 },
+        grid: { color: 'rgba(0,61,165,0.06)' },
+        ticks: { display: false }
+      },
+      y: {
+        min: 0.5, max: 5.5,
+        title: { display: true, text: 'Technology Change: Incremental  →  Radical  →  Extreme', color: '#8A9099', font: { size: 11, weight: '300' }, padding: 12 },
+        grid: { color: 'rgba(0,61,165,0.06)' },
+        ticks: { display: false }
+      }
+    }
+  }
+});
+
+// DONUT
+const donutCtx = document.getElementById('donutChart').getContext('2d');
+new Chart(donutCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Core Zone', 'Edge Zone', 'Beyond Zone'],
+    datasets: [{
+      data: [85, 12, 3],
+      backgroundColor: ['rgba(26,107,60,0.85)', 'rgba(181,132,26,0.85)', 'rgba(139,26,26,0.85)'],
+      borderWidth: 0,
+      hoverOffset: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '68%',
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, pointStyleWidth: 8, font: { size: 11 } } },
+      tooltip: { ...tooltip }
+    }
+  }
+});
+
+// RADAR
+const radarCtx = document.getElementById('radarChart').getContext('2d');
+new Chart(radarCtx, {
+  type: 'radar',
+  data: {
+    labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'AI Readiness', 'Brand Equity', 'Signal Detection'],
+    datasets: [
+      {
+        label: 'General Mills',
+        data: [78, 52, 18, 65, 82, 55],
+        borderColor: 'rgba(0,61,165,0.9)',
+        backgroundColor: 'rgba(0,61,165,0.1)',
+        pointBackgroundColor: 'rgba(0,61,165,1)',
+        borderWidth: 2, pointRadius: 4
+      },
+      {
+        label: 'Nestlé',
+        data: [80, 72, 72, 68, 85, 74],
+        borderColor: 'rgba(200,151,43,0.8)',
+        backgroundColor: 'rgba(200,151,43,0.07)',
+        pointBackgroundColor: 'rgba(200,151,43,1)',
+        borderWidth: 2, pointRadius: 4
+      },
+      {
+        label: 'Kraft Heinz',
+        data: [62, 44, 14, 48, 70, 42],
+        borderColor: 'rgba(139,26,26,0.7)',
+        backgroundColor: 'rgba(139,26,26,0.07)',
+        pointBackgroundColor: 'rgba(139,26,26,1)',
+        borderWidth: 2, pointRadius: 4
+      },
+      {
+        label: 'PepsiCo',
+        data: [82, 66, 30, 72, 78, 62],
+        borderColor: 'rgba(26,107,60,0.7)',
+        backgroundColor: 'rgba(26,107,60,0.06)',
+        pointBackgroundColor: 'rgba(26,107,60,1)',
+        borderWidth: 2, pointRadius: 4
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, pointStyleWidth: 8, font: { size: 11 } } },
+      tooltip: { ...tooltip }
+    },
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { display: false },
+        grid: { color: 'rgba(0,0,0,0.07)' },
+        angleLines: { color: 'rgba(0,0,0,0.07)' },
+        pointLabels: { font: { size: 11, weight: '400' }, color: '#5A6A7A' }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
