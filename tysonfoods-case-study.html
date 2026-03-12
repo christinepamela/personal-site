@@ -1,0 +1,2577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tyson Foods — The Theta Framework Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --tyson-red: #C8102E;
+  --tyson-gold: #D4A017;
+  --ink: #0E1A18;
+  --ink-soft: #1E2D2A;
+  --ink-medium: #2C3E3A;
+  --paper: #F7F5F0;
+  --paper-warm: #EFEBE2;
+  --paper-deep: #E6E0D4;
+  --muted: #8A9490;
+  --muted-light: #B0BAB6;
+  --core-green: #2D6A4F;
+  --edge-amber: #B5841A;
+  --beyond-crimson: #8B1A1A;
+  --border-warm: rgba(200,16,46,0.12);
+  --border-ink: rgba(14,26,24,0.1);
+  --red-glow: rgba(200,16,46,0.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ====== NAV ====== */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 16px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(14,26,24,0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(200,16,46,0.18);
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--tyson-red);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-light);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: white; }
+
+.nav-tag {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tyson-red);
+  border: 1px solid rgba(200,16,46,0.4);
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+
+/* ====== HERO ====== */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200,16,46,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,16,46,0.06) 1px, transparent 1px);
+  background-size: 64px 64px;
+  animation: gridDrift 30s linear infinite;
+}
+
+@keyframes gridDrift {
+  0% { transform: translate(0,0); }
+  100% { transform: translate(64px, 64px); }
+}
+
+.hero-noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.hero-radial {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(200,16,46,0.12) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 40% at 20% 80%, rgba(212,160,23,0.06) 0%, transparent 60%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 48px;
+  padding-top: 100px;
+  padding-bottom: 80px;
+}
+
+.hero-kicker {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--tyson-red);
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-kicker::before {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 1px;
+  background: var(--tyson-red);
+}
+
+.hero-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.2rem, 6vw, 6rem);
+  font-weight: 300;
+  line-height: 1.06;
+  color: white;
+  max-width: 820px;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeUp 0.9s ease forwards 0.4s;
+}
+
+.hero-headline em {
+  font-style: italic;
+  color: var(--tyson-gold);
+}
+
+.hero-sub {
+  font-size: 1.05rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.6);
+  max-width: 560px;
+  margin-bottom: 56px;
+  opacity: 0;
+  animation: fadeUp 1s ease forwards 0.6s;
+}
+
+.hero-meta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 32px;
+  max-width: 780px;
+  opacity: 0;
+  animation: fadeUp 1.1s ease forwards 0.8s;
+}
+
+.hero-meta-item {
+  padding: 0 24px 0 0;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+
+.hero-meta-item:last-child { border-right: none; }
+.hero-meta-item:first-child { padding-left: 0; }
+
+.hero-meta-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.hero-meta-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+}
+
+.hero-scroll {
+  position: absolute;
+  right: 48px;
+  bottom: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  animation: fadeIn 1.2s ease forwards 1.2s;
+}
+
+.hero-scroll span {
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  writing-mode: vertical-rl;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, var(--tyson-red), transparent);
+  animation: scrollLine 2s ease-in-out infinite;
+}
+
+@keyframes scrollLine {
+  0%, 100% { transform: scaleY(1); opacity: 1; }
+  50% { transform: scaleY(0.3); opacity: 0.3; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ====== GENERAL SECTION STYLES ====== */
+section {
+  padding: 100px 48px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-kicker {
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--tyson-red);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-kicker::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--tyson-red);
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 3.5vw, 3.2rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 48px;
+}
+
+.section-title em {
+  font-style: italic;
+  color: var(--tyson-red);
+}
+
+.section-title-light {
+  color: white;
+}
+
+.section-title-light em {
+  color: var(--tyson-gold);
+}
+
+/* ====== FADE UP ANIMATION ====== */
+.fade-up {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ====== ABOUT SECTION ====== */
+.about-section {
+  background: white;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.about-prose p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #3a4a46;
+  margin-bottom: 20px;
+}
+
+.hidden-fact {
+  background: var(--ink);
+  border-radius: 4px;
+  padding: 28px 32px;
+  margin-top: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hidden-fact::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--tyson-red);
+}
+
+.hidden-fact-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--tyson-red);
+  margin-bottom: 12px;
+}
+
+.hidden-fact p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.75);
+  margin: 0;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--paper-deep);
+}
+
+.stat-box {
+  background: white;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.stat-number span {
+  color: var(--tyson-red);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.belief-strip {
+  background: var(--tyson-red);
+  padding: 64px 48px;
+  margin-top: 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.belief-strip::before {
+  content: '"';
+  position: absolute;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20rem;
+  color: rgba(255,255,255,0.04);
+  top: -60px;
+  left: 40px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.belief-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-style: italic;
+  font-weight: 300;
+  color: white;
+  max-width: 780px;
+  margin: 0 auto 20px;
+  line-height: 1.5;
+  position: relative;
+}
+
+.belief-attr {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+
+/* ====== TIMELINE ====== */
+.timeline-section {
+  background: var(--paper-warm);
+}
+
+.timeline {
+  position: relative;
+  padding-left: 120px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 88px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--tyson-red) 10%, var(--tyson-red) 90%, transparent);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 44px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.timeline-year {
+  position: absolute;
+  left: -120px;
+  top: 2px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--muted);
+  width: 80px;
+  text-align: right;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -33px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--paper-warm);
+  border: 2px solid var(--muted);
+  z-index: 1;
+}
+
+.timeline-item.milestone .timeline-dot {
+  background: var(--tyson-red);
+  border-color: var(--tyson-red);
+  width: 14px;
+  height: 14px;
+  left: -35px;
+  top: 4px;
+}
+
+.timeline-item.milestone .timeline-year {
+  color: var(--tyson-red);
+  font-weight: 600;
+}
+
+.timeline-phase {
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--tyson-gold);
+  margin-bottom: 4px;
+}
+
+.timeline-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.timeline-desc {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: #5a6a65;
+}
+
+/* ====== THETA MAP SECTION ====== */
+.map-section {
+  background: white;
+}
+
+.map-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 64px;
+  align-items: start;
+}
+
+.zone-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.zone-pill {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 4px;
+  border: 1px solid var(--border-ink);
+}
+
+.zone-pill.core { border-color: rgba(45,106,79,0.2); background: rgba(45,106,79,0.04); }
+.zone-pill.edge { border-color: rgba(181,132,26,0.2); background: rgba(181,132,26,0.04); }
+.zone-pill.beyond { border-color: rgba(139,26,26,0.2); background: rgba(139,26,26,0.04); }
+
+.zone-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.zone-dot.core { background: var(--core-green); }
+.zone-dot.edge { background: var(--edge-amber); }
+.zone-dot.beyond { background: var(--beyond-crimson); }
+
+.zone-pill-title {
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+
+.zone-pill-desc {
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.chart-wrapper {
+  background: var(--paper);
+  border: 1px solid var(--border-ink);
+  border-radius: 6px;
+  padding: 28px;
+  position: relative;
+}
+
+.chart-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.chart-sub {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.reading-card {
+  background: var(--ink);
+  border-radius: 4px;
+  padding: 20px 22px;
+  margin-top: 20px;
+}
+
+.reading-card p {
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.65);
+}
+
+.reading-card strong {
+  color: var(--tyson-gold);
+}
+
+/* ====== ALLOCATION SECTION ====== */
+.allocation-section {
+  background: var(--paper-warm);
+}
+
+.alloc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 64px;
+  align-items: start;
+}
+
+.alloc-doughnut-wrap {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 0 auto 32px;
+}
+
+.doughnut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.doughnut-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.doughnut-sub {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.alloc-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.alloc-bar-item {}
+
+.alloc-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.alloc-bar-name {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--ink);
+}
+
+.alloc-bar-nums {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.alloc-bar-track {
+  position: relative;
+  height: 8px;
+  background: var(--paper-deep);
+  border-radius: 4px;
+  overflow: visible;
+  margin-bottom: 8px;
+}
+
+.alloc-bar-fill {
+  position: absolute;
+  left: 0; top: 0;
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1.2s cubic-bezier(0.16,1,0.3,1);
+}
+
+.alloc-bar-fill.core { background: var(--core-green); }
+.alloc-bar-fill.edge { background: var(--edge-amber); }
+.alloc-bar-fill.beyond { background: var(--beyond-crimson); }
+
+.alloc-bar-target {
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 16px;
+  background: rgba(14,26,24,0.3);
+  border-radius: 1px;
+}
+
+.alloc-commentary {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ====== INNOVATION CULTURE / JOURNEY ====== */
+.culture-section {
+  background: white;
+}
+
+.culture-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+}
+
+.culture-card {
+  padding: 32px;
+  border: 1px solid var(--border-ink);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.culture-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px;
+  height: 0;
+  background: var(--tyson-red);
+  transition: height 0.4s ease;
+}
+
+.culture-card:hover::before { height: 100%; }
+
+.culture-card-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  font-weight: 300;
+  color: var(--paper-deep);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.culture-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+
+.culture-card p {
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: #5a6a65;
+}
+
+/* ====== DROUGHT SECTION ====== */
+.drought-section {
+  background: var(--ink);
+  position: relative;
+  overflow: hidden;
+}
+
+.drought-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(200,16,46,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 10% 80%, rgba(212,160,23,0.05) 0%, transparent 50%);
+}
+
+.drought-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 80px;
+  align-items: start;
+  position: relative;
+}
+
+.drought-prose p {
+  font-size: 0.98rem;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 20px;
+}
+
+.drought-stat-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.drought-stat-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 3px;
+  padding: 24px 26px;
+}
+
+.drought-stat-card.alarming {
+  background: rgba(200,16,46,0.08);
+  border-color: rgba(200,16,46,0.2);
+}
+
+.drought-stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.6rem;
+  font-weight: 300;
+  color: white;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.drought-stat-num.red { color: var(--tyson-red); }
+.drought-stat-num.gold { color: var(--tyson-gold); }
+
+.drought-stat-label {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.5);
+}
+
+.drought-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 32px 0;
+}
+
+.drought-callout {
+  background: rgba(200,16,46,0.1);
+  border: 1px solid rgba(200,16,46,0.25);
+  border-radius: 4px;
+  padding: 24px 28px;
+  margin-top: 20px;
+}
+
+.drought-callout p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  font-weight: 300;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ====== ECONOMY SECTION ====== */
+.economy-section {
+  background: var(--paper-warm);
+}
+
+.economy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2px;
+  margin-bottom: 60px;
+}
+
+.economy-card {
+  background: white;
+  padding: 32px 28px;
+}
+
+.economy-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8rem;
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+
+.economy-num.red { color: var(--tyson-red); }
+
+.economy-label {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.economy-narrative {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+
+.economy-narrative p {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #4a5a56;
+}
+
+/* ====== COMPETITORS ====== */
+.competitors-section {
+  background: white;
+}
+
+.competitor-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  margin-bottom: 64px;
+}
+
+.competitor-card {
+  background: var(--paper);
+  padding: 24px 20px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.competitor-card.featured {
+  background: white;
+  border-color: var(--tyson-red);
+  position: relative;
+}
+
+.competitor-card.featured::before {
+  content: 'Subject';
+  position: absolute;
+  top: -1px; right: 12px;
+  font-size: 0.56rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: var(--tyson-red);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 0 0 3px 3px;
+}
+
+.comp-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.comp-tag {
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+
+.comp-zones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.comp-zone-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comp-zone-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.comp-zone-dot.strong { opacity: 1; }
+.comp-zone-dot.weak { opacity: 0.35; }
+.comp-zone-dot.absent { opacity: 0.15; }
+
+.comp-zone-text {
+  font-size: 0.75rem;
+  color: #5a6a65;
+  line-height: 1.4;
+}
+
+.comp-verdict {
+  display: inline-block;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 2px;
+  background: var(--paper-deep);
+  color: var(--muted);
+}
+
+.comp-verdict.warm { background: rgba(200,16,46,0.08); color: var(--tyson-red); }
+.comp-verdict.gold { background: rgba(212,160,23,0.12); color: var(--edge-amber); }
+.comp-verdict.green { background: rgba(45,106,79,0.08); color: var(--core-green); }
+
+.radar-wrap {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ====== S/W SECTION ====== */
+.sw-section {
+  background: var(--paper-warm);
+}
+
+.sw-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+
+.sw-panel {
+  background: white;
+  padding: 40px 36px;
+}
+
+.sw-panel-header {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-ink);
+}
+
+.sw-panel.strengths .sw-panel-header { color: var(--core-green); }
+.sw-panel.weaknesses .sw-panel-header { color: var(--beyond-crimson); }
+
+.sw-items {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sw-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.sw-marker {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.sw-panel.strengths .sw-marker {
+  background: rgba(45,106,79,0.1);
+  color: var(--core-green);
+  border: 1px solid rgba(45,106,79,0.2);
+}
+
+.sw-panel.weaknesses .sw-marker {
+  background: rgba(139,26,26,0.08);
+  color: var(--beyond-crimson);
+  border: 1px solid rgba(139,26,26,0.15);
+}
+
+.sw-item-content strong {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.sw-item-content p {
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: #6a7a76;
+}
+
+/* ====== THETA DIAGNOSTIC ====== */
+.diagnostic-section {
+  background: var(--ink-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+.diagnostic-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 60% at 90% 10%, rgba(200,16,46,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 5% 90%, rgba(212,160,23,0.04) 0%, transparent 50%);
+}
+
+.diag-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  position: relative;
+}
+
+.diag-block {
+  margin-bottom: 48px;
+}
+
+.diag-block-title {
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--tyson-red);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.diag-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.diag-row-label {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.55);
+}
+
+.diag-row-value {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: white;
+}
+
+.diag-score-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.diag-score-label {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.55);
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.diag-score-dots {
+  display: flex;
+  gap: 5px;
+}
+
+.score-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+}
+
+.score-dot.filled { background: var(--tyson-red); }
+.score-dot.filled.gold { background: var(--tyson-gold); }
+
+.diag-tension-box {
+  background: rgba(200,16,46,0.1);
+  border: 1px solid rgba(200,16,46,0.22);
+  border-radius: 4px;
+  padding: 20px 22px;
+  margin-top: 8px;
+}
+
+.diag-tension-box p {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.65);
+}
+
+.diag-inline-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.diag-bar-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 80px;
+  gap: 12px;
+  align-items: center;
+}
+
+.diag-bar-zone {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.diag-bar-track {
+  position: relative;
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+}
+
+.diag-bar-actual {
+  position: absolute;
+  left: 0; top: 0;
+  height: 100%;
+  border-radius: 3px;
+}
+
+.diag-bar-actual.core { background: var(--core-green); }
+.diag-bar-actual.edge { background: var(--edge-amber); }
+.diag-bar-actual.beyond { background: var(--beyond-crimson); }
+
+.diag-bar-target-line {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 12px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 1px;
+}
+
+.diag-bar-label {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.4);
+}
+
+.verdict-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 4px;
+  padding: 28px 30px;
+  margin-top: 40px;
+}
+
+.verdict-archetype {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.verdict-chips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.verdict-chip {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+
+.verdict-chip.ok { background: rgba(45,106,79,0.2); color: #6ec99a; }
+.verdict-chip.warn { background: rgba(181,132,26,0.2); color: #e8bb4a; }
+.verdict-chip.low { background: rgba(139,26,26,0.25); color: #e87070; }
+
+.verdict-text {
+  font-size: 0.85rem;
+  line-height: 1.75;
+  color: rgba(255,255,255,0.55);
+}
+
+/* ====== ONE QUESTION ====== */
+.question-section {
+  background: var(--tyson-red);
+  padding: 80px 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.question-section::before {
+  content: '?';
+  position: absolute;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 40rem;
+  color: rgba(255,255,255,0.03);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.question-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.question-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  font-style: italic;
+  font-weight: 300;
+  color: white;
+  max-width: 820px;
+  margin: 0 auto 24px;
+  line-height: 1.45;
+  position: relative;
+}
+
+.question-attr {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  position: relative;
+}
+
+/* ====== FOOTER ====== */
+footer {
+  background: var(--ink);
+  padding: 32px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(200,16,46,0.15);
+}
+
+.footer-left {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.footer-left strong {
+  color: rgba(255,255,255,0.5);
+  font-weight: 500;
+}
+
+.footer-right {
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 900px) {
+  nav { padding: 14px 24px; }
+  .nav-links { display: none; }
+  section { padding: 64px 24px; }
+  .hero-content { padding: 0 24px; padding-top: 80px; padding-bottom: 60px; }
+  .hero-headline { font-size: 2.6rem; }
+  .hero-meta { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .hero-scroll { display: none; }
+  .about-grid, .map-grid, .alloc-grid, .culture-grid, .drought-grid,
+  .economy-narrative, .diag-grid, .sw-grid { grid-template-columns: 1fr; }
+  .competitor-grid { grid-template-columns: 1fr 1fr; }
+  .economy-grid { grid-template-columns: 1fr; }
+  .timeline { padding-left: 80px; }
+  footer { flex-direction: column; gap: 12px; text-align: center; }
+  .belief-strip { padding: 40px 24px; }
+  .question-section { padding: 60px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Theta Framework / Tyson Foods</a>
+  <ul class="nav-links">
+    <li><a href="#about">The Company</a></li>
+    <li><a href="#timeline">Arc</a></li>
+    <li><a href="#innovation">Innovation</a></li>
+    <li><a href="#drought">The Crisis</a></li>
+    <li><a href="#diagnostic">Diagnostic</a></li>
+  </ul>
+  <span class="nav-tag">Case Study 2026</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-radial"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">The Theta Framework &nbsp;|&nbsp; Strategic Case Study</div>
+    <h1 class="hero-headline">
+      The machine that feeds America is<br>
+      <em>running on borrowed time.</em>
+    </h1>
+    <p class="hero-sub">Tyson Foods processes 20% of all beef, chicken and pork consumed in the United States. Its supply chain is collapsing. Its Beyond zone is starving. And nobody in the boardroom is asking the right question.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Founded</div>
+        <div class="hero-meta-value">1935, Springdale AR</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Employees</div>
+        <div class="hero-meta-value">133,000</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Revenue (FY2025)</div>
+        <div class="hero-meta-value">$54.4 Billion</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Theta Archetype</div>
+        <div class="hero-meta-value" style="color:var(--tyson-red)">Legacy-Rich, Vision-Poor</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="container">
+    <div class="section-kicker">The Company</div>
+    <h2 class="section-title">What they do, and what<br><em>they don't talk about</em></h2>
+    <div class="about-grid fade-up">
+      <div class="about-prose">
+        <p>Tyson Foods is not just a chicken company. It is, in fact, the second-largest processor of beef in the United States, one of the world's top pork producers, and the parent of household names that reach into nearly every American kitchen: Jimmy Dean, Hillshire Farm, Ball Park, Sara Lee. The Tyson brand itself accounts for roughly 22% of all frozen chicken sold in American retail.</p>
+        <p>What makes Tyson unusual among food giants is its vertical depth. From hatchery to retail shelf, many of its chickens never leave the company's own hands. This integration is both its great strength and the source of its most dangerous blind spot: a company so invested in optimizing what it already controls that it struggles to imagine what it doesn't.</p>
+        <p>Its four business segments, Chicken, Beef, Pork, and Prepared Foods, generate roughly equal strategic importance but wildly different financial fates in 2026. Chicken is the growth engine. Beef is in freefall. Pork is limping. Prepared Foods is the quiet hero nobody talks about enough.</p>
+        <div class="hidden-fact">
+          <div class="hidden-fact-label">What most people don't know</div>
+          <p>In 2021 and 2022, Tyson posted over $3 billion in net income, more than most tech companies that year. By fiscal 2023, they recorded a net loss of $648 million. The same company. Same brands. Same factories. What changed was not their innovation capacity or market share. It was the weather on the Great Plains. That is how fragile a $54 billion company can be when its raw material walks on four legs.</p>
+        </div>
+      </div>
+      <div>
+        <div class="stat-grid">
+          <div class="stat-box">
+            <div class="stat-number">20<span>%</span></div>
+            <div class="stat-label">of all US beef, chicken and pork processed by Tyson</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number">35<span>%</span></div>
+            <div class="stat-label">market share among direct protein processing peers</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number" style="color:var(--tyson-red)">-$1.5B</div>
+            <div class="stat-label">beef segment losses over last two fiscal years</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number">86<span>M</span></div>
+            <div class="stat-label">US cattle as of Jan 2026, the smallest herd since 1950</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="belief-strip fade-up" style="margin-top: 80px;">
+    <p class="belief-quote">"A healthy innovation portfolio spans all three zones. Companies that innovate only in the Core optimize themselves into irrelevance."</p>
+    <div class="belief-attr">The Theta Framework &nbsp;/&nbsp; Christine Pamela Chandrakasan</div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline-section" id="timeline">
+  <div class="container">
+    <div class="section-kicker">The Arc</div>
+    <h2 class="section-title">Nine decades of<br><em>survival and reinvention</em></h2>
+    <div class="timeline fade-up">
+
+      <div class="timeline-item">
+        <div class="timeline-year">1935</div>
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-phase">Origin</div>
+          <div class="timeline-title">A truck, a dream, and the Great Depression</div>
+          <div class="timeline-desc">John W. Tyson begins hauling chickens to Chicago and Kansas City markets. No factory. No brand. Just a farmer's son moving product when others weren't. The founding instinct, find the gap, move fast, survive, would become the company's enduring DNA.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item milestone">
+        <div class="timeline-year">1963</div>
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-phase">First S-Curve</div>
+          <div class="timeline-title">Goes public on the NYSE</div>
+          <div class="timeline-desc">Tyson Foods lists on the New York Stock Exchange, formalizing its transformation from a regional hauler into a vertically integrated poultry processor. The IPO funds infrastructure that will make Tyson the dominant force in American chicken for the next 40 years.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1989</div>
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-phase">Expansion</div>
+          <div class="timeline-title">Acquires Holly Farms for $1.29 billion</div>
+          <div class="timeline-desc">A hostile takeover that shocked the industry and doubled Tyson's chicken capacity overnight. The move signaled that Tyson was not interested in organic growth alone. Acquisition is strategy. Scale is survival.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item milestone">
+        <div class="timeline-year">2001</div>
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-phase">Transformation</div>
+          <div class="timeline-title">IBP acquisition redefines the company</div>
+          <div class="timeline-desc">Tyson acquires IBP Inc. for $3.2 billion, instantly becoming one of the world's largest beef and pork processors alongside its chicken dominance. This is the architectural shift that creates the multi-protein giant we know today. It also plants the seed of the current crisis: deep structural dependence on cattle supply.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2013</div>
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-phase">Trust-Building</div>
+          <div class="timeline-title">Third-party animal welfare audits mandated</div>
+          <div class="timeline-desc">Under pressure from McDonald's and Whole Foods, Tyson becomes one of the first large meatpackers to require independent audits across its beef and pork supply chains. Customer pressure, not internal vision, drives the change. This pattern will repeat.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item milestone">
+        <div class="timeline-year">2014</div>
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-phase">Brand Era Begins</div>
+          <div class="timeline-title">Hillshire Brands acquired for $8.55 billion</div>
+          <div class="timeline-desc">The most transformative acquisition since IBP. Hillshire brings Jimmy Dean, Ball Park, Sara Lee, and State Fair under the Tyson roof. Overnight, Tyson becomes a branded consumer goods company, not just a commodity processor. The Prepared Foods segment is born. This is the move that will save them when beef collapses.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2016</div>
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-phase">Futures Betting</div>
+          <div class="timeline-title">Tyson Ventures launches, invests in Beyond Meat</div>
+          <div class="timeline-desc">Tyson takes a stake in Beyond Meat, signaling an openness to alternative proteins that surprised the industry. It was the boldest Beyond bet the company had ever made. The stake was later sold as Beyond Meat struggled. What was lost wasn't just the investment. It was the institutional nerve to try again.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2021</div>
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-phase">Peak Earnings</div>
+          <div class="timeline-title">$3.05 billion net income — a historic high</div>
+          <div class="timeline-desc">Post-pandemic demand surge, tight supply across the protein sector, and strong branded product performance combine for the most profitable year in company history. The machine runs perfectly. No one asks what happens when the machine breaks.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2021</div>
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-phase">Automation Bet</div>
+          <div class="timeline-title">$1.3 billion automation commitment announced</div>
+          <div class="timeline-desc">In a rare signal of Edge investment, Tyson commits over $1 billion to AI-driven robotics, automated deboning, and smart processing lines. The stated goal is efficiency and reduced physical labor burden. The real goal is a hedge against rising wages and labor instability in a workforce of 133,000.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item milestone">
+        <div class="timeline-year">2023</div>
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-phase">Crisis</div>
+          <div class="timeline-title">$648 million net loss — from record profit to record loss in 24 months</div>
+          <div class="timeline-desc">The cattle shortage bites with full force. Beef margins collapse. Restructuring charges accumulate. The company loses nearly $700 million in a single fiscal year. The speed and severity of the reversal is historic, and reveals how thin the structural buffer between commodity volatility and existential risk truly is.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2025</div>
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-phase">Reckoning</div>
+          <div class="timeline-title">Greenwashing settlement: climate claims walked back</div>
+          <div class="timeline-desc">Tyson agrees to stop marketing beef as "climate-smart" and withdraws its net-zero 2050 commitment as part of a legal settlement with the Environmental Working Group. The company denies wrongdoing but loses its most ambitious Beyond-zone narrative. The sustainability story, already fragile, is now silent.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item milestone">
+        <div class="timeline-year">2026</div>
+        <div class="timeline-dot"></div>
+        <div>
+          <div class="timeline-phase">Now</div>
+          <div class="timeline-title">Plant closures, chicken pivot, and the search for a second act</div>
+          <div class="timeline-desc">The Lexington, Nebraska beef plant closes permanently. The Amarillo facility cuts a full shift. Chicken momentum continues with five consecutive quarters of volume growth. Chicken Cups wins 2026 Product of the Year. The company is right-sizing for a smaller beef future and betting on the brands that don't walk, bleed, or depend on rain. The question is whether that is enough.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- THETA INNOVATION MAP -->
+<section class="map-section" id="innovation">
+  <div class="container">
+    <div class="section-kicker">The Theta Innovation Map</div>
+    <h2 class="section-title">Where the bets<br><em>actually live</em></h2>
+    <div class="map-grid fade-up">
+      <div>
+        <div class="zone-legend">
+          <div class="zone-pill core">
+            <div class="zone-dot core"></div>
+            <div>
+              <div class="zone-pill-title">Core Zone</div>
+              <div class="zone-pill-desc">Existing markets, incremental improvement. Optimize and defend. This is where Tyson excels and where it risks over-concentrating.</div>
+            </div>
+          </div>
+          <div class="zone-pill edge">
+            <div class="zone-dot edge"></div>
+            <div>
+              <div class="zone-pill-title">Edge Zone</div>
+              <div class="zone-pill-desc">Moderate to high tech change, adjacent or new markets. The next S-curve. Tyson is here in operations but not in new business models.</div>
+            </div>
+          </div>
+          <div class="zone-pill beyond">
+            <div class="zone-dot beyond"></div>
+            <div>
+              <div class="zone-pill-title">Beyond Zone</div>
+              <div class="zone-pill-desc">Radical bets, speculative horizons. Shape the future. Tyson's most underfunded zone. The one that decides who they become in 2035.</div>
+            </div>
+          </div>
+        </div>
+        <div class="reading-card">
+          <p><strong>How to read this map:</strong> Dot size reflects relative investment level. Note the heavy clustering in the lower-left (Core) quadrant and the near-absence of activity in the upper-right (Beyond). The most important white space is the intersection of new market reach and high technology change — where the next generation of protein companies will be built.</p>
+        </div>
+      </div>
+      <div>
+        <div class="chart-wrapper">
+          <div class="chart-title">Tyson Innovation Portfolio</div>
+          <div class="chart-sub">X-Axis: Market Reach &nbsp;|&nbsp; Y-Axis: Technology Change</div>
+          <canvas id="scatterChart" height="380"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section class="allocation-section">
+  <div class="container">
+    <div class="section-kicker">70-20-10 Allocation</div>
+    <h2 class="section-title">The numbers that<br><em>reveal the strategy</em></h2>
+    <div class="alloc-grid fade-up">
+      <div style="text-align: center;">
+        <div class="alloc-doughnut-wrap">
+          <canvas id="doughnutChart"></canvas>
+          <div class="doughnut-center">
+            <div class="doughnut-label">85/12/3</div>
+            <div class="doughnut-sub">Actual Mix</div>
+          </div>
+        </div>
+        <p style="font-size:0.8rem; color:var(--muted); margin-top:8px; line-height:1.6;">Tyson's current estimated allocation vs. the Theta 70-20-10 benchmark. The Core zone is consuming resources that the Edge and Beyond zones need to survive.</p>
+      </div>
+      <div class="alloc-bars">
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <div class="alloc-bar-name">Core Zone</div>
+            <div class="alloc-bar-nums">85% actual &nbsp;/&nbsp; 70% target</div>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill core" style="width: 0%" data-target="85"></div>
+            <div class="alloc-bar-target" style="left: 70%"></div>
+          </div>
+          <div class="alloc-commentary">Over-indexed by 15 points. The cattle crisis has forced operational focus, but Core optimization at this level leaves no oxygen for the next horizon. The vertical line marks the target.</div>
+        </div>
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <div class="alloc-bar-name">Edge Zone</div>
+            <div class="alloc-bar-nums">12% actual &nbsp;/&nbsp; 20% target</div>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill edge" style="width: 0%" data-target="12"></div>
+            <div class="alloc-bar-target" style="left: 20%"></div>
+          </div>
+          <div class="alloc-commentary">Underweight by 8 points. Edge investments exist (automation, blockchain traceability) but they are operational enablers, not new businesses. Building capacity is not the same as building the next S-curve.</div>
+        </div>
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <div class="alloc-bar-name">Beyond Zone</div>
+            <div class="alloc-bar-nums">3% actual &nbsp;/&nbsp; 10% target</div>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill beyond" style="width: 0%" data-target="3"></div>
+            <div class="alloc-bar-target" style="left: 10%"></div>
+          </div>
+          <div class="alloc-commentary">Starved. The greenwashing settlement removed the climate narrative. The Beyond Meat stake was sold. There is no visible moonshot. A 3% allocation to the future in a company this size is not caution. It is surrender.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INNOVATION CULTURE -->
+<section class="culture-section">
+  <div class="container">
+    <div class="section-kicker">Innovation Culture</div>
+    <h2 class="section-title">How innovation grew, stalled,<br><em>and what drives it now</em></h2>
+    <div class="culture-grid fade-up">
+      <div class="culture-card">
+        <div class="culture-card-num">01</div>
+        <div class="culture-card-title">The Maverick Problem</div>
+        <p>Tyson has innovators. The culinary team that identified "Swavory" flavor trends and launched Chicken Cups won a national consumer award. The blockchain team is working in genuine ambiguity. The clean label advocates pushed back against decades of formulation orthodoxy. These are Maverick behaviors. But are these people protected, celebrated, or given permission to fail? The evidence says no. In a 133,000-person operation, process is everywhere and unstructured exploration is rare. Mavericks at Tyson are likely hidden in functional roles, measured by the wrong metrics, and slowly losing their edge to the weight of the machine.</p>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-num">02</div>
+        <div class="culture-card-title">Failure as Taboo</div>
+        <p>Tyson does not have a Failure Library. There are no public post-mortems of innovation attempts. The greenwashing settlement, rather than becoming a lesson studied openly, appears to have chilled all climate-related R&D conversation. This is a company that tolerates failure rather than learns from it. The difference is critical. Tolerating failure means absorbing the cost and moving on. Learning from failure means changing strategy, sharing the lesson, and giving the next team a better starting position. Only one of those builds an innovation culture.</p>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-num">03</div>
+        <div class="culture-card-title">Marketing as the Innovation Engine</div>
+        <p>Here is something Tyson does genuinely well: marketing drives product innovation upstream, not just downstream. The decision to launch Chicken Cups in single-serve, microwaveable formats came from identifying the protein snack gap in a category dominated by bars and powders. The Jimmy Dean Stagecoach Festival partnership came from a Chief Growth Officer asking who the next generation of consumers is. This is marketing functioning as customer signal architecture. When marketing is allowed to listen to Early Adopters and translate that signal into product briefs, it creates a powerful Core innovation loop. The risk is that this loop stays in Core and never reaches Edge or Beyond.</p>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-num">04</div>
+        <div class="culture-card-title">The Automation Bet: Edge or Just Efficiency?</div>
+        <p>The $1.3 billion automation commitment is the most discussed Edge investment in Tyson's portfolio. But the Theta lens asks a harder question: is this an Edge innovation or a Core efficiency play dressed in Edge language? The answer is both, and that ambiguity is the problem. Automation that reduces deboning labor and speeds throughput is Core optimization. Automation that enables entirely new product formats, personalized nutrition, or on-demand manufacturing is Edge innovation. Tyson is doing the former and calling it the latter. The metrics confirm this: automation is measured by cost savings, not by new capability creation or learning velocity.</p>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-num">05</div>
+        <div class="culture-card-title">Tyson Ventures: Window or Wall?</div>
+        <p>Since 2016, Tyson Ventures has invested over $100 million in food technology startups, including AI-driven consumer intelligence platforms, product development tools, and food safety technologies. The 2025 Demo Day surfaced genuine innovation from the portfolio. But venture investing and open innovation are not the same thing. Cargill partners with startups on joint R&D and shared commercialization. Tyson invests in them. One builds learning velocity. The other builds a balance sheet. Tyson Ventures is a window into the future, but without a mechanism to pull insights back into the core operation, it remains decorative rather than transformative.</p>
+      </div>
+      <div class="culture-card">
+        <div class="culture-card-num">06</div>
+        <div class="culture-card-title">The Board's New Bet</div>
+        <p>In fiscal 2025, Tyson's Board formed a Technology Committee, chaired by Maria N. Martinez. This is a meaningful governance signal. It says that technology and innovation are no longer afterthoughts; they are board-level strategic priorities. The question the Theta Framework asks is whether this committee has the mandate to protect Beyond-zone bets when they don't show returns in two years, and whether it includes anyone whose entire professional identity is built around futures that don't yet exist. Board composition shapes what gets funded. And what gets funded shapes who the company becomes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DROUGHT SECTION -->
+<section class="drought-section" id="drought">
+  <div class="drought-bg"></div>
+  <div class="container">
+    <div class="section-kicker" style="color:var(--tyson-red)">The Crisis Nobody Named</div>
+    <h2 class="section-title section-title-light">The American cattle famine<br><em>hiding in plain sight</em></h2>
+    <div class="drought-grid fade-up">
+      <div class="drought-prose">
+        <p>There is a word for what is happening to the American cattle industry, and it is not "headwinds." It is not "cyclical pressure" or "market normalization." The United States cattle herd is the smallest it has been in 75 years, shrunken by a decade of drought that turned grasslands to dust across Texas, Oklahoma, Kansas, and the Southern Plains. Ranchers who spent generations building their herds sold them off because they had no grass and no water. Then they watched cattle prices rise to record highs on the very animals they could no longer afford to raise.</p>
+        <p>Farm bankruptcies in the United States jumped 46% in 2025 compared to the prior year. Over 107,000 beef cattle farms and ranches were lost between 2017 and 2022 alone. Since 1980, more than 665,000 cattle operations have disappeared. That is more than half the beef cattle farms in America, gone in a single generation. And yet this crisis has no name, no hashtag, no national emergency declaration.</p>
+        <p>The reason is structural. Drought is a slow catastrophe. It does not arrive with the camera-ready drama of a hurricane or a wildfire. It accumulates over years, tightening its grip one dry season at a time, until one morning a fifth-generation rancher in Oklahoma tells a reporter the situation feels "extremely fragile." The crisis is real, dispersed across red states and blue states equally, economically devastating but geographically invisible to the urban majority, and politically inconvenient because water and climate don't fit neatly into partisan narratives.</p>
+        <p>What makes this more than a Tyson story is what it reveals about systemic risk in the food supply. A company processing 20% of the nation's beef is losing $1.5 billion because it cannot affordably source the raw material. The supply chain didn't break from a cyberattack or a labor dispute. It broke because it did not rain enough for long enough on the Great Plains. That is the kind of fragility that doesn't appear in quarterly earnings calls until it has been building for five years.</p>
+        <div class="drought-callout">
+          <p>"There's really nothing anybody can do to change this very quickly. We're in a tight supply situation that took several years to develop, and it'll take several years to get out of it."</p>
+        </div>
+        <p style="margin-top: 20px;">Rebuilding the US cattle herd will take years beyond 2026, and experts believe the rebuilt herd will be permanently smaller than historical norms. Tyson has accepted this. Its plant closures in Nebraska and Texas are not temporary adjustments. They are a structural reset for a smaller beef future.</p>
+      </div>
+      <div class="drought-stat-stack">
+        <div class="drought-stat-card alarming">
+          <div class="drought-stat-num red">86.2M</div>
+          <div class="drought-stat-label">US cattle and calves as of January 2026, the smallest herd since 1950</div>
+        </div>
+        <div class="drought-stat-card">
+          <div class="drought-stat-num gold">$6.69</div>
+          <div class="drought-stat-label">Average retail price per pound of ground beef in December 2025, an all-time record</div>
+        </div>
+        <div class="drought-stat-card alarming">
+          <div class="drought-stat-num red">-$345</div>
+          <div class="drought-stat-label">Estimated packer margin per head at lows in early 2026, one of the worst on record</div>
+        </div>
+        <div class="drought-stat-card">
+          <div class="drought-stat-num">46%</div>
+          <div class="drought-stat-label">Jump in US farm bankruptcies in 2025 vs. prior year</div>
+        </div>
+        <div class="drought-stat-card alarming">
+          <div class="drought-stat-num red">665K</div>
+          <div class="drought-stat-label">US beef cattle operations lost since 1980. More than half the farms that existed one generation ago are gone.</div>
+        </div>
+        <div class="drought-stat-card">
+          <div class="drought-stat-num gold">2028</div>
+          <div class="drought-stat-label">Earliest projected year for meaningful US herd rebuilding to begin</div>
+        </div>
+        <div class="drought-divider"></div>
+        <div style="padding: 0 4px;">
+          <p style="font-size: 0.78rem; line-height:1.7; color: rgba(255,255,255,0.4);">Regional cattle population decline during the 2010s drought cycle, which is considered the prelude to today's crisis:</p>
+          <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display:flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+              <span style="font-size:0.8rem; color:rgba(255,255,255,0.5);">Southern Plains (TX, OK)</span>
+              <span style="font-size:0.9rem; color:var(--tyson-red); font-family:'Cormorant Garamond',serif;">-17.6%</span>
+            </div>
+            <div style="display:flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+              <span style="font-size:0.8rem; color:rgba(255,255,255,0.5);">Central Plains (KS, NE)</span>
+              <span style="font-size:0.9rem; color:var(--tyson-gold); font-family:'Cormorant Garamond',serif;">-11.0%</span>
+            </div>
+            <div style="display:flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+              <span style="font-size:0.8rem; color:rgba(255,255,255,0.5);">Northern Plains (ND, SD)</span>
+              <span style="font-size:0.9rem; color:rgba(255,255,255,0.5); font-family:'Cormorant Garamond',serif;">-4.9%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ECONOMY SECTION -->
+<section class="economy-section">
+  <div class="container">
+    <div class="section-kicker">The Consumer Crisis</div>
+    <h2 class="section-title">When people can't afford<br><em>what you sell</em></h2>
+    <div class="economy-grid fade-up">
+      <div class="economy-card">
+        <div class="economy-num red">$648M</div>
+        <div class="economy-label">Net loss in FY2023. The same company that made $3.24 billion in 2022.</div>
+      </div>
+      <div class="economy-card">
+        <div class="economy-num">$53B+</div>
+        <div class="economy-label">Revenue held flat for five consecutive years while profits collapsed</div>
+      </div>
+      <div class="economy-card">
+        <div class="economy-num red">Down</div>
+        <div class="economy-label">Consumer purchasing power described by Tyson's own CEO as a "cautious consumer environment"</div>
+      </div>
+    </div>
+    <div class="economy-narrative fade-up">
+      <p>There is a paradox at the center of Tyson's financial story: revenue has barely moved in five years, holding steady around $53 to $54 billion, while net income has swung from $3.2 billion to a loss of $648 million and back to a modest $474 million. The same consumers are buying roughly the same volume of protein. What has changed is what it costs Tyson to make it, and what consumers are willing to pay for different kinds of it.</p>
+      <p>This is the consumer economy speaking. When household budgets tighten under inflation and wage stagnation, beef becomes a luxury and chicken becomes the default. Tyson's CEO has explicitly noted this shift, and the company's strategic pivot toward chicken and Prepared Foods is a direct response to it. But the deeper problem is one that no amount of product reformulation solves: if your target consumers cannot afford to trade up to your value-added products, your entire premium innovation strategy loses its market. The irony is that Tyson is innovating toward premiumization at exactly the moment consumers are trading down.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section class="competitors-section">
+  <div class="container">
+    <div class="section-kicker">Competitive Landscape</div>
+    <h2 class="section-title">How the field looks<br><em>through the Theta lens</em></h2>
+    <div class="competitor-grid fade-up">
+      <div class="competitor-card featured">
+        <div class="comp-name">Tyson Foods</div>
+        <div class="comp-tag">Legacy-Rich, Vision-Poor</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row">
+            <div class="comp-zone-dot core strong"></div>
+            <div class="comp-zone-text">Core: 85% — dominant but over-concentrated</div>
+          </div>
+          <div class="comp-zone-row">
+            <div class="comp-zone-dot edge" style="background:var(--edge-amber)" class="weak"></div>
+            <div class="comp-zone-text">Edge: 12% — operational, not transformational</div>
+          </div>
+          <div class="comp-zone-row">
+            <div class="comp-zone-dot beyond" style="background:var(--beyond-crimson); opacity:0.35"></div>
+            <div class="comp-zone-text">Beyond: 3% — post-greenwashing, silent</div>
+          </div>
+        </div>
+        <div class="comp-verdict warm">Transitioning</div>
+      </div>
+      <div class="competitor-card">
+        <div class="comp-name">Hormel Foods</div>
+        <div class="comp-tag">Disciplined Explorer</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row">
+            <div class="comp-zone-dot core strong"></div>
+            <div class="comp-zone-text">Core: 75% — strong, brand-led</div>
+          </div>
+          <div class="comp-zone-row">
+            <div class="comp-zone-dot edge" style="background:var(--edge-amber)"></div>
+            <div class="comp-zone-text">Edge: 15% — expanding into snacking and plant protein</div>
+          </div>
+          <div class="comp-zone-row">
+            <div class="comp-zone-dot beyond" style="background:var(--beyond-crimson)"></div>
+            <div class="comp-zone-text">Beyond: 10% — actually funded. Evolve plant-based line.</div>
+          </div>
+        </div>
+        <div class="comp-verdict gold">Balanced</div>
+      </div>
+      <div class="competitor-card">
+        <div class="comp-name">Cargill</div>
+        <div class="comp-tag">Rebel Innovator (in disguise)</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row">
+            <div class="comp-zone-dot core strong"></div>
+            <div class="comp-zone-text">Core: 70% — disciplined, not complacent</div>
+          </div>
+          <div class="comp-zone-row">
+            <div class="comp-zone-dot edge" style="background:var(--edge-amber)"></div>
+            <div class="comp-zone-text">Edge: 20% — mycoprotein, fermentation, regen ag</div>
+          </div>
+          <div class="comp-zone-row">
+            <div class="comp-zone-dot beyond" style="background:var(--beyond-crimson)"></div>
+            <div class="comp-zone-text">Beyond: 10% — precision fermentation, AI protein design</div>
+          </div>
+        </div>
+        <div class="comp-verdict green">Leading</div>
+      </div>
+      <div class="competitor-card">
+        <div class="comp-name">JBS</div>
+        <div class="comp-tag">Legacy-Rich, Culture Awakening</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row">
+            <div class="comp-zone-dot core strong"></div>
+            <div class="comp-zone-text">Core: 90% — operationally dominant</div>
+          </div>
+          <div class="comp-zone-row">
+            <div class="comp-zone-dot edge" style="background:var(--edge-amber); opacity:0.4"></div>
+            <div class="comp-zone-text">Edge: 8% — Global Innovation Center (nascent)</div>
+          </div>
+          <div class="comp-zone-row">
+            <div class="comp-zone-dot beyond" style="background:var(--beyond-crimson); opacity:0.2"></div>
+            <div class="comp-zone-text">Beyond: 2% — no visible alternative protein bets</div>
+          </div>
+        </div>
+        <div class="comp-verdict">Emerging</div>
+      </div>
+    </div>
+    <div class="radar-wrap fade-up">
+      <div class="chart-wrapper">
+        <div class="chart-title">Competitive Theta Profile</div>
+        <div class="chart-sub">Six dimensions across four companies &nbsp;|&nbsp; Scale 0-100</div>
+        <canvas id="radarChart" height="340"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S&W -->
+<section class="sw-section">
+  <div class="container">
+    <div class="section-kicker">Strengths and Weaknesses</div>
+    <h2 class="section-title">The honest ledger</h2>
+    <div class="sw-grid fade-up">
+      <div class="sw-panel strengths">
+        <div class="sw-panel-header">Where Tyson genuinely wins</div>
+        <div class="sw-items">
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-item-content">
+              <strong>Brand equity that survives crises</strong>
+              <p>Jimmy Dean, Hillshire Farm, and Ball Park hold top-three positions in their respective categories. These brands survived inflation, litigation, and a CEO transition without losing meaningful shelf position. That kind of durability is rare and valuable.</p>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-item-content">
+              <strong>Chicken momentum is real and building</strong>
+              <p>Five consecutive quarters of volume growth in the chicken segment with a 3.7% increase is not noise. Chicken Cups winning 2026 Product of the Year across 40,000 consumer votes is the kind of market signal that comes from genuinely understanding a consumption shift.</p>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-item-content">
+              <strong>Distribution muscle no startup can replicate</strong>
+              <p>Tyson's logistics, cold chain infrastructure, and retailer relationships represent a moat that takes decades to build. When a new product needs to reach 40,000 grocery locations simultaneously, that infrastructure is the difference between a concept and a market.</p>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-item-content">
+              <strong>Leadership agility under genuine pressure</strong>
+              <p>The decision to close beef plants, accept a smaller operational footprint, and pivot capital toward growing segments is operationally courageous. Most incumbents delay these calls by two to three years. Tyson's CEO moved decisively when the signals were clear.</p>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">S</div>
+            <div class="sw-item-content">
+              <strong>Clean label execution as a competitive signal</strong>
+              <p>Reformulating the entire portfolio to remove HFCS, artificial additives, and non-essential ingredients by 2026 is not a small undertaking. It is a portfolio-wide bet that regulatory and consumer pressure on ingredients will intensify. Being ahead of that curve is a genuine Core advantage.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sw-panel weaknesses">
+        <div class="sw-panel-header">Where the gaps are widening</div>
+        <div class="sw-items">
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-item-content">
+              <strong>No credible long-term protein bet</strong>
+              <p>Tyson sold its Beyond Meat stake, walked back its climate-smart claims, and has no visible position in cultivated meat, fermentation-derived protein, or precision nutrition. Cargill is building all three. Hormel is funding plant-based alternatives. Tyson is watching from a distance.</p>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-item-content">
+              <strong>Failure intelligence is essentially zero</strong>
+              <p>There is no Failure Library, no cross-functional post-mortem culture, no evidence that experiments gone wrong become organizational learning. The greenwashing settlement, the most instructive failure of recent years, appears to have created caution rather than curriculum. A company that cannot learn from failure cannot explore at the edge.</p>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-item-content">
+              <strong>Innovation metrics don't match innovation ambition</strong>
+              <p>Edge and Beyond initiatives are measured by implementation timelines and cost savings, not by learning velocity or early adopter engagement. When you measure exploration by operational metrics, you guarantee you only explore what looks like operations. The future gets evaluated by criteria designed for the present.</p>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-item-content">
+              <strong>Customer signal architecture skews toward the mainstream</strong>
+              <p>Tyson listens closely and skillfully to Early and Late Majority consumers. Innovators and Early Adopters, the groups that carry signals about what protein consumption will look like in 2030, are essentially invisible in the feedback architecture. The company is optimized for today's demand and nearly blind to tomorrow's.</p>
+            </div>
+          </div>
+          <div class="sw-item">
+            <div class="sw-marker">W</div>
+            <div class="sw-item-content">
+              <strong>The premiumization strategy collides with the consumer reality</strong>
+              <p>Tyson's innovation roadmap leans toward value-added, premium-positioned products: protein snacks, cleaner labels, "everyday elevated" prepared foods. But the consumer environment in 2026 is one of documented budget pressure and trading down. Building a premium portfolio for consumers who are actively choosing cheaper alternatives is a timing problem that strategy alone cannot solve.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA DIAGNOSTIC -->
+<section class="diagnostic-section" id="diagnostic">
+  <div class="diagnostic-bg"></div>
+  <div class="container">
+    <div class="section-kicker" style="color: var(--tyson-red)">The Theta Diagnostic</div>
+    <h2 class="section-title section-title-light">Everything the numbers<br><em>don't say</em></h2>
+
+    <div class="diag-grid fade-up">
+      <div>
+        <!-- Portfolio Mapping -->
+        <div class="diag-block">
+          <div class="diag-block-title">Portfolio Allocation vs. Benchmark</div>
+          <div class="diag-inline-bars">
+            <div class="diag-bar-row">
+              <div class="diag-bar-zone">Core</div>
+              <div class="diag-bar-track">
+                <div class="diag-bar-actual core" style="width: 85%"></div>
+                <div class="diag-bar-target-line" style="left: 70%"></div>
+              </div>
+              <div class="diag-bar-label">85% / 70% target</div>
+            </div>
+            <div class="diag-bar-row">
+              <div class="diag-bar-zone">Edge</div>
+              <div class="diag-bar-track">
+                <div class="diag-bar-actual edge" style="width: 12%"></div>
+                <div class="diag-bar-target-line" style="left: 20%"></div>
+              </div>
+              <div class="diag-bar-label">12% / 20% target</div>
+            </div>
+            <div class="diag-bar-row">
+              <div class="diag-bar-zone">Beyond</div>
+              <div class="diag-bar-track">
+                <div class="diag-bar-actual beyond" style="width: 3%"></div>
+                <div class="diag-bar-target-line" style="left: 10%"></div>
+              </div>
+              <div class="diag-bar-label">3% / 10% target</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leadership Trifecta -->
+        <div class="diag-block">
+          <div class="diag-block-title">Leadership Trifecta</div>
+          <div class="diag-score-row">
+            <div class="diag-score-label">Agility</div>
+            <div class="diag-score-dots">
+              <div class="score-dot filled gold"></div>
+              <div class="score-dot filled gold"></div>
+              <div class="score-dot filled gold"></div>
+              <div class="score-dot filled gold"></div>
+              <div class="score-dot"></div>
+            </div>
+            <div style="font-size:0.72rem; color:rgba(255,255,255,0.35); padding-left:10px;">4/5</div>
+          </div>
+          <div class="diag-score-row">
+            <div class="diag-score-label">Consciousness</div>
+            <div class="diag-score-dots">
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot"></div>
+              <div class="score-dot"></div>
+            </div>
+            <div style="font-size:0.72rem; color:rgba(255,255,255,0.35); padding-left:10px;">3/5</div>
+          </div>
+          <div class="diag-score-row">
+            <div class="diag-score-label">Courage</div>
+            <div class="diag-score-dots">
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot"></div>
+              <div class="score-dot"></div>
+            </div>
+            <div style="font-size:0.72rem; color:rgba(255,255,255,0.35); padding-left:10px;">3/5</div>
+          </div>
+        </div>
+
+        <!-- Mavericks and Culture -->
+        <div class="diag-block">
+          <div class="diag-block-title">Mavericks and Culture</div>
+          <div class="diag-row">
+            <div class="diag-row-label">Maverick presence</div>
+            <div class="diag-row-value" style="color:var(--tyson-gold)">Hidden</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Maverick protection</div>
+            <div class="diag-row-value" style="color:var(--tyson-gold)">Partial</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Failure intelligence</div>
+            <div class="diag-row-value" style="color:var(--tyson-red)">None</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Psychological safety</div>
+            <div class="diag-row-value" style="color:var(--tyson-red)">Low</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Open source ethos</div>
+            <div class="diag-row-value" style="color:var(--tyson-gold)">Low-moderate</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Chaos stage readiness</div>
+            <div class="diag-row-value" style="color:var(--tyson-gold)">Partial</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <!-- Customer Signal -->
+        <div class="diag-block">
+          <div class="diag-block-title">Customer Signal Alignment</div>
+          <div class="diag-row">
+            <div class="diag-row-label">Innovators (2.5%) — Beyond signals</div>
+            <div class="diag-row-value" style="color:var(--tyson-red)">~5% focus</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Early Adopters (13.5%) — Edge signals</div>
+            <div class="diag-row-value" style="color:var(--tyson-gold)">~15% focus</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Early Majority (34%) — Core feedback</div>
+            <div class="diag-row-value" style="color: #6ec99a;">~40% focus</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Late Majority (34%) — Core optimization</div>
+            <div class="diag-row-value" style="color: #6ec99a;">~30% focus</div>
+          </div>
+        </div>
+
+        <!-- Critical Tension -->
+        <div class="diag-block">
+          <div class="diag-block-title">Critical Structural Tension</div>
+          <div class="diag-tension-box">
+            <p>Tyson's most dangerous structural risk is not the cattle shortage. The cattle shortage is visible, quantifiable, and temporary. The real tension is between the company's identity as a protein processor and the possibility that protein consumption itself is restructuring. Tyson's entire innovation architecture, its brands, its factories, its supply chain, its talent profile, is built around animal protein. If that category faces structural headwinds from climate regulation, shifting consumer ethics, or competitive pressure from alternative proteins at scale, the company has no proven capability to respond. They have been here before: in 2016, they placed a bet on Beyond Meat and then retreated. That is not just a financial decision. It is a signal about what the organization believes it is allowed to become.</p>
+          </div>
+        </div>
+
+        <!-- Relativity -->
+        <div class="diag-block">
+          <div class="diag-block-title">Relativity Assessment</div>
+          <div class="diag-row">
+            <div class="diag-row-label">vs. Industry baseline</div>
+            <div class="diag-row-value" style="color:#6ec99a;">Above</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">vs. Tech sector</div>
+            <div class="diag-row-value" style="color:var(--tyson-red);">Far below</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">vs. Stated ambition</div>
+            <div class="diag-row-value" style="color:var(--tyson-gold);">On track (Core only)</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">vs. Historical self</div>
+            <div class="diag-row-value" style="color:#6ec99a;">Improving</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">vs. What's possible (frontier)</div>
+            <div class="diag-row-value" style="color:var(--tyson-red);">Far</div>
+          </div>
+        </div>
+
+        <!-- Verdict -->
+        <div class="verdict-box">
+          <div class="verdict-archetype">Legacy-Rich, Vision-Poor</div>
+          <div class="verdict-chips">
+            <span class="verdict-chip ok">Core Intact</span>
+            <span class="verdict-chip warn">Edge Constrained</span>
+            <span class="verdict-chip low">Beyond Absent</span>
+          </div>
+          <div class="verdict-text">Tyson has deep assets, iconic brands, distribution that took 90 years to build, and genuine operational excellence in its growing segments. What it lacks is a compelling story about who it intends to be in 2035. The Theta lens reveals a company that is brilliant at optimizing what it already knows, and dangerously underinvested in discovering what it doesn't. The most urgent question is not whether they can survive the cattle crisis. They can. The question is whether they will emerge from it with the courage to build something new, or simply return to the same model with a smaller beef plant and better chicken nuggets.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UNANSWERED QUESTIONS SECTION -->
+<section style="background: var(--paper-warm);">
+  <div class="container">
+    <div class="section-kicker">The Unanswered Questions</div>
+    <h2 class="section-title">What the analysis reveals<br><em>but cannot resolve</em></h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px;" class="fade-up">
+
+      <div style="background: white; padding: 28px 30px;">
+        <div style="font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--tyson-red); margin-bottom: 12px;">Board Governance</div>
+        <p style="font-size:0.88rem; line-height:1.75; color:#4a5a56;">The Technology Committee formed in 2025 is a meaningful signal. But who sits on it, what mandate it carries, and whether executive compensation is tied to innovation metrics beyond Core zone performance are questions that determine whether the committee changes behavior or simply changes optics.</p>
+      </div>
+
+      <div style="background: white; padding: 28px 30px;">
+        <div style="font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--tyson-red); margin-bottom: 12px;">The Alternative Protein Wound</div>
+        <p style="font-size:0.88rem; line-height:1.75; color:#4a5a56;">Tyson invested in Beyond Meat and then sold. Was that a rational strategic exit or an organizational retreat from discomfort? The answer matters enormously because it determines whether Tyson has processed the alternative protein question or is simply avoiding it. You cannot build the next curve until you understand why you abandoned the last one.</p>
+      </div>
+
+      <div style="background: white; padding: 28px 30px;">
+        <div style="font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--tyson-red); margin-bottom: 12px;">International Learning Loops</div>
+        <p style="font-size:0.88rem; line-height:1.75; color:#4a5a56;">International accounts for roughly 4% of Tyson's revenue. But international markets, particularly in Asia and parts of Europe, are where protein consumption patterns are evolving fastest and where alternative proteins have gained early traction. Is Tyson's international business a source of forward signals, or simply a small revenue line reviewed quarterly?</p>
+      </div>
+
+      <div style="background: white; padding: 28px 30px;">
+        <div style="font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--tyson-red); margin-bottom: 12px;">The 2035 Consumer</div>
+        <p style="font-size:0.88rem; line-height:1.75; color:#4a5a56;">Every innovation portfolio is a bet on a future consumer. Tyson's current portfolio is optimized for someone who values convenience, affordability, and familiar protein formats. But who is the 2035 consumer? What do they value? Where do they shop? How do they think about the relationship between their food, their health, and the climate? If Tyson has not built a detailed profile of this person, they are innovating for a consumer who may not arrive.</p>
+      </div>
+
+      <div style="background: white; padding: 28px 30px;">
+        <div style="font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--tyson-red); margin-bottom: 12px;">Talent Pipeline for Innovators</div>
+        <p style="font-size:0.88rem; line-height:1.75; color:#4a5a56;">Tyson competes for operations, supply chain, and food science talent effectively. But what is its value proposition for the kind of innovator who wants to reshape a category? Why would a researcher working on precision fermentation choose Tyson over Cargill or a well-funded startup? If the answer is unclear, the talent gap will widen before the innovation gap does.</p>
+      </div>
+
+      <div style="background: white; padding: 28px 30px;">
+        <div style="font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--tyson-red); margin-bottom: 12px;">Policy as Strategy</div>
+        <p style="font-size:0.88rem; line-height:1.75; color:#4a5a56;">The regulatory environment for industrial protein production is shifting. Carbon pricing, methane regulation, antibiotic use restrictions, and labeling requirements are all moving in a direction that could structurally alter the cost base of conventional meat processing. Is Tyson shaping that regulatory environment, anticipating it, or simply reacting to it? The answer to that question is the difference between a company that controls its future and one that adapts to someone else's.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ONE QUESTION -->
+<section class="question-section">
+  <div class="question-label">The Theta One Question</div>
+  <p class="question-text">"You are world-class at optimizing the present. But who is building your future, and do you give them permission to fail?"</p>
+  <div class="question-attr">The Theta Framework &nbsp;/&nbsp; Christine Pamela Chandrakasan</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <strong>The Theta Framework</strong> by Christine Pamela Chandrakasan<br>
+    Strategic Case Study: Tyson Foods &nbsp;/&nbsp; 2026
+  </div>
+  <div class="footer-right">Strategic Case Study</div>
+</footer>
+
+<script>
+// ====== SCROLL ANIMATIONS ======
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// ====== ALLOC BARS ANIMATION ======
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.alloc-bar-fill').forEach(bar => {
+        const target = bar.dataset.target;
+        setTimeout(() => { bar.style.width = target + '%'; }, 200);
+      });
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.alloc-grid').forEach(el => barObserver.observe(el));
+
+// ====== CHART.JS DEFAULTS ======
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.color = '#8A9490';
+
+const tooltipDefaults = {
+  backgroundColor: 'rgba(14,26,24,0.92)',
+  titleColor: 'white',
+  bodyColor: 'rgba(255,255,255,0.7)',
+  borderColor: 'rgba(200,16,46,0.25)',
+  borderWidth: 1,
+  padding: 12,
+  cornerRadius: 4,
+  titleFont: { family: "'DM Sans', sans-serif", size: 12, weight: '500' },
+  bodyFont: { family: "'DM Sans', sans-serif", size: 11 }
+};
+
+// ====== SCATTER CHART ======
+const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+
+// Custom label plugin
+const labelPlugin = {
+  id: 'afterDatasetsDraw',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    chart.data.datasets.forEach((dataset, i) => {
+      const meta = chart.getDatasetMeta(i);
+      meta.data.forEach((point, j) => {
+        const label = dataset.labels ? dataset.labels[j] : '';
+        if (!label) return;
+        const x = point.x;
+        const y = point.y;
+        ctx.save();
+        ctx.font = "500 10px 'DM Sans', sans-serif";
+        ctx.fillStyle = 'rgba(14,26,24,0.55)';
+        ctx.textAlign = 'left';
+        ctx.fillText(label, x + (point.options.radius || 6) + 5, y + 4);
+        ctx.restore();
+      });
+    });
+  }
+};
+
+new Chart(scatterCtx, {
+  type: 'scatter',
+  plugins: [labelPlugin],
+  data: {
+    datasets: [
+      {
+        label: 'Core Zone',
+        data: [
+          {x: 10, y: 12}, // Chicken Cups
+          {x: 12, y: 10}, // Clean Label
+          {x: 8,  y: 14}, // Jimmy Dean/Hillshire
+          {x: 22, y: 18}, // Swavory Snacking
+          {x: 24, y: 20}, // Protein + Fiber
+        ],
+        labels: ['Chicken Cups', 'Clean Label', 'Brand Equity', 'Swavory Snacking', 'Protein + Fiber'],
+        backgroundColor: 'rgba(45,106,79,0.75)',
+        pointRadius: [12, 10, 9, 7, 6],
+        pointHoverRadius: 14,
+      },
+      {
+        label: 'Edge Zone',
+        data: [
+          {x: 40, y: 48}, // NAE Chicken
+          {x: 44, y: 50}, // Blockchain
+          {x: 55, y: 68}, // IoT/AI Barns
+          {x: 58, y: 70}, // $1.3B Automation
+        ],
+        labels: ['NAE Chicken', 'Blockchain', 'IoT Barn Monitor', 'AI Automation'],
+        backgroundColor: 'rgba(181,132,26,0.75)',
+        pointRadius: [8, 7, 9, 14],
+        pointHoverRadius: 14,
+      },
+      {
+        label: 'Beyond Zone',
+        data: [
+          {x: 72, y: 80}, // Alt Feed
+          {x: 75, y: 76}, // Closed-loop Water
+          {x: 82, y: 88}, // Methane Capture
+          {x: 84, y: 84}, // Climate-Smart R&D
+        ],
+        labels: ['Alt Feed R&D', 'Closed-Loop Water', 'Methane Capture', 'Climate-Smart R&D'],
+        backgroundColor: 'rgba(139,26,26,0.7)',
+        pointRadius: [5, 4, 4, 4],
+        pointHoverRadius: 10,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      tooltip: {
+        ...tooltipDefaults,
+        callbacks: {
+          label: (ctx) => {
+            const labels = ctx.dataset.labels;
+            return ' ' + (labels ? labels[ctx.dataIndex] : '') + ' (' + ctx.dataset.label + ')';
+          }
+        }
+      },
+      legend: {
+        position: 'bottom',
+        labels: {
+          padding: 20,
+          usePointStyle: true,
+          pointStyleWidth: 10,
+          font: { size: 11 }
+        }
+      }
+    },
+    scales: {
+      x: {
+        min: 0, max: 100,
+        grid: { color: 'rgba(200,16,46,0.05)' },
+        border: { display: false },
+        ticks: { display: false },
+        title: {
+          display: true,
+          text: 'Market Reach: Existing → New → Emerging → Speculative',
+          font: { size: 10, style: 'italic' },
+          color: '#8A9490',
+          padding: { top: 10 }
+        }
+      },
+      y: {
+        min: 0, max: 100,
+        grid: { color: 'rgba(200,16,46,0.05)' },
+        border: { display: false },
+        ticks: { display: false },
+        title: {
+          display: true,
+          text: 'Technology Change: Incremental → Moderate → High → Radical → Extreme',
+          font: { size: 10, style: 'italic' },
+          color: '#8A9490'
+        }
+      }
+    }
+  }
+});
+
+// ====== DOUGHNUT CHART ======
+const doughnutCtx = document.getElementById('doughnutChart').getContext('2d');
+new Chart(doughnutCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Core (85%)', 'Edge (12%)', 'Beyond (3%)'],
+    datasets: [{
+      data: [85, 12, 3],
+      backgroundColor: [
+        'rgba(45,106,79,0.85)',
+        'rgba(181,132,26,0.85)',
+        'rgba(139,26,26,0.85)'
+      ],
+      borderWidth: 0,
+      hoverOffset: 4
+    }]
+  },
+  options: {
+    cutout: '68%',
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      tooltip: {
+        ...tooltipDefaults,
+        callbacks: {
+          label: (ctx) => ' ' + ctx.label + ': ' + ctx.parsed + '%'
+        }
+      },
+      legend: {
+        position: 'bottom',
+        labels: {
+          padding: 16,
+          usePointStyle: true,
+          font: { size: 11 }
+        }
+      }
+    }
+  }
+});
+
+// ====== RADAR CHART ======
+const radarCtx = document.getElementById('radarChart').getContext('2d');
+new Chart(radarCtx, {
+  type: 'radar',
+  data: {
+    labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'Failure Intelligence', 'Customer Signals', 'Open Innovation'],
+    datasets: [
+      {
+        label: 'Tyson',
+        data: [82, 45, 18, 12, 38, 28],
+        borderColor: 'rgba(200,16,46,0.9)',
+        backgroundColor: 'rgba(200,16,46,0.08)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(200,16,46,0.9)',
+        pointRadius: 4
+      },
+      {
+        label: 'Hormel',
+        data: [72, 58, 55, 45, 52, 48],
+        borderColor: 'rgba(212,160,23,0.8)',
+        backgroundColor: 'rgba(212,160,23,0.06)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(212,160,23,0.8)',
+        pointRadius: 4
+      },
+      {
+        label: 'Cargill',
+        data: [75, 78, 72, 68, 70, 80],
+        borderColor: 'rgba(45,106,79,0.8)',
+        backgroundColor: 'rgba(45,106,79,0.06)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(45,106,79,0.8)',
+        pointRadius: 4
+      },
+      {
+        label: 'JBS',
+        data: [85, 32, 15, 10, 28, 18],
+        borderColor: 'rgba(180,190,186,0.5)',
+        backgroundColor: 'rgba(180,190,186,0.04)',
+        borderWidth: 1.5,
+        pointBackgroundColor: 'rgba(180,190,186,0.5)',
+        pointRadius: 3
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      tooltip: tooltipDefaults,
+      legend: {
+        position: 'bottom',
+        labels: {
+          padding: 20,
+          usePointStyle: true,
+          font: { size: 11 }
+        }
+      }
+    },
+    scales: {
+      r: {
+        min: 0,
+        max: 100,
+        ticks: { display: false },
+        grid: { color: 'rgba(14,26,24,0.07)' },
+        angleLines: { color: 'rgba(14,26,24,0.07)' },
+        pointLabels: {
+          font: { size: 11, family: "'DM Sans', sans-serif" },
+          color: '#5a6a65'
+        }
+      }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
