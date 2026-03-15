@@ -1,1303 +1,2586 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>When Copying Innovation Is No Longer Enough | Astro Malaysia</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --astro-orange: #FF6B35;
-            --astro-dark: #1a1a1a;
-            --astro-secondary: #2d2d2d;
-            --text-primary: #1a1a1a;
-            --text-secondary: #666;
-            --text-light: #999;
-            --bg-light: #fafafa;
-            --bg-white: #ffffff;
-            --border-subtle: #e8e8e8;
-            --shadow-soft: 0 2px 20px rgba(0,0,0,0.04);
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-            color: var(--text-primary);
-            line-height: 1.7;
-            overflow-x: hidden;
-            background: var(--bg-white);
-        }
-
-        /* Hero Section - Full Screen Cover */
-        .hero {
-            height: 100vh;
-            background: linear-gradient(135deg, var(--astro-dark) 0%, var(--astro-secondary) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, var(--astro-orange) 0%, transparent 70%);
-            border-radius: 50%;
-            top: -300px;
-            right: -300px;
-            opacity: 0.08;
-            animation: pulse 8s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.08; }
-            50% { transform: scale(1.1); opacity: 0.12; }
-        }
-
-        .hero-content {
-            text-align: center;
-            color: white;
-            z-index: 1;
-            max-width: 1000px;
-            padding: 3rem 2rem;
-        }
-
-        .hero-label {
-            font-size: 0.75rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--astro-orange);
-            margin-bottom: 2rem;
-            font-weight: 600;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 0.3s;
-        }
-
-        .hero-title {
-            font-size: 4.5rem;
-            font-weight: 200;
-            line-height: 1.15;
-            margin-bottom: 2.5rem;
-            letter-spacing: -2px;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 0.5s;
-        }
-
-        .hero-subtitle {
-            font-size: 1.5rem;
-            color: rgba(255,255,255,0.7);
-            font-weight: 300;
-            margin-bottom: 3rem;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 0.7s;
-        }
-
-        .hero-meta {
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.5);
-            letter-spacing: 1px;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 0.9s;
-        }
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255,255,255,0.4);
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-            40% { transform: translateX(-50%) translateY(-8px); }
-            60% { transform: translateX(-50%) translateY(-4px); }
-        }
-
-        /* Container */
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 3rem;
-        }
-
-        /* Section Styling */
-        section {
-            padding: 8rem 0;
-        }
-
-        section.bg-light {
-            background: var(--bg-light);
-        }
-
-        .section-header {
-            margin-bottom: 4rem;
-        }
-
-        .section-label {
-            font-size: 0.75rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--astro-orange);
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        h2 {
-            font-size: 3rem;
-            font-weight: 300;
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
-            letter-spacing: -1px;
-            color: var(--text-primary);
-        }
-
-        .section-intro {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            line-height: 1.8;
-            max-width: 800px;
-        }
-
-        h3 {
-            font-size: 1.75rem;
-            font-weight: 400;
-            margin: 4rem 0 2rem;
-            color: var(--text-primary);
-        }
-
-        p {
-            font-size: 1.05rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
-        }
-
-        /* Stats Grid - Elegant Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin: 4rem 0;
-        }
-
-        .stat-card {
-            text-align: center;
-            padding: 3rem 2rem;
-            background: var(--bg-white);
-            border: 1px solid var(--border-subtle);
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-soft);
-        }
-
-        .stat-number {
-            font-size: 3.5rem;
-            font-weight: 200;
-            color: var(--astro-orange);
-            margin-bottom: 1rem;
-            letter-spacing: -1px;
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            line-height: 1.5;
-        }
-
-        /* Insight Callout */
-        .insight-box {
-            background: linear-gradient(135deg, var(--astro-dark) 0%, var(--astro-secondary) 100%);
-            color: white;
-            padding: 3rem 3.5rem;
-            margin: 4rem 0;
-            border-left: 4px solid var(--astro-orange);
-        }
-
-        .insight-box h3 {
-            color: var(--astro-orange);
-            margin-top: 0;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .insight-box p {
-            color: rgba(255,255,255,0.85);
-            font-size: 1.25rem;
-            line-height: 1.7;
-            margin: 0;
-        }
-
-        /* Timeline - Minimalist */
-        .timeline {
-            margin: 4rem 0;
-        }
-
-        .timeline-item {
-            display: grid;
-            grid-template-columns: 100px 1fr;
-            gap: 3rem;
-            padding: 2rem 0;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .timeline-item:last-child {
-            border-bottom: none;
-        }
-
-        .timeline-year {
-            font-size: 2rem;
-            font-weight: 200;
-            color: var(--astro-orange);
-            letter-spacing: -1px;
-        }
-
-        .timeline-content h4 {
-            font-size: 1.15rem;
-            margin-bottom: 0.75rem;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        .timeline-content p {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin: 0;
-        }
-
-        /* Chart Container - Clean */
-        .chart-container {
-            margin: 4rem 0;
-            padding: 3rem;
-            background: var(--bg-white);
-            border: 1px solid var(--border-subtle);
-        }
-
-        .chart-title {
-            font-size: 1.1rem;
-            margin-bottom: 2.5rem;
-            color: var(--text-primary);
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-
-        .chart-wrapper {
-            position: relative;
-            height: 450px;
-        }
-
-        .chart-insight {
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-subtle);
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            line-height: 1.7;
-        }
-
-        .chart-insight strong {
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        /* Theta Framework - Visual Grid */
-        .theta-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin: 4rem 0;
-        }
-
-        .theta-card {
-            padding: 2.5rem;
-            border: 2px solid var(--border-subtle);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .theta-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, var(--astro-orange), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .theta-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-soft);
-            border-color: var(--astro-orange);
-        }
-
-        .theta-card:hover::before {
-            opacity: 1;
-        }
-
-        .theta-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .theta-card.core .theta-label { color: #dc2626; }
-        .theta-card.edge .theta-label { color: #ea580c; }
-        .theta-card.beyond .theta-label { color: #2563eb; }
-
-        .theta-percentage {
-            font-size: 3rem;
-            font-weight: 200;
-            margin: 1.5rem 0;
-            letter-spacing: -1px;
-        }
-
-        .theta-card h4 {
-            font-size: 1.15rem;
-            margin-bottom: 1rem;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        .theta-card p {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-
-        .theta-card .risk-label {
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        .theta-card.core .risk-label { color: #dc2626; }
-        .theta-card.edge .risk-label { color: #ea580c; }
-        .theta-card.beyond .risk-label { color: #2563eb; }
-
-        /* Capabilities Matrix */
-        .capabilities-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin: 4rem 0;
-        }
-
-        .capability-card {
-            padding: 2rem;
-            background: var(--bg-white);
-            border: 1px solid var(--border-subtle);
-            transition: all 0.3s ease;
-        }
-
-        .capability-card:hover {
-            border-color: var(--astro-orange);
-            box-shadow: var(--shadow-soft);
-        }
-
-        .capability-header {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--astro-orange);
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        .capability-title {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 0.75rem;
-        }
-
-        .capability-desc {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 1rem;
-        }
-
-        .transfer-badge {
-            display: inline-block;
-            padding: 0.35rem 0.85rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .transfer-high {
-            background: rgba(255, 107, 53, 0.1);
-            color: var(--astro-orange);
-        }
-
-        .transfer-medium {
-            background: rgba(102, 102, 102, 0.1);
-            color: var(--text-secondary);
-        }
-
-        /* Strategic Roadmap */
-        .roadmap {
-            margin: 4rem 0;
-            padding: 3rem;
-            background: var(--bg-light);
-            border-left: 4px solid var(--astro-orange);
-        }
-
-        .roadmap-phase {
-            margin-bottom: 3rem;
-            padding-bottom: 3rem;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .roadmap-phase:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .roadmap-header {
-            display: flex;
-            align-items: baseline;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .roadmap-years {
-            font-size: 1.5rem;
-            font-weight: 300;
-            color: var(--astro-orange);
-        }
-
-        .roadmap-title {
-            font-size: 1.5rem;
-            font-weight: 400;
-            color: var(--text-primary);
-        }
-
-        .roadmap-desc {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            line-height: 1.7;
-            margin-top: 0.5rem;
-        }
-
-        /* Closing Section */
-        .closing {
-            background: linear-gradient(135deg, var(--astro-dark) 0%, var(--astro-secondary) 100%);
-            color: white;
-            text-align: center;
-            padding: 8rem 0;
-        }
-
-        .closing h2 {
-            color: white;
-            font-size: 3.5rem;
-            max-width: 900px;
-            margin: 0 auto 2rem;
-        }
-
-        .closing .insight {
-            font-size: 1.5rem;
-            color: rgba(255,255,255,0.7);
-            max-width: 800px;
-            margin: 0 auto 2rem;
-            font-weight: 300;
-        }
-
-        .closing .final-note {
-            font-size: 1.1rem;
-            color: rgba(255,255,255,0.5);
-            max-width: 700px;
-            margin: 3rem auto 0;
-        }
-
-        /* Footer */
-        footer {
-            background: var(--astro-dark);
-            color: rgba(255,255,255,0.5);
-            padding: 3rem 0;
-            text-align: center;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-        }
-
-        footer .author {
-            color: var(--astro-orange);
-            margin-bottom: 0.5rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 968px) {
-            .hero-title {
-                font-size: 2.5rem;
-                letter-spacing: -1px;
-            }
-
-            .hero-subtitle {
-                font-size: 1.2rem;
-            }
-
-            h2 {
-                font-size: 2rem;
-            }
-
-            h3 {
-                font-size: 1.5rem;
-            }
-
-            .section-intro {
-                font-size: 1.1rem;
-            }
-
-            .theta-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .capabilities-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .timeline-item {
-                grid-template-columns: 70px 1fr;
-                gap: 1.5rem;
-            }
-
-            .timeline-year {
-                font-size: 1.5rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .chart-container {
-                padding: 2rem 1.5rem;
-            }
-
-            .chart-wrapper {
-                height: 320px;
-            }
-
-            section {
-                padding: 4rem 0;
-            }
-
-            .container {
-                padding: 0 1.5rem;
-            }
-
-            .insight-box {
-                padding: 2rem;
-            }
-
-            .roadmap {
-                padding: 2rem;
-            }
-
-            .roadmap-header {
-                flex-direction: column;
-                gap: 0.5rem;
-                align-items: flex-start;
-            }
-
-            .closing h2 {
-                font-size: 2.5rem;
-            }
-
-            .closing .insight {
-                font-size: 1.25rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero-title {
-                font-size: 2rem;
-            }
-
-            .hero-subtitle {
-                font-size: 1rem;
-            }
-
-            .stat-number {
-                font-size: 2.5rem;
-            }
-
-            .theta-percentage {
-                font-size: 2.5rem;
-            }
-
-            .chart-wrapper {
-                height: 280px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astro Malaysia: The Satellite That Must Reinvent Its Orbit | Theta Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --astro-red: #C8102E;
+  --astro-gold: #C9963A;
+  --ink: #0C1210;
+  --ink-soft: #1A2420;
+  --paper: #F8F5EF;
+  --paper-warm: #F0EBE0;
+  --muted: #7A8C86;
+  --core-green: #2A6B48;
+  --edge-amber: #B5841A;
+  --beyond-crimson: #8B1A1A;
+  --border-light: rgba(200, 16, 46, 0.12);
+  --border-ink: rgba(12, 18, 16, 0.1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+
+/* ---- NOISE TEXTURE OVERLAY ---- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* ---- NAV ---- */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1.1rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(12, 18, 16, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(200, 16, 46, 0.2);
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--astro-gold);
+  letter-spacing: 0.05em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover { color: var(--astro-gold); }
+
+/* ---- HERO ---- */
+.hero {
+  min-height: 100vh;
+  background: var(--ink);
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(200,16,46,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,16,46,0.06) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridDrift 30s linear infinite;
+}
+
+@keyframes gridDrift {
+  from { transform: translateY(0); }
+  to { transform: translateY(60px); }
+}
+
+.hero-glow {
+  position: absolute;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,16,46,0.18) 0%, transparent 65%);
+  top: -200px; right: -200px;
+  animation: glowPulse 8s ease-in-out infinite;
+}
+
+.hero-glow-2 {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,150,58,0.1) 0%, transparent 65%);
+  bottom: 100px; left: 10%;
+  animation: glowPulse 12s ease-in-out infinite reverse;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 9rem 3rem 5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.hero-kicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--astro-red);
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeUp 1s ease forwards 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hero-kicker::before {
+  content: '';
+  width: 40px;
+  height: 1px;
+  background: var(--astro-red);
+  display: inline-block;
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 300;
+  line-height: 1.08;
+  color: #fff;
+  max-width: 900px;
+  letter-spacing: -0.02em;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeUp 1s ease forwards 0.55s;
+}
+
+.hero-title em {
+  color: var(--astro-gold);
+  font-style: italic;
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: rgba(255,255,255,0.55);
+  font-weight: 300;
+  max-width: 600px;
+  margin-bottom: 4rem;
+  line-height: 1.75;
+  opacity: 0;
+  animation: fadeUp 1s ease forwards 0.75s;
+}
+
+.hero-meta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 2.5rem;
+  opacity: 0;
+  animation: fadeUp 1s ease forwards 0.95s;
+}
+
+.meta-item {
+  padding-right: 2rem;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+
+.meta-item:last-child { border-right: none; padding-right: 0; }
+
+.meta-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+.meta-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  color: rgba(255,255,255,0.8);
+  font-weight: 400;
+}
+
+.scroll-track {
+  position: absolute;
+  right: 3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  animation: fadeUp 1s ease forwards 1.2s;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, var(--astro-red));
+  animation: scrollLine 2s ease-in-out infinite;
+}
+
+@keyframes scrollLine {
+  0%, 100% { transform: scaleY(1); opacity: 1; }
+  50% { transform: scaleY(0.5); opacity: 0.4; }
+}
+
+.scroll-text {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  writing-mode: vertical-rl;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- SECTION SHARED ---- */
+.section { padding: 7rem 0; }
+.section-warm { background: var(--paper-warm); }
+.section-ink { background: var(--ink); color: #fff; }
+.section-white { background: #fff; }
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 3rem;
+}
+
+.section-eyebrow {
+  font-size: 0.65rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--astro-red);
+  margin-bottom: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.section-eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: var(--astro-red);
+}
+
+h2.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.2rem, 4vw, 3.6rem);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 1.5rem;
+}
+
+.section-ink h2.section-title { color: #fff; }
+
+h2.section-title em {
+  color: var(--astro-gold);
+  font-style: italic;
+}
+
+.lead-text {
+  font-size: 1.15rem;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 680px;
+  font-weight: 300;
+}
+
+.section-ink .lead-text { color: rgba(255,255,255,0.55); }
+
+p.body-text {
+  font-size: 1rem;
+  color: #4A5850;
+  line-height: 1.85;
+  margin-bottom: 1.4rem;
+}
+
+.section-ink p.body-text { color: rgba(255,255,255,0.7); }
+
+/* ---- ABOUT TWO-COL ---- */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  margin-top: 4rem;
+}
+
+.hidden-fact {
+  background: var(--ink);
+  color: #fff;
+  padding: 2.5rem;
+  margin-top: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hidden-fact::before {
+  content: '!';
+  position: absolute;
+  right: 1.5rem;
+  top: 1rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 5rem;
+  color: var(--astro-red);
+  opacity: 0.15;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.hidden-fact-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--astro-gold);
+  margin-bottom: 1rem;
+}
+
+.hidden-fact p {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.75;
+  margin: 0;
+}
+
+.stat-quad {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5px;
+  background: var(--border-ink);
+}
+
+.stat-box {
+  background: var(--paper);
+  padding: 2.2rem 2rem;
+  text-align: center;
+  transition: background 0.3s;
+}
+
+.stat-box:hover { background: var(--paper-warm); }
+
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  font-weight: 400;
+  color: var(--astro-red);
+  line-height: 1;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.02em;
+}
+
+.stat-desc {
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+}
+
+/* ---- BELIEF STRIP ---- */
+.belief-strip {
+  background: var(--astro-red);
+  padding: 5rem 3rem;
+  text-align: center;
+}
+
+.belief-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(255,255,255,0.92);
+  max-width: 800px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.belief-attribution {
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ---- TIMELINE ---- */
+.timeline-track {
+  margin-top: 4rem;
+  position: relative;
+}
+
+.timeline-track::before {
+  content: '';
+  position: absolute;
+  left: 110px;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--astro-red), var(--astro-gold), transparent);
+}
+
+.tl-item {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 3rem;
+  padding: 2.5rem 0;
+  position: relative;
+}
+
+.tl-item::after {
+  content: '';
+  position: absolute;
+  left: 103px;
+  top: 3rem;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--paper-warm);
+  border: 2px solid var(--astro-red);
+  z-index: 1;
+}
+
+.tl-item.milestone::after {
+  background: var(--astro-red);
+  width: 18px;
+  height: 18px;
+  left: 102px;
+}
+
+.tl-year {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 300;
+  color: var(--astro-gold);
+  letter-spacing: -0.02em;
+  text-align: right;
+  padding-top: 0.1rem;
+}
+
+.tl-phase {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--astro-red);
+  margin-bottom: 0.5rem;
+}
+
+.tl-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+
+.tl-desc {
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* ---- THETA MAP ---- */
+.theta-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 4rem;
+  margin-top: 4rem;
+  align-items: start;
+}
+
+.zone-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.zone-pill {
+  padding: 1.8rem;
+  border-left: 3px solid transparent;
+  background: var(--paper);
+  transition: all 0.3s;
+}
+
+.zone-pill:hover { transform: translateX(4px); }
+
+.zone-pill.core { border-color: var(--core-green); }
+.zone-pill.edge { border-color: var(--edge-amber); }
+.zone-pill.beyond { border-color: var(--beyond-crimson); }
+
+.zone-pill-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.zone-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.zone-dot.core { background: var(--core-green); }
+.zone-dot.edge { background: var(--edge-amber); }
+.zone-dot.beyond { background: var(--beyond-crimson); }
+
+.zone-pill-name {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.zone-pill-desc {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.scatter-wrap {
+  background: #fff;
+  border: 1px solid var(--border-ink);
+  padding: 2.5rem;
+}
+
+.scatter-wrap h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  color: var(--ink);
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.chart-area {
+  position: relative;
+  height: 420px;
+}
+
+/* ---- PORTFOLIO ALLOCATION ---- */
+.alloc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 4rem;
+  margin-top: 4rem;
+  align-items: start;
+}
+
+.donut-wrap {
+  position: relative;
+  text-align: center;
+}
+
+.donut-area {
+  position: relative;
+  height: 300px;
+}
+
+.donut-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.donut-center-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.donut-center-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.alloc-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.alloc-item {}
+
+.alloc-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.6rem;
+}
+
+.alloc-zone-name {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.alloc-pct {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.alloc-bar-track {
+  height: 6px;
+  background: var(--border-ink);
+  position: relative;
+  margin-bottom: 0.6rem;
+}
+
+.alloc-bar-fill {
+  height: 100%;
+  position: absolute;
+  left: 0; top: 0;
+  transition: width 1.2s ease;
+}
+
+.alloc-bar-bench {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 12px;
+  background: var(--ink);
+  opacity: 0.3;
+}
+
+.alloc-comment {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ---- COMPETITORS ---- */
+.comp-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5rem;
+  margin: 3.5rem 0;
+}
+
+.comp-card {
+  background: var(--paper);
+  border: 1px solid var(--border-ink);
+  padding: 1.8rem 1.5rem;
+  transition: all 0.3s;
+}
+
+.comp-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+}
+
+.comp-card.featured {
+  border-color: var(--astro-red);
+  border-width: 2px;
+  background: #fff;
+}
+
+.comp-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+}
+
+.comp-tag {
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.05em;
+}
+
+.comp-zone-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--ink);
+}
+
+.comp-zone-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.comp-verdict {
+  margin-top: 1.2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--border-ink);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* ---- RADAR ---- */
+.radar-wrap {
+  margin-top: 3rem;
+  background: #fff;
+  border: 1px solid var(--border-ink);
+  padding: 3rem;
+}
+
+.radar-area { position: relative; height: 420px; }
+
+/* ---- STRENGTHS / WEAKNESSES ---- */
+.sw-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 4rem;
+}
+
+.sw-panel {
+  padding: 2.5rem;
+  border: 1px solid transparent;
+}
+
+.sw-panel.strengths {
+  background: rgba(42, 107, 72, 0.04);
+  border-color: rgba(42, 107, 72, 0.2);
+}
+
+.sw-panel.weaknesses {
+  background: rgba(139, 26, 26, 0.04);
+  border-color: rgba(139, 26, 26, 0.2);
+}
+
+.sw-panel-title {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+.strengths .sw-panel-title { color: var(--core-green); }
+.weaknesses .sw-panel-title { color: var(--beyond-crimson); }
+
+.sw-item {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.sw-item:last-child { margin-bottom: 0; }
+
+.sw-marker {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.strengths .sw-marker {
+  background: rgba(42, 107, 72, 0.12);
+  color: var(--core-green);
+}
+
+.weaknesses .sw-marker {
+  background: rgba(139, 26, 26, 0.12);
+  color: var(--beyond-crimson);
+}
+
+.sw-text strong {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+}
+
+.sw-text span {
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* ---- DIAGNOSTIC (INK) ---- */
+.diagnostic-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  margin-top: 4rem;
+}
+
+.diag-block {
+  margin-bottom: 3rem;
+}
+
+.diag-block-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--astro-gold);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.diag-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.diag-row-label {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.55);
+}
+
+.diag-row-score {
+  display: flex;
+  gap: 4px;
+}
+
+.score-pip {
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+  background: rgba(255,255,255,0.1);
+}
+
+.score-pip.filled { background: var(--astro-gold); }
+.score-pip.half { background: rgba(201,150,58,0.4); }
+
+.tension-box {
+  background: rgba(200,16,46,0.12);
+  border-left: 3px solid var(--astro-red);
+  padding: 1.8rem;
+  margin-top: 1rem;
+}
+
+.tension-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--astro-red);
+  margin-bottom: 0.75rem;
+}
+
+.tension-text {
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.7;
+}
+
+.verdict-strip {
+  margin-top: 3rem;
+  padding: 2.5rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+}
+
+.verdict-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.verdict-archetype {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  font-weight: 300;
+  color: var(--astro-gold);
+  font-style: italic;
+  margin-bottom: 0.75rem;
+}
+
+.verdict-explanation {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.65;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ---- REVENUE SECTION ---- */
+.revenue-chart-wrap {
+  background: #fff;
+  border: 1px solid var(--border-ink);
+  padding: 3rem;
+  margin-top: 3rem;
+}
+
+.rev-area { position: relative; height: 360px; }
+
+.revenue-annotation {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border-ink);
+  margin-top: 3rem;
+}
+
+.rev-ann {
+  background: var(--paper);
+  padding: 1.8rem 1.5rem;
+}
+
+.rev-ann-year {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--astro-red);
+  margin-bottom: 0.4rem;
+}
+
+.rev-ann-pct {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.6rem;
+}
+
+.rev-ann-text {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* ---- INNOVATION DILEMMA ---- */
+.dilemma-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 4rem;
+}
+
+.dilemma-card {
+  padding: 3rem;
+  border: 1px solid var(--border-ink);
+  background: #fff;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.dilemma-card:hover {
+  box-shadow: 0 16px 50px rgba(0,0,0,0.07);
+  transform: translateY(-2px);
+}
+
+.dilemma-number {
+  position: absolute;
+  top: 2.5rem;
+  right: 2.5rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem;
+  font-weight: 300;
+  color: var(--border-ink);
+  line-height: 1;
+}
+
+.dilemma-category {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--astro-red);
+  margin-bottom: 0.75rem;
+}
+
+.dilemma-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 1rem;
+  line-height: 1.25;
+}
+
+.dilemma-text {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ---- CLOSING ---- */
+.closing {
+  background: var(--ink);
+  padding: 9rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.closing-bg {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(200,16,46,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,16,46,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+.closing h2.section-title {
+  max-width: 800px;
+  margin: 0 auto 2rem;
+}
+
+.closing .lead-text {
+  max-width: 600px;
+  margin: 0 auto 3rem;
+}
+
+.one-question {
+  background: rgba(200,16,46,0.12);
+  border: 1px solid rgba(200,16,46,0.3);
+  padding: 3rem;
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.oq-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--astro-red);
+  margin-bottom: 1.2rem;
+}
+
+.oq-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(255,255,255,0.88);
+  line-height: 1.45;
+}
+
+/* ---- FOOTER ---- */
+footer {
+  background: #080E0C;
+  padding: 2.5rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.footer-left {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.3);
+}
+
+.footer-left strong {
+  color: var(--astro-gold);
+  font-weight: 500;
+}
+
+.footer-right {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+}
+
+/* ---- FADE IN ON SCROLL ---- */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- PULL QUOTE ---- */
+.pull-quote {
+  border-left: 3px solid var(--astro-gold);
+  padding: 1.5rem 2rem;
+  margin: 2.5rem 0;
+  background: rgba(201,150,58,0.05);
+}
+
+.pull-quote p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.section-ink .pull-quote {
+  background: rgba(201,150,58,0.08);
+  border-color: var(--astro-gold);
+}
+
+.section-ink .pull-quote p { color: rgba(255,255,255,0.82); }
+
+.pull-quote-attr {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.75rem;
+  letter-spacing: 0.05em;
+  font-style: normal;
+}
+
+/* ---- KPI SECTION ---- */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 4rem;
+}
+
+.kpi-card {
+  background: var(--paper);
+  padding: 2.5rem 2rem;
+  border-top: 3px solid transparent;
+}
+
+.kpi-card.chaos { border-color: var(--beyond-crimson); }
+.kpi-card.build { border-color: var(--edge-amber); }
+.kpi-card.scale { border-color: var(--core-green); }
+
+.kpi-stage {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.kpi-metric {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+
+.kpi-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.kpi-trend {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.75rem;
+  display: inline-block;
+  border-radius: 2px;
+}
+
+.kpi-trend.warn { background: rgba(181,132,26,0.12); color: var(--edge-amber); }
+.kpi-trend.bad { background: rgba(139,26,26,0.12); color: var(--beyond-crimson); }
+.kpi-trend.good { background: rgba(42,107,72,0.12); color: var(--core-green); }
+
+/* ---- MISSED TURNS ---- */
+.tl-missed {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 3rem;
+  padding: 0.5rem 0 1.5rem;
+  position: relative;
+}
+
+.tl-missed-content {
+  background: rgba(139,26,26,0.07);
+  border-left: 3px solid var(--beyond-crimson);
+  padding: 1.2rem 1.5rem;
+}
+
+.tl-missed-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--beyond-crimson);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.tl-missed-text {
+  font-size: 0.88rem;
+  color: #6B3A3A;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* ---- ASEAN IP SECTION ---- */
+.asean-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.asean-market-card {
+  background: var(--paper);
+  border: 1px solid var(--border-ink);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.asean-market-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--astro-red), var(--astro-gold));
+}
+
+.asean-card-country {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+}
+
+.asean-card-pop {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--astro-gold);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.asean-card-body {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.asean-card-adjacency {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-ink);
+  font-size: 0.8rem;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.asean-gap-strip {
+  background: var(--ink);
+  padding: 3rem;
+  margin-top: 2.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem;
+}
+
+.asean-gap-item {
+  text-align: center;
+  padding: 1.5rem;
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+.asean-gap-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+.asean-gap-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--astro-gold);
+  margin-bottom: 0.5rem;
+}
+
+.asean-gap-desc {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .asean-grid { grid-template-columns: 1fr; }
+  .asean-gap-strip { grid-template-columns: 1fr; }
+  .tl-missed { grid-template-columns: 70px 1fr; gap: 1.5rem; }
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  .container { padding: 0 1.5rem; }
+  .about-grid, .theta-layout, .alloc-grid, .sw-grid, .diagnostic-grid, .dilemma-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .comp-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-meta { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+  .meta-item { border-right: none; padding-right: 0; }
+  .scroll-track { display: none; }
+  .hero-title { font-size: 2.5rem; }
+  .revenue-annotation { grid-template-columns: repeat(2, 1fr); }
+  .kpi-grid { grid-template-columns: 1fr; }
+  .section { padding: 4rem 0; }
+  .belief-strip { padding: 3.5rem 1.5rem; }
+  footer { flex-direction: column; gap: 1rem; text-align: center; }
+}
+</style>
 </head>
 <body>
-    <!-- Hero Cover -->
-    <div class="hero">
-        <div class="hero-content">
-            <div class="hero-label">Innovation Case Study</div>
-            <h1 class="hero-title">When Copying Innovation<br>Is No Longer Enough</h1>
-            <p class="hero-subtitle">Can Astro Still Lead Malaysia's Entertainment Future?</p>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Theta Framework</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#innovation">Innovation Map</a></li>
+    <li><a href="#revenue">Revenue</a></li>
+    <li><a href="#competitors">Competitors</a></li>
+    <li><a href="#asean">ASEAN</a></li>
+    <li><a href="#diagnostic">Diagnostic</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Framework Case Study</div>
+    <h1 class="hero-title">The Satellite That Needs to<br>Reinvent <em>Its Own Orbit</em></h1>
+    <p class="hero-subtitle">Astro Malaysia built an empire on distribution. Now the pipes are someone else's playground. The question is no longer survival. It is whether a distribution giant can become a creation force.</p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">Founded</div>
+        <div class="meta-value">1996</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">FY25 Revenue</div>
+        <div class="meta-value">RM 3.08B</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Homes Reached</div>
+        <div class="meta-value">5.3M</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Theta Archetype</div>
+        <div class="meta-value">Emerging Explorer</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-track">
+    <div class="scroll-line"></div>
+    <div class="scroll-text">Scroll</div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="section-eyebrow">Origin and Identity</div>
+    <h2 class="section-title">The Company That Brought the<br>World into <em>Malaysian Homes</em></h2>
+    <div class="about-grid">
+      <div class="fade-up">
+        <p class="body-text">In 1996, Astro did something radical. It took established satellite technology from elsewhere in the world, brought it into the tropics, and created Malaysia's first mass-market pay-TV service. This was not invention. It was inspired translation. The company understood that the value was not in making the satellite. It was in making it Malaysian.</p>
+        <p class="body-text">For nearly two decades, Astro thrived on a model that is deceptively simple to describe and extraordinarily difficult to replicate: control the pipe, own the content deal, build the hardware relationship, and the audience stays. It worked. Sixty-five percent household penetration. Seventeen million weekly radio listeners. Three major language communities served under one roof.</p>
+        <p class="body-text">What Astro built was not just a business. It was infrastructure. Emotional infrastructure. The kind that becomes invisible because it is everywhere. And invisible infrastructure is, paradoxically, the most vulnerable kind, because people only notice it when it stops working.</p>
+        <p class="body-text">Here is what has changed that most people do not yet fully register: you no longer need that white satellite dish on your roof to watch Astro. The Ulti box delivers the full Astro experience entirely over broadband, no dish, no outdoor installation, no line-of-sight to the sky. sooka works on any smartphone, tablet or smart TV with a WiFi connection. The satellite is still there, still transmitting, still serving millions of homes. But the pipe has been democratised. Anyone with internet access is now Astro's potential audience. That is a profound structural shift, and it changes everything about how Astro must think about reach, acquisition and the definition of its own market.</p>
+        <div class="hidden-fact">
+          <div class="hidden-fact-label">Something most people do not know</div>
+          <p>When satellite signals fade during Malaysia's heavy tropical downpours, Astro does not simply lose the broadcast. It switches, within seconds, to a second broadcast centre located 25 kilometres away. This dual-facility architecture was built in Astro's earliest years as a direct engineering response to the Malaysian climate. It was one of the first serious innovations Astro funded entirely in-house, and predates every digital transformation initiative by fifteen years. The company's instinct to solve local problems with engineered solutions runs deeper than its current strategy documents suggest. Today, that same engineering mindset is what makes the Ulti box possible: the dish-free household is not a concession to streaming competitors. It is Astro solving the same problem it always solved, just with fibre instead of satellites.</p>
         </div>
-        <div class="scroll-indicator">SCROLL ↓</div>
+      </div>
+      <div class="fade-up">
+        <div class="stat-quad">
+          <div class="stat-box">
+            <div class="stat-num">65%</div>
+            <div class="stat-desc">Peak household<br>penetration rate</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">17.1M</div>
+            <div class="stat-desc">Weekly radio<br>listeners</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">10,000+</div>
+            <div class="stat-desc">Hours of local content<br>produced annually</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">29%</div>
+            <div class="stat-desc">Revenue erosion<br>FY21 to FY25</div>
+          </div>
+        </div>
+        <div class="pull-quote" style="margin-top:2rem;">
+          <p>"Distribution is not a moat when the river changes course."</p>
+          <div class="pull-quote-attr">The Theta Framework on infrastructure-led businesses in the streaming era</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BELIEF STRIP 1 -->
+<div class="belief-strip">
+  <p class="belief-quote">"Innovation is like planting a forest. The seeds you plant today won't bear fruit tomorrow, but they will mold your company's future."</p>
+  <div class="belief-attribution">The Theta Framework by Christine Pamela Chandrakasan</div>
+</div>
+
+<!-- TIMELINE -->
+<section class="section section-warm">
+  <div class="container">
+    <div class="section-eyebrow">The Arc</div>
+    <h2 class="section-title">From Antenna to <em>Algorithm</em></h2>
+    <p class="lead-text">Astro's evolution traces the full arc of media disruption in Southeast Asia. What happened matters. What did not happen matters just as much. Both are recorded here.</p>
+
+    <div style="display:flex; gap:2rem; margin-bottom:2rem; flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.75rem;color:var(--muted);">
+        <div style="width:14px;height:14px;border-radius:50%;background:var(--astro-red);flex-shrink:0;"></div> Strategic milestone
+      </div>
+      <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.75rem;color:var(--muted);">
+        <div style="width:14px;height:14px;border-radius:50%;background:var(--paper-warm);border:2px solid var(--astro-red);flex-shrink:0;"></div> Event on record
+      </div>
+      <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.75rem;color:var(--muted);">
+        <div style="width:14px;height:14px;border-radius:2px;background:rgba(139,26,26,0.15);border-left:3px solid var(--beyond-crimson);flex-shrink:0;"></div> Missed turn
+      </div>
     </div>
 
-    <!-- Act 1: The Rise -->
-    <section>
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Stage 1: The Rise</div>
-                <h2>The First Satellite Window<br>into Malaysia</h2>
-                <p class="section-intro">Founded in 1996, Astro became Malaysia's first mass-market satellite pay-TV service. When MegaTV collapsed, Astro emerged as the nationwide content gateway, building cultural dominance through a strategic multilingual approach spanning Malay, Chinese, and Tamil programming.</p>
-            </div>
+    <div class="timeline-track fade-up">
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number">65%</div>
-                    <div class="stat-label">Peak Household<br>Penetration</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">1996</div>
-                    <div class="stat-label">Year<br>Founded</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">3</div>
-                    <div class="stat-label">Major Language<br>Markets</div>
-                </div>
-            </div>
-
-            <div class="insight-box">
-                <h3>Takeaway</h3>
-                <p>Astro built a monopoly by translating proven global tech into the local context faster than anyone else but remained a hardware-anchored business. A classic case of execution excellence without innovation dependency.</p>
-            </div>
-
-            <p>The NJOI initiative extended reach to rural and low-income segments, achieving both social impact and market expansion. Astro's strength expanded into radio, sports, and content production, creating a massive moat through hardware control, billing infrastructure, exclusive content rights, and local production capabilities.</p>
+      <div class="tl-item milestone">
+        <div class="tl-year">1996</div>
+        <div>
+          <div class="tl-phase">Origin</div>
+          <div class="tl-title">The First Window Opens</div>
+          <div class="tl-desc">Astro launches as Malaysia's first direct-to-home satellite broadcaster. From day one, it goes fully digital, a bold and prescient choice. Initial offering of 22 channels carrying HBO, ESPN and Discovery. The genius was in the curation, not the technology.</div>
         </div>
-    </section>
+      </div>
 
-    <!-- Act 2: The Shock -->
-    <section class="bg-light">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Stage 2: The Shock</div>
-                <h2>Streaming Broke the<br>Distribution Moat</h2>
-                <p class="section-intro">External forces fundamentally redefined the competitive landscape. The arrival of ubiquitous broadband, mobile-first viewing habits, global streaming platforms, frictionless piracy, and creator-driven platforms shifted the youth attention graph entirely.</p>
-            </div>
-
-            <div class="chart-container">
-                <div class="chart-title">Revenue Decline Timeline (FY22–FY25E)</div>
-                <div class="chart-wrapper">
-                    <canvas id="revenueChart"></canvas>
-                </div>
-                <div class="chart-insight">
-                    <strong>Key Insight:</strong> Approximately 27% revenue drop over 3 years, driven by pay-TV commoditization and accelerating subscriber churn. Digital growth offsets only 20% of core erosion.
-                </div>
-            </div>
-
-            <h3>The Disruption Timeline</h3>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-year">2015</div>
-                    <div class="timeline-content">
-                        <h4>Netflix Malaysia Launch</h4>
-                        <p>On-demand era begins, challenging traditional TV scheduling model</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">2017</div>
-                    <div class="timeline-content">
-                        <h4>Broadband Penetration >80%</h4>
-                        <p>Internet becomes ubiquitous, reducing satellite dependency</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">2018</div>
-                    <div class="timeline-content">
-                        <h4>Mobile Surpasses TV</h4>
-                        <p>Mobile becomes primary screen for youth demographics</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">2020</div>
-                    <div class="timeline-content">
-                        <h4>MCO Acceleration</h4>
-                        <p>Lockdowns permanently accelerate streaming and short-form video adoption</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">2021</div>
-                    <div class="timeline-content">
-                        <h4>Disney+ Hotstar Malaysia</h4>
-                        <p>Global studios bypass local aggregators</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">2024</div>
-                    <div class="timeline-content">
-                        <h4>TikTok & YouTube Domination</h4>
-                        <p>Creator platforms capture majority of daily attention share</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="insight-box">
-                <h3>The Result</h3>
-                <p>Owning the living room is no longer owning the market. Astro dominated 1996–2015 when access was scarce. After 2015, audiences moved to streaming and social media — where Astro wasn't present.</p>
-            </div>
+      <div class="tl-item">
+        <div class="tl-year">2000</div>
+        <div>
+          <div class="tl-phase">Expansion</div>
+          <div class="tl-title">Beyond Malaysia</div>
+          <div class="tl-desc">Kristal-Astro launches in Brunei. Astro begins testing the idea that its model could travel. The early result: a regional footprint, but limited learning about scaling content across cultures.</div>
         </div>
-    </section>
+      </div>
 
-    <!-- Data Analysis -->
-    <section>
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Data Analysis</div>
-                <h2>The Migration:<br>Pay-TV to Streaming</h2>
-            </div>
-
-            <div class="chart-container">
-                <div class="chart-title">Subscriber Trends: Pay-TV vs Streaming (sooka)</div>
-                <div class="chart-wrapper">
-                    <canvas id="subscriberChart"></canvas>
-                </div>
-                <div class="chart-insight">
-                    <strong>Strategic Insight:</strong> Astro is growing digital subscribers, but conversion only offsets ~20% of core churn. The gap between losses and gains continues to widen.
-                </div>
-            </div>
-
-            <div class="chart-container">
-                <div class="chart-title">Audience Shift by Age Group: Attention Migration (2018 vs 2024)</div>
-                <div class="chart-wrapper">
-                    <canvas id="audienceChart"></canvas>
-                </div>
-                <div class="chart-insight">
-                    <strong>Critical Finding:</strong> Youth attention (13-34) migrated almost completely to streaming and social platforms. Middle-aged cohorts now majority streaming. Even older demographics are shifting — eroding Astro's traditional base.
-                </div>
-            </div>
-
-            <div class="insight-box">
-                <h3>Critical Insight</h3>
-                <p>Attention is now mobile-first and creator-driven. Growth no longer sits in the living room; it sits in the feed. Astro loses relevance where future lifetime value lives.</p>
-            </div>
+      <div class="tl-item">
+        <div class="tl-year">2008</div>
+        <div>
+          <div class="tl-phase">Infrastructure</div>
+          <div class="tl-title">Rebuilding the Backbone</div>
+          <div class="tl-desc">Astro begins a major overhaul of its broadcast management system. A partner willing to build custom solutions around Astro's unique multi-site needs is found. This is early evidence of a company willing to invest in operational innovation when operational survival demands it.</div>
         </div>
-    </section>
+      </div>
 
-    <!-- Act 3: Misleading Lessons -->
-    <section class="bg-light">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Stage 3: Misleading Lessons</div>
-                <h2>The Adaptation Era:<br>Still Strong, Still Late</h2>
-                <p class="section-intro">Astro has responded with strategic adaptations across connectivity, pricing, platform aggregation, and content. But adapting to disruption is not the same as creating new value.</p>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number">3×</div>
-                    <div class="stat-label">FY25 Profit<br>Increase</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" style="font-size: 2.5rem;">2-Digit</div>
-                    <div class="stat-label">Broadband &<br>Digital Ads Growth</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">-13%</div>
-                    <div class="stat-label">Q1 FY26<br>Revenue YoY</div>
-                </div>
-            </div>
-
-            <div class="insight-box">
-                <h3>The Paradox</h3>
-                <p>Astro is adapting, but gravity is stronger. Profitability improves through cost reduction, yet revenue decline accelerates. Churn widens despite lower prices and better bundles.</p>
-            </div>
+      <div class="tl-item milestone">
+        <div class="tl-year">2009</div>
+        <div>
+          <div class="tl-phase">Technology Upgrade</div>
+          <div class="tl-title">Astro B.yond: HD Arrives</div>
+          <div class="tl-desc">High-definition broadcasting launches. Astro stays ahead of the hardware curve and drives an upgrade cycle. This moment represents a high point of its Core innovation confidence. The model is clear: better pipes, better signal, more subscribers.</div>
         </div>
-    </section>
+      </div>
 
-    <!-- Theta Framework -->
-    <section>
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Stage 4: The Opportunity</div>
-                <h2>Astro Through the<br>Theta Framework</h2>
-                <p class="section-intro">Understanding where innovation lives, where value is trapped, and where growth must be built.</p>
-            </div>
-
-            <div class="theta-grid">
-                <div class="theta-card core">
-                    <div class="theta-label">
-                        <span>✅</span>
-                        <span>Core</span>
-                    </div>
-                    <div class="theta-percentage">70%</div>
-                    <h4>Satellite Pay-TV</h4>
-                    <p>NJOI, content rights, hardware upgrades, linear broadcasting</p>
-                    <div class="risk-label">Melting iceberg — defend but do not over-invest</div>
-                </div>
-                <div class="theta-card edge">
-                    <div class="theta-label">
-                        <span>🟨</span>
-                        <span>Edge</span>
-                    </div>
-                    <div class="theta-percentage">25%</div>
-                    <h4>Digital Transition</h4>
-                    <p>sooka OTT, app aggregation, data-driven ads, Astro Fibre</p>
-                    <div class="risk-label">Must accelerate churn conversion into digital retention</div>
-                </div>
-                <div class="theta-card beyond">
-                    <div class="theta-label">
-                        <span>🟦</span>
-                        <span>Beyond</span>
-                    </div>
-                    <div class="theta-percentage">5%</div>
-                    <h4>Future Engines</h4>
-                    <p>AI personalization, sports tech, creator economy (very early stage)</p>
-                    <div class="risk-label">Where new revenue engines must emerge</div>
-                </div>
-            </div>
-
-            <div class="chart-container">
-                <div class="chart-title">Innovation Mix: Current Strategic Focus Distribution</div>
-                <div class="chart-wrapper">
-                    <canvas id="thetaChart"></canvas>
-                </div>
-                <div class="chart-insight">
-                    <strong>Assessment:</strong> Too much defensive investment in declining Core. Insufficient investment in Beyond — where the next core must be built. Edge is growing but lacks breakthrough momentum.
-                </div>
-            </div>
-
-            <div class="insight-box">
-                <h3>Strategic Implication</h3>
-                <p>Astro is defending yesterday's business model. To lead Malaysia's entertainment future, it must build tomorrow's value engines instead of merely adapting today's platforms and playing catch-up.</p>
-            </div>
+      <div class="tl-item">
+        <div class="tl-year">2012</div>
+        <div>
+          <div class="tl-phase">Inclusion</div>
+          <div class="tl-title">NJOI and the Free Tier</div>
+          <div class="tl-desc">The free-to-air satellite service NJOI launches, extending reach into lower-income and rural segments. A rare moment where Astro grew its audience not by charging more but by charging nothing. Social impact as market strategy.</div>
         </div>
-    </section>
+      </div>
 
-    <!-- Transferable Capabilities -->
-    <section class="bg-light">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Strategic Assets</div>
-                <h2>15 Transferable<br>Capabilities</h2>
-                <p class="section-intro">Below are 6 of 15 capabilities that can power new business models beyond traditional Pay-TV.</p>
-            </div>
-
-            <div class="capabilities-grid">
-                <div class="capability-card">
-                    <div class="capability-header">Infrastructure</div>
-                    <div class="capability-title">Subscription Billing & Recurring Revenue</div>
-                    <div class="capability-desc">Proven payment infrastructure across millions of households</div>
-                    <span class="transfer-badge transfer-high">High Transfer Potential</span>
-                </div>
-                <div class="capability-card">
-                    <div class="capability-header">Infrastructure</div>
-                    <div class="capability-title">Broadband Delivery Network</div>
-                    <div class="capability-desc">Growing fibre infrastructure for connectivity services</div>
-                    <span class="transfer-badge transfer-medium">Medium Transfer Potential</span>
-                </div>
-                <div class="capability-card">
-                    <div class="capability-header">Content & IP</div>
-                    <div class="capability-title">Local Language Content Creation</div>
-                    <div class="capability-desc">Production capabilities across Malay, Chinese, Tamil markets</div>
-                    <span class="transfer-badge transfer-high">High Transfer Potential</span>
-                </div>
-                <div class="capability-card">
-                    <div class="capability-header">Content & IP</div>
-                    <div class="capability-title">Sports Production & Licensing</div>
-                    <div class="capability-desc">Exclusive rights and production expertise in national sports</div>
-                    <span class="transfer-badge transfer-high">High Transfer Potential</span>
-                </div>
-                <div class="capability-card">
-                    <div class="capability-header">Data & Analytics</div>
-                    <div class="capability-title">Language-Segmented Audience Data</div>
-                    <div class="capability-desc">Deep behavioral insights across demographic segments</div>
-                    <span class="transfer-badge transfer-high">High Transfer Potential</span>
-                </div>
-                <div class="capability-card">
-                    <div class="capability-header">National Reach</div>
-                    <div class="capability-title">Government Relationships</div>
-                    <div class="capability-desc">Trusted partner for national digital initiatives</div>
-                    <span class="transfer-badge transfer-high">High Transfer Potential</span>
-                </div>
-            </div>
-
-            <div class="insight-box">
-                <h3>Key Insight</h3>
-                <p>Astro is more than a TV company. Its existing capabilities — content, segmentation, trust, infrastructure — can become the foundation of multiple new high-growth businesses.</p>
-            </div>
+      <div class="tl-missed">
+        <div></div>
+        <div class="tl-missed-content">
+          <div class="tl-missed-label">Missed Turn — 2012</div>
+          <div class="tl-missed-text">Astro on the Go launches the same year as NJOI: Malaysia's first OTT streaming service, three years before Netflix enters the market. Rather than positioning it as the future of the business, Astro treats it as a companion to satellite Pay-TV. The head start is real. The commitment to it is not. The company had the first mover advantage in streaming and chose not to use it.</div>
         </div>
-    </section>
+      </div>
 
-    <!-- Act 5: The Transformation -->
-    <section>
-        <div class="container">
-            <div class="section-header">
-                <div class="section-label">Stage 5: The Transformation</div>
-                <h2>Examples of New Core<br>Opportunities</h2>
-                <p class="section-intro">Building second cores by leveraging existing strengths while reducing dependence on legacy Pay-TV.</p>
-            </div>
-
-            <h3>1. Malaysia Creator & SME Platform</h3>
-            <p><strong>Why it matters:</strong> Astro has the only truly scaled local content ecosystem and deep brand trust across Malay, Chinese, and Tamil households.</p>
-            <p><strong>Opportunity:</strong> Connect creators and SMEs through a national marketplace, bridging local advertising gaps that foreign platforms cannot reach.</p>
-            <p><strong>Potential impact:</strong> Creates a high-growth, defensible business around content, advertising, and local commerce.</p>
-
-            <h3>2. National Sports & Live Entertainment Engine</h3>
-            <p><strong>Why it matters:</strong> Sports is a national obsession; Astro already owns sports licensing and production relationships.</p>
-            <p><strong>Opportunity:</strong> Become the go-to hub for live sports, esports, and national leagues, capturing subscriptions, sponsorships, and engagement.</p>
-            <p><strong>Potential impact:</strong> Sports is identity-driven — hard for global competitors to replicate locally.</p>
-
-            <h3>3. Digital Infrastructure & Household Bundle</h3>
-            <p><strong>Why it matters:</strong> Broadband is a utility; consumers face fragmented digital service bundles.</p>
-            <p><strong>Opportunity:</strong> Offer a unified bundle of broadband, OTT, and family content while integrating loyalty and connectivity.</p>
-            <p><strong>Potential impact:</strong> Positions Astro as a non-discretionary, sticky service — a new household platform beyond TV.</p>
-
-            <div class="roadmap">
-                <h3 style="margin-top: 0; margin-bottom: 3rem;">Potential Strategic Architecture Timeline</h3>
-                
-                <div class="roadmap-phase">
-                    <div class="roadmap-header">
-                        <div class="roadmap-years">Years 1–2</div>
-                        <div class="roadmap-title">Core Stabilization</div>
-                    </div>
-                    <div class="roadmap-desc">Stop the bleeding, build muscle. Legacy monetization, app conversion, foundational capabilities.</div>
-                </div>
-
-                <div class="roadmap-phase">
-                    <div class="roadmap-header">
-                        <div class="roadmap-years">Years 3–5</div>
-                        <div class="roadmap-title">Edge Growth Engine</div>
-                    </div>
-                    <div class="roadmap-desc">Build new revenue majority from digital. Creator engagement, OTT sports & local content, fibre expansion, strategic partnerships.</div>
-                </div>
-
-                <div class="roadmap-phase">
-                    <div class="roadmap-header">
-                        <div class="roadmap-years">Years 6–10</div>
-                        <div class="roadmap-title">Second Core Dominance</div>
-                    </div>
-                    <div class="roadmap-desc">Scale beyond TV, define the market. Sports ecosystem, creator economy platform, household digital bundles, AI personalization at scale.</div>
-                </div>
-            </div>
-
-            <div class="insight-box">
-                <h3>Organizational Innovation Engine</h3>
-                <p>Astro needs more than strategy. It needs a future factory : A corporate VC arm to invest in creator platforms and digital sports assets. An incubation lab to prototype and graduate promising ideas into new business units. Separate KPIs that measure learning and growth, not just legacy metrics.</p>
-            </div>
+      <div class="tl-item">
+        <div class="tl-year">2015</div>
+        <div>
+          <div class="tl-phase">The Clock Starts</div>
+          <div class="tl-title">Netflix Enters Malaysia</div>
+          <div class="tl-desc">The disruption clock starts. Astro's response is measured and perhaps too measured. The company labels streaming as an adjacent opportunity and manages it alongside core Pay-TV rather than treating it as an existential threat. This framing will cost years.</div>
         </div>
-    </section>
+      </div>
 
-    <!-- Closing -->
-    <div class="closing">
-        <div class="container">
-            <div class="section-label" style="color: var(--astro-orange); margin-bottom: 2rem;">Closing Insight</div>
-            <h2>Astro thrived by owning the window into Malaysian homes.</h2>
-            <p class="insight">Its future depends on owning who Malaysians pay attention to.</p>
-            <p class="final-note">Adapting innovation once made Astro a leader. But only creating new core value will keep it one.</p>
+      <div class="tl-missed">
+        <div></div>
+        <div class="tl-missed-content">
+          <div class="tl-missed-label">Missed Turn — 2015 to 2017</div>
+          <div class="tl-missed-text">The two years between Netflix's Malaysia launch and Rohana Rozhan's public acknowledgment of disruption are the most expensive silence in Astro's history. Internal awareness of the threat existed. Strategic response did not move at the same speed. The framing of streaming as adjacent rather than existential shaped budget decisions, product priorities, and talent allocation for years. By the time the company publicly named the threat, subscriber erosion had already begun.</div>
         </div>
+      </div>
+
+      <div class="tl-item milestone">
+        <div class="tl-year">2017</div>
+        <div>
+          <div class="tl-phase">Inflection Point</div>
+          <div class="tl-title">CEO Rohana Rozhan Names the Truth</div>
+          <div class="tl-desc">Rohana publicly acknowledges that "technology has opened up a new world order where business models are completely disrupted." She calls for a fundamental shift. She also admits, candidly, that changing the pace of the organisation is quite difficult. This is the gap between seeing clearly and acting boldly.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year">2019</div>
+        <div>
+          <div class="tl-phase">Cloud and Content</div>
+          <div class="tl-title">AWS Partnership and Astro Ultra</div>
+          <div class="tl-desc">Astro signs with Amazon Web Services, targeting 75% cloud-based infrastructure. Astro Ultra UHD platform launches. Two investments in different directions simultaneously, one in future architecture, one in extending the present hardware model.</div>
+        </div>
+      </div>
+
+      <div class="tl-missed">
+        <div></div>
+        <div class="tl-missed-content">
+          <div class="tl-missed-label">Missed Turn — 2019 to 2021</div>
+          <div class="tl-missed-text">The AWS partnership targets 75% cloud infrastructure. But cloud is plumbing, not product. While the architecture modernises, no new consumer-facing product of significance launches. The MCO lockdowns of 2020 create a surge in streaming demand across Southeast Asia. Disney+ Hotstar enters Malaysia in 2021. Between the AWS deal and the sooka relaunch, two years pass with no visible acceleration in Astro's digital product output. The infrastructure is being built. The audience clock is not waiting.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year">2021</div>
+        <div>
+          <div class="tl-phase">Partnership Era</div>
+          <div class="tl-title">Netflix Integration and sooka Relaunch</div>
+          <div class="tl-desc">Astro integrates Netflix into its ecosystem, a strategic pivot from competition to aggregation. The sooka OTT platform is reimagined as a direct-to-consumer streaming service. For the first time, Astro acknowledges it cannot beat the global giants and begins building with them instead.</div>
+        </div>
+      </div>
+
+      <div class="tl-item milestone">
+        <div class="tl-year">2024</div>
+        <div>
+          <div class="tl-phase">Production Era</div>
+          <div class="tl-title">Astro Studios and KULT Launch</div>
+          <div class="tl-desc">Astro Studios opens with Extended Reality virtual production powered by Unreal Engine, capable of producing in Dolby Vision and Dolby Atmos. KULT, a separate digital marketing entity, is set up as a protected innovation unit with its own office in Bangsar and its own mandate. Two simultaneous signals that Astro has stopped waiting.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year">2025</div>
+        <div>
+          <div class="tl-phase">Stabilisation</div>
+          <div class="tl-title">The First Green Shoots</div>
+          <div class="tl-desc">sooka paying customers nearly double year on year. Astro Fibre grows 11%. August 2025 marks the first positive Pay-TV net subscriber addition in seven years. Revenue remains under pressure but the direction of the new businesses finally turns upward. The company is not healed. But it has stopped bleeding the same way.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- INNOVATION MAP -->
+<section class="section section-white" id="innovation">
+  <div class="container">
+    <div class="section-eyebrow">Theta Innovation Map</div>
+    <h2 class="section-title">Where Astro <em>Actually Innovates</em></h2>
+    <p class="lead-text">The Theta Framework maps innovation across three zones defined by market reach and technology change. What the map reveals about Astro is not just what it is doing, but the gravitational pull that makes certain zones hard to leave.</p>
+
+    <div class="theta-layout fade-up">
+      <div>
+        <div class="zone-legend">
+          <div class="zone-pill core">
+            <div class="zone-pill-header">
+              <div class="zone-dot core"></div>
+              <div class="zone-pill-name">Core Zone</div>
+            </div>
+            <div class="zone-pill-desc">Existing markets, incremental improvement. Pay-TV packages, NJOI optimisation, radio digital upgrades, Astro Fibre rollout. These initiatives serve known audiences with familiar technology. They are densely funded and rigorously measured. They are also, structurally, in decline.</div>
+          </div>
+          <div class="zone-pill edge">
+            <div class="zone-pill-header">
+              <div class="zone-dot edge"></div>
+              <div class="zone-pill-name">Edge Zone</div>
+            </div>
+            <div class="zone-pill-desc">Adjacent bets and architectural pivots. Cloud playout migration, sooka OTT acceleration, XR virtual production, sooka VIP tier. These serve new audiences with meaningful technology change. They are funded but not yet at scale. sooka's 97% paying customer growth is the single strongest signal in this zone.</div>
+          </div>
+          <div class="zone-pill beyond">
+            <div class="zone-pill-header">
+              <div class="zone-dot beyond"></div>
+              <div class="zone-pill-name">Beyond Zone</div>
+            </div>
+            <div class="zone-pill-desc">Speculative bets and frontier signals. GenAI personalisation, hyper-local IP for ASEAN export, the aggregator model at full maturity, un-piratable on-ground experiences. These are real bets, but they are thin. The Beyond zone at Astro is a garden with seeds planted and not yet watered.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scatter-wrap">
+        <h4>Astro Innovation Portfolio Map</h4>
+        <div class="chart-area">
+          <canvas id="scatterChart"></canvas>
+        </div>
+      </div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="author">A case study by Christine Pamela</div>
-        <div>© Theta Framework 2025. All rights reserved.</div>
-    </footer>
+    <div style="margin-top:3.5rem;" class="fade-up">
+      <div class="pull-quote">
+        <p>"Which zones are crowded? Which are empty? Does the map show balance or dangerous concentration? Where are the white spaces that no one is pursuing?"</p>
+        <div class="pull-quote-attr">Theta Framework Section 1 guiding questions</div>
+      </div>
+      <p class="body-text">Astro's map has an obvious gravity problem. The Core cluster is dense, large-dot, well-resourced. The Edge cluster is meaningful but not yet dominant. The Beyond cluster has presence but not programme. The most under-explored white space in the entire map is systematic regional IP export. Astro produces more culturally specific Malaysian content than any other entity on the planet. Almost none of it travels purposefully beyond the country's borders. That gap is not a product problem. It is a strategic imagination problem.</p>
+    </div>
+  </div>
+</section>
 
-    <script>
-        Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
-        Chart.defaults.color = '#666';
+<!-- PORTFOLIO ALLOCATION -->
+<section class="section section-warm">
+  <div class="container">
+    <div class="section-eyebrow">70-20-10 Analysis</div>
+    <h2 class="section-title">The Allocation That<br><em>Tells the Truth</em></h2>
+    <p class="lead-text">Where a company actually puts its money is a more honest strategy document than any deck in the boardroom. Astro's allocation tells a story of a company that knows the answer but keeps stalling on the question.</p>
 
-        // Revenue Decline Chart
-        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-        new Chart(revenueCtx, {
-            type: 'line',
-            data: {
-                labels: ['FY22', 'FY23', 'FY24', 'FY25E'],
-                datasets: [{
-                    label: 'Revenue (RM Billion)',
-                    data: [4.21, 3.62, 3.34, 3.08],
-                    borderColor: '#FF6B35',
-                    backgroundColor: 'rgba(255, 107, 53, 0.05)',
-                    borderWidth: 2,
-                    tension: 0.4,
-                    fill: true,
-                    pointRadius: 5,
-                    pointHoverRadius: 7,
-                    pointBackgroundColor: '#FF6B35',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: '#1a1a1a',
-                        padding: 12,
-                        titleFont: { size: 13 },
-                        bodyFont: { size: 14 },
-                        cornerRadius: 4
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        min: 2.5,
-                        max: 4.5,
-                        grid: { color: 'rgba(0,0,0,0.05)' },
-                        ticks: {
-                            callback: function(value) {
-                                return 'RM ' + value + 'B';
-                            }
-                        }
-                    },
-                    x: {
-                        grid: { display: false }
-                    }
-                }
-            }
-        });
+    <div class="alloc-grid fade-up">
+      <div>
+        <div class="donut-wrap">
+          <div class="donut-area">
+            <canvas id="donutChart"></canvas>
+            <div class="donut-center">
+              <div class="donut-center-value">3</div>
+              <div class="donut-center-label">Zones Active</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="alloc-bars">
+        <div class="alloc-item">
+          <div class="alloc-item-header">
+            <div class="alloc-zone-name">Core Zone</div>
+            <div class="alloc-pct">~82%</div>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill" style="width:82%; background: var(--core-green);"></div>
+            <div class="alloc-bar-bench" style="left:70%;"></div>
+          </div>
+          <div class="alloc-comment">Benchmark is 70%. Astro runs 10-15 points overweight in Core. The excess is not intentional ambition for the present. It is structural inertia. Legacy costs are high, the hardware estate is large, and core revenue still pays most of the bills. The danger is that optimising for this keeps the next S-curve underfunded.</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-item-header">
+            <div class="alloc-zone-name">Edge Zone</div>
+            <div class="alloc-pct">~12%</div>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill" style="width:12%; background: var(--edge-amber);"></div>
+            <div class="alloc-bar-bench" style="left:20%;"></div>
+          </div>
+          <div class="alloc-comment">Benchmark is 20%. Astro is running half what it should in the zone that contains its most promising businesses. sooka and Astro Fibre are growing, but the capital behind them relative to their strategic importance does not yet match the stated ambition.</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-item-header">
+            <div class="alloc-zone-name">Beyond Zone</div>
+            <div class="alloc-pct">~5%</div>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill" style="width:5%; background: var(--beyond-crimson);"></div>
+            <div class="alloc-bar-bench" style="left:10%;"></div>
+          </div>
+          <div class="alloc-comment">Benchmark is 10%. Astro is at roughly half the recommended Beyond allocation. This is the most strategically dangerous gap. The seeds for 2035 are sparse. GenAI, regional IP export, frontier content formats: these exist as signals of intent, not as funded programmes with dedicated teams and patient capital behind them.</div>
+        </div>
+      </div>
+    </div>
 
-        // Subscriber Trends Chart
-        const subscriberCtx = document.getElementById('subscriberChart').getContext('2d');
-        new Chart(subscriberCtx, {
-            type: 'line',
-            data: {
-                labels: ['FY22', 'FY23', 'FY24', 'FY25E'],
-                datasets: [{
-                    label: 'Pay-TV Subscribers (Millions)',
-                    data: [3.1, 2.7, 2.3, 2.0],
-                    borderColor: '#dc2626',
-                    backgroundColor: 'rgba(220, 38, 38, 0.05)',
-                    borderWidth: 2,
-                    tension: 0.4,
-                    fill: true,
-                    yAxisID: 'y',
-                    pointRadius: 5,
-                    pointHoverRadius: 7
-                }, {
-                    label: 'sooka Subscribers (Thousands)',
-                    data: [200, 350, 500, 650],
-                    borderColor: '#2563eb',
-                    backgroundColor: 'rgba(37, 99, 235, 0.05)',
-                    borderWidth: 2,
-                    tension: 0.4,
-                    fill: true,
-                    yAxisID: 'y1',
-                    pointRadius: 5,
-                    pointHoverRadius: 7
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 20,
-                            font: { size: 12 },
-                            usePointStyle: true,
-                            pointStyle: 'circle'
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: '#1a1a1a',
-                        padding: 12,
-                        cornerRadius: 4
-                    }
-                },
-                scales: {
-                    y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        title: {
-                            display: true,
-                            text: 'Pay-TV Subscribers (M)',
-                            font: { size: 11 }
-                        },
-                        grid: { color: 'rgba(0,0,0,0.05)' }
-                    },
-                    y1: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
-                        title: {
-                            display: true,
-                            text: 'sooka Subscribers (K)',
-                            font: { size: 11 }
-                        },
-                        grid: { drawOnChartArea: false }
-                    },
-                    x: {
-                        grid: { display: false }
-                    }
-                }
-            }
-        });
+    <div class="pull-quote fade-up" style="margin-top:3rem;">
+      <p>"A healthy innovation portfolio spans all three zones. Companies that innovate only in the Core optimise themselves into irrelevance."</p>
+      <div class="pull-quote-attr">The Theta Framework</div>
+    </div>
 
-        // Audience Shift Chart
-        const audienceCtx = document.getElementById('audienceChart').getContext('2d');
-        new Chart(audienceCtx, {
-            type: 'bar',
-            data: {
-                labels: ['13-17', '18-34', '35-54', '55+'],
-                datasets: [{
-                    label: '2018 Pay-TV',
-                    data: [20, 40, 65, 85],
-                    backgroundColor: 'rgba(220, 38, 38, 0.5)',
-                }, {
-                    label: '2024 Pay-TV',
-                    data: [8, 20, 40, 70],
-                    backgroundColor: 'rgba(220, 38, 38, 0.2)',
-                }, {
-                    label: '2018 Streaming/Social',
-                    data: [80, 60, 35, 15],
-                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
-                }, {
-                    label: '2024 Streaming/Social',
-                    data: [92, 80, 60, 30],
-                    backgroundColor: 'rgba(37, 99, 235, 0.5)',
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 15,
-                            font: { size: 11 },
-                            usePointStyle: true,
-                            pointStyle: 'rect'
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: '#1a1a1a',
-                        padding: 12,
-                        cornerRadius: 4
-                    }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Age Groups',
-                            font: { size: 12 }
-                        },
-                        grid: { display: false }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        title: {
-                            display: true,
-                            text: '% of Daily Video Attention',
-                            font: { size: 12 }
-                        },
-                        grid: { color: 'rgba(0,0,0,0.05)' },
-                        ticks: {
-                            callback: function(value) {
-                                return value + '%';
-                            }
-                        }
-                    }
-                }
-            }
-        });
+    <div class="kpi-grid fade-up">
+      <div class="kpi-card chaos">
+        <div class="kpi-stage">Chaos Stage / Maverick Mode</div>
+        <div class="kpi-metric">Unknown</div>
+        <div class="kpi-label">Learning velocity in early exploration</div>
+        <div class="kpi-trend bad">Not measured</div>
+      </div>
+      <div class="kpi-card build">
+        <div class="kpi-stage">Build Stage / Skunkworks</div>
+        <div class="kpi-metric">Quarterly</div>
+        <div class="kpi-label">sooka iteration cycle</div>
+        <div class="kpi-trend warn">Improving</div>
+      </div>
+      <div class="kpi-card scale">
+        <div class="kpi-stage">Scale Stage / Open Source</div>
+        <div class="kpi-metric">97% YoY</div>
+        <div class="kpi-label">sooka paying customer growth</div>
+        <div class="kpi-trend good">Strong signal</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        // Theta Framework Chart
-        const thetaCtx = document.getElementById('thetaChart').getContext('2d');
-        new Chart(thetaCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Core (Satellite Pay-TV)', 'Edge (Digital Transition)', 'Beyond (Future Engines)'],
-                datasets: [{
-                    data: [70, 25, 5],
-                    backgroundColor: [
-                        'rgba(220, 38, 38, 0.7)',
-                        'rgba(234, 88, 12, 0.7)',
-                        'rgba(37, 99, 235, 0.7)'
-                    ],
-                    borderWidth: 0,
-                    hoverOffset: 10
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 20,
-                            font: { size: 12 },
-                            usePointStyle: true,
-                            pointStyle: 'circle'
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: '#1a1a1a',
-                        padding: 12,
-                        cornerRadius: 4,
-                        callbacks: {
-                            label: function(context) {
-                                return context.label + ': ' + context.parsed + '%';
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    </script>
+<!-- REVENUE -->
+<section class="section section-white" id="revenue">
+  <div class="container">
+    <div class="section-eyebrow">Revenue and Macro Context</div>
+    <h2 class="section-title">Five Years of <em>Uncomfortable Numbers</em></h2>
+    <p class="lead-text">Astro has lost 29% of its revenue in four fiscal years. That is not a correction. That is a structural shift in the underlying business model. The question is whether what is being built can grow faster than what is being lost.</p>
+
+    <div class="revenue-chart-wrap fade-up">
+      <div class="rev-area">
+        <canvas id="revenueChart"></canvas>
+      </div>
+    </div>
+
+    <div class="revenue-annotation fade-up">
+      <div class="rev-ann">
+        <div class="rev-ann-year">FY22</div>
+        <div class="rev-ann-pct">4.18B / -4.1%</div>
+        <div class="rev-ann-text">The first real crack. Streaming adoption reaches critical mass. Advertising budgets begin shifting to digital. Still manageable, but the trendline has definitively turned.</div>
+      </div>
+      <div class="rev-ann">
+        <div class="rev-ann-year">FY23</div>
+        <div class="rev-ann-pct">3.62B / -13.4%</div>
+        <div class="rev-ann-text">The steepest single-year drop. Netflix, Disney+ and iQIYI attack Astro's local content moat with Malay, Chinese and Tamil originals. Cost-of-living pressure gives households an easy budget line to cut.</div>
+      </div>
+      <div class="rev-ann">
+        <div class="rev-ann-year">FY24</div>
+        <div class="rev-ann-pct">3.34B / -7.7%</div>
+        <div class="rev-ann-text">Net profit collapses 85% to RM36M, the lowest since the 2012 listing. Go Shop closes. Forex losses hit unhedged liabilities. The VSS restructuring adds one-time costs. The share price falls to 29.5 sen.</div>
+      </div>
+      <div class="rev-ann">
+        <div class="rev-ann-year">FY25</div>
+        <div class="rev-ann-pct">3.08B / -7.8%</div>
+        <div class="rev-ann-text">Decline continues but composition changes. sooka nearly doubles paying subscribers. Fibre grows 11%. Enterprise up 18%. Adjacent businesses begin meaningfully offsetting core losses for the first time.</div>
+      </div>
+    </div>
+
+    <p class="body-text" style="margin-top:2.5rem;">What the revenue chart does not show is the macro context that makes Astro's situation harder than the numbers alone suggest. Malaysian consumer spending has been compressed by inflation and a weakening ringgit. Multinational advertising budgets, which once flowed heavily into linear TV and radio, have been systematically redirected to programmatic digital formats where Astro does not yet compete at scale. The company is fighting both a structural media disruption and an unfavourable macroeconomic cycle simultaneously.</p>
+
+    <p class="body-text">The micro picture is more encouraging. In the communities Astro serves most deeply, those who want Malay drama, Tamil programming, and Mandarin content at a level of production quality and cultural fluency that global platforms cannot yet match, the loyalty remains real. The chasm is not between Astro and its audience. It is between the audience it serves now and the one it needs to reach next.</p>
+
+    <div class="pull-quote fade-up">
+      <p>"Astro's FY24 profit collapse revealed something important: when you cut costs aggressively while revenue erodes, you get profit improvement without business improvement. That is not recovery. That is managed decline dressed up as resilience."</p>
+      <div class="pull-quote-attr">Theta Framework Diagnostic Analysis</div>
+    </div>
+  </div>
+</section>
+
+<!-- BELIEF STRIP 2 -->
+<div class="belief-strip">
+  <p class="belief-quote">"The only way to survive is to build your next S-curve before the current one collapses. That means using your Core to fund your Edge and Beyond."</p>
+  <div class="belief-attribution">The Theta Framework</div>
+</div>
+
+<!-- INNOVATION CULTURE SECTION -->
+<section class="section section-warm">
+  <div class="container">
+    <div class="section-eyebrow">Innovation Culture and People</div>
+    <h2 class="section-title">Wildflowers in a<br><em>Manicured Garden</em></h2>
+    <p class="lead-text">The Theta Framework's most provocative claim is that the real innovation gap is not structural. It is human. Mavericks exist inside Astro. The question is whether the organisation is soil or cement.</p>
+
+    <div class="about-grid fade-up">
+      <div>
+        <p class="body-text">Every organisation that has lived as long as Astro develops an immune system. It is efficient, adaptive, and thoroughly hostile to foreign bodies. The foreign bodies, in this context, are unconventional ideas and the people who carry them. Agnes Rozario, Astro's Chief Content Officer, represents the archetype of the protected maverick: a leader who uses her seniority as a shield for the creative risk-takers in her orbit. That is not a systemic solution. That is a personality solution.</p>
+        <p class="body-text">The launch of KULT tells a similar story. The fact that Astro needed to physically move this unit to a separate office in Bangsar, give it a separate leadership structure, and explicitly free it from Astro's existing incentive system says everything about what happens to bold ideas inside the main building. KULT is proof of concept that protected innovation spaces work. It is also, inadvertently, evidence that the main building needs them.</p>
+        <p class="body-text">What the Theta Framework calls the Chaos Stage, the unstructured space where mavericks roam without instructions, where failure is a curriculum rather than a consequence, is the zone where Astro is most clearly underdeveloped. Their innovation happens in programmes, in partnerships, in structured investments. The unstructured exploration that produces genuinely surprising futures? That infrastructure barely exists.</p>
+        <div class="pull-quote">
+          <p>"Mavericks are the wildflowers in a monoculture. The ones who ask 'why not' when everyone else says that is not how we do things. They don't follow rules. They rewrite them."</p>
+          <div class="pull-quote-attr">The Theta Framework</div>
+        </div>
+      </div>
+      <div>
+        <p class="body-text">Astro has never had a corporate venture arm. It has no formal fund for minority-stake investments in early-stage companies. Its external investment track record consists almost entirely of majority-stake joint ventures, the Karangkraf Digital 360 deal for RM100 million, the Nu Ideaktiv partnership for similar sums. These are acquisitions of control, not bets on optionality. A venture fund says: we accept that eight of these ten investments may fail, and that is how we find the one that changes everything. Astro's approach says: we must have 51% and a clear integration path before we move.</p>
+        <p class="body-text">This control orientation is not irrational. For a company managing a complex, multi-platform content operation across languages, demographics, and distribution channels, concentration of ownership reduces operational risk. But it also means Astro never builds the muscle for small, speculative, high-upside bets. And in an era defined by startups that move faster than any legacy organisation can respond to, that muscle gap is not trivial.</p>
+        <p class="body-text">The psychological safety question is worth sitting with. When Euan Smith says publicly that the company is funding the old and new world simultaneously, that honest acknowledgment is a form of leadership courage that the Theta Framework scores highly. What is less visible, and more determinative, is whether the people three levels below Euan feel safe to bring him a genuinely uncomfortable idea without a revenue model attached to it.</p>
+        <div class="hidden-fact">
+          <div class="hidden-fact-label">The hidden fact that reframes everything</div>
+          <p>Astro launched its first OTT streaming service in 2012. It was called Astro on the Go. Netflix would not enter Malaysia for another three years. Astro had a genuine head start in streaming, an early mover advantage that most digital-native companies would have weaponised. Instead, Astro on the Go was treated as a companion to satellite Pay-TV, an extension of the existing model rather than a replacement for it. It was ahead of its time and deliberately kept small. By the time the company understood what it had, the window had narrowed. The lesson is not that Astro failed to innovate. It is that Astro innovated and then did not back its own bet.</p>
+        </div>
+        <div class="hidden-fact" style="margin-top:1.2rem;">
+          <div class="hidden-fact-label">The question no one is asking Astro</div>
+          <p>Astro has 12,000 hours of public service content in its ESG portfolio under the Voice For Good initiative. It won an Asia-Pacific broadcasting award for developing audio description for visually impaired viewers, a first in Malaysian television. These are not marketing moves. They are signals of an organisation that cares about people. The question is whether that same care culture extends inward, to the employees and mavericks inside the company who need the same protection from process that vulnerable audiences need from indifference.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="dilemma-grid fade-up" style="margin-top:3rem;">
+      <div class="dilemma-card">
+        <div class="dilemma-number">01</div>
+        <div class="dilemma-category">Innovation Dilemma</div>
+        <div class="dilemma-title">The Piracy Paradox</div>
+        <div class="dilemma-text">Astro identifies content piracy as its single biggest competitive threat. An illegal streaming device costs a Malaysian household RM600 once. Astro's subscription costs that much in three or four months. The implication is not just a pricing problem. It is a value proposition problem. Astro wins when it creates experiences that cannot be pirated, live sports drama, community moments, local film premieres. The innovation question is not how to stop piracy. It is how to make Astro irreplaceable by building things that piracy cannot copy.</div>
+      </div>
+      <div class="dilemma-card">
+        <div class="dilemma-number">02</div>
+        <div class="dilemma-category">Innovation Dilemma</div>
+        <div class="dilemma-title">The Aggregator Bet</div>
+        <div class="dilemma-text">Astro's Astro One strategy bundles up to 16 streaming services, including Netflix, Amazon Prime and iQIYI, under one subscription. This is simultaneously brilliant and fragile. Brilliant because it positions Astro as the trusted curator in a world of overwhelming content choice. Fragile because every global streaming service is building its own direct relationship with Malaysian subscribers, and the moment they no longer need Astro as the on-ramp, the aggregator becomes a middleman waiting to be disintermediated.</div>
+      </div>
+      <div class="dilemma-card">
+        <div class="dilemma-number">03</div>
+        <div class="dilemma-category">Innovation Dilemma</div>
+        <div class="dilemma-title">The Local Content Moat</div>
+        <div class="dilemma-text">82% of Astro's viewing time is spent on local and vernacular programming. That number is extraordinary. It is also the most important number in Astro's entire innovation strategy, because it means the company has a defensible advantage that Netflix cannot simply buy. But local content strength is a moat only if it keeps getting deeper. The moment Astro's content investment plateaus, Netflix, with its global data advantage and production capital, will close the gap faster than expected.</div>
+      </div>
+      <div class="dilemma-card">
+        <div class="dilemma-number">04</div>
+        <div class="dilemma-category">Innovation Dilemma</div>
+        <div class="dilemma-title">The Failure Intelligence Gap</div>
+        <div class="dilemma-text">Astro has no known Failure Library. No public programme for celebrating intelligent failures. Go Shop was closed in 2023 after years of losses. The Astro Nusantara Indonesia venture was wound down in 2008. These were real, expensive bets that did not work. What learning was extracted and institutionalised from each? What changed in strategy, in process, in people decisions as a result? The absence of a failure intelligence infrastructure does not mean failures are not learned from. It means they are learned from inconsistently.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section class="section section-white" id="competitors">
+  <div class="container">
+    <div class="section-eyebrow">Competitive Landscape</div>
+    <h2 class="section-title">The Ecosystem Astro<br><em>Must Outthink</em></h2>
+    <p class="lead-text">Positioning Astro's competitors on the Theta Framework reveals something important: the company is not just fighting other media companies. It is fighting entirely different games being played at different speeds.</p>
+
+    <div class="comp-grid fade-up">
+      <div class="comp-card featured">
+        <div class="comp-name">Astro Malaysia</div>
+        <div class="comp-tag">Emerging Explorer</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div> Core: Strong, over-indexed</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div> Edge: Active, underfunded</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson)"></div> Beyond: Signals, not yet programmes</div>
+        <div class="comp-verdict" style="color:var(--astro-gold)">Subject Company</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Unifi TV</div>
+        <div class="comp-tag">Disciplined Bundler</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div> Core: Strong bundling infrastructure</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div> Edge: HBO exclusive, convergence play</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:#ddd"></div> Beyond: None visible</div>
+        <div class="comp-verdict" style="color:var(--edge-amber)">Moderate Threat</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Media Prima</div>
+        <div class="comp-tag">Legacy-Rich, Vision-Poor</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div> Core: Dominant free-to-air</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:#ddd"></div> Edge: dimsum failed, retreated</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:#ddd"></div> Beyond: None visible</div>
+        <div class="comp-verdict" style="color:var(--muted)">Declining Threat</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Netflix / Disney+</div>
+        <div class="comp-tag">Balanced Builders</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div> Core: Massive global library</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div> Edge: Local content investment</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson)"></div> Beyond: GenAI, gaming, interactive</div>
+        <div class="comp-verdict" style="color:var(--beyond-crimson)">Existential Threat</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Piracy</div>
+        <div class="comp-tag">Invisible Competitor</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:#ddd"></div> Core: RM600 one-time barrier</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson)"></div> Edge: Constantly adapts</div>
+        <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson)"></div> Beyond: No rules to follow</div>
+        <div class="comp-verdict" style="color:var(--beyond-crimson)">Market Distortion</div>
+      </div>
+    </div>
+
+    <p class="body-text fade-up">The Unifi TV HBO acquisition deserves a careful read. After Astro dropped the exclusive HBO linear channels, Unifi secured them and launched a one-month free access promotion. This is a real win for Unifi, a premium exclusive that differentiates their bundle and reinforces their convergence story. But it is not a strategic earthquake. HBO linear channels in 2026 carry less weight than they did in 2016. The real HBO prize would be exclusive streaming rights. Unifi does not have those. The move shifts Unifi from a strong Core player to a slightly stronger Core player. It does not create Edge or Beyond capability.</p>
+
+    <p class="body-text fade-up">Media Prima's dimsum story is instructive in a different way. They entered OTT in 2016, too late to establish a content identity and without the capital to compete against global platforms. dimsum never found its reason to exist. The lesson for Astro is not that sooka will fail the same way. It is that late entry with insufficient differentiation is fatal, and sooka's differentiation, its sports rights, its local drama, its integration with the broader Astro ecosystem, must continue to deepen.</p>
+
+    <div class="radar-wrap fade-up">
+      <h4 style="font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:500; color:var(--ink); margin-bottom:2rem;">Competitive Radar: Six Strategic Dimensions</h4>
+      <div class="radar-area">
+        <canvas id="radarChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S&W -->
+<section class="section section-warm">
+  <div class="container">
+    <div class="section-eyebrow">Strengths and Weaknesses</div>
+    <h2 class="section-title">An Honest<br><em>Reckoning</em></h2>
+    <div class="sw-grid fade-up">
+      <div class="sw-panel strengths">
+        <div class="sw-panel-title">Structural Strengths</div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <strong>The Local Content Fortress</strong>
+            <span>82% of viewing time on local and vernacular programming is not a coincidence. It is the output of decades of investment in understanding exactly what makes a Malaysian story resonate with a Malaysian audience. This is a cultural capability that money alone cannot buy quickly.</span>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <strong>Ecosystem Architecture</strong>
+            <span>The aggregator model, bundling Netflix, Amazon, iQIYI and others under Astro One, is a sophisticated response to competitive fragmentation. Astro becomes the simplifier in a complex market. That is a genuinely valuable position if it can be defended.</span>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <strong>Multi-Language Trust at Scale</strong>
+            <span>Serving Malay, Chinese and Tamil communities with cultural fluency at production scale is not something any global competitor can replicate quickly. This is simultaneously Astro's strongest content moat and its most under-leveraged asset for regional expansion.</span>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <strong>Astro Studios XR Capability</strong>
+            <span>The Extended Reality virtual production facility, operating in Dolby Vision and Dolby Atmos, is a production capability that puts Astro in a different category from regional competitors. Whether it generates sufficient B2B revenue to justify its existence is the open question.</span>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <strong>Conscious Leadership Signal</strong>
+            <span>Euan Smith's public acknowledgment that Astro is funding two worlds simultaneously, the legacy and the future, is a form of strategic honesty that creates alignment. Leaders who name uncomfortable truths publicly are more likely to act on them than leaders who manage narrative.</span>
+          </div>
+        </div>
+      </div>
+      <div class="sw-panel weaknesses">
+        <div class="sw-panel-title">Structural Weaknesses</div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-text">
+            <strong>No Venture Infrastructure</strong>
+            <span>Without a formal corporate VC arm, Astro cannot take minority positions in early-stage companies, cannot build portfolio-level optionality, and cannot learn at the speed of the startup ecosystem. Every major tech-enabled media company globally has this capability. Astro does not.</span>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-text">
+            <strong>Failure Intelligence Architecture Missing</strong>
+            <span>No Failure Library, no programme for celebrating intelligent failure, no evidence of systematic post-mortems that are shared across the organisation. This is not about celebrating incompetence. It is about the learning loops that separate improving organisations from stagnating ones.</span>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-text">
+            <strong>Beyond Zone is Thinly Resourced</strong>
+            <span>At an estimated 3-5% of innovation spend, Astro's Beyond zone is running at roughly half the Theta benchmark. GenAI, frontier content formats, and regional IP export exist as aspirations in executive communications. They need programme status, dedicated teams, and patient capital that is genuinely protected from quarterly earnings pressure.</span>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-text">
+            <strong>Customer Signal Architecture is Majority-Centric</strong>
+            <span>Astro listens exceptionally well to its existing, satisfied customers. Its Putra Awards and viewer data reflect the Early and Late Majority. What it systematically misses are the innovators and early adopters, the 15% whose confusion and experimentation are the earliest signals of where the market moves next.</span>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-text">
+            <strong>The Aggregator Dependency Risk</strong>
+            <span>Every streaming service bundled into Astro One is also building a direct relationship with the same customer. The aggregator model works until the global platforms decide the cost of sharing revenue with Astro exceeds the value of Astro's distribution reach. That calculus shifts as Malaysia's digital infrastructure matures.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section class="section section-ink" id="diagnostic">
+  <div class="container">
+    <div class="section-eyebrow" style="color:var(--astro-red);">Theta Diagnostic</div>
+    <h2 class="section-title">Reading the<br><em>Full Picture</em></h2>
+    <p class="lead-text">The Theta Framework does not just map strategy. It reads culture, leadership, customer signals, and failure intelligence simultaneously. What follows is the composite diagnostic.</p>
+
+    <div class="diagnostic-grid fade-up">
+      <div>
+        <div class="diag-block">
+          <div class="diag-block-title">Innovation Portfolio</div>
+          <div class="diag-row">
+            <div class="diag-row-label">Core allocation vs benchmark</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip half"></div><div class="score-pip"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Edge momentum</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip"></div><div class="score-pip"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Beyond investment depth</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip half"></div><div class="score-pip"></div><div class="score-pip"></div><div class="score-pip"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">S-curve readiness</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip half"></div><div class="score-pip"></div><div class="score-pip"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="diag-block">
+          <div class="diag-block-title">Leadership Trifecta</div>
+          <div class="diag-row">
+            <div class="diag-row-label">Agility (adapt when rules don't serve)</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip half"></div><div class="score-pip"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Consciousness (awareness over ego)</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Courage (act despite uncertainty)</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip"></div><div class="score-pip"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="diag-block">
+          <div class="diag-block-title">Culture and Mavericks</div>
+          <div class="diag-row">
+            <div class="diag-row-label">Maverick presence</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Maverick protection (systematic)</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip half"></div><div class="score-pip"></div><div class="score-pip"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Chaos stage readiness</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip"></div><div class="score-pip"></div><div class="score-pip"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Failure intelligence</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip half"></div><div class="score-pip"></div><div class="score-pip"></div><div class="score-pip"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Psychological safety</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip half"></div><div class="score-pip"></div><div class="score-pip"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Open source ethos</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip half"></div><div class="score-pip"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="diag-block">
+          <div class="diag-block-title">Customer Signal Architecture</div>
+          <div class="diag-row">
+            <div class="diag-row-label">Innovator listening (2.5%)</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip"></div><div class="score-pip"></div><div class="score-pip"></div><div class="score-pip"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Early adopter signals</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip half"></div><div class="score-pip"></div><div class="score-pip"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Majority feedback loops</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip half"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Non-consumption analysis</div>
+            <div class="diag-row-score">
+              <div class="score-pip"></div><div class="score-pip"></div><div class="score-pip"></div><div class="score-pip"></div><div class="score-pip"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="diag-block">
+          <div class="diag-block-title">Relativity Assessment</div>
+          <div class="diag-row">
+            <div class="diag-row-label">vs Malaysian media peers</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip half"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">vs regional digital natives</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip"></div><div class="score-pip"></div><div class="score-pip"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">vs stated ambition</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip filled"></div><div class="score-pip"></div><div class="score-pip"></div>
+            </div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">vs global frontier</div>
+            <div class="diag-row-score">
+              <div class="score-pip filled"></div><div class="score-pip half"></div><div class="score-pip"></div><div class="score-pip"></div><div class="score-pip"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tension-box">
+          <div class="tension-label">Critical Tension</div>
+          <div class="tension-text">Astro is running two businesses simultaneously and measuring them with the same calendar. Core businesses need quarterly metrics. Beyond businesses need decade metrics. When they share a reporting cycle, the Beyond always loses. The most dangerous moment in Astro's transformation is not the next earnings miss. It is the board meeting where a promising but unprofitable Beyond investment gets reclassified as a cost to be managed rather than a seed to be watered.</div>
+        </div>
+
+        <div class="verdict-strip" style="margin-top:2rem;">
+          <div class="verdict-label">Strategic Archetype</div>
+          <div class="verdict-archetype">Emerging Disciplined Explorer</div>
+          <div class="verdict-explanation">Core is defended and producing cash flow. Edge is active and showing genuine momentum. Beyond has strategic presence but lacks structural investment. Astro is on the path to becoming a Disciplined Explorer. The question is speed and patience simultaneously.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BELIEF STRIP 3 -->
+<div class="belief-strip" style="background: var(--ink); border-top: 1px solid rgba(200,16,46,0.3);">
+  <p class="belief-quote" style="color:rgba(255,255,255,0.82);">"Can Astro Malaysia bring Malaysia forward? That depends entirely on whether Astro can bring itself forward first."</p>
+  <div class="belief-attribution" style="color:rgba(255,255,255,0.35);">Theta Framework Analysis, March 2026</div>
+</div>
+
+<!-- ASEAN IP SECTION -->
+<section class="section section-white" id="asean">
+  <div class="container">
+    <div class="section-eyebrow">The Underplayed Opportunity</div>
+    <h2 class="section-title">The Content That<br><em>Does Not Travel</em></h2>
+    <p class="lead-text">Astro produces more culturally specific, production-grade Malaysian content than any other organisation on the planet. 82% of its viewing time is spent on local and vernacular programming. RM379 million was invested in local content in FY25 alone. Almost none of it is deliberately distributed beyond Malaysia's borders. That is not a product problem. It is a strategic imagination problem.</p>
+
+    <div class="about-grid fade-up" style="margin-top:3rem;">
+      <div>
+        <p class="body-text">The Malay-speaking world is not a niche. Indonesia has 275 million people, the majority of whom share significant linguistic, cultural, and religious adjacency with Malaysia's largest audience segment. Brunei is a small but affluent market already familiar with Astro content. Singapore's Malay community, which numbers around 500,000, is culturally proximate and underserved by Singapore's English-dominant media landscape. The Malaysian diaspora in the UK, Australia, and the Gulf states actively seeks culturally resonant content in ways that no global streaming platform currently serves well.</p>
+        <p class="body-text">Beyond the Malay-speaking world, Astro's Chinese-language and Tamil-language content pipelines represent additional regional assets. The Chinese diaspora across Southeast Asia numbers in the tens of millions. Tamil-speaking communities exist in significant concentrations across Singapore, Sri Lanka, and India's southern states. Astro has the content relationships, the production infrastructure, and the cultural fluency to serve these communities. What it lacks is the distribution architecture and the strategic will to pursue them.</p>
+        <p class="body-text">The Theta Framework's Beyond Zone question for Astro is not whether it can build GenAI or quantum storytelling capabilities. It is whether it can answer this question: what would it look like to be the defining content brand for the Malay-speaking world, the way that TVB once was for Chinese diaspora audiences globally? That is a Beyond bet that sits on top of existing Core capabilities. It does not require invention. It requires resolve.</p>
+      </div>
+      <div>
+        <p class="body-text">The competitive gap here is genuine and time-limited. Netflix is investing in Malaysian Malay-language originals. iQIYI is moving into Malay content. Disney+ Hotstar has Southeast Asia regional content ambitions. Each of these players is arriving with global distribution infrastructure and significant production capital. Astro's advantage is depth of cultural understanding and decades of audience relationship. That advantage narrows with every year that regional IP export remains a paragraph in a strategy presentation rather than a funded programme with a team behind it.</p>
+        <p class="body-text">What would the infrastructure look like? It would need partnerships with regional streaming platforms, starting with Indonesia where the cultural and linguistic overlap is greatest. It would need a dedicated content licensing and co-production team, separate from the domestic production operation. It would need a brand strategy that extends Astro's identity, or a sub-brand entirely, into the regional market. None of this is technically complex. All of it requires capital allocation decisions that compete directly with the Core's appetite for defensive investment.</p>
+        <div class="pull-quote">
+          <p>"The most under-explored white space in Astro's entire portfolio is not a technology bet. It is a geography bet built on culture they already own."</p>
+          <div class="pull-quote-attr">Theta Framework analysis on Astro's Beyond Zone</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="asean-grid fade-up">
+      <div class="asean-market-card">
+        <div class="asean-card-country">Indonesia</div>
+        <div class="asean-card-pop">275M population / Largest Malay-language market globally</div>
+        <div class="asean-card-body">The most significant adjacency. Bahasa Indonesia and Bahasa Malaysia are mutually intelligible with minimal adaptation. Indonesian audiences already consume Malaysian drama informally. A formal distribution partnership with a platform like Vidio or GoPlay would be the highest-value first move in any regional expansion strategy.</div>
+        <div class="asean-card-adjacency">Astro's current presence: None formal. Opportunity window: Open but closing.</div>
+      </div>
+      <div class="asean-market-card">
+        <div class="asean-card-country">Singapore</div>
+        <div class="asean-card-pop">500K Malay community / Affluent, underserved by local media</div>
+        <div class="asean-card-body">Singapore's Malay community has cultural proximity to Malaysia and is affluent enough to pay for premium content. Mediacorp serves the Malay segment but does not produce at Astro's volume or quality level. A sooka-based distribution partnership in Singapore would be low-cost to execute and high-signal for regional ambition.</div>
+        <div class="asean-card-adjacency">Astro's current presence: Informal satellite overspill. Opportunity window: Underexplored.</div>
+      </div>
+      <div class="asean-market-card">
+        <div class="asean-card-country">Malaysian Diaspora</div>
+        <div class="asean-card-pop">Global / UK, Australia, Gulf States, US</div>
+        <div class="asean-card-body">The Malaysian diaspora is digitally sophisticated, emotionally connected to Malaysian content, and actively seeking it through unofficial channels. sooka's IP infrastructure is already built for exactly this audience. A formal diaspora subscription offering with globally accessible pricing would address a market that currently turns to piracy out of structural necessity, not preference.</div>
+        <div class="asean-card-adjacency">Astro's current presence: None structured. Opportunity window: Immediate via sooka.</div>
+      </div>
+      <div class="asean-market-card">
+        <div class="asean-card-country">Tamil ASEAN Corridor</div>
+        <div class="asean-card-pop">Singapore, Sri Lanka, South India diaspora</div>
+        <div class="asean-card-body">Astro's Tamil content pipeline, serving Malaysia's Indian community, has regional applicability that is almost entirely unexplored. Singapore's Tamil community is the natural first market. Sri Lanka and the South Indian diaspora in the Gulf represent additional expansion potential for content that Astro already produces.</div>
+        <div class="asean-card-adjacency">Astro's current presence: None. A genuine white space in the Beyond zone.</div>
+      </div>
+    </div>
+
+    <div class="asean-gap-strip fade-up">
+      <div class="asean-gap-item">
+        <div class="asean-gap-label">ASEAN addressable population</div>
+        <div class="asean-gap-value">680M</div>
+        <div class="asean-gap-desc">People in a region with cultural proximity to Astro's content strengths</div>
+      </div>
+      <div class="asean-gap-item">
+        <div class="asean-gap-label">Malay-speaking world</div>
+        <div class="asean-gap-value">290M+</div>
+        <div class="asean-gap-desc">The core linguistic market Astro's content is built for but not yet distributed to</div>
+      </div>
+      <div class="asean-gap-item">
+        <div class="asean-gap-label">Astro's current formal regional reach</div>
+        <div class="asean-gap-value">~0%</div>
+        <div class="asean-gap-desc">Of its content portfolio deliberately distributed beyond Malaysian borders</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POTENTIAL AND FORWARD SECTION -->
+<section class="section section-warm">
+  <div class="container">
+    <div class="section-eyebrow">The Potential Question</div>
+    <h2 class="section-title">Can a Distribution Giant<br>Become a <em>Creation Force?</em></h2>
+
+    <div class="about-grid fade-up">
+      <div>
+        <p class="body-text">The honest answer is yes, but not by doing more of what it already does. The companies that have made this transition successfully did not simply add digital units or launch apps alongside their legacy business. They made a fundamental shift in what they believed their advantage was. For Astro, that shift is available, and it starts with one asset that nobody else has.</p>
+        <p class="body-text">Astro is the only entity in Malaysia with production-grade, multi-language, culturally fluent content infrastructure operating at scale. It knows how to make content that makes a Malaysian grandmother feel seen and a Malaysian teenager feel understood simultaneously. That is not a template. That is a culture. And cultures do not scale by being copied. They scale by being deepened and then exported on their own terms.</p>
+        <p class="body-text">The dish-free future that is already here changes the acquisition calculus fundamentally. When Astro required a satellite dish, its market was bounded by geography, by housing regulations, by installation logistics. The Ulti box and sooka app remove all three constraints. Every Malaysian household with broadband is now a potential Astro subscriber. Every diaspora Malaysian with a smartphone is a potential sooka customer. The total addressable market for Astro's content has grown significantly in the last three years. The sales and marketing infrastructure has not yet caught up to that reality.</p>
+        <div class="pull-quote">
+          <p>"Core tells you where they are. Edge tells you what they're trying. Beyond tells you who they want to become."</p>
+          <div class="pull-quote-attr">The Theta Framework</div>
+        </div>
+      </div>
+      <div>
+        <p class="body-text">Astro Studios, with its XR virtual production capability, is the clearest signal that the company is no longer content being a content consumer. Offering Extended Reality production services to regional content creators positions Astro not just as a broadcaster but as an infrastructure provider for the broader creative economy. The question is whether this capability will be marketed and staffed as a genuine business or treated as a technical showcase.</p>
+        <p class="body-text">sooka's trajectory deserves more attention than it gets. A 97% year-on-year increase in paying subscribers is not incremental improvement. It is a business finding its market. The challenge ahead is the chasm crossing, moving from the early adopters who signed up despite imperfection, to the early majority who will sign up only when proof is abundant and friction is minimal. Astro has crossed this chasm before, with broadband, with NJOI, with sports rights. It knows how to do it. The question is whether sooka has the investment behind it to cross at the required speed.</p>
+        <p class="body-text">The marketing question runs deeper than brand. Astro's marketing challenge is not awareness. Everyone in Malaysia knows who Astro is. Its marketing challenge is narrative repositioning: moving the brand in the Malaysian mind from the company that put a satellite dish on the roof to the company that is building the creative infrastructure for what Malaysia watches, hears and feels. The dish is no longer the product. The story always was. That is a harder story to tell. But it is the true one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<div class="closing">
+  <div class="closing-bg"></div>
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="section-eyebrow" style="justify-content:center;color:var(--astro-red);">Final Diagnostic</div>
+    <h2 class="section-title" style="color:#fff; text-align:center;">Astro thrived by owning the window.<br>The window is now <em>everywhere.</em></h2>
+    <p class="lead-text" style="text-align:center; margin:0 auto 3rem;">Adapting is not creating. Surviving is not leading. The company has the assets, the audience, and the architecture for something more. The gap between where Astro is and where it could be is not technical. It is a question of how much it truly believes in the seeds it has planted.</p>
+
+    <div class="one-question">
+      <div class="oq-label">The One Question</div>
+      <div class="oq-text">"Is Astro planting enough seeds for 2035, or is it managing a harvest from a forest it no longer has the courage to grow?"</div>
+    </div>
+
+    <p style="font-size:0.88rem; color:rgba(255,255,255,0.35); text-align:center; max-width:600px; margin:0 auto; line-height:1.7;">The Theta Framework does not answer this question. It asks it, persistently, until the company cannot avoid answering it for itself. That is the beginning of transformation.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <strong>Theta Framework</strong> by Christine Pamela Chandrakasan &nbsp;|&nbsp; Astro Malaysia Case Study &nbsp;|&nbsp; March 2026
+  </div>
+  <div class="footer-right">Strategic Case Study</div>
+</footer>
+
+<script>
+// SCROLL ANIMATIONS
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// CHART DEFAULTS
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.color = '#7A8C86';
+
+const TOOLTIP_STYLE = {
+  backgroundColor: 'rgba(12,18,16,0.92)',
+  titleColor: '#fff',
+  bodyColor: 'rgba(255,255,255,0.72)',
+  borderColor: 'rgba(200,16,46,0.3)',
+  borderWidth: 1,
+  padding: 12,
+  cornerRadius: 2,
+  titleFont: { size: 12, weight: '500' },
+  bodyFont: { size: 11 }
+};
+
+// SCATTER CHART
+const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+const scatterData = {
+  datasets: [
+    {
+      label: 'Core Zone',
+      data: [
+        { x: 15, y: 15, label: 'Pay-TV packs', r: 22 },
+        { x: 20, y: 18, label: 'NJOI service', r: 14 },
+        { x: 25, y: 20, label: 'Radio network', r: 16 },
+        { x: 35, y: 30, label: 'Astro Fibre', r: 14 },
+      ],
+      backgroundColor: 'rgba(42,107,72,0.25)',
+      borderColor: 'rgba(42,107,72,0.7)',
+      borderWidth: 1.5,
+    },
+    {
+      label: 'Edge Zone',
+      data: [
+        { x: 50, y: 55, label: 'sooka OTT', r: 16 },
+        { x: 45, y: 65, label: 'Cloud playout', r: 13 },
+        { x: 60, y: 58, label: 'XR Studio', r: 11 },
+        { x: 40, y: 50, label: 'Ultra/Ulti boxes', r: 10 },
+      ],
+      backgroundColor: 'rgba(181,132,26,0.25)',
+      borderColor: 'rgba(181,132,26,0.7)',
+      borderWidth: 1.5,
+    },
+    {
+      label: 'Beyond Zone',
+      data: [
+        { x: 78, y: 80, label: 'Aggregator model', r: 10 },
+        { x: 85, y: 88, label: 'GenAI / personalisaton', r: 7 },
+        { x: 72, y: 75, label: 'Un-piratable moments', r: 8 },
+        { x: 90, y: 82, label: 'ASEAN IP export', r: 6 },
+      ],
+      backgroundColor: 'rgba(139,26,26,0.25)',
+      borderColor: 'rgba(139,26,26,0.7)',
+      borderWidth: 1.5,
+    }
+  ]
+};
+
+new Chart(scatterCtx, {
+  type: 'bubble',
+  data: scatterData,
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } },
+      tooltip: {
+        ...TOOLTIP_STYLE,
+        callbacks: {
+          label: (ctx) => ctx.raw.label || ctx.dataset.label
+        }
+      }
+    },
+    scales: {
+      x: {
+        min: 0, max: 100,
+        title: { display: true, text: 'Market Reach:  Existing → New → Emerging → Speculative', font: { size: 10 }, color: '#7A8C86' },
+        grid: { color: 'rgba(200,16,46,0.05)' },
+        ticks: { display: false }
+      },
+      y: {
+        min: 0, max: 100,
+        title: { display: true, text: 'Technology Change:  Low → Moderate → High → Radical → Extreme', font: { size: 10 }, color: '#7A8C86' },
+        grid: { color: 'rgba(200,16,46,0.05)' },
+        ticks: { display: false }
+      }
+    }
+  }
+});
+
+// DONUT CHART
+const donutCtx = document.getElementById('donutChart').getContext('2d');
+new Chart(donutCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Core (~82%)', 'Edge (~12%)', 'Beyond (~5%)'],
+    datasets: [{
+      data: [82, 12, 5],
+      backgroundColor: ['rgba(42,107,72,0.75)', 'rgba(181,132,26,0.75)', 'rgba(139,26,26,0.75)'],
+      borderWidth: 0,
+      hoverOffset: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '68%',
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } },
+      tooltip: { ...TOOLTIP_STYLE, callbacks: { label: (ctx) => ' ' + ctx.label } }
+    }
+  }
+});
+
+// REVENUE CHART
+const revCtx = document.getElementById('revenueChart').getContext('2d');
+new Chart(revCtx, {
+  type: 'line',
+  data: {
+    labels: ['FY21', 'FY22', 'FY23', 'FY24', 'FY25'],
+    datasets: [
+      {
+        label: 'Total Revenue (RM Billion)',
+        data: [4.36, 4.18, 3.62, 3.34, 3.08],
+        borderColor: 'rgba(200,16,46,0.8)',
+        backgroundColor: 'rgba(200,16,46,0.05)',
+        borderWidth: 2,
+        tension: 0.4,
+        fill: true,
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        pointBackgroundColor: 'rgba(200,16,46,0.9)',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        yAxisID: 'y'
+      },
+      {
+        label: 'Net Profit (RM Billion)',
+        data: [0.285, 0.195, 0.155, 0.037, 0.065],
+        borderColor: 'rgba(201,150,58,0.7)',
+        backgroundColor: 'rgba(201,150,58,0.04)',
+        borderWidth: 1.5,
+        tension: 0.4,
+        borderDash: [5, 3],
+        fill: false,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: 'rgba(201,150,58,0.8)',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        yAxisID: 'y1'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } },
+      tooltip: { ...TOOLTIP_STYLE }
+    },
+    scales: {
+      y: {
+        min: 2, max: 5,
+        position: 'left',
+        title: { display: true, text: 'Revenue (RM B)', font: { size: 10 } },
+        grid: { color: 'rgba(0,0,0,0.04)' },
+        ticks: { callback: v => 'RM ' + v + 'B', font: { size: 10 } }
+      },
+      y1: {
+        min: 0, max: 0.6,
+        position: 'right',
+        title: { display: true, text: 'Net Profit (RM B)', font: { size: 10 } },
+        grid: { drawOnChartArea: false },
+        ticks: { callback: v => 'RM ' + v + 'B', font: { size: 10 } }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// RADAR CHART
+const radarCtx = document.getElementById('radarChart').getContext('2d');
+new Chart(radarCtx, {
+  type: 'radar',
+  data: {
+    labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'Local Content Depth', 'Tech Agility', 'Ecosystem Scale'],
+    datasets: [
+      {
+        label: 'Astro Malaysia',
+        data: [78, 52, 32, 88, 48, 65],
+        backgroundColor: 'rgba(200,16,46,0.12)',
+        borderColor: 'rgba(200,16,46,0.7)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(200,16,46,0.8)',
+        pointRadius: 4
+      },
+      {
+        label: 'Unifi TV',
+        data: [70, 45, 15, 30, 55, 60],
+        backgroundColor: 'rgba(42,107,72,0.06)',
+        borderColor: 'rgba(42,107,72,0.45)',
+        borderWidth: 1.5,
+        borderDash: [4, 3],
+        pointBackgroundColor: 'rgba(42,107,72,0.6)',
+        pointRadius: 3
+      },
+      {
+        label: 'Netflix / Disney+',
+        data: [92, 78, 85, 45, 92, 88],
+        backgroundColor: 'rgba(139,26,26,0.06)',
+        borderColor: 'rgba(139,26,26,0.45)',
+        borderWidth: 1.5,
+        borderDash: [4, 3],
+        pointBackgroundColor: 'rgba(139,26,26,0.6)',
+        pointRadius: 3
+      },
+      {
+        label: 'Media Prima',
+        data: [62, 22, 10, 55, 28, 35],
+        backgroundColor: 'rgba(201,150,58,0.06)',
+        borderColor: 'rgba(201,150,58,0.4)',
+        borderWidth: 1.5,
+        borderDash: [4, 3],
+        pointBackgroundColor: 'rgba(201,150,58,0.5)',
+        pointRadius: 3
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } },
+      tooltip: { ...TOOLTIP_STYLE }
+    },
+    scales: {
+      r: {
+        min: 0, max: 100,
+        grid: { color: 'rgba(0,0,0,0.06)' },
+        angleLines: { color: 'rgba(0,0,0,0.06)' },
+        ticks: { display: false },
+        pointLabels: { font: { size: 11 }, color: '#4A5850' }
+      }
+    }
+  }
+});
+</script>
 </body>
 </html>
