@@ -1,1127 +1,2405 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shell Malaysia: Strategic Innovation Through Theta</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            color: #1a1a1a;
-            line-height: 1.6;
-            overflow-x: hidden;
-            background: #ffffff;
-        }
-
-        .hero {
-            height: 100vh;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(221, 29, 33, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 50%, rgba(251, 206, 7, 0.1) 0%, transparent 50%);
-            animation: pulse 8s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 0.8; }
-        }
-
-        .hero-content {
-            text-align: center;
-            color: white;
-            z-index: 1;
-            max-width: 900px;
-            padding: 2rem;
-        }
-
-        .case-study-label {
-            font-size: 0.85rem;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: #FBCE07;
-            margin-bottom: 2rem;
-            font-weight: 500;
-        }
-
-        .hero-content h1 {
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.03em;
-            line-height: 1.1;
-        }
-
-        .hero-subtitle {
-            font-size: clamp(1rem, 2vw, 1.3rem);
-            font-weight: 300;
-            color: rgba(255, 255, 255, 0.85);
-            margin-bottom: 3rem;
-            line-height: 1.6;
-        }
-
-        .hero-meta {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            flex-wrap: wrap;
-        }
-
-        .meta-item {
-            text-align: center;
-        }
-
-        .meta-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 0.5rem;
-        }
-
-        .meta-value {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: white;
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-10px); }
-        }
-
-        section {
-            padding: 6rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-label {
-            font-size: 0.75rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: #DD1D21;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        h2 {
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 700;
-            margin-bottom: 2rem;
-            color: #1a1a1a;
-            letter-spacing: -0.02em;
-        }
-
-        h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: #1a1a1a;
-        }
-
-        p {
-            color: #666;
-            font-size: 1rem;
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin: 4rem 0;
-        }
-
-        .stat-card {
-            text-align: center;
-            padding: 2rem 1rem;
-            background: #fafafa;
-            border-radius: 4px;
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #DD1D21;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: #666;
-            font-weight: 500;
-        }
-
-        .chart-container {
-            background: #fafafa;
-            padding: 3rem 2rem;
-            border-radius: 4px;
-            margin: 4rem 0;
-        }
-
-        .chart-container h3 {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 1.3rem;
-        }
-
-        .chart-container canvas {
-            max-height: 450px;
-        }
-
-        .ceo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-
-        .ceo-card {
-            background: #fafafa;
-            padding: 2rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }
-
-        .ceo-card:hover {
-            border-color: #DD1D21;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .ceo-card.selected {
-            border-color: #FBCE07;
-            background: #fffef8;
-        }
-
-        .ceo-name {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-        }
-
-        .ceo-period {
-            font-size: 0.85rem;
-            color: #999;
-            margin-bottom: 1.5rem;
-        }
-
-        .zone-bars {
-            margin: 1.5rem 0;
-        }
-
-        .zone-bar {
-            margin-bottom: 1rem;
-        }
-
-        .zone-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
-            color: #666;
-            font-weight: 500;
-        }
-
-        .bar-track {
-            height: 6px;
-            background: #e5e5e5;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .bar-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.5s ease;
-        }
-
-        .bar-core { background: #10b981; }
-        .bar-edge { background: #FBCE07; }
-        .bar-beyond { background: #DD1D21; }
-
-        .ceo-descriptor {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e5e5e5;
-            font-size: 0.9rem;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .ceo-details {
-            display: none;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #e5e5e5;
-        }
-
-        .ceo-card.selected .ceo-details {
-            display: block;
-        }
-
-        .detail-item {
-            font-size: 0.85rem;
-            color: #666;
-            margin-bottom: 0.5rem;
-        }
-
-        .detail-item strong {
-            color: #DD1D21;
-            font-weight: 600;
-        }
-
-        .timeline {
-            position: relative;
-            padding: 2rem 0;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background: #e5e5e5;
-        }
-
-        .timeline-item {
-            padding-left: 3rem;
-            margin-bottom: 3rem;
-            position: relative;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -4px;
-            top: 5px;
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: #DD1D21;
-        }
-
-        .timeline-year {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #DD1D21;
-            margin-bottom: 0.5rem;
-        }
-
-        .timeline-content h4 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: #1a1a1a;
-        }
-
-        .timeline-content p {
-            font-size: 0.95rem;
-            color: #666;
-            line-height: 1.7;
-        }
-
-        .challenge-section {
-            background: #fafafa;
-            padding: 6rem 2rem;
-            margin: 4rem 0;
-        }
-
-        .challenge-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 3rem;
-            margin: 3rem auto;
-            max-width: 1200px;
-        }
-
-        .challenge-card {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 4px;
-            border-top: 3px solid #DD1D21;
-        }
-
-        .challenge-card h3 {
-            color: #DD1D21;
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .challenge-box {
-            background: #f8f8f8;
-            padding: 1.5rem;
-            border-radius: 4px;
-            margin-bottom: 1.5rem;
-        }
-
-        .challenge-box h4 {
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-            color: #1a1a1a;
-            font-weight: 600;
-        }
-
-        .challenge-box ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .challenge-box li {
-            padding-left: 1.5rem;
-            position: relative;
-            margin-bottom: 0.75rem;
-            font-size: 0.9rem;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .challenge-box li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: #DD1D21;
-        }
-
-        .solution-box {
-            background: #fffef8;
-            padding: 1.5rem;
-            border-radius: 4px;
-            border-left: 3px solid #FBCE07;
-        }
-
-        .solution-box h4 {
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-            color: #1a1a1a;
-            font-weight: 600;
-        }
-
-        .solution-box ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .solution-box li {
-            padding-left: 1.5rem;
-            position: relative;
-            margin-bottom: 0.75rem;
-            font-size: 0.9rem;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .solution-box li::before {
-            content: '•';
-            position: absolute;
-            left: 0;
-            color: #FBCE07;
-            font-weight: bold;
-        }
-
-        .insights-section {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            color: white;
-            padding: 6rem 2rem;
-            margin: 4rem 0;
-        }
-
-        .insights-section h2 {
-            color: white;
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .insights-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .insight-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
-            border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .insight-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #FBCE07;
-            margin-bottom: 1rem;
-        }
-
-        .insight-card h3 {
-            color: white;
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-        }
-
-        .insight-card p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.95rem;
-            line-height: 1.7;
-        }
-
-        footer {
-            background: #1a1a1a;
-            color: rgba(255, 255, 255, 0.6);
-            padding: 3rem 2rem;
-            text-align: center;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-logo {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #FBCE07;
-            margin-bottom: 1rem;
-        }
-
-        .footer-tagline {
-            font-size: 0.85rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-credit {
-            font-size: 0.75rem;
-            opacity: 0.5;
-        }
-
-        @media (max-width: 768px) {
-            section { padding: 4rem 1.5rem; }
-            .hero-meta { gap: 1.5rem; }
-            .stats-grid, .ceo-grid, .challenge-grid { grid-template-columns: 1fr; }
-            .challenge-grid { gap: 2rem; }
-            .challenge-card { padding: 2rem; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shell: The Innovation Paradox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --shell-red: #DD1D21;
+  --shell-yellow: #FBCE07;
+  --ink: #0E1A18;
+  --ink-soft: #1A2C29;
+  --paper: #F7F5F0;
+  --paper-warm: #EFEBE2;
+  --muted: #8A9490;
+  --core-green: #2D6A4F;
+  --edge-amber: #B5841A;
+  --beyond-crimson: #8B1A1A;
+  --border: rgba(221,29,33,0.12);
+  --border-subtle: rgba(14,26,24,0.08);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 3rem;
+  background: rgba(14,26,24,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(251,206,7,0.08);
+}
+
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--shell-yellow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--shell-yellow); }
+
+/* HERO */
+.hero {
+  height: 100vh;
+  min-height: 700px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.hero-grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(251,206,7,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(251,206,7,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  animation: gridDrift 20s linear infinite;
+}
+
+@keyframes gridDrift {
+  from { transform: translate(0,0); }
+  to { transform: translate(80px,80px); }
+}
+
+.hero-noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.hero-radial {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 60%, rgba(221,29,33,0.14) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 80% 30%, rgba(251,206,7,0.08) 0%, transparent 60%);
+}
+
+.hero-scroll-line {
+  position: absolute;
+  right: 3rem;
+  top: 30%;
+  height: 35%;
+  width: 1px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden;
+}
+
+.hero-scroll-line::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(to bottom, transparent, var(--shell-yellow), transparent);
+  animation: scrollDown 2.5s ease-in-out infinite;
+}
+
+@keyframes scrollDown {
+  from { top: -100%; }
+  to { top: 200%; }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 0 5rem 5rem;
+  animation: heroReveal 1.2s ease both;
+}
+
+@keyframes heroReveal {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-kicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--shell-yellow);
+  margin-bottom: 1.5rem;
+  animation: heroReveal 1s 0.2s ease both;
+}
+
+.hero-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.5rem, 7vw, 6.5rem);
+  font-weight: 300;
+  color: #fff;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.2rem;
+  animation: heroReveal 1s 0.35s ease both;
+}
+
+.hero-headline em {
+  font-style: italic;
+  color: var(--shell-yellow);
+}
+
+.hero-sub {
+  font-size: 1.05rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.6);
+  max-width: 640px;
+  line-height: 1.7;
+  margin-bottom: 3.5rem;
+  animation: heroReveal 1s 0.5s ease both;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 2rem;
+  animation: heroReveal 1s 0.65s ease both;
+}
+
+.meta-fact {
+  padding: 0 2.5rem 0 0;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  margin-right: 2.5rem;
+}
+
+.meta-fact:last-child { border-right: none; margin-right: 0; }
+
+.meta-fact-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 0.4rem;
+}
+
+.meta-fact-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: #fff;
+}
+
+/* SHARED */
+.section-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 3rem;
+}
+
+.section-kicker {
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--shell-red);
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+.section-title em {
+  font-style: italic;
+  color: var(--shell-red);
+}
+
+.section-body {
+  font-size: 1rem;
+  line-height: 1.85;
+  color: #4A5752;
+  max-width: 680px;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ABOUT SECTION */
+.about-section {
+  padding: 9rem 0 7rem;
+  background: var(--paper);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: start;
+  margin-top: 3.5rem;
+}
+
+.hidden-fact {
+  background: var(--ink);
+  color: #fff;
+  padding: 2rem 2.2rem;
+  border-radius: 2px;
+  margin-top: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hidden-fact::before {
+  content: 'HIDDEN FACT';
+  position: absolute;
+  top: 1rem;
+  right: 1.2rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  color: var(--shell-yellow);
+  opacity: 0.8;
+}
+
+.hidden-fact p {
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: rgba(255,255,255,0.75);
+}
+
+.stats-2x2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5px;
+  background: var(--border-subtle);
+}
+
+.stat-block {
+  background: var(--paper);
+  padding: 2.2rem 2rem;
+}
+
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.2rem;
+  font-weight: 400;
+  color: var(--shell-red);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.stat-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+}
+
+/* BELIEF STRIP */
+.belief-strip {
+  background: var(--shell-red);
+  padding: 5rem 3rem;
+}
+
+.belief-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.belief-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
+  font-weight: 300;
+  font-style: italic;
+  color: #fff;
+  line-height: 1.45;
+  margin-bottom: 1.5rem;
+}
+
+.belief-attr {
+  font-size: 0.72rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+
+/* TIMELINE */
+.timeline-section {
+  padding: 8rem 0;
+  background: var(--paper-warm);
+}
+
+.timeline-container {
+  margin-top: 4rem;
+  position: relative;
+}
+
+.tl-spine {
+  position: absolute;
+  left: 88px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(14,26,24,0.12);
+}
+
+.tl-item {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 0;
+  margin-bottom: 3.5rem;
+  position: relative;
+}
+
+.tl-year-col {
+  padding-right: 2rem;
+  text-align: right;
+  padding-top: 0.15rem;
+}
+
+.tl-year {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.tl-dot {
+  position: absolute;
+  left: 82px;
+  top: 6px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--paper-warm);
+  border: 2px solid var(--muted);
+  z-index: 1;
+}
+
+.tl-item.milestone .tl-dot {
+  background: var(--shell-red);
+  border-color: var(--shell-red);
+  width: 15px;
+  height: 15px;
+  left: 81px;
+}
+
+.tl-item.milestone .tl-year { color: var(--shell-red); }
+
+.tl-phase {
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--shell-yellow);
+  background: var(--ink);
+  padding: 0.2rem 0.5rem;
+  display: inline-block;
+  margin-bottom: 0.4rem;
+}
+
+.tl-content {
+  padding-left: 2.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.tl-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+
+.tl-text {
+  font-size: 0.88rem;
+  color: #5A6B66;
+  line-height: 1.75;
+  max-width: 600px;
+}
+
+/* INNOVATION DNA */
+.dna-section {
+  padding: 9rem 0;
+  background: var(--paper);
+}
+
+.dna-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5px;
+  background: var(--border-subtle);
+  margin-top: 4rem;
+}
+
+.dna-card {
+  background: var(--paper);
+  padding: 2.5rem 2.2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.dna-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--shell-red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+.dna-card:hover::before { transform: scaleX(1); }
+
+.dna-icon {
+  font-size: 1.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.dna-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.8rem;
+}
+
+.dna-text {
+  font-size: 0.875rem;
+  color: #5A6B66;
+  line-height: 1.75;
+}
+
+/* THETA MAP */
+.theta-section {
+  padding: 9rem 0;
+  background: var(--paper-warm);
+}
+
+.theta-intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  margin-top: 3.5rem;
+  align-items: start;
+}
+
+.zone-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.zone-pill {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.2rem 1.4rem;
+  background: var(--paper);
+  border-left: 4px solid transparent;
+}
+
+.zone-pill.core { border-color: var(--core-green); }
+.zone-pill.edge { border-color: var(--edge-amber); }
+.zone-pill.beyond { border-color: var(--beyond-crimson); }
+
+.zone-pill-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.zone-pill.core .zone-pill-label { color: var(--core-green); }
+.zone-pill.edge .zone-pill-label { color: var(--edge-amber); }
+.zone-pill.beyond .zone-pill-label { color: var(--beyond-crimson); }
+
+.zone-pill-text {
+  font-size: 0.82rem;
+  color: #5A6B66;
+  line-height: 1.6;
+}
+
+.chart-wrap {
+  background: var(--paper);
+  padding: 2rem;
+  position: relative;
+}
+
+.chart-title {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* ALLOCATION */
+.alloc-section {
+  padding: 9rem 0;
+  background: var(--ink);
+  color: #fff;
+}
+
+.alloc-section .section-title { color: #fff; }
+.alloc-section .section-body { color: rgba(255,255,255,0.6); }
+
+.alloc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 5rem;
+  margin-top: 4rem;
+  align-items: center;
+}
+
+.alloc-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.alloc-bar-item {}
+
+.alloc-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.6rem;
+}
+
+.alloc-bar-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+
+.alloc-bar-nums {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.alloc-actual {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.alloc-benchmark {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.35);
+}
+
+.alloc-track {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  position: relative;
+  overflow: visible;
+}
+
+.alloc-fill {
+  height: 100%;
+  transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+.alloc-benchmark-line {
+  position: absolute;
+  top: -4px;
+  height: 14px;
+  width: 2px;
+  background: rgba(255,255,255,0.25);
+}
+
+.alloc-commentary {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+  margin-top: 0.6rem;
+  line-height: 1.6;
+}
+
+/* CEO TIMELINE */
+.ceo-section {
+  padding: 9rem 0;
+  background: var(--paper);
+}
+
+.ceo-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  margin-top: 3.5rem;
+  margin-bottom: 4rem;
+}
+
+.ceo-chart-wrap {
+  background: var(--paper-warm);
+  padding: 2rem;
+}
+
+.ceo-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5px;
+  background: var(--border-subtle);
+  margin-top: 2rem;
+}
+
+.ceo-card {
+  background: var(--paper);
+  padding: 2rem 1.8rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-top: 3px solid transparent;
+  position: relative;
+}
+
+.ceo-card.active,
+.ceo-card:hover {
+  background: var(--paper-warm);
+  border-top-color: var(--shell-red);
+}
+
+.ceo-era {
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+
+.ceo-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 1.2rem;
+  line-height: 1.2;
+}
+
+.mini-bars { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+
+.mini-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.mini-bar-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  width: 40px;
+  color: var(--muted);
+}
+
+.mini-track {
+  flex: 1;
+  height: 4px;
+  background: rgba(14,26,24,0.08);
+}
+
+.mini-fill { height: 100%; transition: width 0.8s ease; }
+.mini-fill.core { background: var(--core-green); }
+.mini-fill.edge { background: var(--edge-amber); }
+.mini-fill.beyond { background: var(--beyond-crimson); }
+
+.mini-pct {
+  font-size: 0.7rem;
+  color: var(--muted);
+  width: 28px;
+  text-align: right;
+}
+
+.ceo-tagline {
+  font-size: 0.78rem;
+  color: #5A6B66;
+  line-height: 1.6;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 0.8rem;
+}
+
+/* INNOVATION DILEMMAS */
+.dilemma-section {
+  padding: 9rem 0;
+  background: var(--paper-warm);
+}
+
+.dilemma-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 4rem;
+}
+
+.dilemma-card {
+  background: var(--paper);
+  padding: 2.5rem;
+  border-top: 1px solid var(--border-subtle);
+  position: relative;
+}
+
+.dilemma-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem;
+  font-weight: 300;
+  color: var(--border-subtle);
+  line-height: 1;
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+}
+
+.dilemma-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 1rem;
+  max-width: 80%;
+}
+
+.dilemma-text {
+  font-size: 0.875rem;
+  color: #5A6B66;
+  line-height: 1.8;
+}
+
+.dilemma-tension {
+  margin-top: 1.2rem;
+  padding: 0.8rem 1rem;
+  background: var(--paper-warm);
+  border-left: 3px solid var(--shell-yellow);
+  font-size: 0.8rem;
+  color: var(--ink);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* COMPETITOR */
+.competitor-section {
+  padding: 9rem 0;
+  background: var(--paper);
+}
+
+.competitor-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+  margin-top: 3.5rem;
+}
+
+.comp-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5px;
+  background: var(--border-subtle);
+  margin-top: 3.5rem;
+}
+
+.comp-card {
+  background: var(--paper-warm);
+  padding: 1.8rem 1.4rem;
+}
+
+.comp-card.featured {
+  background: var(--paper);
+  outline: 2px solid var(--shell-red);
+  outline-offset: -2px;
+}
+
+.comp-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+}
+
+.comp-tag {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.comp-zone-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.comp-zone-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.comp-zone-dot.strong { opacity: 1; }
+.comp-zone-dot.mid { opacity: 0.5; }
+.comp-zone-dot.weak { opacity: 0.2; }
+.comp-zone-dot.core { background: var(--core-green); }
+.comp-zone-dot.edge { background: var(--edge-amber); }
+.comp-zone-dot.beyond { background: var(--beyond-crimson); }
+
+.comp-zone-text {
+  font-size: 0.72rem;
+  color: #5A6B66;
+  line-height: 1.4;
+}
+
+.comp-verdict {
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.comp-card.featured .comp-verdict { color: var(--shell-red); }
+
+/* RADAR CHART WRAP */
+.radar-wrap {
+  background: var(--paper-warm);
+  padding: 2rem;
+  margin-top: 3.5rem;
+}
+
+.radar-title {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* S&W */
+.sw-section {
+  padding: 9rem 0;
+  background: var(--paper-warm);
+}
+
+.sw-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 4rem;
+}
+
+.sw-panel {
+  padding: 2.5rem;
+  background: var(--paper);
+}
+
+.sw-panel.strengths { border-top: 3px solid var(--core-green); }
+.sw-panel.weaknesses { border-top: 3px solid var(--beyond-crimson); }
+
+.sw-panel-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+.sw-panel.strengths .sw-panel-title { color: var(--core-green); }
+.sw-panel.weaknesses .sw-panel-title { color: var(--beyond-crimson); }
+
+.sw-item {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.8rem;
+  padding-bottom: 1.8rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.sw-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.sw-marker {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+.sw-panel.strengths .sw-marker {
+  background: rgba(45,106,79,0.1);
+  color: var(--core-green);
+}
+
+.sw-panel.weaknesses .sw-marker {
+  background: rgba(139,26,26,0.1);
+  color: var(--beyond-crimson);
+}
+
+.sw-lead {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.35rem;
+}
+
+.sw-detail {
+  font-size: 0.8rem;
+  color: #5A6B66;
+  line-height: 1.7;
+}
+
+/* DIAGNOSTIC DARK */
+.diagnostic-section {
+  padding: 9rem 0;
+  background: var(--ink-soft);
+  color: #fff;
+}
+
+.diagnostic-section .section-kicker { color: var(--shell-yellow); }
+.diagnostic-section .section-title { color: #fff; }
+
+.diagnostic-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-top: 4rem;
+}
+
+.diag-block {
+  padding: 2.2rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.diag-block-title {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--shell-yellow);
+  margin-bottom: 1.5rem;
+}
+
+.archetype-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.archetype-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  background: rgba(255,255,255,0.04);
+}
+
+.archetype-row.active {
+  background: rgba(221,29,33,0.15);
+  border-left: 3px solid var(--shell-red);
+}
+
+.archetype-name {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.75);
+}
+
+.archetype-row.active .archetype-name { color: #fff; font-weight: 500; }
+
+.archetype-status {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+}
+
+.archetype-row.active .archetype-status { color: var(--shell-red); }
+
+.culture-score-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.culture-score-item {}
+
+.cs-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 0.4rem;
+}
+
+.cs-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  position: relative;
+}
+
+.cs-fill {
+  height: 100%;
+  background: var(--shell-yellow);
+  transition: width 1s ease;
+}
+
+.cs-score {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.5);
+  margin-top: 0.3rem;
+}
+
+.tension-card {
+  padding: 1.8rem;
+  background: rgba(221,29,33,0.1);
+  border: 1px solid rgba(221,29,33,0.2);
+}
+
+.tension-card-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--shell-red);
+  margin-bottom: 0.8rem;
+}
+
+.tension-card-text {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.75;
+}
+
+.relativity-table { width: 100%; border-collapse: collapse; }
+
+.relativity-table tr {
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.relativity-table tr:last-child { border-bottom: none; }
+
+.relativity-table td {
+  padding: 0.8rem 0;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.6);
+  vertical-align: middle;
+}
+
+.relativity-table td:first-child { width: 50%; }
+
+.relativity-table td:last-child {
+  text-align: right;
+}
+
+.rel-chip {
+  display: inline-block;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 1px;
+}
+
+.rel-chip.above { background: rgba(45,106,79,0.25); color: #7ECBA5; }
+.rel-chip.at { background: rgba(181,132,26,0.25); color: var(--shell-yellow); }
+.rel-chip.below { background: rgba(221,29,33,0.25); color: #FF8A8A; }
+.rel-chip.behind { background: rgba(221,29,33,0.25); color: #FF8A8A; }
+
+.verdict-strip {
+  margin-top: 4rem;
+  padding: 3rem;
+  background: rgba(221,29,33,0.08);
+  border: 1px solid rgba(221,29,33,0.2);
+  text-align: center;
+}
+
+.verdict-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--shell-red);
+  margin-bottom: 1rem;
+}
+
+.verdict-archetype {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.5rem;
+  font-weight: 400;
+  font-style: italic;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.verdict-text {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.6);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+/* ONE QUESTION */
+.oneq-section {
+  padding: 9rem 0;
+  background: var(--paper);
+}
+
+.oneq-inner {
+  max-width: 800px;
+  margin: 4rem auto 0;
+  text-align: center;
+}
+
+.oneq-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.4;
+  margin-bottom: 2rem;
+}
+
+.oneq-source {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* MARKETING SECTION */
+.marketing-section {
+  padding: 9rem 0;
+  background: var(--paper-warm);
+}
+
+.marketing-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 5rem;
+  margin-top: 4rem;
+  align-items: start;
+}
+
+.pull-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.45;
+  border-left: 3px solid var(--shell-yellow);
+  padding-left: 1.8rem;
+  margin: 2rem 0;
+}
+
+.insight-list { list-style: none; margin-top: 2rem; }
+
+.insight-list li {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.insight-list li:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.insight-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  color: var(--shell-red);
+  font-style: italic;
+  flex-shrink: 0;
+  margin-top: -2px;
+}
+
+.insight-text {
+  font-size: 0.85rem;
+  color: #5A6B66;
+  line-height: 1.75;
+}
+
+.insight-text strong { color: var(--ink); font-weight: 600; }
+
+/* FOOTER */
+footer {
+  background: var(--ink);
+  padding: 3.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+.footer-left {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.05em;
+}
+
+.footer-left span { color: var(--shell-yellow); }
+
+.footer-right {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  .section-wrap { padding: 0 1.5rem; }
+  .hero-content { padding: 0 2rem 4rem; }
+  .hero-meta { flex-wrap: wrap; gap: 1.5rem; }
+  .meta-fact { border-right: none; margin-right: 0; padding-right: 0; }
+
+  .about-grid, .theta-intro-grid, .alloc-grid, .ceo-intro,
+  .competitor-intro, .sw-grid, .diagnostic-grid, .dilemma-grid,
+  .marketing-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+
+  .dna-grid { grid-template-columns: 1fr; }
+  .ceo-cards { grid-template-columns: 1fr 1fr; }
+  .comp-cards { grid-template-columns: 1fr 1fr; }
+  .stats-2x2 { grid-template-columns: 1fr 1fr; }
+  .culture-score-grid { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
-    <div class="hero">
-        <div class="hero-content">
-            <div class="case-study-label">Strategic Case Study</div>
-            <h1>Shell Malaysia</h1>
-            <p class="hero-subtitle">Applying the Theta Innovation Framework to Navigate Energy Transition in Southeast Asia</p>
-            <div class="hero-meta">
-                <div class="meta-item">
-                    <div class="meta-label">Industry</div>
-                    <div class="meta-value">Energy & Petrochemicals</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Founded</div>
-                    <div class="meta-value">1891 (Sarawak)</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Framework</div>
-                    <div class="meta-value">Theta (Core·Edge·Beyond)</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Region</div>
-                    <div class="meta-value">Southeast Asia</div>
-                </div>
-            </div>
+
+<nav>
+  <div class="nav-logo">Theta Framework · Shell</div>
+  <ul class="nav-links">
+    <li><a href="#dna">Innovation DNA</a></li>
+    <li><a href="#map">Theta Map</a></li>
+    <li><a href="#ceo">Leadership</a></li>
+    <li><a href="#dilemmas">Dilemmas</a></li>
+    <li><a href="#diagnostic">Diagnostic</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-radial"></div>
+  <div class="hero-scroll-line"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Innovation Framework &nbsp;·&nbsp; Strategic Case Study</div>
+    <h1 class="hero-headline">
+      The Brilliant<br>
+      <em>Inheritance</em><br>
+      Problem
+    </h1>
+    <p class="hero-sub">Shell has built world-class innovation for over 130 years. It pioneered LNG, reimagined offshore engineering, and cultivated a technical culture that competitors envy. So why does the future keep getting deferred?</p>
+    <div class="hero-meta">
+      <div class="meta-fact">
+        <div class="meta-fact-label">Founded</div>
+        <div class="meta-fact-value">1833 London</div>
+      </div>
+      <div class="meta-fact">
+        <div class="meta-fact-label">Malaysia Operations</div>
+        <div class="meta-fact-value">Since 1891</div>
+      </div>
+      <div class="meta-fact">
+        <div class="meta-fact-label">2023 Revenue</div>
+        <div class="meta-fact-value">$316.6B</div>
+      </div>
+      <div class="meta-fact">
+        <div class="meta-fact-label">Theta Archetype</div>
+        <div class="meta-fact-value">Legacy-Rich, Vision-Poor</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="section-wrap">
+    <div class="section-kicker reveal">Origin Story</div>
+    <h2 class="section-title reveal">A seashell shop that<br>became the world's<br><em>energy backbone</em></h2>
+
+    <div class="about-grid">
+      <div class="reveal">
+        <p class="section-body">In 1833, Marcus Samuel Sr. sold decorative seashells from a shop in East London. His son would use the same trade routes to transport kerosene to Asia, commission the world's first purpose-built oil tanker, and pioneer transit through the Suez Canal. The innovation was not just technical. It was relentless audacity applied to a problem no one else was solving.</p>
+        <p class="section-body" style="margin-top:1.2rem;">That audacity hardened into institution. By 1907, Shell merged with Royal Dutch Petroleum to form the company that would drill deeper, ship farther, and engineer more complex assets than almost anyone on earth. The culture of solving the technically impossible became Shell's defining characteristic, and its greatest source of both strength and inertia.</p>
+
+        <div class="hidden-fact reveal">
+          <p>Shell's Malaysia operations began in 1891, in Miri, Sarawak. That is 72 years before Malaysia existed as an independent nation. Shell did not enter a country. It preceded one. The relationships, infrastructure, and institutional memory Shell carries in Malaysia are not comparable to any competitor's Southeast Asian position. They are generational.</p>
         </div>
-        <div class="scroll-indicator">Scroll to explore</div>
+      </div>
+
+      <div class="reveal">
+        <div class="stats-2x2">
+          <div class="stat-block">
+            <div class="stat-num">130+</div>
+            <div class="stat-desc">Years of continuous<br>Malaysia operations</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-num">196</div>
+            <div class="stat-desc">Shell Ventures<br>investments since 1996</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-num">1996</div>
+            <div class="stat-desc">GameChanger program<br>launched internally</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-num">20%</div>
+            <div class="stat-desc">Of global oil production<br>from the Middle East</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="belief-strip reveal">
+  <div class="belief-inner">
+    <div class="belief-quote">"Innovation is not about inventing new products. That is the outcome. The essence of innovation is challenging the status quo, solving problems, and enabling people to thrive."</div>
+    <div class="belief-attr">The Theta Framework &nbsp;·&nbsp; Christine Pamela</div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<section class="timeline-section" id="history">
+  <div class="section-wrap">
+    <div class="section-kicker reveal">130 Years Compressed</div>
+    <h2 class="section-title reveal">Every breakthrough<br>contains the <em>seed</em><br>of the next constraint</h2>
+
+    <div class="timeline-container reveal">
+      <div class="tl-spine"></div>
+
+      <div class="tl-item">
+        <div class="tl-year-col"><div class="tl-year">1833</div></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-title">The Seashell Shop</div>
+          <div class="tl-text">Marcus Samuel Sr. opens an antiques and curiosities shop in London. The seashell trade with Asia establishes supply routes that would later carry something far more valuable. The brand logo the world now recognises on a billion fuel pumps is a direct descendent of those shells.</div>
+        </div>
+      </div>
+
+      <div class="tl-item milestone">
+        <div class="tl-year-col"><div class="tl-year">1892</div></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-phase">Innovation Inflection</div>
+          <div class="tl-title">The Murex and the Suez Gamble</div>
+          <div class="tl-text">Shell commissions the Murex, one of the world's first purpose-built oil tankers, designed to transit the Suez Canal. The Canal authorities had never allowed bulk oil transport; Shell's engineering convinced them otherwise. This was not incremental improvement. It was a rewrite of global energy logistics.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year-col"><div class="tl-year">1907</div></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-title">The Royal Dutch Merger</div>
+          <div class="tl-text">Shell Transport merges with Royal Dutch Petroleum, creating a 60-40 dual-listed structure that would govern the company for nearly a century. The Anglo-Dutch governance model bred a culture of consensus, careful navigation between power centres, and process over speed. This cultural DNA persists decades after the structure dissolved.</div>
+        </div>
+      </div>
+
+      <div class="tl-item milestone">
+        <div class="tl-year-col"><div class="tl-year">1960s</div></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-phase">Category Creator</div>
+          <div class="tl-title">Shell Invents an Industry: LNG</div>
+          <div class="tl-text">Shell partners in the world's first commercial LNG plant in Algeria. Cooling gas to a liquid, shipping it across oceans, converting it back: the idea was considered borderline fantastical. Shell committed decades of engineering discipline to make it routine. Today LNG represents one of Shell's most durable competitive moats, and Malaysia sits at its centre.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year-col"><div class="tl-year">1995</div></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-title">Brent Spar: The First Reckoning</div>
+          <div class="tl-text">Shell's plan to sink the Brent Spar oil buoy triggered a European consumer boycott of historic scale. Greenpeace's campaign, even where factually contested, revealed something structural: Shell's innovation culture was world-class at engineering, and nearly absent at stakeholder intelligence. The reputational cost forced a generation of rethinking about who the company was engineering for.</div>
+        </div>
+      </div>
+
+      <div class="tl-item milestone">
+        <div class="tl-year-col"><div class="tl-year">1996</div></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-phase">Internal Bet</div>
+          <div class="tl-title">GameChanger: The Maverick Vault</div>
+          <div class="tl-text">Shell launches GameChanger, an internal venture capital program open to any employee or outside contributor with a radical idea. Over 25 years it would incubate the concept that became Prelude FLNG, carbon capture pilots, and dozens of technologies now embedded in Shell's core. It is the company's most authentic attempt to protect the Chaos stage of innovation. The question is whether it still does.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year-col"><div class="tl-year">2004</div></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-title">The Reserves Scandal: Truth Has a Time Horizon</div>
+          <div class="tl-text">Shell is forced to reclassify over 20% of its proven reserves, admitting years of overstatement. Share price drops. Senior executives depart. The crisis triggers a 2005 corporate unification. The deeper lesson is never fully absorbed: an organisation that rewards certainty above honesty will systematically distort its own picture of the future.</div>
+        </div>
+      </div>
+
+      <div class="tl-item milestone">
+        <div class="tl-year-col"><div class="tl-year">2013</div></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-phase">Engineering Apex</div>
+          <div class="tl-title">Prelude FLNG: The Largest Floating Structure Ever Built</div>
+          <div class="tl-text">Shell launches Prelude FLNG off the Australian coast. The facility extracts gas from below the seabed, liquefies it, and stores it for tanker transfer, all at sea, miles from shore. It is the largest offshore facility in human history. The technology originated in GameChanger. From maverick idea to operational engineering miracle: 15 years, billions of dollars, and a proof that Shell can still dream at extraordinary scale.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year-col"><div class="tl-year">2016</div></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-title">The BG Acquisition: Buying the Next S-Curve</div>
+          <div class="tl-text">Shell acquires BG Group for $70 billion, becoming the world's largest LNG company overnight. It is the industry's boldest bet in a generation, executed while oil prices were near historic lows. Van Beurden's conviction was structural: LNG is the cleanest bridge fuel, and leadership in it must be built before competitors recognise the opportunity. Bold, yes. But it was still a Core Zone bet.</div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-year-col"><div class="tl-year">2021</div></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-title">Dutch Court Orders Emission Cuts: The Frontier Arrives Uninvited</div>
+          <div class="tl-text">A Dutch court orders Shell to reduce emissions by 45% by 2030. Shell appeals. The ruling is a landmark: for the first time, a corporation is legally required to align its business model with a climate target it did not choose. Shell's Beyond Zone ambitions are no longer optional positioning. They are subject to judicial enforcement. The company's response will define the next decade.</div>
+        </div>
+      </div>
+
+      <div class="tl-item milestone">
+        <div class="tl-year-col"><div class="tl-year">2023</div></div>
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-phase">Pivot</div>
+          <div class="tl-title">Sawan's Reset: Performance, Discipline, Simplification</div>
+          <div class="tl-text">Wael Sawan becomes CEO with a clear mandate: restore investor confidence through capital discipline. The strategy phrase is "performance, discipline, simplification." Low-return renewable investments are scaled back. Headcount is cut. The message to the organisation is unmistakable: the Core is not being abandoned; everything else is being scrutinised. Rational for the shareholder. Uncomfortable for the portfolio.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- INNOVATION DNA -->
+<section class="dna-section" id="dna">
+  <div class="section-wrap">
+    <div class="section-kicker reveal">What Makes Shell, Shell</div>
+    <h2 class="section-title reveal">The innovation DNA that<br>built empires and<br><em>now complicates them</em></h2>
+    <p class="section-body reveal" style="margin-top:1.2rem; margin-bottom:0;">Shell's innovation history is not thin. It is structurally remarkable. Understanding it is essential to understanding why the gaps exist.</p>
+
+    <div class="dna-grid" style="margin-top:3.5rem;">
+      <div class="dna-card reveal">
+        <div class="dna-icon">⚙️</div>
+        <div class="dna-title">The Engineering-First Mind</div>
+        <div class="dna-text">Shell's culture was forged in the most technically demanding environments on earth: deep-water platforms, Arctic conditions, sub-surface geology that humbles supercomputers. The result is a workforce of world-class problem-solvers. They can optimise a refinery to extract 0.1% more efficiency. The question your framework asks is whether anyone is asking if that refinery should exist in 2040.</div>
+      </div>
+
+      <div class="dna-card reveal">
+        <div class="dna-icon">🔬</div>
+        <div class="dna-title">GameChanger: Courage in a Program</div>
+        <div class="dna-text">Launched in 1996, GameChanger is Shell's most authentic innovation mechanism: an open call for radical ideas, with internal venture funding for the best ones. It is not namesake. Prelude FLNG started here. Early CCS concepts grew here. The question is whether it remains a true Chaos stage space, or whether it has become another stage-gate process wearing startup clothes. The structure is intact. The culture may have quietly departed.</div>
+      </div>
+
+      <div class="dna-card reveal">
+        <div class="dna-icon">🌊</div>
+        <div class="dna-title">Scale as a Competitive Weapon</div>
+        <div class="dna-text">Shell does not think in megawatts. It thinks in gigawatts. It does not pilot CCS at a shed. It builds Northern Endurance, the UK's most ambitious industrial decarbonisation cluster. This scale orientation is a genuine competitive advantage: Shell can do things that startups and even mid-tier majors cannot fund or execute. The risk is that scale thinking applied to Edge and Beyond kills the small bets that eventually become the large ones.</div>
+      </div>
+
+      <div class="dna-card reveal">
+        <div class="dna-icon">🔄</div>
+        <div class="dna-title">LNG: A Blueprint for Zone Migration</div>
+        <div class="dna-text">In the 1960s, LNG was a Beyond Zone concept. Fantastical, technically unproven, commercially uncertain. Shell committed to it anyway. Decades later it migrated to Edge, then became the Core of the Core. The LNG story is Theta in motion: patient capital invested in a Beyond bet that took 30 years to pay off. The irony is that having succeeded once with this model, Shell now has trouble applying the same patience to the next generation of bets.</div>
+      </div>
+
+      <div class="dna-card reveal">
+        <div class="dna-icon">🧬</div>
+        <div class="dna-title">Shell Ventures: The Radar Antenna</div>
+        <div class="dna-text">Since 1996, Shell Ventures has made 196 investments in startups spanning power, mobility, emissions, and digital. The portfolio includes early-stage seed bets alongside later-stage companies. It is not a token program. But it functions as a financial investor more than a capability-builder. The critical question is whether portfolio companies are shaping Shell's internal strategy, or whether Shell is simply watching them from a comfortable distance.</div>
+      </div>
+
+      <div class="dna-card reveal">
+        <div class="dna-icon">🤝</div>
+        <div class="dna-title">The Waterfall That Runs Everything</div>
+        <div class="dna-text">Shell's project management methodology, Front-End Loading, is built on Waterfall logic: sequential, stage-gated, deeply rigorous. For a $10 billion LNG platform, this is not a flaw. It is a necessity. But the same processes that govern deep-water platforms govern EV charging pilots. The Build stage of innovation needs protection from this architecture. Shell has not yet built that protection at scale.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section class="theta-section" id="map">
+  <div class="section-wrap">
+    <div class="section-kicker reveal">Theta Innovation Map</div>
+    <h2 class="section-title reveal">Where Shell actually<br>places its <em>bets</em></h2>
+
+    <div class="theta-intro-grid">
+      <div class="reveal">
+        <div class="zone-legend">
+          <div class="zone-pill core">
+            <div>
+              <div class="zone-pill-label">🟩 Core Zone</div>
+              <div class="zone-pill-text">Existing markets, existing technology. Incremental to adjacent improvement. The cash engine that funds everything else. Oil, gas, LNG, refining, retail. This is where Shell's world-class execution lives.</div>
+            </div>
+          </div>
+          <div class="zone-pill edge">
+            <div>
+              <div class="zone-pill-label">🟨 Edge Zone</div>
+              <div class="zone-pill-text">New markets or meaningfully new technology. The next S-curve in development. CCS at scale, EV charging networks, sustainable aviation fuel, residential energy. These are Shell's architectural and disruptive plays.</div>
+            </div>
+          </div>
+          <div class="zone-pill beyond">
+            <div>
+              <div class="zone-pill-label">🟥 Beyond Zone</div>
+              <div class="zone-pill-text">Transformational and frontier. Speculative, long-horizon, radical technology change. Green hydrogen, advanced biofuels, nuclear fusion investment, carbon-negative systems. These are bets on who Shell becomes after oil.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--paper);padding:1.5rem;border-left:3px solid var(--shell-yellow);" class="reveal">
+          <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem;">Reading the Map</div>
+          <p style="font-size:0.82rem;color:#5A6B66;line-height:1.7;">The size of each dot represents relative investment level. The concentration in the lower-left is not a surprise. It is the outcome of a capital allocation process optimised for proven returns. What the map makes visible is the thinness of activity in the upper-right, where the industry is being rewritten.</p>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <div class="chart-wrap">
+          <div class="chart-title">Shell Innovation Portfolio Map (X: Market Reach · Y: Technology Change)</div>
+          <canvas id="scatterChart" width="520" height="340" style="max-width:100%;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section class="alloc-section" id="allocation">
+  <div class="section-wrap">
+    <div class="section-kicker reveal" style="color:var(--shell-yellow);">70-20-10 Allocation Analysis</div>
+    <h2 class="section-title reveal">The gap between<br><em>stated ambition</em><br>and actual capital</h2>
+
+    <div class="alloc-grid">
+      <div>
+        <p class="section-body reveal" style="color:rgba(255,255,255,0.6);">Theta's 70-20-10 model is not a prescription. It is a diagnostic. The question it forces is not whether the allocation is correct, but whether it is intentional. Shell's current distribution reflects a deliberate Sawan-era pivot toward Core returns. The question the framework asks is: at what cost?</p>
+        <p class="section-body reveal" style="color:rgba(255,255,255,0.6);margin-top:1rem;">The benchmark gap in the Beyond zone is not a rounding error. It represents the seeds that are not being planted. And as your book observes, "the seeds you plant today won't bear fruit tomorrow, but they will mould your company's future."</p>
+      </div>
+
+      <div class="alloc-bars reveal">
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-label">Core Zone</span>
+            <div class="alloc-bar-nums">
+              <span class="alloc-actual" style="color:#7ECBA5;">~80%</span>
+              <span class="alloc-benchmark">benchmark: 70%</span>
+            </div>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill" style="width:80%;background:var(--core-green);"></div>
+            <div class="alloc-benchmark-line" style="left:70%"></div>
+          </div>
+          <div class="alloc-commentary">Overweight by 8-12pts. Sawan's "performance, discipline, simplification" has concentrated capital in highest-return hydrocarbons.</div>
+        </div>
+
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-label">Edge Zone</span>
+            <div class="alloc-bar-nums">
+              <span class="alloc-actual" style="color:var(--shell-yellow);">~13%</span>
+              <span class="alloc-benchmark">benchmark: 20%</span>
+            </div>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill" style="width:13%;background:var(--edge-amber);"></div>
+            <div class="alloc-benchmark-line" style="left:20%"></div>
+          </div>
+          <div class="alloc-commentary">Underweight. EV charging, CCS, and SAF receive investment but face premature ROCE expectations that stall the next S-curve.</div>
+        </div>
+
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-label">Beyond Zone</span>
+            <div class="alloc-bar-nums">
+              <span class="alloc-actual" style="color:#FF8A8A;">~4%</span>
+              <span class="alloc-benchmark">benchmark: 10%</span>
+            </div>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill" style="width:4%;background:var(--beyond-crimson);"></div>
+            <div class="alloc-benchmark-line" style="left:10%"></div>
+          </div>
+          <div class="alloc-commentary">Critically underweight. Green hydrogen, advanced biofuels, and frontier bets collectively receive less than 5% of total R&D and capital expenditure.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CEO SECTION -->
+<section class="ceo-section" id="ceo">
+  <div class="section-wrap">
+    <div class="section-kicker reveal">Leadership Through the Theta Lens</div>
+    <h2 class="section-title reveal">Four leaders, four<br><em>interpretations</em><br>of the same company</h2>
+
+    <div class="ceo-intro">
+      <div class="reveal">
+        <p class="section-body">Shell's strategic DNA is not constant. It mutates with each CEO transition, reflecting a negotiation between the company's engineering heritage, its shareholder obligations, and the external signals each leader chooses to believe. The Theta lens makes these shifts visible in allocation terms, not just rhetoric.</p>
+        <p class="section-body" style="margin-top:1rem;">The most revealing data point is not which CEO invested most in Beyond. It is how quickly the organisation responds when a new CEO signals that the Core is the priority. The machinery of a large organisation doesn't change direction slowly because it lacks agility. It changes direction slowly because it has been built not to.</p>
+      </div>
+      <div class="ceo-chart-wrap reveal">
+        <div class="chart-title">Zone Allocation by CEO Era</div>
+        <canvas id="ceoChart" width="480" height="240" style="max-width:100%;"></canvas>
+      </div>
     </div>
 
-    <section>
-        <div class="section-label">Executive Summary</div>
-        <h2>A Legacy Before a Nation</h2>
-        <p>Shell's operations in Malaysia began in 1891, 72 years before Malaysia's formation as an independent nation. For over 130 years, Shell Malaysia has evolved from pioneering oil exploration in Miri, Sarawak, to becoming one of the world's most critical LNG hubs and a strategic bridge between Shell's global ambitions and Southeast Asian energy transition.</p>
-        <p>This case study examines how the Theta Innovation Framework (Core·Edge·Beyond) provides Shell Malaysia with a structured approach to balance operational excellence, strategic growth, and transformational innovation while navigating internal coordination challenges and external resource competition.</p>
+    <div class="ceo-cards" id="ceoCards"></div>
+  </div>
+</section>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number">7,000+</div>
-                <div class="stat-label">Direct Employees</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">950+</div>
-                <div class="stat-label">Service Stations</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">130+</div>
-                <div class="stat-label">Years of Operations</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">Top 3</div>
-                <div class="stat-label">Fuel Retailer Position</div>
-            </div>
+<!-- MARKETING -->
+<section class="marketing-section" id="marketing">
+  <div class="section-wrap">
+    <div class="section-kicker reveal">Brand as Strategy</div>
+    <h2 class="section-title reveal">When the logo becomes<br>a <em>promise</em> the<br>portfolio cannot keep</h2>
+
+    <div class="marketing-grid">
+      <div class="reveal">
+        <p class="section-body">Shell is one of the most recognised brands on earth. The scallop shell, born from a Victorian curio shop, now sits on over 46,000 service stations across 80 countries. People know the brand. They fill their cars, trust the lubricants, recognise the yellow. What they are beginning to notice is the gap between what the brand implies and what the portfolio delivers.</p>
+        <div class="pull-quote">The brand has always promised something more than fuel. It has promised confidence in the future of energy.</div>
+        <p class="section-body">Under van Beurden, Shell leaned into this promise with visible commitments to the energy transition: net-zero targets, EV charging acquisitions, public advocacy for carbon pricing. The marketing narrative was forward-looking. The allocation was more conservative. Under Sawan, the narrative has become more disciplined: "we will invest where we generate competitive returns." Honest. But it does not inspire the people inside the organisation who want to build the future.</p>
+        <p class="section-body" style="margin-top:1rem;">Marketing matters for innovation because it signals internally as much as externally. When the company says it is building the future, people believe they are building the future. When the company says it is disciplining the portfolio, people wait before investing their energy in something that may get cut.</p>
+      </div>
+
+      <div class="reveal">
+        <ul class="insight-list">
+          <li>
+            <span class="insight-num">01</span>
+            <span class="insight-text"><strong>The Brand-Portfolio Gap.</strong> Shell's brand imagery features renewable energy, clean technology, and a greener future. Its capital allocation is 78-82% in hydrocarbons. When the brand narrative and the portfolio reality diverge, the credibility cost lands on the people who believed the narrative: employees, early adopters of new energy products, and government partners expecting transition leadership.</span>
+          </li>
+          <li>
+            <span class="insight-num">02</span>
+            <span class="insight-text"><strong>Marketing as Internal Signal.</strong> In a company of 100,000 people, brand messaging doubles as culture messaging. Every Shell campaign that leads with "powering progress" tells New Energies teams their work matters. Every pivot back to hydrocarbon profitability tells the same teams to hedge their bets.</span>
+          </li>
+          <li>
+            <span class="insight-num">03</span>
+            <span class="insight-text"><strong>Customer Signal Architecture.</strong> Shell's retail network touches millions of consumers. But the data flowing from those interactions is predominantly optimising Core products. The early adopter signals, the confusion about EV charging, the questions about carbon offsets: these are Edge and Beyond intelligence sitting in a Core listening apparatus.</span>
+          </li>
+          <li>
+            <span class="insight-num">04</span>
+            <span class="insight-text"><strong>The Shell Recharge Paradox.</strong> Shell is one of Europe's largest EV charging networks. But the brand association remains petrol. Crossing the chasm from early adopter to early majority in EV charging requires a brand that says "we are the future of fuelling," not "we also do charging." That identity shift has not been made.</span>
+          </li>
+          <li>
+            <span class="insight-num">05</span>
+            <span class="insight-text"><strong>Product Innovation Follows Brand Conviction.</strong> Shell's lubricants and specialty chemicals are innovation leaders precisely because the brand has committed to leadership in those categories. The same conviction applied to hydrogen or advanced biofuels would unlock the same innovation intensity. The brand has the reach. The question is whether leadership has the conviction.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DILEMMAS -->
+<section class="dilemma-section" id="dilemmas">
+  <div class="section-wrap">
+    <div class="section-kicker reveal">The Real Innovation Challenges</div>
+    <h2 class="section-title reveal">The dilemmas no<br>framework can<br><em>dissolve, only name</em></h2>
+
+    <div class="dilemma-grid">
+
+      <div class="dilemma-card reveal">
+        <div class="dilemma-num">01</div>
+        <div class="dilemma-title">Molecules vs. Electrons: A Civilisational Shift Dressed as a Strategy Debate</div>
+        <div class="dilemma-text">Shell's DNA is built on managing molecules. Finding them, moving them, transforming them, trading them. The emerging energy system is fundamentally about electrons: renewables, grids, storage, software-defined power. These are not adjacent industries. They are different epistemic worlds. An engineer who has spent 20 years optimising an LNG liquefaction process is not simply redeployable to designing a residential battery product. Shell knows this. The question is how deeply it has acted on the knowledge.</div>
+        <div class="dilemma-tension">The fast follower model that worked for every previous technology generation may not work here. AI systems, energy platforms, and EV ecosystems improve through data and use. Early movers compound. Latecomers cannot simply purchase the gap.</div>
+      </div>
+
+      <div class="dilemma-card reveal">
+        <div class="dilemma-num">02</div>
+        <div class="dilemma-title">The ROCE Trap: When Accounting Kills the Future</div>
+        <div class="dilemma-text">Shell's Core business generates 15-25% Return on Capital Employed. The new energy businesses it needs to build, wind, solar, EV charging, hydrogen distribution, generate 4-8% ROCE. Every dollar invested in a CCS project with a 6% return is a dollar not invested in a deep-water well with a 20% return. In a publicly traded company, this arithmetic has consequences. The CFO must defend every allocation to a Board whose fiduciary instinct is to maximise near-term returns.</div>
+        <div class="dilemma-tension">This is not a failure of will. It is a structural misalignment between the time horizons of capital markets and the time horizons of energy system transformation. The LNG S-curve took 30 years. Markets reward quarters.</div>
+      </div>
+
+      <div class="dilemma-card reveal">
+        <div class="dilemma-num">03</div>
+        <div class="dilemma-title">Safety Culture vs. Experimentation Culture: The Same Reflex, Different Outcomes</div>
+        <div class="dilemma-text">Shell's safety culture is not optional. One platform failure, one refinery incident, one pipeline rupture carries consequences measured in lives, not percentage points. The processes that prevent catastrophe are sacred, as they should be. But those processes have been extended to cover everything. A New Energies team proposing a hydrogen pilot in Singapore faces the same approval architecture as a $5 billion upstream project. The risk profiles are not comparable. The process treats them as if they are.</div>
+        <div class="dilemma-tension">The Chaos stage of innovation requires tolerance for failure as learning. Shell says it embraces this. Its incentive system penalises it. The gap between rhetoric and reality here is where mavericks lose faith and leave.</div>
+      </div>
+
+      <div class="dilemma-card reveal">
+        <div class="dilemma-num">04</div>
+        <div class="dilemma-title">The Acquisition Integration Problem: Buying Innovation, Inheriting Friction</div>
+        <div class="dilemma-text">Shell has made smart Edge acquisitions: sonnen (residential batteries), ubitricity (EV charging), NewMotion, Greenlots. Each represented genuine innovation capability: agile teams, customer-intimate products, startup-speed iteration. The pattern that follows is structurally predictable. Shell's processes, legal reviews, HSSE requirements, and stage-gate governance arrive in the acquired company's workflow. The result is an asset that is safer, more compliant, and slower. The thing that made it worth acquiring has been quietly managed away.</div>
+        <div class="dilemma-tension">Bain research suggests 80-90% of acquisitions fail to deliver expected value. Shell's acquisition record in Core M&A is strong. Its Edge acquisition integration record is more mixed.</div>
+      </div>
+
+      <div class="dilemma-card reveal">
+        <div class="dilemma-num">05</div>
+        <div class="dilemma-title">The Maverick's Dilemma: Brilliant People in a System That Does Not Know What to Do With Them</div>
+        <div class="dilemma-text">Shell has no shortage of mavericks. The engineers who conceived Prelude, the scientists who pushed early CCS, the strategists who argued for the BG acquisition against the consensus: these are people who see around corners. But the organisational reward structure promotes into management, not into protected spaces for continued unconventional work. The Technical Fellow program recognises deep expertise. What is missing is the protected space for the cross-disciplinary maverick who does not fit any single technical domain.</div>
+        <div class="dilemma-tension">"Mavericks are the wildflowers in a monoculture." The ones who have already left to join clean tech startups are the ones Shell will most wish it had kept.</div>
+      </div>
+
+      <div class="dilemma-card reveal">
+        <div class="dilemma-num">06</div>
+        <div class="dilemma-title">Geopolitical Fortune, Strategic Risk: The Middle East Paradox</div>
+        <div class="dilemma-text">The March 2026 Middle East crisis is simultaneously validating Shell's Core strategy and exposing its fragility. Oil at $113 per barrel rewards Shell's hydrocarbon concentration. But Shell's Ras Laffan facilities have been attacked, LNG production is shut down, and force majeure has been declared to customers. The very assets that justify the Core-heavy strategy are the ones most exposed to the disruption that makes diversification necessary. Concentration creates returns. Concentration also creates catastrophic single points of failure.</div>
+        <div class="dilemma-tension">20% of Shell's total production comes from the Middle East. When that region becomes a theatre of active conflict, the "value over volume" thesis meets its stress test.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section class="competitor-section" id="competitors">
+  <div class="section-wrap">
+    <div class="section-kicker reveal">Competitive Landscape</div>
+    <h2 class="section-title reveal">The peers are not<br>standing still while<br><em>Shell disciplines itself</em></h2>
+
+    <div class="competitor-intro">
+      <div class="reveal">
+        <p class="section-body">Competition among supermajors is no longer simply about who finds the most oil most cheaply. The landscape has fractured into distinct strategic postures. TotalEnergies has built a genuine balanced portfolio. Exxon is optimising the Core with AI and frontier exploration. BP is deepening its digital transformation. Chevron is executing selectively but expanding its frontier footprint. Shell is concentrating on Core discipline, which generates superior near-term returns but narrows its optionality window.</p>
+        <p class="section-body" style="margin-top:1rem;">The SLB analysis makes a pointed observation: Shell is "the outlier" among supermajors in avoiding frontier exploration. The question is whether that is strategic discipline or the beginning of managed decline.</p>
+      </div>
+      <div class="reveal">
+        <div style="padding:1.8rem;background:var(--paper-warm);border-left:3px solid var(--shell-red);">
+          <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.8rem;">Industry Observation</div>
+          <p style="font-size:0.88rem;color:#5A6B66;line-height:1.75;font-style:italic;">"For how long can you manage decline before you decline managing?" The industry's own analysts are now asking this question about Shell's frontier strategy. It is not a hostile question. It is the right one.</p>
+          <div style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-top:0.8rem;">Oilfield International Services, 2026</div>
         </div>
-    </section>
-
-    <section style="background: #fafafa; padding: 6rem 2rem; margin: 0;">
-        <div style="max-width: 1200px; margin: 0 auto;">
-            <div class="section-label">Strategic Lens</div>
-            <h2>Understanding the Theta Innovation Lens</h2>
-            <p>Large industrial organizations rarely fail from lack of innovation. They fail from misalignment between what must be protected, what should be scaled next, and what must be explored patiently.</p>
-            <p>The Theta Innovation Lens categorizes innovation into three strategic zones:</p>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 3rem 0;">
-                <div style="background: white; padding: 2rem; border-radius: 4px; border-left: 4px solid #10b981;">
-                    <h3 style="color: #10b981; font-size: 1.2rem; margin-bottom: 1rem;">🟩 Core</h3>
-                    <p style="margin: 0; font-size: 0.95rem;">Activities that sustain today's business and generate the cash flows that fund everything else.</p>
-                </div>
-                <div style="background: white; padding: 2rem; border-radius: 4px; border-left: 4px solid #FBCE07;">
-                    <h3 style="color: #1a1a1a; font-size: 1.2rem; margin-bottom: 1rem;">🟨 Edge</h3>
-                    <p style="margin: 0; font-size: 0.95rem;">Initiatives that extend existing capabilities into adjacent markets and near-term growth opportunities.</p>
-                </div>
-                <div style="background: white; padding: 2rem; border-radius: 4px; border-left: 4px solid #DD1D21;">
-                    <h3 style="color: #DD1D21; font-size: 1.2rem; margin-bottom: 1rem;">🟥 Beyond</h3>
-                    <p style="margin: 0; font-size: 0.95rem;">Efforts that explore long-horizon technologies that may redefine the business but require discipline, patience, and clear milestones.</p>
-                </div>
-            </div>
-
-            <p style="margin-top: 2rem;">Shell's 130-year history naturally maps to these three zones. The question is not whether Shell innovates, but how intentionally each zone is managed, and how clearly the organization aligns around them.</p>
-            
-            <div style="background: white; padding: 2rem; border-radius: 4px; margin: 3rem 0; border-left: 3px solid #FBCE07;">
-                <p style="margin: 0; font-size: 0.95rem; font-style: italic; color: #666;"><strong>Theta Lens:</strong> Viewed through the Core–Edge–Beyond framework, Shell's leadership history reveals a clear pattern: periods of strong performance coincide with disciplined Core stewardship, while moments of strain emerge when Edge and Beyond initiatives lack explicit portfolio boundaries. Theta does not judge ambition. It clarifies sequencing.</p>
-            </div>
-        </div>
-    </section>
-
-    <section>
-        <div class="section-label">Historical Context</div>
-        <h2>From Seashells to Energy Giant</h2>
-        <div class="timeline">
-            <div class="timeline-item">
-                <div class="timeline-year">1833</div>
-                <div class="timeline-content">
-                    <h4>Humble Beginnings</h4>
-                    <p>Marcus Samuel opens an antiques shop in London, selling oriental seashells as fashionable décor. Demand grew rapidly, expanding into bulk imports from Asia and laying early foundations for a broader import-export business.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-year">1891</div>
-                <div class="timeline-content">
-                    <h4>Malaysia Operations Begin</h4>
-                    <p>Shell establishes operations in Miri, Sarawak, marking the beginning of what would become one of Shell's most legendary subsidiaries—predating Malaysia's independence by seven decades.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-year">1892</div>
-                <div class="timeline-content">
-                    <h4>Innovation in Shipping</h4>
-                    <p>Marcus Samuel's sons commission Murex, one of the world's first purpose-built oil tankers and the first to transit the Suez Canal. This breakthrough in transport efficiency transformed Shell's economics and enabled global competition against Standard Oil.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-year">1907</div>
-                <div class="timeline-content">
-                    <h4>Global Expansion</h4>
-                    <p>Shell Transport and Trading merges with Royal Dutch Petroleum, forming Royal Dutch Shell Group and positioning the company for global dominance in the 20th century energy landscape.</p>
-                </div>
-            </div>
-            <div class="timeline-item">
-                <div class="timeline-year">2022</div>
-                <div class="timeline-content">
-                    <h4>Modern Era</h4>
-                    <p>Shell simplifies its name to Shell plc, relocates headquarters to London, and embraces a new era focused on energy transition while maintaining operational excellence across traditional and emerging energy sectors.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section>
-        <div class="section-label">Leadership Analysis</div>
-        <h2>Strategic Evolution Through Leadership</h2>
-        <p style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">Shell's CEOs have navigated different strategic priorities through the Theta Framework lens: Core optimization, Edge growth, and Beyond transformation. This timeline reveals how leadership philosophy shapes organizational focus.</p>
-
-        <div class="chart-container">
-            <h3>CEO Strategic Focus Timeline</h3>
-            <canvas id="leadershipChart"></canvas>
-        </div>
-
-        <div class="ceo-grid" id="ceoCards"></div>
-    </section>
-
-    <section>
-        <div class="section-label">Strategic Positioning</div>
-        <h2>Malaysia's Dual Role</h2>
-        <p>Shell Malaysia operates at a unique intersection: balancing global Shell strategy with local market dynamics, serving as both a cash-generating legacy asset and a proving ground for energy transition initiatives in Southeast Asia.</p>
-
-        <div class="chart-container">
-            <h3>Strategic Capability Comparison: Global Shell vs. Shell Malaysia</h3>
-            <canvas id="comparisonChart"></canvas>
-        </div>
-    </section>
-
-    <div class="challenge-section">
-        <div style="max-width: 1200px; margin: 0 auto;">
-            <div class="section-label" style="text-align: center;">Strategic Challenges</div>
-            <h2 style="text-align: center;">Navigating Dual Pressures</h2>
-            <p style="text-align: center; color: #666; max-width: 800px; margin: 0 auto 3rem;">Innovation at Shell Malaysia faces dual pressures: internal coordination across business units and external competition for global resources. The Theta Framework provides structured solutions to both.</p>
-
-            <div class="challenge-grid">
-                <div class="challenge-card">
-                    <h3>🔄 Internal: Cross-Unit Coordination</h3>
-                    
-                    <div class="challenge-box">
-                        <h4>The Challenge</h4>
-                        <ul>
-                            <li>Upstream engineers prioritize precision & risk elimination</li>
-                            <li>Downstream retail teams focus on customer UX & speed</li>
-                            <li>New Energies wants to disrupt traditional segments</li>
-                            <li>Competing priorities for limited capex allocation</li>
-                            <li>No unified framework for measuring innovation success</li>
-                        </ul>
-                    </div>
-
-                    <div class="solution-box">
-                        <h4>✓ Theta Framework Solution</h4>
-                        <ul>
-                            <li><strong>Unified Language:</strong> Core, Edge, and Beyond give Upstream, Downstream, Integrated Gas, and New Energies a shared way to justify priorities without competing on ideology or politics</li>
-                            <li><strong>Clear Allocation:</strong> Structured portfolio prevents political capex battles</li>
-                            <li><strong>Reduced Friction:</strong> Each unit understands their strategic zone role</li>
-                            <li><strong>Measurable KPIs:</strong> Innovation scoring system for all zones</li>
-                        </ul>
-                        <div style="background: #fff; padding: 1rem; border-radius: 4px; margin-top: 1rem; border: 1px solid #FBCE07;">
-                            <p style="font-size: 0.85rem; margin: 0; color: #666;"><strong style="color: #1a1a1a;">Without Theta:</strong> Innovation debates default to politics, personality, or short-term ROI.<br><strong style="color: #1a1a1a;">With Theta:</strong> Decisions shift from whether to invest to where an initiative belongs—Core, Edge, or Beyond—and what success should look like in that zone.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="challenge-card">
-                    <h3>🌍 External: Global Resource Competition</h3>
-                    
-                    <div class="challenge-box">
-                        <h4>The Challenge</h4>
-                        <ul>
-                            <li>Malaysia competes with Netherlands, UK, Singapore, Oman for HQ attention</li>
-                            <li>Limited investment autonomy vs global Shell strategy</li>
-                            <li>Beyond initiatives (CCS, hydrogen) need HQ approval & funding</li>
-                            <li>Risk of being seen as "just a cash cow" not innovation hub</li>
-                            <li>No systematic way to prove Malaysia's strategic importance</li>
-                        </ul>
-                    </div>
-
-                    <div class="solution-box">
-                        <h4>✓ Theta Framework Solution</h4>
-                        <ul>
-                            <li><strong>Strategic Narrative:</strong> Position Malaysia as SEA energy transition command center</li>
-                            <li><strong>Data-Backed Defense:</strong> Quantify Beyond investment value to HQ</li>
-                            <li><strong>Portfolio Visibility:</strong> Clear Core/Edge/Beyond roadmap demonstrates maturity</li>
-                            <li><strong>Competitive Edge:</strong> Differentiate from PETRONAS & regional players</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <section style="background: white; padding: 4rem 2rem;">
-        <div style="max-width: 900px; margin: 0 auto;">
-            <div class="section-label" style="text-align: center;">Applying Theta to Shell Malaysia</div>
-            <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem;">A Moving Portfolio, Not a Fixed Structure</h2>
-            
-            <p style="text-align: center; color: #666; font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem;">
-                Core, Edge, and Beyond are not fixed categories—they shift with technology maturity, market conditions, and geography. What is Beyond in one decade may become Edge in the next, and eventually part of the Core.
-            </p>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2.5rem 0;">
-                <div style="text-align: center; padding: 1.5rem; background: #fafafa; border-radius: 4px;">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚡</div>
-                    <div style="font-size: 0.9rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.5rem;">Technology Evolution</div>
-                    <div style="font-size: 0.85rem; color: #666;">LNG: Beyond → Edge → Core</div>
-                </div>
-                <div style="text-align: center; padding: 1.5rem; background: #fafafa; border-radius: 4px;">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🌍</div>
-                    <div style="font-size: 0.9rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.5rem;">Market Dynamics</div>
-                    <div style="font-size: 0.85rem; color: #666;">Regulation, economics, geography</div>
-                </div>
-            </div>
-
-            <p style="text-align: center; color: #666; font-size: 0.95rem; line-height: 1.7; padding: 2rem; background: #fffef8; border-left: 3px solid #FBCE07; border-radius: 4px; margin-top: 2rem;">
-                <strong style="color: #1a1a1a;">For Shell Malaysia:</strong> This lens clarifies how a 130-year operating legacy can coexist with energy transition experiments. Strategic tension between them is not a failure. It's a design challenge that Theta makes visible and manageable.
-            </p>
+    <div class="comp-cards reveal">
+      <div class="comp-card featured">
+        <div class="comp-name">Shell</div>
+        <div class="comp-tag">The Disciplined Holdout</div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot core strong"></div>
+          <div class="comp-zone-text">Core: LNG dominant, deep-water, retail</div>
         </div>
-    </section>
-
-    <div class="insights-section">
-        <h2>Strategic Insights</h2>
-        <p style="text-align: center; max-width: 800px; margin: 0 auto 3rem; color: rgba(255,255,255,0.8);">The following insights interpret Shell Malaysia's position through the Theta lens.</p>
-        <div class="insights-grid">
-            <div class="insight-card">
-                <div class="insight-number">01</div>
-                <h3>🎯 Framework Creates Alignment</h3>
-                <p>The Theta Framework solves Shell Malaysia's coordination challenge by providing a shared language across business units : Upstream, Downstream, Integrated Gas, and New Energies can now speak the same strategic vocabulary. Traditional strategy frameworks optimize within silos; Theta exposes tension between silos, where most capital and innovation failures actually occur.</p>
-            </div>
-            <div class="insight-card">
-                <div class="insight-number">02</div>
-                <h3>🟩 Core Drives Stability</h3>
-                <p>Shell's oil & gas foundation remains critical for funding innovation. Every successful CEO maintained strong Core performance while exploring new opportunities. Malaysia's 130+ years of operational excellence provides the cash flow stability necessary for strategic experimentation.</p>
-            </div>
-            <div class="insight-card">
-                <div class="insight-number">03</div>
-                <h3>🟨 Edge Determines Competitiveness</h3>
-                <p>LNG leadership, carbon capture, and EV charging infrastructure represent Shell Malaysia's Edge (the next S-curve) that will define competitive position in Southeast Asia's energy transition. Strategic Edge investments create optionality without overcommitting capital.</p>
-            </div>
-            <div class="insight-card">
-                <div class="insight-number">04</div>
-                <h3>🟥 Beyond Requires Discipline</h3>
-                <p>Hydrogen production, synthetic fuels, and carbon-negative pathways need structured, long-term investment with measurable milestones. Shell Malaysia's challenge is securing HQ commitment while building local proof-of-concept capabilities.</p>
-            </div>
-            <div class="insight-card">
-                <div class="insight-number">05</div>
-                <h3>🌏 Malaysia as Strategic Bridge</h3>
-                <p>Shell Malaysia’s unique position predates the nation itself and combines world-class LNG operations with deep government relationships. This makes it an ideal proving ground for Theta implementation in emerging markets. Shell began as a company willing to step outside its comfort zone, moving from decorative seashells to bulk oil transport and from shipping innovation to offshore engineering. Shell Malaysia carries that same DNA forward today by preserving operational excellence while selectively experimenting with lower-carbon systems that may define the next century of energy.</p>
-            </div>
-            <div class="insight-card">
-                <div class="insight-number">06</div>
-                <h3>📊 Data-Driven Resource Allocation</h3>
-                <p>By quantifying Core/Edge/Beyond investments and outcomes, Shell Malaysia can build a compelling case to Shell HQ for increased autonomy and investment allocation, moving beyond subjective political negotiations.</p>
-            </div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot edge mid"></div>
+          <div class="comp-zone-text">Edge: CCS, EV charging, SAF pilots</div>
         </div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot beyond weak"></div>
+          <div class="comp-zone-text">Beyond: Minimal; frontier shunned</div>
+        </div>
+        <div class="comp-verdict">Legacy-Rich, Vision-Poor</div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-name">TotalEnergies</div>
+        <div class="comp-tag">The Balanced Builder</div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot core strong"></div>
+          <div class="comp-zone-text">Core: Integrated oil, gas, LNG</div>
+        </div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot edge strong"></div>
+          <div class="comp-zone-text">Edge: Aggressive renewables, Mistral AI partnership</div>
+        </div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot beyond mid"></div>
+          <div class="comp-zone-text">Beyond: Frontier exploration, dual strategy</div>
+        </div>
+        <div class="comp-verdict">Most Balanced of the Majors</div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-name">ExxonMobil</div>
+        <div class="comp-tag">The Core Optimiser</div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot core strong"></div>
+          <div class="comp-zone-text">Core: Guyana, Permian, AI drilling automation</div>
+        </div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot edge mid"></div>
+          <div class="comp-zone-text">Edge: CCS, hydrogen; secondary focus</div>
+        </div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot beyond mid"></div>
+          <div class="comp-zone-text">Beyond: Frontier exploration re-engagement</div>
+        </div>
+        <div class="comp-verdict">Core-Dominant, AI-Enabled</div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-name">BP</div>
+        <div class="comp-tag">The Digital Transformer</div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot core mid"></div>
+          <div class="comp-zone-text">Core: Rebuilding; Palantir digital twin at scale</div>
+        </div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot edge strong"></div>
+          <div class="comp-zone-text">Edge: AI-native operations, 2M+ sensor integration</div>
+        </div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot beyond weak"></div>
+          <div class="comp-zone-text">Beyond: Pulled back on transition targets</div>
+        </div>
+        <div class="comp-verdict">Pivoting Back to Core via Digital</div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-name">Chevron</div>
+        <div class="comp-tag">The Quiet Executor</div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot core strong"></div>
+          <div class="comp-zone-text">Core: Permian, AI drones, autonomous methane detection</div>
+        </div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot edge mid"></div>
+          <div class="comp-zone-text">Edge: Targeted AI deployment, machine learning</div>
+        </div>
+        <div class="comp-zone-row">
+          <div class="comp-zone-dot beyond mid"></div>
+          <div class="comp-zone-text">Beyond: Brazil, Namibia, Angola frontier re-entry</div>
+        </div>
+        <div class="comp-verdict">Core-Focused, Frontier-Returning</div>
+      </div>
     </div>
 
-    <section>
-        <div class="section-label">Strategic Implications</div>
-        <h2>Path Forward</h2>
-        <p>Shell Malaysia stands at a critical juncture. With 130+ years of operational excellence, world-class LNG infrastructure, and strategic positioning in Southeast Asia's fastest-growing energy markets, it represents an ideal case study for applying the Theta Innovation Framework.</p>
-        <p>The framework addresses both internal coordination challenges (aligning Upstream, Downstream, and New Energies) and external resource competition (securing HQ investment against global Shell subsidiaries). By providing a shared strategic language and measurable portfolio structure, Theta enables Shell Malaysia to:</p>
-        
-        <div style="background: #fafafa; padding: 2rem; border-radius: 4px; margin: 2rem 0;">
-            <ul style="list-style: none; padding: 0;">
-                <li style="padding: 0.75rem 0; border-bottom: 1px solid #e5e5e5; font-size: 0.95rem;"><strong style="color: #DD1D21;">Optimize Core:</strong> Maintain operational excellence in traditional oil & gas while funding innovation</li>
-                <li style="padding: 0.75rem 0; border-bottom: 1px solid #e5e5e5; font-size: 0.95rem;"><strong style="color: #FBCE07;">Accelerate Edge:</strong> Scale LNG, CCS, and EV charging as near-term growth engines</li>
-                <li style="padding: 0.75rem 0; border-bottom: 1px solid #e5e5e5; font-size: 0.95rem;"><strong style="color: #DD1D21;">Discipline Beyond:</strong> Build structured pathways for hydrogen and carbon-negative initiatives</li>
-                <li style="padding: 0.75rem 0; font-size: 0.95rem;"><strong style="color: #1a1a1a;">Demonstrate Value:</strong> Prove strategic importance to Shell HQ through data-driven portfolio management</li>
-            </ul>
+    <div class="radar-wrap reveal">
+      <div class="radar-title">Competitive Capability Comparison: Six Dimensions</div>
+      <canvas id="radarChart" width="900" height="300" style="max-width:100%;"></canvas>
+    </div>
+
+  </div>
+</section>
+
+<!-- S&W -->
+<section class="sw-section" id="strengths">
+  <div class="section-wrap">
+    <div class="section-kicker reveal">Strengths and Weaknesses</div>
+    <h2 class="section-title reveal">What Shell genuinely<br>has, and what it<br><em>genuinely lacks</em></h2>
+
+    <div class="sw-grid">
+      <div class="sw-panel strengths reveal">
+        <div class="sw-panel-title">Strengths</div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div>
+            <div class="sw-lead">LNG Market Leadership is Structurally Durable</div>
+            <div class="sw-detail">Shell's LNG position, built over six decades and cemented by the $70B BG acquisition, is not replicable by any competitor in the near term. The infrastructure, the customer relationships, the technical expertise, and the operational knowledge form a moat that takes decades to dig. In a world where gas is the cleanest hydrocarbon bridge fuel, this is a genuine strategic asset with a long runway.</div>
+          </div>
         </div>
 
-        <p>For large organizations navigating the energy transition, Shell Malaysia illustrates how the Theta Framework brings structure to complexity by separating legacy strength from near-term growth and long-term experimentation.</p>
-    </section>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-logo">Theta Framework</div>
-            <div class="footer-tagline">Core · Edge · Beyond</div>
-            <div class="footer-author">Prepared by Christine Pamela</div>
-            <div class="footer-credit">© 2025 Strategic Innovation Case Study</div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div>
+            <div class="sw-lead">Technical Depth That Competitors Cannot Simulate</div>
+            <div class="sw-detail">The engineering knowledge embedded in Shell's workforce, accumulated across 130 years of solving problems others considered impossible, is not a capability that can be acquired or replicated quickly. Deep-water engineering, LNG process design, sub-surface modelling: these capabilities took generations to build and they translate directly into innovation leadership in the Core zone.</div>
+          </div>
         </div>
-    </footer>
 
-    <script>
-        // Wait for Chart.js to load and DOM to be ready
-        window.addEventListener('load', function() {
-            // Check if Chart.js loaded
-            if (typeof Chart === 'undefined') {
-                console.error('Chart.js failed to load');
-                return;
-            }
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div>
+            <div class="sw-lead">GameChanger Has a Real Track Record</div>
+            <div class="sw-detail">Unlike most corporate innovation programs, GameChanger has produced tangible outputs: Prelude FLNG originated here, early CCS concepts were nurtured here, and dozens of technologies in Shell's current operations were seeded here. The program is not performative. The question is whether it is still providing genuine Chaos stage protection or whether it has become a structured process wearing startup clothes.</div>
+          </div>
+        </div>
 
-            // CEO Data
-            const ceoData = [
-            {
-                name: "Jeroen van der Veer",
-                period: "2004–2009",
-                core: 70,
-                edge: 25,
-                beyond: 5,
-                descriptor: "Rebuilt trust after crisis → heavy Core operations → disciplined portfolio.",
-                details: [
-                    "Restored credibility with markets and regulators after reserves reporting crisis",
-                    "Focused on operational discipline and risk management",
-                    "Strengthened governance and compliance frameworks"
-                ]
-            },
-            {
-                name: "Peter Voser",
-                period: "2009–2013",
-                core: 70,
-                edge: 25,
-                beyond: 5,
-                descriptor: "Cost discipline + capital control → Edge only where necessary.",
-                details: [
-                    "Aggressive cost-cutting during post-financial crisis period",
-                    "Streamlined operations and refocused capital allocation",
-                    "Stabilized returns through operational efficiency"
-                ]
-            },
-            {
-                name: "Ben van Beurden",
-                period: "2014–2022",
-                core: 55,
-                edge: 35,
-                beyond: 10,
-                descriptor: "Transition strategist → LNG expansion + renewables push.",
-                details: [
-                    "Led Shell into energy transition era with BG Group acquisition",
-                    "Committed to net-zero targets and portfolio transformation",
-                    "Expanded LNG position and invested in new energy ventures"
-                ]
-            },
-            {
-                name: "Wael Sawan",
-                period: "2023– ",
-                core: 60,
-                edge: 30,
-                beyond: 10,
-                descriptor: "Return to hydrocarbon profitability → selective transition execution.",
-                details: [
-                    "Repositioning toward higher-return hydrocarbons",
-                    "Slowing certain energy transition investments",
-                    "Focus on investor returns and portfolio discipline"
-                ]
-            }
-        ];
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div>
+            <div class="sw-lead">Balance Sheet as Strategic Weapon in a Volatile World</div>
+            <div class="sw-detail">The 2026 Middle East crisis is rewarding companies with strong balance sheets and diversified portfolios. Shell qualifies on both counts. The "flight to quality" that institutional investors are executing is landing on Shell, Exxon, and Chevron. In a world where energy infrastructure is becoming a theatre of conflict, financial resilience is not just an accounting metric. It is a strategic differentiator.</div>
+          </div>
+        </div>
 
-        // Render CEO Cards
-        const ceoCardsContainer = document.getElementById('ceoCards');
-        ceoCardsContainer.innerHTML = ceoData.map((ceo, index) => `
-            <div class="ceo-card" onclick="toggleCEOCard(${index})">
-                <div class="ceo-name">${ceo.name}</div>
-                <div class="ceo-period">${ceo.period}</div>
-                <div class="zone-bars">
-                    <div class="zone-bar">
-                        <div class="zone-label">
-                            <span>Core</span>
-                            <span>${ceo.core}%</span>
-                        </div>
-                        <div class="bar-track">
-                            <div class="bar-fill bar-core" style="width: ${ceo.core}%"></div>
-                        </div>
-                    </div>
-                    <div class="zone-bar">
-                        <div class="zone-label">
-                            <span>Edge</span>
-                            <span>${ceo.edge}%</span>
-                        </div>
-                        <div class="bar-track">
-                            <div class="bar-fill bar-edge" style="width: ${ceo.edge}%"></div>
-                        </div>
-                    </div>
-                    <div class="zone-bar">
-                        <div class="zone-label">
-                            <span>Beyond</span>
-                            <span>${ceo.beyond}%</span>
-                        </div>
-                        <div class="bar-track">
-                            <div class="bar-fill bar-beyond" style="width: ${ceo.beyond}%"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="ceo-descriptor">${ceo.descriptor}</div>
-                <div class="ceo-details">
-                    ${ceo.details.map(detail => `<div class="detail-item"><strong>•</strong> ${detail}</div>`).join('')}
-                </div>
-            </div>
-        `).join('');
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div>
+            <div class="sw-lead">Malaysia: A Strategic Position No Competitor Can Replicate</div>
+            <div class="sw-detail">Shell's presence in Malaysia predates the nation by 72 years. The institutional relationships, the government trust, the joint venture architecture with PETRONAS, and the operational expertise accumulated here are assets that cannot be purchased or accelerated. As Southeast Asia becomes one of the world's most important energy transition theatres, Shell's Malaysia position is a genuine geopolitical advantage.</div>
+          </div>
+        </div>
+      </div>
 
-        function toggleCEOCard(index) {
-            const cards = document.querySelectorAll('.ceo-card');
-            cards.forEach((card, i) => {
-                if (i === index) {
-                    card.classList.toggle('selected');
-                } else {
-                    card.classList.remove('selected');
-                }
-            });
-        }
+      <div class="sw-panel weaknesses reveal">
+        <div class="sw-panel-title">Weaknesses</div>
 
-        // CEO Strategic Focus Timeline Chart
-        const ceoNames = ceoData.map(c => `${c.name.split(' ').pop()} (${c.period})`);
-        const coreData = ceoData.map(c => c.core);
-        const edgeData = ceoData.map(c => c.edge);
-        const beyondData = ceoData.map(c => c.beyond);
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div>
+            <div class="sw-lead">No True Skunkworks: The Build Stage Is Missing</div>
+            <div class="sw-detail">Shell has a Chaos stage vehicle in GameChanger and a Scale stage capability in its commercial operations. What it lacks is a genuine Build stage: a physically separate, autonomously funded team insulated from Core bureaucracy, applying stage-appropriate metrics, and following a clear path to scaling. New Energies is a business unit, not a skunkworks. It inherits the same approval chains and financial hurdles as Upstream. This structural gap explains why pilots die in the valley between proof-of-concept and commercial scale.</div>
+          </div>
+        </div>
 
-        new Chart(document.getElementById("leadershipChart"), {
-            type: "bar",
-            data: {
-                labels: ceoNames,
-                datasets: [
-                    {
-                        label: "Core Focus",
-                        data: coreData,
-                        backgroundColor: "#10b981",
-                        stack: "strategy"
-                    },
-                    {
-                        label: "Edge Growth",
-                        data: edgeData,
-                        backgroundColor: "#FBCE07",
-                        stack: "strategy"
-                    },
-                    {
-                        label: "Beyond Innovation",
-                        data: beyondData,
-                        backgroundColor: "#DD1D21",
-                        stack: "strategy"
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { 
-                        position: "top",
-                        labels: {
-                            font: {
-                                size: 13,
-                                family: 'Inter'
-                            }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(ctx) {
-                                return ctx.dataset.label + ": " + ctx.raw + "%";
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: { 
-                        stacked: true,
-                        ticks: {
-                            font: {
-                                size: 11,
-                                family: 'Inter'
-                            }
-                        }
-                    },
-                    y: {
-                        stacked: true,
-                        max: 100,
-                        ticks: { 
-                            callback: v => v + "%",
-                            font: {
-                                size: 11,
-                                family: 'Inter'
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: 'Strategic Focus (%)',
-                            font: {
-                                size: 12,
-                                family: 'Inter'
-                            }
-                        }
-                    }
-                }
-            }
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div>
+            <div class="sw-lead">AI Adoption Gap Is Becoming a Compounding Disadvantage</div>
+            <div class="sw-detail">In the most recent competitive analysis of supermajor AI adoption, Shell is absent from the leadership conversation. ExxonMobil is running closed-loop autonomous drilling in Guyana. BP has a Palantir-powered digital twin integrating two million sensors. Chevron deploys AI-enabled autonomous drones for methane detection. TotalEnergies has a frontier AI partnership with Mistral. Shell's AI story is not prominent in independent analysis. This is not a gap that closes by waiting.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div>
+            <div class="sw-lead">Failure Intelligence Is Theoretical, Not Practiced</div>
+            <div class="sw-detail">Shell says it embraces learning from failure. Its incentive system penalises it. There is no Failure Library. Intelligent failures in Edge and Beyond initiatives are not systematically captured, shared, or celebrated. Post-mortems occur for major project failures. The "intelligent failure," the kind that generates strategic learning from a small, well-designed experiment, is not tracked and not celebrated. This is the clearest cultural gap between Shell's stated innovation philosophy and its actual innovation architecture.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div>
+            <div class="sw-lead">Customer Signal Architecture Serves the Core, Not the Future</div>
+            <div class="sw-detail">Shell's listening infrastructure is excellent at capturing feedback from existing customers in existing markets. It is nearly absent at capturing signals from early adopters of new energy products, from non-consumers who have opted out of Shell's offer entirely, and from the fringe voices that, as the Theta framework notes, are "not exceptions. They are early signals of what's coming next." The outliers that reveal unmet needs are being systematically filtered out by a signal architecture optimised for the 80% mainstream.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div>
+            <div class="sw-lead">The Trading Division's Innovation Culture Is Walled Off</div>
+            <div class="sw-detail">Shell's trading division operates with a completely different cadence than the rest of the company: fast decisions, algorithmic thinking, risk tolerance, continuous iteration. It is the closest thing Shell has to an agile organisation at scale. And it is structurally separated from the innovation teams that need exactly those capabilities. The cultural cross-pollination between trading and New Energies has not happened. A hidden Edge asset sits behind a wall that nobody seems to be trying to remove.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section class="diagnostic-section" id="diagnostic">
+  <div class="section-wrap">
+    <div class="section-kicker reveal">Theta Diagnostic</div>
+    <h2 class="section-title reveal">The full picture, without<br>the <em>comfortable</em> omissions</h2>
+
+    <div class="diagnostic-grid">
+
+      <div class="diag-block reveal">
+        <div class="diag-block-title">Strategic Archetype Assessment</div>
+        <div class="archetype-grid">
+          <div class="archetype-row">
+            <span class="archetype-name">The Balanced Builder (Core + Edge + Beyond)</span>
+            <span class="archetype-status">Not yet</span>
+          </div>
+          <div class="archetype-row">
+            <span class="archetype-name">The Disciplined Explorer (Strong Core, active Edge, funded Beyond)</span>
+            <span class="archetype-status">Partial</span>
+          </div>
+          <div class="archetype-row active">
+            <span class="archetype-name">Legacy-Rich, Vision-Poor (Core strong, Edge strained, Beyond minimal)</span>
+            <span class="archetype-status">Current fit</span>
+          </div>
+          <div class="archetype-row">
+            <span class="archetype-name">The Profitable Stagnant (Core only)</span>
+            <span class="archetype-status">Risk trajectory</span>
+          </div>
+          <div class="archetype-row">
+            <span class="archetype-name">The Lost Giant (All zones underperforming)</span>
+            <span class="archetype-status">Not there</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="diag-block reveal">
+        <div class="diag-block-title">Culture and Leadership Scores</div>
+        <div class="culture-score-grid">
+          <div class="culture-score-item">
+            <div class="cs-label">Maverick Presence</div>
+            <div class="cs-bar"><div class="cs-fill" style="width:75%"></div></div>
+            <div class="cs-score">4 / 5 (exist but hidden)</div>
+          </div>
+          <div class="culture-score-item">
+            <div class="cs-label">Maverick Protection</div>
+            <div class="cs-bar"><div class="cs-fill" style="width:35%"></div></div>
+            <div class="cs-score">2 / 5 (inadequate)</div>
+          </div>
+          <div class="culture-score-item">
+            <div class="cs-label">Chaos Stage Readiness</div>
+            <div class="cs-bar"><div class="cs-fill" style="width:40%"></div></div>
+            <div class="cs-score">2 / 5 (over-structured)</div>
+          </div>
+          <div class="culture-score-item">
+            <div class="cs-label">Skunkworks Capability</div>
+            <div class="cs-bar"><div class="cs-fill" style="width:30%"></div></div>
+            <div class="cs-score">2 / 5 (missing)</div>
+          </div>
+          <div class="culture-score-item">
+            <div class="cs-label">Failure Intelligence</div>
+            <div class="cs-bar"><div class="cs-fill" style="width:35%"></div></div>
+            <div class="cs-score">2 / 5 (theoretical)</div>
+          </div>
+          <div class="culture-score-item">
+            <div class="cs-label">Psychological Safety</div>
+            <div class="cs-bar"><div class="cs-fill" style="width:45%"></div></div>
+            <div class="cs-score">2.5 / 5 (uneven)</div>
+          </div>
+          <div class="culture-score-item">
+            <div class="cs-label">Leadership Agility</div>
+            <div class="cs-bar"><div class="cs-fill" style="width:65%"></div></div>
+            <div class="cs-score">3.5 / 5 (operational yes)</div>
+          </div>
+          <div class="culture-score-item">
+            <div class="cs-label">Open Source Ethos</div>
+            <div class="cs-bar"><div class="cs-fill" style="width:45%"></div></div>
+            <div class="cs-score">2.5 / 5 (controlled)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="diag-block reveal">
+        <div class="diag-block-title">Critical Structural Tension</div>
+        <div class="tension-card">
+          <div class="tension-card-label">The Core Funding Loop</div>
+          <div class="tension-card-text">Shell's Core generates the cash that funds Shell's transition ambitions. But the Core's returns are so superior to Edge and Beyond returns that the capital allocation process persistently gravitates toward it. The result is a self-reinforcing loop: Core funds Core, Edge is underfunded, Beyond is treated as optional, and the next S-curve is perpetually deferred. The loop is not a failure of strategy. It is the rational outcome of a system optimised for quarterly returns.</div>
+        </div>
+        <div style="margin-top:1rem;padding:1.2rem;background:rgba(251,206,7,0.08);border:1px solid rgba(251,206,7,0.15);">
+          <p style="font-size:0.82rem;color:rgba(255,255,255,0.65);line-height:1.7;font-style:italic;">"A healthy innovation portfolio spans all three zones. Companies that innovate only in the Core optimise themselves into irrelevance." The Theta Framework</p>
+        </div>
+      </div>
+
+      <div class="diag-block reveal">
+        <div class="diag-block-title">Relativity Assessment</div>
+        <table class="relativity-table">
+          <tr>
+            <td>vs. Direct competitors (majors)</td>
+            <td><span class="rel-chip at">At par</span></td>
+          </tr>
+          <tr>
+            <td>vs. Tech sector (digital natives)</td>
+            <td><span class="rel-chip below">Below</span></td>
+          </tr>
+          <tr>
+            <td>vs. Stated 2050 net-zero ambition</td>
+            <td><span class="rel-chip behind">Behind</span></td>
+          </tr>
+          <tr>
+            <td>vs. Historical self (2020-2022 peak)</td>
+            <td><span class="rel-chip below">Slightly declined</span></td>
+          </tr>
+          <tr>
+            <td>vs. What is possible at its scale</td>
+            <td><span class="rel-chip below">Far from frontier</span></td>
+          </tr>
+          <tr>
+            <td>vs. AI adoption leadership</td>
+            <td><span class="rel-chip behind">Not prominent</span></td>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+
+    <div class="verdict-strip reveal">
+      <div class="verdict-label">Theta Archetype Verdict</div>
+      <div class="verdict-archetype">Legacy-Rich, Vision-Poor</div>
+      <div class="verdict-text">Shell has the resources to be a Balanced Builder. It has the talent to lead the energy transition. Its technical heritage is one of the most formidable in industrial history. The gap is not technical or financial. It is the distance between what the allocation says and what the ambition claims. Between what the Core generates and what the Beyond requires. Between the mavericks who can see the next curve and the system that is not designed to protect them. The company can close this distance. The question the Theta framework asks is not whether it can. It is whether it will.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ONE QUESTION -->
+<section class="oneq-section" id="question">
+  <div class="section-wrap">
+    <div class="section-kicker reveal" style="text-align:center;">The One Question</div>
+    <div class="oneq-inner reveal">
+      <div class="oneq-text">
+        "If Shell's current S-curve declines faster than anticipated, will the next one be ready, or will the world's most capable energy company discover that it optimised itself into a future it can no longer fund its way into?"
+      </div>
+      <div class="oneq-source">Theta Framework Analysis · Shell plc · March 2026</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left"><span>Theta Framework</span> · Core · Edge · Beyond · By Christine Pamela</div>
+  <div class="footer-right">Strategic Case Study · 2026</div>
+</footer>
+
+<script>
+// INTERSECTION OBSERVER FOR REVEALS
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(el => {
+    if (el.isIntersecting) {
+      el.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Cap pixel ratio to prevent canvas exceeding max size
+Chart.defaults.devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+
+// CEO CARDS DATA
+const ceoData = [
+  {
+    name: "Jeroen van der Veer",
+    period: "2004 – 2009",
+    core: 70, edge: 25, beyond: 5,
+    era: "Post-Scandal Rebuild",
+    tagline: "Restored operational trust after the reserves crisis. Heavy Core stewardship, disciplined allocation. Innovation was not the mission; credibility was."
+  },
+  {
+    name: "Peter Voser",
+    period: "2009 – 2013",
+    core: 70, edge: 25, beyond: 5,
+    era: "Cost Discipline Era",
+    tagline: "Post-financial crisis austerity. Capital control was the language of leadership. Edge investment only where commercially justified in the near term."
+  },
+  {
+    name: "Ben van Beurden",
+    period: "2014 – 2022",
+    core: 55, edge: 35, beyond: 10,
+    era: "Transition Strategist",
+    tagline: "The BG acquisition. Net-zero commitments. New Energies as a genuine business. The most expansive Theta portfolio in Shell's recent history, even if the Beyond remained thin."
+  },
+  {
+    name: "Wael Sawan",
+    period: "2023 – Present",
+    core: 62, edge: 28, beyond: 10,
+    era: "Performance Reset",
+    tagline: "Return to capital discipline. Stated Beyond allocation holds on paper; actual investment in transition is being reviewed. The Core is the strategic anchor, not the bridge."
+  }
+];
+
+const ceoContainer = document.getElementById('ceoCards');
+ceoContainer.innerHTML = ceoData.map((c, i) => `
+  <div class="ceo-card reveal" onclick="selectCeo(${i})" id="ceo-${i}">
+    <div class="ceo-era">${c.era}</div>
+    <div class="ceo-name">${c.name}</div>
+    <div style="font-size:0.7rem;color:var(--muted);margin-bottom:1rem;">${c.period}</div>
+    <div class="mini-bars">
+      <div class="mini-bar-row">
+        <span class="mini-bar-label">Core</span>
+        <div class="mini-track"><div class="mini-fill core" style="width:${c.core}%"></div></div>
+        <span class="mini-pct">${c.core}%</span>
+      </div>
+      <div class="mini-bar-row">
+        <span class="mini-bar-label">Edge</span>
+        <div class="mini-track"><div class="mini-fill edge" style="width:${c.edge}%"></div></div>
+        <span class="mini-pct">${c.edge}%</span>
+      </div>
+      <div class="mini-bar-row">
+        <span class="mini-bar-label">Beyond</span>
+        <div class="mini-track"><div class="mini-fill beyond" style="width:${c.beyond}%"></div></div>
+        <span class="mini-pct">${c.beyond}%</span>
+      </div>
+    </div>
+    <div class="ceo-tagline">${c.tagline}</div>
+  </div>
+`).join('');
+
+// observe new cards
+document.querySelectorAll('.ceo-card').forEach(el => observer.observe(el));
+
+function selectCeo(i) {
+  document.querySelectorAll('.ceo-card').forEach((c, idx) => {
+    c.classList.toggle('active', idx === i);
+  });
+}
+
+// CEO STACKED BAR
+const ceoChart = new Chart(document.getElementById('ceoChart'), {
+  type: 'bar',
+  data: {
+    labels: ceoData.map(c => c.name.split(' ').pop()),
+    datasets: [
+      { label: 'Core', data: ceoData.map(c => c.core), backgroundColor: '#2D6A4F', stack: 's' },
+      { label: 'Edge', data: ceoData.map(c => c.edge), backgroundColor: '#B5841A', stack: 's' },
+      { label: 'Beyond', data: ceoData.map(c => c.beyond), backgroundColor: '#8B1A1A', stack: 's' }
+    ]
+  },
+  options: {
+    responsive: false,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 11 }, color: '#8A9490', boxWidth: 10, padding: 12 } },
+      tooltip: { backgroundColor: 'rgba(14,26,24,0.92)', titleFont: { family: 'DM Sans' }, bodyFont: { family: 'DM Sans' } }
+    },
+    scales: {
+      x: { stacked: true, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#8A9490' }, grid: { display: false }, border: { display: false } },
+      y: { stacked: true, max: 100, ticks: { callback: v => v + '%', font: { family: 'DM Sans', size: 10 }, color: '#8A9490' }, grid: { color: 'rgba(14,26,24,0.06)' }, border: { display: false } }
+    }
+  }
+});
+
+// SCATTER CHART
+const scatterChart = new Chart(document.getElementById('scatterChart'), {
+  type: 'scatter',
+  plugins: [{
+    id: 'labels',
+    afterDatasetsDraw(chart) {
+      const ctx = chart.ctx;
+      chart.data.datasets.forEach((ds, di) => {
+        ds.data.forEach((pt, pi) => {
+          const meta = chart.getDatasetMeta(di);
+          const point = meta.data[pi];
+          if (!point) return;
+          ctx.save();
+          ctx.font = '11px DM Sans';
+          ctx.fillStyle = ds.borderColor;
+          ctx.textAlign = 'left';
+          ctx.fillText(pt.label, point.x + 10, point.y + 4);
+          ctx.restore();
         });
+      });
+    }
+  }],
+  data: {
+    datasets: [
+      {
+        label: 'Core Zone',
+        backgroundColor: 'rgba(45,106,79,0.75)',
+        borderColor: '#2D6A4F',
+        pointRadius: [14, 12, 10],
+        data: [
+          { x: 1.2, y: 1.5, label: 'O&G Optimisation', r: 14 },
+          { x: 2.0, y: 1.8, label: 'LNG Expansion', r: 12 },
+          { x: 1.5, y: 1.2, label: 'Retail / Refining', r: 10 }
+        ]
+      },
+      {
+        label: 'Edge Zone',
+        backgroundColor: 'rgba(181,132,26,0.75)',
+        borderColor: '#B5841A',
+        pointRadius: [9, 8, 7],
+        data: [
+          { x: 2.8, y: 3.0, label: 'CCS at Scale', r: 9 },
+          { x: 3.2, y: 3.5, label: 'EV Charging', r: 8 },
+          { x: 2.5, y: 2.8, label: 'SAF Production', r: 7 }
+        ]
+      },
+      {
+        label: 'Beyond Zone',
+        backgroundColor: 'rgba(139,26,26,0.75)',
+        borderColor: '#8B1A1A',
+        pointRadius: [5, 4, 3],
+        data: [
+          { x: 3.8, y: 4.2, label: 'Green Hydrogen', r: 5 },
+          { x: 4.2, y: 4.6, label: 'Offshore Wind', r: 4 },
+          { x: 4.8, y: 4.9, label: 'Nuclear Fusion', r: 3 }
+        ]
+      }
+    ]
+  },
+  options: {
+    responsive: false,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        min: 0, max: 6,
+        title: { display: true, text: 'Market Reach   Existing → New → Emerging → Speculative', font: { family: 'DM Sans', size: 10 }, color: '#8A9490' },
+        ticks: { display: false },
+        grid: { color: 'rgba(14,26,24,0.06)' },
+        border: { display: false }
+      },
+      y: {
+        min: 0, max: 6,
+        title: { display: true, text: 'Technology Change   Low → Moderate → High → Radical', font: { family: 'DM Sans', size: 10 }, color: '#8A9490' },
+        ticks: { display: false },
+        grid: { color: 'rgba(14,26,24,0.06)' },
+        border: { display: false }
+      }
+    }
+  }
+});
 
-        // Comparison Radar Chart
-        new Chart(document.getElementById("comparisonChart"), {
-            type: "radar",
-            data: {
-                labels: ['Core Strength', 'Edge Innovation', 'Beyond Vision', 'Investment Autonomy', 'LNG Leadership', 'EV Charging'],
-                datasets: [
-                    {
-                        label: 'Global Shell',
-                        data: [95, 60, 55, 95, 100, 80],
-                        borderColor: '#DD1D21',
-                        backgroundColor: 'rgba(221, 29, 33, 0.2)',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#DD1D21',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#DD1D21'
-                    },
-                    {
-                        label: 'Shell Malaysia',
-                        data: [80, 40, 35, 45, 75, 30],
-                        borderColor: '#FBCE07',
-                        backgroundColor: 'rgba(251, 206, 7, 0.2)',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#FBCE07',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#FBCE07'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            font: {
-                                size: 13,
-                                family: 'Inter'
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    r: {
-                        min: 0,
-                        max: 100,
-                        ticks: {
-                            stepSize: 20,
-                            font: {
-                                size: 11,
-                                family: 'Inter'
-                            }
-                        },
-                        pointLabels: {
-                            font: {
-                                size: 12,
-                                family: 'Inter'
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    });
-    </script>
+// RADAR CHART
+const radarChart = new Chart(document.getElementById('radarChart'), {
+  type: 'radar',
+  data: {
+    labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'AI Readiness', 'Transition Conviction', 'Frontier Exploration'],
+    datasets: [
+      { label: 'Shell', data: [88, 52, 28, 42, 40, 25], borderColor: '#DD1D21', backgroundColor: 'rgba(221,29,33,0.1)', borderWidth: 2, pointBackgroundColor: '#DD1D21', pointRadius: 4 },
+      { label: 'TotalEnergies', data: [78, 75, 58, 72, 78, 62], borderColor: '#B5841A', backgroundColor: 'rgba(181,132,26,0.08)', borderWidth: 1.5, pointBackgroundColor: '#B5841A', pointRadius: 3 },
+      { label: 'ExxonMobil', data: [95, 55, 52, 80, 38, 68], borderColor: '#2D6A4F', backgroundColor: 'rgba(45,106,79,0.08)', borderWidth: 1.5, pointBackgroundColor: '#2D6A4F', pointRadius: 3 },
+      { label: 'BP', data: [68, 72, 38, 85, 45, 44], borderColor: '#8A9490', backgroundColor: 'rgba(138,148,144,0.06)', borderWidth: 1.5, pointBackgroundColor: '#8A9490', pointRadius: 3 }
+    ]
+  },
+  options: {
+    responsive: false,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 11 }, color: '#8A9490', boxWidth: 10, padding: 14 } },
+      tooltip: { backgroundColor: 'rgba(14,26,24,0.92)', titleFont: { family: 'DM Sans' }, bodyFont: { family: 'DM Sans' } }
+    },
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { display: false },
+        grid: { color: 'rgba(14,26,24,0.1)' },
+        angleLines: { color: 'rgba(14,26,24,0.08)' },
+        pointLabels: { font: { family: 'DM Sans', size: 11 }, color: '#5A6B66' }
+      }
+    }
+  }
+});
+</script>
 </body>
 </html>
