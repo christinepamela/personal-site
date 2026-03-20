@@ -157,7 +157,8 @@ section { padding: 100px 0; }
 .reading-card { background: var(--paper-warm); padding: 20px 24px; margin-top: 20px; border: 1px solid rgba(0,0,0,0.06); }
 .reading-title { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 8px; }
 .reading-text { font-size: 0.82rem; color: var(--ink); line-height: 1.6; }
-.chart-wrap { position: relative; height: 400px; }
+.chart-wrap { position: relative; height: 400px; width: 100%; }
+.chart-wrap canvas { position: absolute; top: 0; left: 0; width: 100% !important; height: 100% !important; }
 
 #allocation { background: var(--paper-warm); }
 .alloc-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: start; }
@@ -218,13 +219,15 @@ section { padding: 100px 0; }
 .archetype-status { width: 28px; flex-shrink: 0; font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--block-green); line-height: 1; }
 .archetype-label { font-size: 0.8rem; font-weight: 500; color: var(--paper); margin-bottom: 4px; }
 .archetype-desc { font-size: 0.75rem; color: rgba(247,245,240,0.4); line-height: 1.55; }
-.leader-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 8px; }
-.leader-row:last-child { border-bottom: none; }
-.leader-name { font-size: 0.82rem; color: var(--paper); }
-.leader-tag { font-size: 0.68rem; color: rgba(247,245,240,0.4); }
-.leader-align { font-size: 0.72rem; display: flex; gap: 3px; }
-.star-filled { color: var(--block-green); }
-.star-empty { color: rgba(255,255,255,0.12); }
+.lqi-bar-row { margin-bottom: 22px; }
+.lqi-bar-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.lqi-quality-name { font-size: 0.78rem; font-weight: 500; color: var(--paper); text-transform: uppercase; letter-spacing: 0.08em; }
+.lqi-quality-pct { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--block-green); }
+.lqi-track { height: 5px; background: rgba(255,255,255,0.07); position: relative; margin-bottom: 10px; }
+.lqi-fill { height: 100%; position: absolute; top: 0; left: 0; transition: width 1.4s ease; border-radius: 0; }
+.lqi-evidence { font-size: 0.75rem; color: rgba(247,245,240,0.38); line-height: 1.65; }
+
+
 .tension-box { background: rgba(139,26,26,0.12); border: 1px solid rgba(139,26,26,0.3); padding: 24px; margin-bottom: 28px; }
 .tension-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(200,100,100,0.8); margin-bottom: 10px; }
 .tension-text { font-size: 0.88rem; color: rgba(247,245,240,0.75); line-height: 1.65; }
@@ -896,42 +899,36 @@ footer { background: var(--ink-soft); padding: 32px 48px; display: flex; justify
           </div>
         </div>
 
-        <div class="diag-section-title">Leadership, Dorsey Alignment Index</div>
-        <div style="margin-bottom:28px;">
-          <div class="leader-row">
-            <span class="leader-name">Jack Dorsey</span>
-            <span class="leader-tag">Rebel Genius · Founder Mode</span>
-            <span class="leader-align"><span class="star-filled">★★★★★</span></span>
+        <div class="diag-section-title">Leadership Quality Index</div>
+        <div style="margin-bottom:8px;">
+          <div class="lqi-bar-row">
+            <div class="lqi-bar-header">
+              <span class="lqi-quality-name">Agility</span>
+              <span class="lqi-quality-pct">88%</span>
+            </div>
+            <div class="lqi-track"><div class="lqi-fill" style="width:0%" data-target="88" data-color="rgba(0,192,75,0.8)"></div></div>
+            <div class="lqi-evidence">The 40% workforce reduction was self-initiated, not forced. TBD was cancelled before the market rendered its verdict. Dhanji Prasanna was elevated after a memo challenged the company's direction. Block breaks its own culture before external pressure demands it.</div>
           </div>
-          <div class="leader-row">
-            <span class="leader-name">Dhanji Prasanna</span>
-            <span class="leader-tag">CTO · AI Manifesto Author</span>
-            <span class="leader-align"><span class="star-filled">★★★★</span><span class="star-empty">★</span></span>
+          <div class="lqi-bar-row">
+            <div class="lqi-bar-header">
+              <span class="lqi-quality-name">Consciousness</span>
+              <span class="lqi-quality-pct">74%</span>
+            </div>
+            <div class="lqi-track"><div class="lqi-fill" style="width:0%" data-target="74" data-color="rgba(181,132,26,0.8)"></div></div>
+            <div class="lqi-evidence">Dorsey stepped down from Twitter voluntarily, twice. He elevated Dhanji to CTO after recognising thinking sharper than his own. The open-source philosophy reflects an organisation aware enough to give away what it could monetise. The succession question, however, remains structurally unresolved.</div>
           </div>
-          <div class="leader-row">
-            <span class="leader-name">Owen Jennings</span>
-            <span class="leader-tag">Head of Product · Velocity Driver</span>
-            <span class="leader-align"><span class="star-filled">★★★★</span><span class="star-empty">★</span></span>
-          </div>
-          <div class="leader-row">
-            <span class="leader-name">Amrita Ahuja</span>
-            <span class="leader-tag">COO/CFO · Operational Architect</span>
-            <span class="leader-align"><span class="star-filled">★★★</span><span class="star-empty">★★</span></span>
-          </div>
-          <div class="leader-row">
-            <span class="leader-name">Jesse Dorogusker</span>
-            <span class="leader-tag">TIDAL + Bitcoin Hardware</span>
-            <span class="leader-align"><span class="star-filled">★★★★</span><span class="star-empty">★</span></span>
-          </div>
-          <div class="leader-row">
-            <span class="leader-name">Thomas Templeton</span>
-            <span class="leader-tag">Proto Mining · Hardware Disruptor</span>
-            <span class="leader-align"><span class="star-filled">★★★★</span><span class="star-empty">★</span></span>
+          <div class="lqi-bar-row">
+            <div class="lqi-bar-header">
+              <span class="lqi-quality-name">Courage</span>
+              <span class="lqi-quality-pct">91%</span>
+            </div>
+            <div class="lqi-track"><div class="lqi-fill" style="width:0%" data-target="91" data-color="rgba(0,192,75,0.65)"></div></div>
+            <div class="lqi-evidence">Public Bitcoin advocacy while the price collapsed. "I'm excited by it" when asked whether quantum computing could break Bitcoin. A 40% workforce cut framed not as crisis response but as deliberate positioning. Block's leadership takes positions before consensus forms, then builds the evidence.</div>
           </div>
         </div>
-        <div style="margin-top:4px;padding:14px 16px;background:rgba(247,245,240,0.04);border-left:2px solid rgba(0,192,75,0.2);font-size:0.7rem;line-height:1.6;color:rgba(247,245,240,0.35);">
-          <strong style="color:rgba(247,245,240,0.5);letter-spacing:0.04em;text-transform:uppercase;font-size:0.65rem;">How this index is measured</strong><br>
-          Scores reflect alignment with Dorsey's three leadership qualities as defined by the Theta Unlearning Framework: <strong style="color:rgba(247,245,240,0.45);">Agility</strong> (willingness to break what works before the market forces it), <strong style="color:rgba(247,245,240,0.45);">Consciousness</strong> (awareness of when to step back and elevate others), and <strong style="color:rgba(247,245,240,0.45);">Courage</strong> (public commitment to positions before consensus forms). Each leader is assessed across all three qualities based on documented decisions, public statements, and observable behavior. Jack scores five stars as the archetype against which others are calibrated. No external score or survey data is used; this is a qualitative diagnostic, not a quantitative ranking.
+        <div style="margin-top:16px;padding:14px 16px;background:rgba(247,245,240,0.04);border-left:2px solid rgba(0,192,75,0.2);font-size:0.7rem;line-height:1.65;color:rgba(247,245,240,0.35);">
+          <strong style="color:rgba(247,245,240,0.5);letter-spacing:0.04em;text-transform:uppercase;font-size:0.65rem;">How these scores are derived</strong><br>
+          The Theta Unlearning Framework defines three qualities present in leadership teams that consistently produce breakthrough innovation: <strong style="color:rgba(247,245,240,0.45);">Agility</strong> (breaking working systems before the market forces it), <strong style="color:rgba(247,245,240,0.45);">Consciousness</strong> (knowing when to step back and elevate others), and <strong style="color:rgba(247,245,240,0.45);">Courage</strong> (committing publicly to positions before consensus forms). Each score reflects how visibly and consistently the organisation as a whole has demonstrated that quality, assessed from documented decisions, public statements, and observable strategic behaviour. These are organisational signals, not individual ratings.
         </div>
       </div>
 
@@ -1051,7 +1048,21 @@ const allocObserver = new IntersectionObserver((entries) => {
 const allocSection = document.getElementById('allocation');
 if (allocSection) allocObserver.observe(allocSection);
 
-// THETA SCATTER CHART
+// Animate LQI bars when diagnostic section comes into view
+const diagObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.lqi-fill[data-target]').forEach(bar => {
+        bar.style.background = bar.dataset.color;
+        bar.style.width = bar.dataset.target + '%';
+      });
+    }
+  });
+}, { threshold: 0.2 });
+const diagSection = document.getElementById('diagnostic');
+if (diagSection) diagObserver.observe(diagSection);
+
+
 const thetaCtx = document.getElementById('thetaChart').getContext('2d');
 new Chart(thetaCtx, {
   type: 'scatter',
