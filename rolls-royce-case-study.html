@@ -1,688 +1,2420 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rolls-Royce: From Luxury Cars to Technology Leaders in Aviation</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rolls-Royce: The Engine That Forgot to Fear — A Theta Framework Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --rr-navy: #0A1628;
+    --rr-gold: #B5941A;
+    --rr-gold-light: #D4AF37;
+    --rr-silver: #C0C4C8;
+    --ink: #0E1A18;
+    --ink-soft: #1E2D2A;
+    --paper: #F7F5F0;
+    --paper-warm: #EFEBE2;
+    --muted: #7A8490;
+    --core-green: #2D6A4F;
+    --core-green-light: rgba(45,106,79,0.12);
+    --edge-amber: #B5841A;
+    --edge-amber-light: rgba(181,132,26,0.12);
+    --beyond-crimson: #8B1A1A;
+    --beyond-crimson-light: rgba(139,26,26,0.12);
+    --border: rgba(181,148,26,0.18);
+    --border-light: rgba(181,148,26,0.08);
+  }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.7;
-            color: #1a1a1a;
-            background: #fafafa;
-        }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 80px 40px;
-        }
+  html { scroll-behavior: smooth; }
 
-        header {
-            margin-bottom: 80px;
-            text-align: center;
-        }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 16px;
+    overflow-x: hidden;
+  }
 
-        .category {
-            font-size: 11px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #3d0954;
-            font-weight: 500;
-            margin-bottom: 24px;
-        }
+  /* ===== NAV ===== */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,22,40,0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(181,148,26,0.2);
+    padding: 0 48px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-        h1 {
-            font-size: 48px;
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 24px;
-            color: #000;
-        }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--rr-gold-light);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
 
-        .subtitle {
-            font-size: 20px;
-            color: #666;
-            font-weight: 400;
-            max-width: 700px;
-            margin: 0 auto;
-        }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
 
-        .author {
-            font-size: 14px;
-            color: #999;
-            margin-top: 32px;
-        }
+  .nav-links a {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
 
-        section {
-            margin-bottom: 80px;
-        }
+  .nav-links a:hover { color: var(--rr-gold-light); }
 
-        h2 {
-            font-size: 32px;
-            font-weight: 600;
-            margin-bottom: 24px;
-            color: #000;
-        }
+  .nav-badge {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--rr-gold);
+    border: 1px solid var(--rr-gold);
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
 
-        h3 {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 40px 0 16px;
-            color: #1a1a1a;
-        }
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    background: var(--rr-navy);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    padding: 80px 80px 60px;
+  }
 
-        p {
-            font-size: 17px;
-            color: #333;
-            margin-bottom: 20px;
-        }
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(181,148,26,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(181,148,26,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridShift 20s linear infinite;
+  }
 
-        .quote-box {
-            background: linear-gradient(135deg, #3d0954 0%, #5c1a7a 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 8px;
-            margin: 40px 0;
-            font-size: 20px;
-            font-style: italic;
-            line-height: 1.6;
-            text-align: center;
-        }
+  @keyframes gridShift {
+    0% { background-position: 0 0; }
+    100% { background-position: 60px 60px; }
+  }
 
-        .theta-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 40px 0;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
+  .hero-radial {
+    position: absolute;
+    width: 800px;
+    height: 800px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(181,148,26,0.07) 0%, transparent 70%);
+    top: -200px; right: -100px;
+    pointer-events: none;
+  }
 
-        .theta-table th {
-            background: #f5f5f5;
-            padding: 20px;
-            text-align: left;
-            font-size: 13px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #666;
-        }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 920px;
+  }
 
-        .theta-table td {
-            padding: 24px 20px;
-            border-top: 1px solid #e0e0e0;
-            font-size: 15px;
-        }
+  .hero-kicker {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rr-gold);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
 
-        .zone-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-        }
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(42px, 6vw, 72px);
+    font-weight: 300;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+  }
 
-        .zone-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
+  .hero-headline em {
+    font-style: italic;
+    color: var(--rr-gold-light);
+    font-weight: 400;
+  }
 
-        .zone-core { background: #4CAF50; }
-        .zone-edge { background: #FFC107; }
-        .zone-beyond { background: #9C27B0; }
+  .hero-sub {
+    font-size: 17px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.6);
+    max-width: 620px;
+    line-height: 1.8;
+    margin-bottom: 64px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.6s forwards;
+  }
 
-        .insights-box {
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            margin: 40px 0;
-            border-left: 4px solid #3d0954;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
+  .hero-meta {
+    display: flex;
+    gap: 48px;
+    border-top: 1px solid rgba(181,148,26,0.2);
+    padding-top: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+    flex-wrap: wrap;
+  }
 
-        .insights-box h3 {
-            margin-top: 0;
-            color: #3d0954;
-        }
+  .hero-meta-item {}
 
-        .key-message {
-            background: #f5f5f5;
-            padding: 24px 32px;
-            border-radius: 6px;
-            margin: 32px 0;
-            font-style: italic;
-            color: #555;
-            font-size: 16px;
-        }
+  .hero-meta-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 6px;
+  }
 
-        .allocation-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin: 40px 0;
-        }
+  .hero-meta-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.9);
+  }
 
-        .allocation-card {
-            background: white;
-            padding: 32px 24px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
+  .scroll-line {
+    position: absolute;
+    right: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1s forwards;
+  }
 
-        .allocation-card h4 {
-            font-size: 16px;
-            margin-bottom: 16px;
-            font-weight: 600;
-        }
+  .scroll-line-text {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
 
-        .allocation-percentage {
-            font-size: 48px;
-            font-weight: 700;
-            color: #3d0954;
-            margin-bottom: 8px;
-        }
+  .scroll-line-bar {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(180deg, rgba(181,148,26,0.6) 0%, transparent 100%);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
 
-        .allocation-label {
-            font-size: 13px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+  @keyframes scrollPulse {
+    0%, 100% { transform: scaleY(1); opacity: 1; }
+    50% { transform: scaleY(0.7); opacity: 0.5; }
+  }
 
-        .balance-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 40px 0;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-        .balance-table th,
-        .balance-table td {
-            padding: 20px;
-            text-align: left;
-            font-size: 15px;
-        }
+  /* ===== SECTION COMMONS ===== */
+  .section-white { background: #fff; }
+  .section-paper { background: var(--paper-warm); }
+  .section-ink { background: var(--ink); color: rgba(255,255,255,0.85); }
 
-        .balance-table th {
-            background: #f5f5f5;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 12px;
-            letter-spacing: 1px;
-            color: #666;
-        }
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 80px;
+  }
 
-        .balance-table td {
-            border-top: 1px solid #e0e0e0;
-        }
+  .section-inner-narrow {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 100px 80px;
+  }
 
-        .balance-table .strength {
-            color: #4CAF50;
-        }
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rr-gold);
+    margin-bottom: 16px;
+    display: block;
+  }
 
-        .balance-table .risk {
-            color: #F44336;
-        }
+  .section-ink .section-label {
+    color: var(--rr-gold-light);
+  }
 
-        .timeline-section {
-            position: relative;
-            padding-left: 40px;
-            margin: 40px 0;
-        }
+  h2.section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 48px;
+    color: var(--ink);
+  }
 
-        .timeline-section:before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 8px;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(180deg, #3d0954 0%, rgba(61, 9, 84, 0.1) 100%);
-        }
+  .section-ink h2.section-title {
+    color: #fff;
+  }
 
-        .timeline-item {
-            position: relative;
-            margin-bottom: 32px;
-        }
+  h2.section-title em {
+    font-style: italic;
+    color: var(--rr-gold);
+  }
 
-        .timeline-item:before {
-            content: '';
-            position: absolute;
-            left: -46px;
-            top: 8px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #3d0954;
-            border: 3px solid #fafafa;
-        }
+  .prose {
+    font-size: 17px;
+    line-height: 1.85;
+    color: #2a2a2a;
+    margin-bottom: 24px;
+  }
 
-        .timeline-year {
-            font-size: 14px;
-            font-weight: 600;
-            color: #3d0954;
-            margin-bottom: 4px;
-        }
+  .section-ink .prose {
+    color: rgba(255,255,255,0.72);
+  }
 
-        .timeline-content {
-            font-size: 16px;
-            color: #333;
-        }
+  /* ===== FADE ON SCROLL ===== */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
 
-        .checkmark-list {
-            list-style: none;
-            margin: 24px 0;
-        }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
-        .checkmark-list li {
-            padding: 12px 0 12px 32px;
-            position: relative;
-            font-size: 16px;
-            color: #333;
-        }
+  /* ===== ABOUT GRID ===== */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 72px;
+    align-items: start;
+  }
 
-        .checkmark-list li:before {
-            content: "✅";
-            position: absolute;
-            left: 0;
-            font-size: 18px;
-        }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border);
+  }
 
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 24px;
-            margin: 40px 0;
-        }
+  .stat-cell {
+    padding: 28px 24px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
 
-        .summary-card {
-            background: white;
-            padding: 32px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border-top: 3px solid #3d0954;
-        }
+  .stat-cell:nth-child(2n) { border-right: none; }
+  .stat-cell:nth-child(n+3) { border-bottom: none; }
 
-        .summary-card h4 {
-            font-size: 18px;
-            margin-bottom: 12px;
-            color: #3d0954;
-        }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px;
+    font-weight: 400;
+    color: var(--rr-gold);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
 
-        .summary-card p {
-            font-size: 15px;
-            color: #666;
-            margin: 0;
-        }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 40px 24px;
-            }
+  .hidden-fact {
+    background: var(--rr-navy);
+    color: #fff;
+    padding: 28px 28px;
+    margin-top: 24px;
+  }
 
-            h1 {
-                font-size: 36px;
-            }
+  .hidden-fact-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--rr-gold);
+    margin-bottom: 12px;
+    display: block;
+  }
 
-            h2 {
-                font-size: 28px;
-            }
+  .hidden-fact p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.75);
+  }
 
-            .allocation-grid {
-                grid-template-columns: 1fr;
-            }
+  /* ===== BELIEF STRIP ===== */
+  .belief-strip {
+    background: var(--rr-navy);
+    padding: 72px 80px;
+    text-align: center;
+  }
 
-            .theta-table,
-            .balance-table {
-                font-size: 14px;
-            }
+  .belief-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.5;
+    max-width: 820px;
+    margin: 0 auto 20px;
+  }
 
-            .theta-table th,
-            .theta-table td,
-            .balance-table th,
-            .balance-table td {
-                padding: 12px;
-            }
+  .belief-attribution {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--rr-gold);
+  }
 
-            .timeline-section {
-                padding-left: 32px;
-            }
+  /* ===== TIMELINE ===== */
+  .timeline {
+    position: relative;
+    padding-left: 0;
+  }
 
-            .quote-box {
-                font-size: 18px;
-                padding: 32px 24px;
-            }
-        }
-    </style>
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 96px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, var(--rr-gold) 0%, rgba(181,148,26,0.1) 100%);
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 0;
+    margin-bottom: 0;
+    position: relative;
+  }
+
+  .timeline-year-col {
+    padding: 28px 28px 28px 0;
+    text-align: right;
+    position: relative;
+  }
+
+  .timeline-year-col::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 36px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--paper-warm);
+    border: 2px solid var(--rr-gold);
+  }
+
+  .timeline-item.highlight .timeline-year-col::after {
+    background: var(--rr-gold);
+    width: 13px;
+    height: 13px;
+    right: -7px;
+    top: 35px;
+  }
+
+  .tl-year {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--rr-gold);
+  }
+
+  .tl-phase {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .timeline-body {
+    padding: 20px 0 20px 36px;
+    border-bottom: 1px solid rgba(181,148,26,0.08);
+  }
+
+  .timeline-item:last-child .timeline-body {
+    border-bottom: none;
+  }
+
+  .tl-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .tl-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .tl-insight {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--rr-gold);
+    background: rgba(181,148,26,0.07);
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+
+  /* ===== INNOVATION MAP ===== */
+  .map-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .zone-legend { }
+
+  .zone-pill {
+    padding: 20px;
+    margin-bottom: 12px;
+    border-radius: 2px;
+  }
+
+  .zone-pill-core {
+    background: var(--core-green-light);
+    border-left: 3px solid var(--core-green);
+  }
+
+  .zone-pill-edge {
+    background: var(--edge-amber-light);
+    border-left: 3px solid var(--edge-amber);
+  }
+
+  .zone-pill-beyond {
+    background: var(--beyond-crimson-light);
+    border-left: 3px solid var(--beyond-crimson);
+  }
+
+  .zone-pill-name {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .zone-pill-core .zone-pill-name { color: var(--core-green); }
+  .zone-pill-edge .zone-pill-name { color: var(--edge-amber); }
+  .zone-pill-beyond .zone-pill-name { color: var(--beyond-crimson); }
+
+  .zone-pill-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .chart-container {
+    position: relative;
+  }
+
+  .chart-wrap {
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 24px;
+  }
+
+  .axis-label-x {
+    text-align: right;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 8px;
+    padding-right: 12px;
+  }
+
+  .axis-label-y {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: absolute;
+    left: -32px;
+    top: 50%;
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  /* ===== ALLOCATION BARS ===== */
+  .allocation-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .alloc-bar-group {
+    margin-bottom: 36px;
+  }
+
+  .alloc-bar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+
+  .alloc-bar-name {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .alloc-bar-name.core { color: var(--core-green); }
+  .alloc-bar-name.edge { color: var(--edge-amber); }
+  .alloc-bar-name.beyond { color: var(--beyond-crimson); }
+
+  .alloc-nums {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .alloc-track {
+    height: 8px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 0;
+    position: relative;
+    margin-bottom: 6px;
+    overflow: visible;
+  }
+
+  .alloc-fill {
+    height: 100%;
+    border-radius: 0;
+    position: absolute;
+    top: 0; left: 0;
+    transition: width 1.2s ease;
+  }
+
+  .alloc-fill.core { background: var(--core-green); }
+  .alloc-fill.edge { background: var(--edge-amber); }
+  .alloc-fill.beyond { background: var(--beyond-crimson); }
+
+  .alloc-benchmark {
+    position: absolute;
+    top: -4px;
+    width: 2px;
+    height: 16px;
+    background: var(--ink);
+    opacity: 0.3;
+  }
+
+  .alloc-note {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  /* ===== TENSION CARDS ===== */
+  .tension-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .tension-card {
+    padding: 32px;
+    border: 1px solid var(--border);
+    position: relative;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .tension-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 56px;
+    font-weight: 300;
+    color: rgba(181,212,26,0.08);
+    position: absolute;
+    top: 12px; right: 20px;
+    line-height: 1;
+    color: rgba(181,148,26,0.12);
+  }
+
+  .tension-tag {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--rr-gold);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .tension-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: #fff;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .tension-body {
+    font-size: 14px;
+    color: rgba(255,255,255,0.58);
+    line-height: 1.7;
+  }
+
+  /* ===== DIAGNOSTIC TABLE ===== */
+  .diag-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+  }
+
+  .diag-table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .diag-table td {
+    padding: 16px 16px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  .diag-table tr:last-child td { border-bottom: none; }
+
+  .diag-table td:first-child {
+    font-weight: 500;
+    color: rgba(255,255,255,0.88);
+    width: 32%;
+  }
+
+  .score-pill {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+
+  .score-strong { background: rgba(45,106,79,0.25); color: #5dbd8a; }
+  .score-moderate { background: rgba(181,132,26,0.25); color: #d4a43a; }
+  .score-weak { background: rgba(139,26,26,0.25); color: #e06060; }
+  .score-caution { background: rgba(100,100,180,0.2); color: #9aa0e0; }
+
+  /* ===== COMPETITOR CARDS ===== */
+  .competitor-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .competitor-card {
+    border: 1px solid rgba(181,148,26,0.12);
+    padding: 24px 18px;
+    background: #fff;
+    position: relative;
+  }
+
+  .competitor-card.featured {
+    border-color: var(--rr-gold);
+    background: rgba(181,148,26,0.03);
+  }
+
+  .comp-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .comp-tag {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+
+  .comp-zone-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: #333;
+  }
+
+  .comp-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .comp-dot-core { background: var(--core-green); }
+  .comp-dot-edge { background: var(--edge-amber); }
+  .comp-dot-beyond { background: var(--beyond-crimson); }
+
+  .comp-verdict {
+    margin-top: 16px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    display: inline-block;
+  }
+
+  /* ===== SW PANELS ===== */
+  .sw-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .sw-panel {
+    padding: 36px 32px;
+    background: #fff;
+    border-top: 3px solid;
+  }
+
+  .sw-panel.strengths { border-color: var(--core-green); }
+  .sw-panel.weaknesses { border-color: var(--beyond-crimson); }
+
+  .sw-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .sw-panel.strengths .sw-title { color: var(--core-green); }
+  .sw-panel.weaknesses .sw-title { color: var(--beyond-crimson); }
+
+  .sw-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+
+  .sw-marker {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .sw-panel.strengths .sw-marker {
+    background: rgba(45,106,79,0.12);
+    color: var(--core-green);
+  }
+
+  .sw-panel.weaknesses .sw-marker {
+    background: rgba(139,26,26,0.1);
+    color: var(--beyond-crimson);
+  }
+
+  .sw-text {}
+
+  .sw-lead {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+
+  .sw-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ===== ARCHETYPE BOX ===== */
+  .archetype-box {
+    border: 1px solid rgba(181,148,26,0.3);
+    padding: 40px;
+    background: rgba(181,148,26,0.04);
+    text-align: center;
+    margin: 48px 0 0;
+  }
+
+  .archetype-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rr-gold-light);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .archetype-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 400;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .archetype-checks {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .archetype-desc {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    max-width: 580px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ===== ONE QUESTION ===== */
+  .one-question {
+    background: var(--rr-navy);
+    padding: 100px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .one-question::before {
+    content: '"';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 400px;
+    color: rgba(181,148,26,0.04);
+    position: absolute;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .oq-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rr-gold);
+    display: block;
+    margin-bottom: 40px;
+  }
+
+  .oq-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(26px, 3.5vw, 40px);
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(255,255,255,0.92);
+    line-height: 1.4;
+    max-width: 820px;
+    margin: 0 auto 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .oq-context {
+    font-size: 15px;
+    color: rgba(255,255,255,0.45);
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ===== PULL QUOTE ===== */
+  .pull-quote {
+    border-left: 3px solid var(--rr-gold);
+    padding: 24px 32px;
+    margin: 40px 0;
+    background: rgba(181,148,26,0.04);
+  }
+
+  .pull-quote-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.55;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  .section-ink .pull-quote-text { color: rgba(255,255,255,0.88); }
+  .section-ink .pull-quote { background: rgba(181,148,26,0.06); }
+
+  .pull-attribution {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--rr-gold);
+  }
+
+  /* ===== INNOVATION CULTURE SECTION ===== */
+  .culture-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  .culture-cell {
+    padding: 36px 28px;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+
+  .culture-cell:last-child { border-right: none; }
+
+  .culture-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .culture-head {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .culture-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ===== DILEMMA STRIP ===== */
+  .dilemma-strip {
+    background: var(--rr-navy);
+    padding: 60px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr 1px 1fr;
+    gap: 0;
+    align-items: center;
+  }
+
+  .dilemma-item {
+    padding: 0 48px;
+    text-align: center;
+  }
+
+  .dilemma-item:first-child { padding-left: 0; }
+  .dilemma-item:last-child { padding-right: 0; }
+
+  .dilemma-divider {
+    height: 80px;
+    background: rgba(181,148,26,0.2);
+  }
+
+  .dilemma-head {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.88);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .dilemma-vs {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--rr-gold);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .dilemma-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.5;
+  }
+
+  /* ===== RADAR CHART CONTAINER ===== */
+  .radar-wrap {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--ink);
+    padding: 40px 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(181,148,26,0.15);
+  }
+
+  .footer-left {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 1px;
+  }
+
+  .footer-right {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 1px;
+    text-align: right;
+  }
+
+  .footer-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    color: var(--rr-gold);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    nav .nav-links { display: none; }
+    .hero { padding: 80px 32px 60px; }
+    .section-inner, .section-inner-narrow { padding: 72px 32px; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .map-grid { grid-template-columns: 1fr; gap: 40px; }
+    .allocation-wrap { grid-template-columns: 1fr; }
+    .tension-grid { grid-template-columns: 1fr; }
+    .competitor-grid { grid-template-columns: 1fr 1fr; }
+    .sw-grid { grid-template-columns: 1fr; }
+    .culture-grid { grid-template-columns: 1fr; }
+    .dilemma-strip { grid-template-columns: 1fr; gap: 32px; padding: 48px 32px; }
+    .dilemma-divider { display: none; }
+    .belief-strip { padding: 48px 32px; }
+    .one-question { padding: 72px 32px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; padding: 32px; }
+    .scroll-line { display: none; }
+    .hero-meta { gap: 28px; }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="category">Strategy Case Study</div>
-            <h1>From Luxury Cars to Technology Leaders in Aviation</h1>
-            <p class="subtitle">A Case Study of Rolls-Royce</p>
-            <p class="author">By Christine Pamela</p>
-        </header>
 
-        <section>
-            <div class="quote-box">
-                "Strive for perfection in everything you do. Take the best that exists and make it better."
-            </div>
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Rolls-Royce</div>
+  <ul class="nav-links">
+    <li><a href="#dna">Innovation DNA</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#tensions">Tensions</a></li>
+    <li><a href="#diagnostic">Diagnostic</a></li>
+    <li><a href="#verdict">Verdict</a></li>
+  </ul>
+  <div class="nav-badge">Theta Analysis</div>
+</nav>
 
-            <p>This has been the mantra of Rolls-Royce since its founding in 1904 by Charles Rolls and Henry Royce. Born out of a partnership between a visionary entrepreneur and a meticulous engineer, Rolls-Royce quickly became a standard for luxury and precision. But it wasn't their iconic automobiles alone that defined them. It was their ability to adapt and innovate, even in the face of global challenges, that launched them to the forefront of the aerospace industry.</p>
-        </section>
-
-        <section>
-            <h2>A Legacy of Innovation</h2>
-
-            <div class="timeline-section">
-                <div class="timeline-item">
-                    <div class="timeline-year">1904</div>
-                    <div class="timeline-content">Charles Rolls and Henry Royce establish Rolls-Royce, setting new standards for luxury and precision engineering</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">1914</div>
-                    <div class="timeline-content">Expansion into aircraft engines as World War I begins, marking a crucial pivot from automotive to aviation</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">1940s</div>
-                    <div class="timeline-content">The Rolls-Royce Merlin engine powers the Supermarine Spitfire and becomes a symbol of ingenuity during World War II</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">1971</div>
-                    <div class="timeline-content">Financial crisis during RB211 development leads to nationalization by UK government—a moment of reckoning</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">1980s</div>
-                    <div class="timeline-content">Privatization and renewed focus on engineering excellence and innovation</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">2000s</div>
-                    <div class="timeline-content">Launch of the Trent family of engines, cementing dominance in wide-body aircraft market</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">2010</div>
-                    <div class="timeline-content">Introduction of TotalCare®, revolutionizing the service model from supplier to partner</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">2020s</div>
-                    <div class="timeline-content">Net-zero carbon commitment and investment in sustainable aviation fuels, hybrid-electric propulsion, and urban air mobility</div>
-                </div>
-            </div>
-
-            <p>In 1914, as World War I began, Rolls-Royce expanded into a new market: aircraft engines. They created the Rolls-Royce Merlin engine, which powered some of the most famous aircraft of World War II, including the Supermarine Spitfire. This not only marked a crucial shift from cars to aviation and established the company as a leader in aerospace engineering, but it was a symbol of ingenuity during one of history's darkest periods.</p>
-
-            <p>But not all of Rolls-Royce's history has been smooth. By the 1970s, the company faced bankruptcy as the development of the RB211 engine spiraled into financial chaos. Nationalized by the UK government in 1971, it was a moment of reckoning. However, Rolls-Royce came out of it stronger, privatized by the 1980s, and refocused on what they did best: engineering excellence and innovation.</p>
-        </section>
-
-        <section>
-            <h2>Redefining the Future of Aviation</h2>
-            
-            <p>The 21st century brought a new chapter with the launch of the Trent family of engines. Known for their fuel efficiency and reliability, these engines powered wide-body aircraft like the Boeing 747 and Airbus A380, further cementing Rolls-Royce's dominance in the aviation industry. Yet, it was more than just engines—it was how they serviced them that changed the game.</p>
-
-            <div class="insights-box">
-                <h3>TotalCare® Revolution</h3>
-                <p>In 2010, Rolls-Royce introduced TotalCare®, a revolutionary service model. Instead of leaving maintenance to airlines, Rolls-Royce took full responsibility, using data analytics to predict issues before they arose. Airlines only paid for flying hours, ensuring engines were always ready to perform.</p>
-                <p style="margin-top: 16px; font-weight: 600; color: #3d0954;">This shifted the relationship from supplier to partner, creating a win-win that transformed the industry.</p>
-            </div>
-        </section>
-
-        <section>
-            <h2>The Race Toward Sustainability</h2>
-            
-            <p>In recent years, Rolls-Royce has set its sights on a loftier ambition: making aviation greener. With a pledge to achieve net-zero carbon emissions by 2050, the company has invested heavily in sustainable aviation fuels (SAF), hybrid-electric propulsion, and advanced analytics to optimize engine performance.</p>
-
-            <p>Take their work on hybrid-electric propulsion systems for example. By combining traditional engines with electric power, Rolls-Royce is reducing fuel consumption and emissions, leading the charge for a more sustainable aviation industry. Meanwhile, their commitment to SAF highlights their role as an industry advocate for greener alternatives. For Rolls-Royce, this isn't just innovation, it's their responsibility toward a better world.</p>
-        </section>
-
-        <section>
-            <h2>Pioneering the Next Wave of Innovation</h2>
-            
-            <p>Rolls-Royce isn't just looking at the skies, it's imagining new ones. By tapping into deep technologies like urban air mobility, autonomous flying vehicles, and quantum computing for advanced material simulations, the company is boldly entering territories few dare to explore.</p>
-
-            <p>They've adopted 3D printing for engine components and integrated AI for predictive maintenance to stay ahead of the rapidly evolving technology curve. Despite having formidable competitors like General Electric, Pratt & Whitney, and Safran, these advancements aren't just about staying ahead of the curve, they're about ensuring that every engine they build sets a new benchmark for performance and sustainability.</p>
-        </section>
-
-        <section>
-            <h2>Innovation Mapping: The Theta Framework</h2>
-            
-            <p>Rolls-Royce operates across all 6 zones, which is rare. Their strategy balances sustaining excellence in core engines while investing in radical bets.</p>
-
-            <h3>🟩 Core Zone</h3>
-            <p style="color: #666; font-size: 15px; margin-bottom: 24px;">Focus: Strengthening the business that keeps cash flowing today.</p>
-
-            <table class="theta-table">
-                <thead>
-                    <tr>
-                        <th>Innovation Type</th>
-                        <th>What Rolls-Royce Did</th>
-                        <th>Impact</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Core Innovation</strong></td>
-                        <td>Continuous iterative improvements in the Trent engine family (fuel efficiency, reliability, monitoring)</td>
-                        <td>Protects market leadership in wide-body engine segment. Drives predictable revenue through long engine life cycles.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Adjacent Innovation</strong></td>
-                        <td>TotalCare® service model: airlines pay per flight hour</td>
-                        <td>Shifted Rolls-Royce from hardware supplier to long-term operating-partner. Recurring revenue, stronger customer stickiness, industry standard now.</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="key-message">
-                Core takeaway: Incremental tech + game-changing business model = commercial advantage.
-            </div>
-
-            <h3>🟨 Edge Zone</h3>
-            <p style="color: #666; font-size: 15px; margin-bottom: 24px;">Focus: Reinventing parts of the business under new pressures (climate, digital aviation).</p>
-
-            <table class="theta-table">
-                <thead>
-                    <tr>
-                        <th>Innovation Type</th>
-                        <th>What Rolls-Royce Did</th>
-                        <th>Why It Matters</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Architectural Innovation</strong></td>
-                        <td>Data-enabled predictive maintenance + AI-driven engine health optimization</td>
-                        <td>Upgrades the aviation ecosystem: reduces downtime, enhances safety, lowers lifetime cost.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Disruptive Innovation</strong></td>
-                        <td>Hybrid-electric propulsion, electrified flight systems, small modular reactors for maritime/defense</td>
-                        <td>Can reset competitive rules if emissions bans accelerate. Starting in niche planes and defense but scalable.</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="key-message">
-                Edge takeaway: These moves defend against disruption from electric-first newcomers.
-            </div>
-
-            <h3>🟥 Beyond Zone</h3>
-            <p style="color: #666; font-size: 15px; margin-bottom: 24px;">Focus: Reinventing what aviation could be.</p>
-
-            <table class="theta-table">
-                <thead>
-                    <tr>
-                        <th>Innovation Type</th>
-                        <th>What Rolls-Royce Did</th>
-                        <th>Role in Future</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Transformational / Revolutionary Innovation</strong></td>
-                        <td>Urban air mobility (eVTOL powertrains), sustainable aviation fuels advocacy</td>
-                        <td>New transportation paradigms; potential to rewrite infrastructure needs.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Frontier Research / Exploratory</strong></td>
-                        <td>Quantum computing for material science, advanced composites, extreme-temp 3D printing</td>
-                        <td>Long-term breakthroughs shaping next-gen engines and aerospace tech.</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="key-message">
-                Beyond takeaway: High risk but anchors the brand as a future aviation architect, not just an engine maker.
-            </div>
-        </section>
-
-        <section>
-            <h2>Strategic Balance</h2>
-
-            <table class="balance-table">
-                <thead>
-                    <tr>
-                        <th>Dimension</th>
-                        <th>Strength</th>
-                        <th>Weakness / Risk</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Market Leadership</strong></td>
-                        <td class="strength">Top-tier in wide-body aircraft</td>
-                        <td class="risk">Vulnerable to shifts toward narrow-body fleets (Boeing 737/A320 dominance)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Revenue Model</strong></td>
-                        <td class="strength">Predictable recurring revenue through TotalCare®</td>
-                        <td class="risk">Overreliance on global passenger miles; COVID-like shocks are devastating</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Tech Investment</strong></td>
-                        <td class="strength">Strong hybrid-electric and materials science portfolio</td>
-                        <td class="risk">High capex + long ROI cycles strain finances</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Brand</strong></td>
-                        <td class="strength">Benchmark for engineering quality</td>
-                        <td class="risk">Must ensure legacy doesn't become inertia</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-        <section>
-            <h2>Theta Framework Allocation</h2>
-
-            <div class="allocation-grid">
-                <div class="allocation-card">
-                    <h4>Core</h4>
-                    <div class="allocation-percentage">55–60%</div>
-                    <div class="allocation-label">of investment</div>
-                </div>
-                <div class="allocation-card">
-                    <h4>Edge</h4>
-                    <div class="allocation-percentage">30–35%</div>
-                    <div class="allocation-label">of investment</div>
-                </div>
-                <div class="allocation-card">
-                    <h4>Beyond</h4>
-                    <div class="allocation-percentage">5–10%</div>
-                    <div class="allocation-label">of investment</div>
-                </div>
-            </div>
-
-            <table class="theta-table">
-                <thead>
-                    <tr>
-                        <th>Theta Zone</th>
-                        <th>What Drives This Share</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <span class="zone-label">
-                                <span class="zone-dot zone-core"></span>
-                                Core (55–60%)
-                            </span>
-                        </td>
-                        <td>Trent engine upgrades, reliability, cost efficiency, service model expansion (TotalCare®). These fund the business today.</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="zone-label">
-                                <span class="zone-dot zone-edge"></span>
-                                Edge (30–35%)
-                            </span>
-                        </td>
-                        <td>Hybrid-electric propulsion, advanced analytics, additive manufacturing, architectural redesign of power systems. Medium-term competitiveness.</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="zone-label">
-                                <span class="zone-dot zone-beyond"></span>
-                                Beyond (5–10%)
-                            </span>
-                        </td>
-                        <td>Urban air mobility, quantum simulation, future sustainable propulsion concepts. High-risk, long-horizon bets.</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <p style="margin-top: 32px; color: #666;">Rolls-Royce's center of gravity is still in Core and Edge, but their Beyond initiatives are essential to remain relevant in a decarbonizing aerospace world.</p>
-        </section>
-
-        <section>
-            <h2>Strategic Assessment</h2>
-
-            <div class="summary-grid">
-                <div class="summary-card">
-                    <h4>Defending the Present</h4>
-                    <p>✅ Strong position in wide-body engines with recurring TotalCare® revenue protecting market share</p>
-                </div>
-                <div class="summary-card">
-                    <h4>Reinventing the Mid-Term</h4>
-                    <p>✅ Hybrid-electric and AI-driven solutions addressing climate pressures and digital transformation</p>
-                </div>
-                <div class="summary-card">
-                    <h4>Planting Seeds for Disruption</h4>
-                    <p>✅ Urban air mobility and quantum computing positioning for future paradigm shifts</p>
-                </div>
-            </div>
-
-            <div class="insights-box">
-                <h3>The Critical Question</h3>
-                <p>Rolls-Royce is investing across all three horizons—Core, Edge, and Beyond. But pacing and capital risk management will determine whether these seeds grow or burn cash.</p>
-                <p style="margin-top: 16px;">The company must balance the financial demands of current operations with the long-term investments needed to remain a leader in a rapidly evolving aerospace landscape.</p>
-            </div>
-        </section>
-
-        <section>
-            <h2>Conclusion</h2>
-            
-            <p>As we look back over a century, from powering the Spitfire to pioneering green aviation, Rolls-Royce has always been about more than engines. It's been about enabling progress. Whether through their innovative TotalCare® service, their groundbreaking Trent engines, or their vision for net-zero aviation, the company has continuously innovated and adapted with resilience and purpose.</p>
-
-            <p>In striving for perfection, Rolls-Royce reminds us that even the greatest challenges, be it war, financial collapse, or climate change, can spark the most extraordinary solutions.</p>
-
-            <div class="quote-box">
-                "Take the best that exists and make it better."
-            </div>
-        </section>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-radial"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Innovation Framework / Strategic Case Study</div>
+    <h1 class="hero-headline">
+      The company that powered the roads<br>and powers the sky<br>
+      <em>is now engineering the next one.</em>
+    </h1>
+    <p class="hero-sub">
+      Rolls-Royce has survived nationalization, reinvented its revenue model, and now bets on nuclear energy and autonomous flight.
+      But surviving is not the same as leading. This is an honest look at a 120-year-old innovation machine,
+      what it gets right, where it hesitates, and the cultural tension no financial turnaround can fix.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Founded</div>
+        <div class="hero-meta-value">1904</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">2025 Revenue</div>
+        <div class="hero-meta-value">£20.1bn</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Market Cap</div>
+        <div class="hero-meta-value">$100bn+</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Theta Archetype</div>
+        <div class="hero-meta-value">Balanced Builder</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Leadership Score</div>
+        <div class="hero-meta-value">4.7 / 5</div>
+      </div>
     </div>
+  </div>
+  <div class="scroll-line">
+    <div class="scroll-line-text">Scroll</div>
+    <div class="scroll-line-bar"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section-white" id="dna">
+  <div class="section-inner">
+    <div class="about-grid fade-in">
+      <div>
+        <span class="section-label">What Rolls-Royce Actually Is</span>
+        <h2 class="section-title">Two companies.<br>One name.<br><em>Entirely different futures.</em></h2>
+        <p class="prose">
+          Most people picture a ghost-silver car gliding silently through Mayfair. The real Rolls-Royce is 50,000 engineers working on something closer to the laws of physics than luxury. Rolls-Royce Holdings plc, the FTSE 100 powerhouse, does not make cars. It makes the engines that power wide-body aircraft, Royal Navy submarines, and data centre generators. The car company, owned entirely by BMW since 2003, shares a name and a heritage, but has entirely different owners, strategies, and futures.
+        </p>
+        <p class="prose">
+          Understanding this split is where most analysis of Rolls-Royce goes wrong. The industrial giant is a different innovation story from the car brand. And right now, the industrial story is the more interesting one: a company mid-transformation, betting on nuclear energy and next-generation propulsion, under a CEO who has told his own employees the company was in its last chance saloon.
+        </p>
+
+        <div class="hidden-fact">
+          <span class="hidden-fact-label">The Fact Most People Miss</span>
+          <p>Rolls-Royce does not make money primarily from selling engines. It makes money from the hours those engines spend in the air. Under TotalCare, airlines pay per flight hour, meaning every grounded aircraft is a direct loss in revenue for Rolls-Royce. The 2020 pandemic did not slow Rolls-Royce. It nearly stopped it. That single fact explains everything about how the company thinks about risk, resilience, and the urgency to diversify beyond aviation.</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="stat-grid">
+          <div class="stat-cell">
+            <div class="stat-num">£3.46bn</div>
+            <div class="stat-label">2025 Operating Profit</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num">+40%</div>
+            <div class="stat-label">Profit Growth YoY</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num">£9bn</div>
+            <div class="stat-label">Share Buyback Programme</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-num">1,200%</div>
+            <div class="stat-label">Share Price Rise Over 3 Years</div>
+          </div>
+        </div>
+
+        <div class="pull-quote" style="margin-top:24px;">
+          <div class="pull-quote-text">"We were burning. Not a crisis. A burning platform. That is different."</div>
+          <div class="pull-attribution">Tufan Erginbilgic, CEO, on joining in 2023</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BELIEF STRIP -->
+<div class="belief-strip fade-in">
+  <p class="belief-quote">"Strive for perfection in everything you do. Take the best that exists and make it better. When it does not exist, design it."</p>
+  <div class="belief-attribution">Henry Royce, 1904</div>
+</div>
+
+<!-- INNOVATION DNA -->
+<section class="section-paper">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="section-label">Innovation DNA</span>
+      <h2 class="section-title">How the instinct to <em>reinvent</em><br>became a survival trait</h2>
+
+      <p class="prose">
+        Rolls-Royce has been forced into innovation more often than it has chosen it freely. That distinction matters. The Merlin engine, which powered the Spitfire and arguably changed the outcome of World War Two, was not born from a product roadmap. It was born from a government asking an engineering company whether it could do something it had never done before, and a culture that said yes before it knew the answer.
+      </p>
+      <p class="prose">
+        That pattern has repeated itself across 120 years. The near-bankruptcy of 1971, caused by catastrophic cost overruns on the RB211 engine, forced nationalization. Instead of destroying the company, it created a protected environment where long-cycle engineering could be funded without quarterly pressure. When privatization came in 1987, the company emerged with both discipline and ambition, a combination rarely coexisting in large organizations.
+      </p>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline fade-in" style="margin-top: 56px;">
+
+      <div class="timeline-item">
+        <div class="timeline-year-col">
+          <div class="tl-year">1904</div>
+          <div class="tl-phase">Origin</div>
+        </div>
+        <div class="timeline-body">
+          <div class="tl-title">A Partnership Built on Disagreement</div>
+          <div class="tl-desc">Charles Rolls wanted a car to sell. Henry Royce wanted a car worth building. Their tension became the company's engine. Royce's obsessive perfectionism and Rolls's commercial ambition created the original Core-Edge balance: excellent engineering funded by commercial success.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item highlight">
+        <div class="timeline-year-col">
+          <div class="tl-year">1914</div>
+          <div class="tl-phase">Pivot I</div>
+        </div>
+        <div class="timeline-body">
+          <div class="tl-title">The First Adjacent Jump: From Road to Sky</div>
+          <div class="tl-desc">World War One forced Rolls-Royce to apply its precision engineering to aircraft engines. This was not a strategic pivot. It was a national emergency converted into a new capability. The Eagle engine followed, powering the first non-stop transatlantic flight in 1919, a direct translation of wartime learning into peacetime possibility.</div>
+          <span class="tl-insight">Theta: Adjacent Innovation becoming Core within a decade</span>
+        </div>
+      </div>
+
+      <div class="timeline-item highlight">
+        <div class="timeline-year-col">
+          <div class="tl-year">1940s</div>
+          <div class="tl-phase">Defining Moment</div>
+        </div>
+        <div class="timeline-body">
+          <div class="tl-title">The Merlin Engine: When Engineering Became Courage</div>
+          <div class="tl-desc">The Merlin powered the Spitfire, the Hurricane, the Lancaster, and the Mustang. It was continuously improved under wartime pressure, iterating faster than any peacetime R&D cycle would have allowed. In four years, the Merlin went through 25 marks of development, each improving power output and reliability. This is what learning velocity looks like under existential pressure.</div>
+          <span class="tl-insight">Theta: Chaos Stage innovation under extreme constraint</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year-col">
+          <div class="tl-year">1971</div>
+          <div class="tl-phase">Crisis</div>
+        </div>
+        <div class="timeline-body">
+          <div class="tl-title">The RB211 and the Cost of Being Too Early</div>
+          <div class="tl-desc">The RB211 was technically brilliant and financially catastrophic. Rolls-Royce promised a performance it could not yet deliver at a price the economics could not support. The lesson that would take decades to fully absorb: being first is not the same as being right. The company was nationalized. The car division was separated. But the RB211 eventually became the engine family that funded the modern company.</div>
+          <span class="tl-insight">Theta: Edge Zone bet taken to market before the Core could absorb it</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year-col">
+          <div class="tl-year">1987</div>
+          <div class="tl-phase">Reborn</div>
+        </div>
+        <div class="timeline-body">
+          <div class="tl-title">Privatization and the Discipline of Consequence</div>
+          <div class="tl-desc">Returning to public markets meant that innovation now had to answer to shareholders, not just engineers. This created a productive tension: the imperative to build long-cycle technology within short-cycle financial expectations. The company's ability to navigate that tension, imperfectly but persistently, shaped the innovation culture that exists today.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item highlight">
+        <div class="timeline-year-col">
+          <div class="tl-year">2010</div>
+          <div class="tl-phase">Model Shift</div>
+        </div>
+        <div class="timeline-body">
+          <div class="tl-title">TotalCare: When the Product Became the Relationship</div>
+          <div class="tl-desc">The move to power-by-the-hour was not a technology innovation. It was a business model innovation that changed everything downstream. Airlines paid for flying hours, not engines. Rolls-Royce became responsible for uptime, which meant it was incentivized to build better engines, invest in predictive maintenance, and stay close to operational data. It turned customers into partners and made switching costs near-insurmountable. Adjacent innovation at its most elegant.</div>
+          <span class="tl-insight">Theta: Adjacent Innovation resetting the entire competitive dynamic</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year-col">
+          <div class="tl-year">2020</div>
+          <div class="tl-phase">Near-Collapse</div>
+        </div>
+        <div class="timeline-body">
+          <div class="tl-title">The Pandemic: Revenue Tied to Aircraft Flying Hours Hits Zero</div>
+          <div class="tl-desc">When global aviation stopped, Rolls-Royce's revenue model stopped with it. TotalCare, the same innovation that had created durable competitive advantage, became a liability when aircraft were grounded. The company lost £4bn in a single year. The lesson was not that TotalCare was wrong. It was that a Core built on a single variable, flying hours, needed a Beyond hedge that did not depend on the same variable.</div>
+          <span class="tl-insight">Theta: Concentrated Core creates fragility; the SMR and Power Systems bets make new sense</span>
+        </div>
+      </div>
+
+      <div class="timeline-item highlight">
+        <div class="timeline-year-col">
+          <div class="tl-year">2023</div>
+          <div class="tl-phase">Transformation</div>
+        </div>
+        <div class="timeline-body">
+          <div class="tl-title">The Burning Platform Speech That Changed the Culture</div>
+          <div class="tl-desc">New CEO Tufan Erginbilgic walked into an all-hands meeting and told 50,000 employees the company was underperforming every key competitor and was in its last chance saloon. Half the top 100 managers left or were replaced. The strategic review involved 500 people across the organization. The shift was not just financial; it was a deliberate attempt to change what the company believed it was capable of. That speech is now part of the company's innovation mythology.</div>
+          <span class="tl-insight">Theta: Culture-shift bet executed at scale, with real personal consequence</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year-col">
+          <div class="tl-year">2025</div>
+          <div class="tl-phase">Now</div>
+        </div>
+        <div class="timeline-body">
+          <div class="tl-title">Record Profits, Ultimatums to Government, and £9 Billion in Buybacks</div>
+          <div class="tl-desc">The turnaround delivered. Profit up 40%, market cap past $100bn, and targets hit two years early. But the most revealing moment was Erginbilgic telling the UK government: support the UltraFan with £200m or we take manufacturing to Germany or the United States. A company certain of its value proposition does not threaten. It negotiates from strength. This was both a confidence signal and a geopolitical warning shot.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INNOVATION CULTURE CELLS -->
+<div class="dilemma-strip fade-in">
+  <div class="dilemma-item">
+    <div class="dilemma-head">Engineering Excellence</div>
+    <div class="dilemma-vs">vs</div>
+    <div class="dilemma-head">Commercial Velocity</div>
+    <div class="dilemma-sub">The RB211 proved you can be technically right and commercially wrong simultaneously.</div>
+  </div>
+  <div class="dilemma-divider"></div>
+  <div class="dilemma-item">
+    <div class="dilemma-head">Performance Culture</div>
+    <div class="dilemma-vs">vs</div>
+    <div class="dilemma-head">Psychological Safety</div>
+    <div class="dilemma-sub">The burning platform creates urgency. Urgency without safety kills the maverick thinking that built this company.</div>
+  </div>
+  <div class="dilemma-divider"></div>
+  <div class="dilemma-item">
+    <div class="dilemma-head">National Champion</div>
+    <div class="dilemma-vs">vs</div>
+    <div class="dilemma-head">Global Competitor</div>
+    <div class="dilemma-sub">The ultimatum to the UK government revealed a company that sees itself as belonging to no single nation.</div>
+  </div>
+</div>
+
+<!-- PORTFOLIO -->
+<section class="section-white" id="portfolio">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="section-label">Theta Innovation Map</span>
+      <h2 class="section-title">Where the bets are placed,<br>and what <em>sits between them</em></h2>
+      <p class="prose">
+        Mapped across market reach and technology change, Rolls-Royce is one of a small number of companies that genuinely operates across all six innovation types. Most large industrials cluster in Core and Adjacent, optimizing existing products for existing customers. Rolls-Royce has active bets running from Trent engine upgrades all the way to Small Modular Reactors and electric vertical takeoff systems. That breadth is rare. Whether the connections between those bets are being leveraged is a different question.
+      </p>
+    </div>
+
+    <div class="map-grid fade-in" style="margin-top:48px;">
+      <div class="zone-legend">
+        <div class="zone-pill zone-pill-core">
+          <div class="zone-pill-name">Core Zone</div>
+          <div class="zone-pill-desc">Existing markets, existing tech. Optimize, defend, generate the cash that funds everything else.</div>
+        </div>
+        <div class="zone-pill zone-pill-edge">
+          <div class="zone-pill-name">Edge Zone</div>
+          <div class="zone-pill-desc">New markets or meaningfully new tech. Build the next S-curve before the current one levels off.</div>
+        </div>
+        <div class="zone-pill zone-pill-beyond">
+          <div class="zone-pill-name">Beyond Zone</div>
+          <div class="zone-pill-desc">Radical or speculative bets. Plant seeds for a company that does not yet exist.</div>
+        </div>
+        <div class="pull-quote" style="margin-top:24px; border-color: var(--rr-gold);">
+          <div class="pull-quote-text" style="font-size:16px;">"A healthy innovation portfolio spans all three zones. Companies that innovate only in the Core optimize themselves into irrelevance."</div>
+          <div class="pull-attribution">The Theta Framework</div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-wrap">
+          <canvas id="scatterChart" height="380"></canvas>
+        </div>
+        <div class="axis-label-x">Market Reach: Existing &rarr; Speculative</div>
+      </div>
+    </div>
+
+    <!-- Zone Breakdown -->
+    <div style="margin-top: 72px;">
+      <div class="fade-in">
+        <h3 style="font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:400; color:var(--core-green); margin-bottom:8px;">Core Zone <span style="font-size:16px; color:var(--muted); font-family:'DM Sans',sans-serif; font-weight:400;">Trent Engine Family / TotalCare Services / Power Systems for Data Centres</span></h3>
+        <p class="prose">
+          The Trent XWB, powering the Airbus A350, is the world's most efficient large aero-engine. That efficiency is not an accident; it is the product of relentless iterative engineering across decades. The Core here is doing exactly what Core should do: generating reliable, compounding cash while protecting market position. The TotalCare model creates lock-in that competitors cannot easily replicate because the switching costs are not financial, they are operational and relational.
+        </p>
+        <p class="prose">
+          Power Systems, the mtu brand serving marine, defence, and increasingly AI data centres, is a Core business experiencing Growth-phase momentum. Data centre demand for reliable backup power has become an unexpected tailwind, turning a steady industrial division into a fast-growing one. This is Core innovation working at its best: the same capability finding new applications without requiring a new product.
+        </p>
+      </div>
+
+      <div class="fade-in" style="margin-top:48px;">
+        <h3 style="font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:400; color:var(--edge-amber); margin-bottom:8px;">Edge Zone <span style="font-size:16px; color:var(--muted); font-family:'DM Sans',sans-serif; font-weight:400;">UltraFan 30 / Connected Insight / Orpheus Programme</span></h3>
+        <p class="prose">
+          The UltraFan 30 is the most significant bet Rolls-Royce has made in a generation. The company voluntarily exited the narrow-body engine market in the 1990s, conceding that space to CFM International (the GE-Safran joint venture). The A320neo and Boeing 737 Max are now the workhorses of global aviation, and Rolls-Royce has no engine on either. The UltraFan is the attempt to re-enter that market with technology that promises 30% lower fuel burn than current alternatives.
+        </p>
+        <p class="prose">
+          The UNIFIED consortium backing this programme is an innovation structure worth studying separately. By bringing together Airbus, ITP Aero, Lufthansa Technik, and leading European universities, Rolls-Royce has effectively built a Skunkworks that sits across institutional and national boundaries. Each partner has skin in the outcome. Risk is shared. Credibility is collective. Ground testing is planned for 2028. If successful, this is the engine that could fund the next phase of the company's existence.
+        </p>
+        <p class="prose">
+          The Orpheus programme in defence is less visible but arguably the more advanced model. In three years it has run 100 test events across 20 engine configurations, a learning velocity that aerospace rarely achieves. The programme leader's description of its method, "agility, learning and collaboration" over process and hierarchy, reads like a direct implementation of Theta's Build Stage principles. It is the company's clearest proof that rapid iteration is possible even in hard-tech, safety-critical environments.
+        </p>
+
+        <!-- ORPHEUS BREAKOUT -->
+        <div style="background:var(--rr-navy); padding:40px 40px 36px; margin:40px 0; position:relative; overflow:hidden;">
+          <div style="position:absolute; top:-20px; right:24px; font-family:'Cormorant Garamond',serif; font-size:120px; font-weight:300; color:rgba(181,148,26,0.06); line-height:1; pointer-events:none; user-select:none;">Orpheus</div>
+          <div style="display:flex; align-items:flex-start; gap:32px; position:relative; z-index:1; flex-wrap:wrap;">
+            <div style="flex:1; min-width:220px;">
+              <span style="font-size:9px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--rr-gold); display:block; margin-bottom:14px;">Case in Point: Orpheus Programme</span>
+              <div style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:400; color:#fff; line-height:1.35; margin-bottom:16px;">The closest thing Rolls-Royce has to a <em style="color:var(--rr-gold-light);">Chaos Stage</em> operating model</div>
+              <p style="font-size:13px; color:rgba(255,255,255,0.62); line-height:1.7; margin:0;">
+                Funded by the UK Ministry of Defence, Orpheus was chartered to develop low-cost, high-performance propulsion for future unmanned aircraft. The team was given a clear mission and deliberately shielded from the process cadence governing the core engine business. The result: a development velocity that would be considered fast in software, let alone propulsion engineering.
+              </p>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1px; background:rgba(181,148,26,0.15); flex-shrink:0; width:320px;">
+              <div style="background:rgba(10,22,40,0.9); padding:20px 18px;">
+                <div style="font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:400; color:var(--rr-gold-light); line-height:1; margin-bottom:4px;">100</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:1px;">Test events</div>
+              </div>
+              <div style="background:rgba(10,22,40,0.9); padding:20px 18px;">
+                <div style="font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:400; color:var(--rr-gold-light); line-height:1; margin-bottom:4px;">20</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:1px;">Engine configs</div>
+              </div>
+              <div style="background:rgba(10,22,40,0.9); padding:20px 18px;">
+                <div style="font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:400; color:var(--rr-gold-light); line-height:1; margin-bottom:4px;">3</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:1px;">Years</div>
+              </div>
+              <div style="background:rgba(10,22,40,0.9); padding:20px 18px;">
+                <div style="font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:400; color:var(--rr-gold-light); line-height:1; margin-bottom:4px;">SMEs</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:1px;">New to Defence</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:28px; padding-top:24px; border-top:1px solid rgba(181,148,26,0.15); position:relative; z-index:1;">
+            <span style="font-size:9px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.3); margin-right:12px;">Theta Read</span>
+            <span style="font-size:13px; color:rgba(255,255,255,0.6); line-height:1.6;">
+              Orpheus operates at the boundary of the Build and Chaos stages simultaneously: a defined goal, protected from bureaucracy, open to SMEs who had never worked in defence, and measured on learning velocity rather than revenue. The question Theta asks is not whether Orpheus works. It does. The question is why this model exists only here, and not as the default operating system for every early-stage programme in the portfolio.
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="fade-in" style="margin-top:48px;">
+        <h3 style="font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:400; color:var(--beyond-crimson); margin-bottom:8px;">Beyond Zone <span style="font-size:16px; color:var(--muted); font-family:'DM Sans',sans-serif; font-weight:400;">Small Modular Reactors / Advanced Air Mobility / Data Labs</span></h3>
+        <p class="prose">
+          Small Modular Reactors represent either the company's most visionary bet or its most dangerous distraction, depending on whether you believe the regulatory and political environment will move fast enough to matter. Rolls-Royce claims no private company in the world has deeper nuclear capability. That claim is plausible: the company has built and maintained nuclear reactors in Royal Navy submarines for over 60 years. The SMR is the attempt to take classified institutional knowledge and commercialize it as factory-built clean energy for grids and, eventually, AI data centres.
+        </p>
+        <p class="prose">
+          The CEO has acknowledged something important in public: he cannot point to a working commercial SMR anywhere. The ambition is real. The timeline is genuinely uncertain. That honesty is healthy. The risk is treating a Beyond-Zone bet with Core-Zone certainty in public communications, which creates expectations the technology cannot yet meet and regulators are not yet equipped to approve.
+        </p>
+        <p class="prose">
+          Data Labs, running since 2018, is the Beyond investment that gets the least attention and may deliver the most durable advantage. The VP leading it applies something unusual for an industrial company: systematic hype cycle mapping using Google Trends before deciding which technologies to pursue. This is intellectual discipline applied to innovation portfolio management. It is the reason Rolls-Royce is not chasing blockchain for engines or metaverse for maintenance. Boring? Perhaps. Effective? Demonstrably.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section class="section-paper">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="section-label">70-20-10 Allocation Analysis</span>
+      <h2 class="section-title">Is the portfolio weighted<br><em>by design or by drift?</em></h2>
+    </div>
+    <div class="allocation-wrap fade-in">
+      <div>
+        <div class="alloc-bar-group">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-name core">Core</span>
+            <span class="alloc-nums">Actual: ~78% / Benchmark: 70%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill core" id="bar-core" style="width:0%"></div>
+            <div class="alloc-benchmark" style="left:70%"></div>
+          </div>
+          <div class="alloc-note">The overweight is deliberate. The turnaround demanded profitability first, innovation second. De-risking the balance sheet before making big bets is correct sequencing, not timidity.</div>
+        </div>
+
+        <div class="alloc-bar-group">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-name edge">Edge</span>
+            <span class="alloc-nums">Actual: ~17% / Benchmark: 20%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill edge" id="bar-edge" style="width:0%"></div>
+            <div class="alloc-benchmark" style="left:20%"></div>
+          </div>
+          <div class="alloc-note">The UltraFan project dominates the Edge allocation. This concentration is a risk: if UltraFan stalls, there is no obvious second Edge bet to step forward. Orpheus and Connected Insight are real but smaller.</div>
+        </div>
+
+        <div class="alloc-bar-group">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-name beyond">Beyond</span>
+            <span class="alloc-nums">Actual: ~5% / Benchmark: 10%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill beyond" id="bar-beyond" style="width:0%"></div>
+            <div class="alloc-benchmark" style="left:10%"></div>
+          </div>
+          <div class="alloc-note">Underweight relative to benchmark, though the SMR and AAM bets are capital-light at this stage, relying on government grants and partnerships rather than internal R&D spend. The question is whether this will shift as those programmes mature.</div>
+        </div>
+
+        <div class="pull-quote">
+          <div class="pull-quote-text">"The only way to survive is to build your next S-curve before the current one collapses. That means using your Core to fund your Edge and Beyond."</div>
+          <div class="pull-attribution">The Theta Framework</div>
+        </div>
+      </div>
+
+      <div>
+        <canvas id="doughnutChart" height="280"></canvas>
+        <div style="text-align:center; margin-top: 24px;">
+          <div style="font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;">S-Curve Positioning</div>
+          <table style="width:100%; border-collapse:collapse; font-size:13px;">
+            <tr style="border-bottom:1px solid rgba(181,148,26,0.12);">
+              <td style="padding:10px 0; color:#333; font-weight:500;">Civil Aerospace (Trent)</td>
+              <td style="padding:10px 0; color:var(--muted); text-align:right;">Maturity</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(181,148,26,0.12);">
+              <td style="padding:10px 0; color:#333; font-weight:500;">Defence</td>
+              <td style="padding:10px 0; color:var(--core-green); text-align:right;">Growth</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(181,148,26,0.12);">
+              <td style="padding:10px 0; color:#333; font-weight:500;">Power Systems</td>
+              <td style="padding:10px 0; color:var(--core-green); text-align:right;">Growth</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(181,148,26,0.12);">
+              <td style="padding:10px 0; color:#333; font-weight:500;">UltraFan 30</td>
+              <td style="padding:10px 0; color:var(--edge-amber); text-align:right;">Pre-Birth</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 0; color:#333; font-weight:500;">SMR Civil Nuclear</td>
+              <td style="padding:10px 0; color:var(--beyond-crimson); text-align:right;">Birth / Speculative</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKETING AND INNOVATION -->
+<section class="section-white">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="section-label">Marketing as an Innovation Signal</span>
+      <h2 class="section-title">The brand is not just a name.<br><em>It is the permission structure for risk.</em></h2>
+      <p class="prose">
+        In most companies, marketing follows innovation. At Rolls-Royce, the relationship is more interesting than that. The brand, built on 120 years of precision engineering and the cultural weight of the Spitfire, functions as advance credibility for bets that have not yet been proven. When the CEO says SMRs will power a million homes, the market listens not because the technology is proven but because the name suggests it might be possible.
+      </p>
+      <p class="prose">
+        This is the least analysed dimension of the company's innovation strategy. The marketing of the car brand, entirely separate under BMW ownership, still bleeds prestige onto the industrial business. When airlines negotiate for engines, the name in the room is the same name on the world's most expensive production car. That association carries a quality premium that pricing data cannot fully explain.
+      </p>
+      <p class="prose">
+        But the brand also creates constraint. Rolls-Royce cannot afford public failure in the way a startup can. A failed SMR pilot does not just affect one business unit; it questions the foundational promise of "the best that exists." This makes the company more conservative than its innovation rhetoric suggests, more likely to announce bets than to take the risks that would genuinely separate it from conservative competitors.
+      </p>
+
+      <div class="culture-grid" style="margin-top: 48px;">
+        <div class="culture-cell">
+          <span class="culture-icon">⚡</span>
+          <div class="culture-head">Brand as Permission</div>
+          <div class="culture-body">The Rolls-Royce name gives the SMR business credibility that a startup with the same technology would take a decade to build. This is a genuine moat, but one that requires constant protection.</div>
+        </div>
+        <div class="culture-cell">
+          <span class="culture-icon">🎯</span>
+          <div class="culture-head">Signal Bets and Market Positioning</div>
+          <div class="culture-body">The UltraFan announcement is partly a technology programme and partly a statement to airlines: we are not exiting aviation. That signal affects customer decisions today, years before the engine exists.</div>
+        </div>
+        <div class="culture-cell">
+          <span class="culture-icon">🔒</span>
+          <div class="culture-head">The Constraint of Perfection</div>
+          <div class="culture-body">A brand built on perfection cannot easily celebrate failure. This is the Theta gap the brand creates: the culture it implies is one where intelligent failure, the source of real learning, is difficult to institutionalise publicly.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TENSIONS -->
+<section class="section-ink" id="tensions">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="section-label">Innovation Dilemmas</span>
+      <h2 class="section-title">The tensions that <em>define</em><br>the next decade</h2>
+      <p class="prose">
+        A company's innovation dilemmas are more instructive than its successes. Successes tell you what worked. Dilemmas tell you what the organisation genuinely believes about itself, and what it is afraid to confront.
+      </p>
+    </div>
+
+    <div class="tension-grid fade-in" style="margin-top:48px;">
+      <div class="tension-card">
+        <div class="tension-number">01</div>
+        <span class="tension-tag">Performance vs. Safety</span>
+        <div class="tension-title">The Burning Platform Built a High-Performance Culture. Who Is It Safe to Fail In?</div>
+        <div class="tension-body">Erginbilgic's transformation delivered extraordinary results. It also created a culture where performance is the dominant signal. In Theta terms, this is a Stage 3 (Scale) operating system being applied to a company that also needs to run Stage 1 (Chaos) to generate the ideas that will replace UltraFan in 2040. The risk is not that the culture is wrong for today. It is that it may be wrong for tomorrow.</div>
+      </div>
+
+      <div class="tension-card">
+        <div class="tension-number">02</div>
+        <span class="tension-tag">Concentration vs. Diversification</span>
+        <div class="tension-title">One Edge Bet to Rule Them All. What If the UltraFan Stalls?</div>
+        <div class="tension-body">The UltraFan 30 is magnificent in ambition and sobering in its singularity. Almost the entire Edge Zone allocation flows through this programme. The UNIFIED consortium distributes risk across partners, but it does not diversify the portfolio. If certification is delayed, if Boeing or Airbus does not select it, or if a competitor delivers a comparable engine first, the company's next-decade story needs a chapter it has not yet written.</div>
+      </div>
+
+      <div class="tension-card">
+        <div class="tension-number">03</div>
+        <span class="tension-tag">Legacy Advantage vs. New Entrant Threat</span>
+        <div class="tension-title">The Narrow-Body Market Rolls-Royce Left Has Not Been Waiting for Them</div>
+        <div class="tension-body">CFM International, the GE-Safran consortium, has 35 years of narrow-body market dominance, installed base loyalty, and a development pipeline of its own. Rolls-Royce is re-entering a market it chose to leave, against competitors who never left. The UltraFan's technical advantages may be real. Converting them into airline commitments before the market consolidates around existing suppliers is a different kind of challenge, one that requires commercial as much as engineering courage.</div>
+      </div>
+
+      <div class="tension-card">
+        <div class="tension-number">04</div>
+        <span class="tension-tag">Mavericks vs. Process</span>
+        <div class="tension-title">The Engineers Who Build Tomorrow Are Different From the Ones Who Optimise Today</div>
+        <div class="tension-body">Theta's Maverick Inventory asks where the rebels are, whether they are protected, and what happens to them. At Rolls-Royce, the mavericks exist, the Orpheus programme's leadership is a clear example, but they are increasingly formalised within large-consortium structures. The unstructured exploration that seeds breakthrough ideas is not visibly supported. The company has excellent Skunkworks. It has limited evidence of genuine Chaos-stage space.</div>
+      </div>
+
+      <div class="tension-card">
+        <div class="tension-number">05</div>
+        <span class="tension-tag">Ecosystem vs. Proprietary</span>
+        <div class="tension-title">Open Source Ethos in a Company That Has Always Protected Its Secrets</div>
+        <div class="tension-body">The UNIFIED consortium is the company's most open innovation structure. The SMR programme requires government transparency to earn regulatory approval. Yet Rolls-Royce's default instinct is proprietary: IP is a core asset, and the culture of engineering secrecy runs deep. Theta's Open Source score is high because of a few flagship programmes. The underlying culture may tell a different story.</div>
+      </div>
+
+      <div class="tension-card">
+        <div class="tension-number">06</div>
+        <span class="tension-tag">National vs. Global</span>
+        <div class="tension-title">A British Institution That Is Increasingly Asking Whether Britain Is Enough</div>
+        <div class="tension-body">The government ultimatum over UltraFan funding was a pivotal moment. Rolls-Royce told the UK that its competitors (GE, Safran) receive two to three times more government support. The implicit message was clear: the company's loyalty to UK manufacturing is conditional on the UK's reciprocal investment. That is not cynical. It is the honest logic of a company competing globally. But it reframes the "national champion" narrative in ways policymakers may not have fully absorbed.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section class="section-paper" id="competitors">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="section-label">Competitive Landscape</span>
+      <h2 class="section-title">Where rivals are building<br><em>their next curves</em></h2>
+      <p class="prose">
+        The competition for aerospace propulsion's future is not happening on one front. GE Aerospace owns narrow-body. Safran is co-developing the future. Pratt & Whitney is fighting a technical fire on the GTF engine that has grounded hundreds of aircraft. Understanding where each player sits in the Theta map reveals why Rolls-Royce's moment of opportunity may be more time-limited than the optimistic case assumes.
+      </p>
+    </div>
+
+    <div class="competitor-grid fade-in">
+      <div class="competitor-card featured">
+        <div class="comp-name">Rolls-Royce</div>
+        <div class="comp-tag">Balanced Builder</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-core"></span>Trent XWB / TotalCare</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-edge"></span>UltraFan 30 / Orpheus</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-beyond"></span>SMR / AAM</div>
+        <div class="comp-verdict" style="background:rgba(45,106,79,0.1); color:var(--core-green);">Strong Across Zones</div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="comp-name">GE Aerospace</div>
+        <div class="comp-tag">Dominant Core, Bold Edge</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-core"></span>LEAP / GE9X engines</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-edge"></span>Open Fan architecture</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-beyond"></span>Hybrid-electric research</div>
+        <div class="comp-verdict" style="background:rgba(181,132,26,0.1); color:var(--edge-amber);">Narrow-Body Entrenched</div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="comp-name">Safran</div>
+        <div class="comp-tag">CFM Partnership, French State</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-core"></span>CFM LEAP (via joint venture)</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-edge"></span>RISE open-fan programme</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-beyond"></span>Hydrogen propulsion research</div>
+        <div class="comp-verdict" style="background:rgba(181,132,26,0.1); color:var(--edge-amber);">State-Backed Reach</div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="comp-name">Pratt & Whitney</div>
+        <div class="comp-tag">GTF Crisis Management</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-core"></span>Geared Turbofan (GTF)</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-edge"></span>GTF Advantage recovery</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-beyond"></span>Hybrid-electric research</div>
+        <div class="comp-verdict" style="background:rgba(139,26,26,0.1); color:var(--beyond-crimson);">Distracted by Recall Crisis</div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="comp-name">Airbus</div>
+        <div class="comp-tag">Hydrogen-First Vision</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-core"></span>A320neo / A350 family</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-edge"></span>ZEROe hydrogen concept</div>
+        <div class="comp-zone-row"><span class="comp-dot comp-dot-beyond"></span>Blended-wing body research</div>
+        <div class="comp-verdict" style="background:rgba(100,100,180,0.1); color:#7a7ad4);">Bold Vision, Long Timeline</div>
+      </div>
+    </div>
+
+    <div class="fade-in" style="margin-top:16px;">
+      <p class="prose">
+        The competitive picture that emerges from the Theta lens is not one where Rolls-Royce is behind. It is one where the window for its Edge bets is more compressed than the company's communications imply. GE Aerospace's Open Fan architecture is targeting the same fuel efficiency claims as UltraFan 30. Safran, backed by the French state, is funded at levels that make the UK government debate look relatively modest. And Pratt and Whitney's GTF crisis, while a current weakness, is also a learning opportunity that will produce a better engine over time.
+      </p>
+      <div class="fade-in">
+        <div class="radar-wrap" style="margin-top:32px;">
+          <canvas id="radarChart" height="380"></canvas>
+        </div>
+        <!-- RADAR DIMENSION KEY -->
+        <div style="margin-top:32px; border:1px solid var(--border); background:#fff; padding:28px 32px;">
+          <div style="font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:20px;">How to Read the Radar: Axis Definitions</div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px 32px;">
+            <div>
+              <div style="font-size:12px; font-weight:600; color:var(--ink); margin-bottom:3px;">Core Strength</div>
+              <div style="font-size:12px; color:var(--muted); line-height:1.5;">Profitability, market share, and competitive depth in the existing installed base. How well the present business is defended.</div>
+            </div>
+            <div>
+              <div style="font-size:12px; font-weight:600; color:var(--ink); margin-bottom:3px;">Edge Momentum</div>
+              <div style="font-size:12px; color:var(--muted); line-height:1.5;">Pace and credibility of next-curve bets: active programmes, partner commitments, and technology readiness levels beyond the Core.</div>
+            </div>
+            <div>
+              <div style="font-size:12px; font-weight:600; color:var(--ink); margin-bottom:3px;">Beyond Vision</div>
+              <div style="font-size:12px; color:var(--muted); line-height:1.5;">Quality and ambition of speculative, long-horizon bets. Not whether they are proven, but whether they are genuinely frontier-level thinking.</div>
+            </div>
+            <div>
+              <div style="font-size:12px; font-weight:600; color:var(--ink); margin-bottom:3px;">Digital / AI</div>
+              <div style="font-size:12px; color:var(--muted); line-height:1.5;">Integration of data, software, and AI capabilities into products and services. Readiness to compete in a software-defined competitive environment.</div>
+            </div>
+            <div>
+              <div style="font-size:12px; font-weight:600; color:var(--ink); margin-bottom:3px;">Manufacturing</div>
+              <div style="font-size:12px; color:var(--muted); line-height:1.5;">Production scale, supply chain resilience, and the ability to industrialise advanced materials and additive manufacturing at volume.</div>
+            </div>
+            <div>
+              <div style="font-size:12px; font-weight:600; color:var(--ink); margin-bottom:3px;">Ecosystem Build</div>
+              <div style="font-size:12px; color:var(--muted); line-height:1.5;">Extent to which the company builds innovation ecosystems with partners, governments, and academia rather than developing proprietary solutions alone.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section class="section-ink" id="diagnostic">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="section-label">Theta Diagnostic</span>
+      <h2 class="section-title">Where the framework<br><em>finds the real picture</em></h2>
+      <p class="prose">
+        The financial turnaround is real. The portfolio is genuinely balanced. The leadership courage is exceptional. And yet the Theta diagnostic reveals a company that has structured its innovation excellence into formal programmes while leaving critical cultural infrastructure unbuilt. The gaps are not in strategy. They are in the operating system underneath it.
+      </p>
+    </div>
+
+    <!-- Two-column diagnostic -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:48px; margin-top:56px;" class="fade-in">
+      <div>
+        <div style="font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-bottom:24px;">Cultural and Leadership Dimensions</div>
+
+        <table class="diag-table">
+          <thead>
+            <tr>
+              <th>Dimension</th>
+              <th>Score</th>
+              <th>Key Finding</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Leadership Agility</td>
+              <td><span class="score-pill score-strong">5 / 5</span></td>
+              <td>The turnaround pace and willingness to confront institutional inertia is exceptional.</td>
+            </tr>
+            <tr>
+              <td>Leadership Courage</td>
+              <td><span class="score-pill score-strong">5 / 5</span></td>
+              <td>Burning platform speech, personnel decisions, government ultimatum. All high-stakes, all executed.</td>
+            </tr>
+            <tr>
+              <td>Leadership Consciousness</td>
+              <td><span class="score-pill score-moderate">4 / 5</span></td>
+              <td>Strong self-awareness at the top. The blind spot is whether dissenting signals travel upward freely.</td>
+            </tr>
+            <tr>
+              <td>Skunkworks Capability</td>
+              <td><span class="score-pill score-strong">5 / 5</span></td>
+              <td>UNIFIED and Orpheus are world-class models of autonomous, goal-clear, process-light teams.</td>
+            </tr>
+            <tr>
+              <td>Open Source Ethos</td>
+              <td><span class="score-pill score-moderate">4 / 5</span></td>
+              <td>Consortia are genuinely collaborative. The default culture outside them is still proprietary.</td>
+            </tr>
+            <tr>
+              <td>Maverick Protection</td>
+              <td><span class="score-pill score-moderate">3 / 5</span></td>
+              <td>Mavericks exist within formal programmes. Unstructured space for idea generation is not visible.</td>
+            </tr>
+            <tr>
+              <td>Psychological Safety</td>
+              <td><span class="score-pill score-moderate">3 / 5</span></td>
+              <td>Strategy process was inclusive. Day-to-day safety under a performance mandate is unverified.</td>
+            </tr>
+            <tr>
+              <td>Failure Intelligence</td>
+              <td><span class="score-pill score-weak">2 / 5</span></td>
+              <td>No evidence of systematic failure tracking, Failure Library, or celebration of intelligent failure.</td>
+            </tr>
+            <tr>
+              <td>Chaos Stage Readiness</td>
+              <td><span class="score-pill score-weak">2 / 5</span></td>
+              <td>The organisation is optimised for disciplined execution. Unstructured exploration is structurally absent.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <div style="font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-bottom:24px;">Portfolio and Customer Architecture</div>
+
+        <table class="diag-table">
+          <thead>
+            <tr>
+              <th>Dimension</th>
+              <th>Score</th>
+              <th>Key Finding</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Core Zone Health</td>
+              <td><span class="score-pill score-strong">5 / 5</span></td>
+              <td>Profitable, growing, diversifying into data centres. TotalCare model creates deep customer lock-in.</td>
+            </tr>
+            <tr>
+              <td>Edge Zone Momentum</td>
+              <td><span class="score-pill score-moderate">4 / 5</span></td>
+              <td>UltraFan is credible and well-structured. Concentration in one programme is the primary risk.</td>
+            </tr>
+            <tr>
+              <td>Beyond Zone Seeds</td>
+              <td><span class="score-pill score-moderate">3 / 5</span></td>
+              <td>SMR has institutional backing but no working example. AAM is pre-commercial. Below benchmark allocation.</td>
+            </tr>
+            <tr>
+              <td>Early Adopter Listening</td>
+              <td><span class="score-pill score-moderate">3 / 5</span></td>
+              <td>Strong signal capture from existing fleet. Listening infrastructure for Beyond-zone customers is nascent.</td>
+            </tr>
+            <tr>
+              <td>Customer Signal Speed</td>
+              <td><span class="score-pill score-moderate">3 / 5</span></td>
+              <td>Connected Insight improves operational signals. Strategic signals from innovators are less visible.</td>
+            </tr>
+            <tr>
+              <td>Ecosystem Thinking</td>
+              <td><span class="score-pill score-strong">4 / 5</span></td>
+              <td>UNIFIED is a genuine ecosystem play. SMR and Power Systems build different ecosystems around different partners.</td>
+            </tr>
+            <tr>
+              <td>Chasm Readiness (UltraFan)</td>
+              <td><span class="score-pill score-moderate">4 / 5</span></td>
+              <td>Consortium model creates early adopter buy-in. Commercial airline commitments are the next test.</td>
+            </tr>
+            <tr>
+              <td>Relativity Score vs. Industry</td>
+              <td><span class="score-pill score-strong">Above</span></td>
+              <td>Financial performance, portfolio breadth, and strategic clarity lead the peer group in 2025-26.</td>
+            </tr>
+            <tr>
+              <td>Relativity Score vs. Frontier</td>
+              <td><span class="score-pill score-caution">Catching Up</span></td>
+              <td>In the deepest Beyond bets (SMR, quantum), the frontier is still ahead. The gap is closing, not closed.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Critical tension -->
+    <div class="pull-quote fade-in" style="margin-top:56px; border-color:var(--rr-gold-light);">
+      <div class="pull-quote-text">"Innovation does not come from playing it safe. It comes from failing intelligently, learning quickly, and adapting. Many companies say they embrace failure, but most penalise mistakes. This creates a fear-driven culture where no one takes risks."</div>
+      <div class="pull-attribution">The Theta Framework</div>
+    </div>
+
+    <div class="fade-in" style="margin-top: 40px;">
+      <p class="prose">
+        The most important Theta finding for Rolls-Royce is not in the portfolio map. It is in the failure intelligence audit. The Orpheus programme demonstrates that rapid learning is possible. Data Labs demonstrates that disciplined experimentation is possible. Neither programme has made its failure intelligence visible to the broader organisation. The RB211 crisis of 1971 is the company's most famous learning moment. It took 50 years. The next cycle cannot wait that long.
+      </p>
+    </div>
+
+    <!-- Archetype -->
+    <div class="archetype-box fade-in">
+      <span class="archetype-label">Theta Strategic Archetype</span>
+      <div class="archetype-name">The Balanced Builder</div>
+      <div class="archetype-checks">✓ &nbsp; ✓ &nbsp; ✓</div>
+      <div class="archetype-desc">
+        Core defended. Edge funded and consortium-structured. Beyond seeded with high-ambition bets.
+        The balance is intentional, not accidental. But balanced builders only remain balanced if they continuously regenerate each zone.
+        The post-UltraFan future requires cultural infrastructure that the current transformation has not yet built.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SW PANELS -->
+<section class="section-paper">
+  <div class="section-inner">
+    <div class="fade-in">
+      <span class="section-label">Strengths and Gaps</span>
+      <h2 class="section-title">What holds,<br>and what <em>deserves a harder look</em></h2>
+    </div>
+    <div class="sw-grid fade-in">
+      <div class="sw-panel strengths">
+        <div class="sw-title">What Rolls-Royce Does Exceptionally Well</div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <div class="sw-lead">Ecosystem architecture through consortia</div>
+            <div class="sw-body">The UNIFIED consortium is not a supplier network. It is a co-investment structure that distributes risk, pools credibility, and creates commercial alignment before the product exists. This is Open Source innovation applied to hard engineering.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <div class="sw-lead">Learning velocity in protected programmes</div>
+            <div class="sw-body">Orpheus ran 100 test events in three years across 20 configurations. In aerospace, that pace is extraordinary. The method, agility over process, is replicable if the organisation chooses to replicate it.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <div class="sw-lead">TotalCare as a recurring intelligence system</div>
+            <div class="sw-body">Every engine in service is a sensor. The data generated from the installed base feeds continuously into engineering decisions, creating a feedback loop that competitors without a comparable installed base cannot easily replicate.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <div class="sw-lead">60 years of nuclear institutional knowledge</div>
+            <div class="sw-body">The company's claim to private-sector nuclear leadership is grounded in Royal Navy submarine work that no other company has access to. That institutional knowledge is genuinely proprietary and genuinely relevant to the SMR commercial opportunity.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <div class="sw-lead">Disciplined hype-cycle intelligence via Data Labs</div>
+            <div class="sw-body">Mapping technology adoption curves before committing investment is unusually rational for a large industrial. The Data Labs approach prevents expensive diversions into blockchain-for-maintenance or AR-for-training while the real opportunities are elsewhere.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sw-panel weaknesses">
+        <div class="sw-title">Where the Framework Finds the Gaps</div>
+
+        <div class="sw-item">
+          <div class="sw-marker">G</div>
+          <div class="sw-text">
+            <div class="sw-lead">No visible failure intelligence system</div>
+            <div class="sw-body">There is no evidence of systematic failure tracking, shared failure learning across divisions, or a cultural celebration of intelligent failure. A company that cannot talk openly about what does not work is a company quietly accumulating invisible risk.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">G</div>
+          <div class="sw-text">
+            <div class="sw-lead">Edge portfolio concentrated in a single bet</div>
+            <div class="sw-body">UltraFan dominates the Edge Zone. If it is delayed, descoped, or loses the airline competition to CFM's Open Fan, there is no readily available second Edge initiative to carry the company's next-decade ambitions.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">G</div>
+          <div class="sw-text">
+            <div class="sw-lead">Maverick identification is informal at best</div>
+            <div class="sw-body">The people who will invent the post-UltraFan future are somewhere in this organisation. There is no formal process for finding them early, protecting them from performance pressure, or giving them unstructured space before they are absorbed into formal programmes.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">G</div>
+          <div class="sw-text">
+            <div class="sw-lead">SMR programme carries public certainty it cannot yet support</div>
+            <div class="sw-body">Calling the SMR business "the future of clean energy" before a single commercial unit is operational creates expectation management risk. When the first delays or regulatory setbacks arrive, the gap between ambition and reality will be visible and public.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">G</div>
+          <div class="sw-text">
+            <div class="sw-lead">Beyond Zone bets are not yet connected to each other</div>
+            <div class="sw-body">SMRs, AAM electrical systems, and Power Systems grid technology have genuine potential synergies. An SMR powering electric aviation infrastructure. Power Systems grid technology informing SMR grid integration. These connections are not yet formally explored or exploited.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ONE QUESTION -->
+<div class="one-question fade-in" id="verdict">
+  <span class="oq-label">The Question That Matters Most</span>
+  <p class="oq-text">
+    As you build the engine that will power tomorrow's aircraft, are you also building the culture that will conceive the technology for the day after that?
+  </p>
+  <p class="oq-context">
+    Rolls-Royce has built something extraordinary in the last three years. The financial turnaround is real. The portfolio is genuinely balanced. The courage at the top is evident. The question is whether the cultural infrastructure, the willingness to fail intelligently, the space for unstructured thinking, the protection of the rebels who see what others do not, is being built with the same urgency as the UltraFan.
+  </p>
+</div>
+
+<!-- CONCLUSION -->
+<section class="section-white">
+  <div class="section-inner-narrow">
+    <div class="fade-in">
+      <span class="section-label">The Theta Verdict</span>
+      <h2 class="section-title">Not a company that forgot<br>to innovate. A company <em>at a crossroads.</em></h2>
+      <p class="prose">
+        Rolls-Royce is not IBM. It is not Kodak. It is not a company that missed the transition. It is a company that survived nationalization, reinvented its revenue model, diversified into nuclear energy, and is now betting its next generation on an engine technology that does not yet have a plane to go in. That is a remarkable position to be in 120 years after two men shook hands in a Manchester hotel.
+      </p>
+      <p class="prose">
+        The Theta analysis reveals a company that has figured out most of the strategic questions and has not yet fully answered the cultural ones. The portfolio is balanced. The leadership is courageous and agile. The skunkworks capability is world-class. And underneath all of that, the failure intelligence system is missing, the maverick identification process is informal, and the psychological safety required for the next cycle of breakthrough thinking has not been formally constructed.
+      </p>
+      <p class="prose">
+        This is not a criticism. It is an observation about sequencing. Erginbilgic was right to prioritise performance. You cannot fund innovation without profit. But the sequence now needs to extend: from performance to profitability to portfolio balance to, finally, the cultural infrastructure that makes the portfolio self-renewing rather than dependent on a single transformative leader or a single transformative programme.
+      </p>
+
+      <div class="pull-quote" style="margin: 40px 0;">
+        <div class="pull-quote-text">"The next trillion-dollar opportunity may start in a coffee shop. The downfall of a tech giant may begin with silence on the frontier. The Theta framework helps you read those signals."</div>
+        <div class="pull-attribution">The Theta Framework</div>
+      </div>
+
+      <p class="prose">
+        The company's history is the best argument for its future. It survived the nationalization that ended most companies like it. It invented a revenue model that competitors are still copying. It re-entered a nuclear technology domain that no private company had previously commercialized. Each of those moves required someone, somewhere, to ask a question that the organization had not yet decided was the right question to ask.
+      </p>
+      <p class="prose">
+        The challenge ahead is ensuring that the person asking that question for the post-UltraFan era is already inside the company, already being heard, and already being given the space to be wrong before they are right.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-brand">THETA FRAMEWORK</div>
+    <div>By Christine Pamela &nbsp;&middot;&nbsp; Strategic Case Study &nbsp;&middot;&nbsp; 2026</div>
+  </div>
+  <div class="footer-right">
+    <div>Rolls-Royce Holdings plc</div>
+    <div>Innovation Portfolio Analysis</div>
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script>
+// Fade-in observer
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// Allocation bars animation
+function animateBars() {
+  const bars = [
+    { id: 'bar-core', width: 78 },
+    { id: 'bar-edge', width: 17 },
+    { id: 'bar-beyond', width: 5 }
+  ];
+  bars.forEach(b => {
+    const el = document.getElementById(b.id);
+    if (el) setTimeout(() => { el.style.width = b.width + '%'; }, 300);
+  });
+}
+
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      animateBars();
+      barObserver.disconnect();
+    }
+  });
+}, { threshold: 0.3 });
+
+const barSection = document.getElementById('bar-core');
+if (barSection) barObserver.observe(barSection.closest('section') || barSection);
+
+// CHART DEFAULTS
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.color = '#7A8490';
+
+const tooltipDefaults = {
+  backgroundColor: 'rgba(14,26,24,0.92)',
+  titleColor: '#fff',
+  bodyColor: 'rgba(255,255,255,0.75)',
+  borderColor: 'rgba(181,148,26,0.3)',
+  borderWidth: 1,
+  padding: 12,
+  cornerRadius: 2
+};
+
+// SCATTER CHART
+const scatterCtx = document.getElementById('scatterChart');
+if (scatterCtx) {
+  const pointLabelPlugin = {
+    id: 'pointLabels',
+    afterDatasetsDraw(chart) {
+      const ctx = chart.ctx;
+      chart.data.datasets.forEach((dataset, di) => {
+        const meta = chart.getDatasetMeta(di);
+        meta.data.forEach((point, pi) => {
+          const label = dataset.labels ? dataset.labels[pi] : '';
+          if (!label) return;
+          ctx.save();
+          ctx.font = "500 11px 'DM Sans', sans-serif";
+          ctx.fillStyle = 'rgba(30,45,42,0.75)';
+          ctx.textAlign = 'left';
+          ctx.fillText(label, point.x + 8, point.y + 4);
+          ctx.restore();
+        });
+      });
+    }
+  };
+
+  new Chart(scatterCtx, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Core Zone',
+          data: [
+            { x: 12, y: 15 },
+            { x: 22, y: 20 },
+            { x: 28, y: 25 }
+          ],
+          labels: ['Trent Engine Upgrades', 'TotalCare Services', 'Data Centre Power'],
+          backgroundColor: 'rgba(45,106,79,0.7)',
+          pointRadius: [16, 20, 14],
+          pointHoverRadius: [19, 23, 17]
+        },
+        {
+          label: 'Edge Zone',
+          data: [
+            { x: 55, y: 62 },
+            { x: 48, y: 52 },
+            { x: 62, y: 42 }
+          ],
+          labels: ['UltraFan 30', 'Orpheus Programme', 'Connected Insight'],
+          backgroundColor: 'rgba(181,132,26,0.75)',
+          pointRadius: [22, 14, 12],
+          pointHoverRadius: [25, 17, 15]
+        },
+        {
+          label: 'Beyond Zone',
+          data: [
+            { x: 78, y: 80 },
+            { x: 88, y: 90 }
+          ],
+          labels: ['Small Modular Reactors', 'Advanced Air Mobility'],
+          backgroundColor: 'rgba(139,26,26,0.75)',
+          pointRadius: [18, 12],
+          pointHoverRadius: [21, 15]
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        tooltip: {
+          ...tooltipDefaults,
+          callbacks: {
+            label: (ctx) => {
+              const ds = ctx.dataset;
+              const label = ds.labels ? ds.labels[ctx.dataIndex] : '';
+              return ` ${label}`;
+            }
+          }
+        },
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 20,
+            usePointStyle: true,
+            pointStyleWidth: 10,
+            font: { size: 12, weight: '500' }
+          }
+        }
+      },
+      scales: {
+        x: {
+          min: 0, max: 100,
+          grid: { color: 'rgba(181,148,26,0.06)' },
+          ticks: { display: false },
+          title: {
+            display: false
+          },
+          border: { display: false }
+        },
+        y: {
+          min: 0, max: 100,
+          grid: { color: 'rgba(181,148,26,0.06)' },
+          ticks: { display: false },
+          title: {
+            display: true,
+            text: 'Technology Change: Low \u2192 Extreme',
+            font: { size: 11 },
+            color: '#7A8490',
+            padding: { bottom: 8 }
+          },
+          border: { display: false }
+        }
+      }
+    },
+    plugins: [pointLabelPlugin]
+  });
+}
+
+// DOUGHNUT CHART
+const doughnutCtx = document.getElementById('doughnutChart');
+if (doughnutCtx) {
+  new Chart(doughnutCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Core (78%)', 'Edge (17%)', 'Beyond (5%)'],
+      datasets: [{
+        data: [78, 17, 5],
+        backgroundColor: [
+          'rgba(45,106,79,0.85)',
+          'rgba(181,132,26,0.85)',
+          'rgba(139,26,26,0.85)'
+        ],
+        borderWidth: 0,
+        cutout: '68%'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: tooltipDefaults,
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 16,
+            usePointStyle: true,
+            pointStyleWidth: 10,
+            font: { size: 12, weight: '500' }
+          }
+        }
+      }
+    }
+  });
+}
+
+// RADAR CHART
+const radarCtx = document.getElementById('radarChart');
+if (radarCtx) {
+  new Chart(radarCtx, {
+    type: 'radar',
+    data: {
+      labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'Digital / AI', 'Manufacturing', 'Ecosystem Build'],
+      datasets: [
+        {
+          label: 'Rolls-Royce',
+          data: [88, 72, 65, 62, 85, 78],
+          borderColor: 'rgba(181,148,26,0.9)',
+          backgroundColor: 'rgba(181,148,26,0.08)',
+          pointBackgroundColor: 'rgba(181,148,26,0.9)',
+          pointRadius: 4,
+          borderWidth: 2
+        },
+        {
+          label: 'GE Aerospace',
+          data: [95, 80, 55, 75, 90, 65],
+          borderColor: 'rgba(45,106,79,0.75)',
+          backgroundColor: 'rgba(45,106,79,0.05)',
+          pointBackgroundColor: 'rgba(45,106,79,0.75)',
+          pointRadius: 3,
+          borderWidth: 1.5
+        },
+        {
+          label: 'Safran (CFM)',
+          data: [85, 75, 60, 65, 78, 70],
+          borderColor: 'rgba(100,120,200,0.65)',
+          backgroundColor: 'rgba(100,120,200,0.04)',
+          pointBackgroundColor: 'rgba(100,120,200,0.65)',
+          pointRadius: 3,
+          borderWidth: 1.5
+        },
+        {
+          label: 'Pratt & Whitney',
+          data: [70, 55, 45, 60, 75, 50],
+          borderColor: 'rgba(139,26,26,0.6)',
+          backgroundColor: 'rgba(139,26,26,0.03)',
+          pointBackgroundColor: 'rgba(139,26,26,0.6)',
+          pointRadius: 3,
+          borderWidth: 1.5
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: tooltipDefaults,
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 20,
+            usePointStyle: true,
+            pointStyleWidth: 10,
+            font: { size: 12, weight: '500' }
+          }
+        }
+      },
+      scales: {
+        r: {
+          min: 0, max: 100,
+          ticks: { display: false },
+          grid: { color: 'rgba(181,148,26,0.1)' },
+          angleLines: { color: 'rgba(181,148,26,0.1)' },
+          pointLabels: {
+            font: { size: 11, weight: '500' },
+            color: '#5a6a65',
+            padding: 8
+          }
+        }
+      }
+    }
+  });
+}
+</script>
+
 </body>
 </html>
