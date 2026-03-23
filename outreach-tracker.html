@@ -1225,7 +1225,8 @@ async function callClaude(systemPrompt, userMessage, maxTokens = 800, callType =
             headers: {
                 'Content-Type': 'application/json',
                 'x-api-key': apiKey,
-                'anthropic-version': '2023-06-01'
+                'anthropic-version': '2023-06-01',
+                'anthropic-dangerous-direct-browser-access': 'true'
             },
             body: JSON.stringify({
                 model: 'claude-sonnet-4-20250514',
@@ -1237,9 +1238,15 @@ async function callClaude(systemPrompt, userMessage, maxTokens = 800, callType =
 
         if (!response.ok) {
             const err = await response.json().catch(() => ({}));
-            const errMsg = err?.error?.message || `API error ${response.status}`;
-            console.error('Anthropic API error:', errMsg);
-            return `API error: ${errMsg}`;
+            const errMsg = err?.error?.message || `HTTP ${response.status}`;
+            const errType = err?.error?.type || '';
+            console.error('Anthropic API error:', response.status, errType, errMsg);
+            // Surface useful guidance for common errors
+            if (response.status === 401) return 'API key invalid or expired. Click ⚙️ Settings to update your key.';
+            if (response.status === 403) return 'API key does not have permission. Check your key at console.anthropic.com.';
+            if (response.status === 429) return 'Rate limited — too many requests. Wait a moment and try again.';
+            if (response.status === 400) return `Bad request: ${errMsg}`;
+            return `API error (${response.status}): ${errMsg}`;
         }
 
         const data = await response.json();
