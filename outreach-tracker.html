@@ -530,6 +530,9 @@
                 🪞 Friday Review
             </button>
             <div class="quick-pulse" id="quickPulse">Loading…</div>
+            <button class="btn-strategic btn-friday" onclick="app.openSettings()" id="settingsBtn" title="API Settings" style="padding:0.7rem 1rem;">
+                ⚙️ <span id="settingsKeyStatus">No API key</span>
+            </button>
         </div>
 
         <div class="nav-tabs">
@@ -984,6 +987,40 @@
     </div>
 </div>
 
+<!-- Settings Modal -->
+<div class="modal" id="settingsModal">
+    <div class="modal-content" style="max-width:520px;">
+        <div class="modal-header">
+            <h2>⚙️ Settings</h2>
+            <div class="modal-sub">API key stored only in your browser — never sent to GitHub or any server</div>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Anthropic API Key</label>
+                <div style="display:flex;gap:0.6rem;">
+                    <input type="password" id="apiKeyInput" placeholder="sk-ant-…" style="flex:1;font-family:monospace;font-size:0.85rem;">
+                    <button class="btn btn-sm" onclick="app.toggleKeyVisibility()">👁</button>
+                </div>
+                <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:0.4rem;">
+                    Get your key at <a href="https://console.anthropic.com" target="_blank" style="color:var(--core-green);">console.anthropic.com</a> → API Keys
+                </div>
+            </div>
+            <div id="keyStatusBanner" style="display:none;padding:0.75rem 1rem;border-radius:var(--radius);font-size:0.85rem;margin-top:0.5rem;"></div>
+            <div style="background:var(--bg-primary);border-radius:var(--radius);padding:1rem;margin-top:1rem;font-size:0.82rem;color:var(--text-secondary);line-height:1.7;">
+                <strong style="color:var(--text-primary);">How this works:</strong><br>
+                Your key is saved to <code>localStorage</code> on this browser only.
+                It never leaves your device except to call the Anthropic API directly.
+                Clearing browser data will remove it — just paste it again if that happens.
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="app.clearAPIKey()">Remove Key</button>
+            <button class="btn" onclick="app.closeModal('settingsModal')">Cancel</button>
+            <button class="btn btn-primary" onclick="app.saveAPIKey()">Save Key</button>
+        </div>
+    </div>
+</div>
+
 <script>
 // ============================================================
 // UTILITY FUNCTIONS
@@ -1169,11 +1206,15 @@ const AILog = {
 // CLAUDE API CALL — with automatic logging of every interaction
 // ============================================================
 async function callClaude(systemPrompt, userMessage, maxTokens = 800, callType = 'general') {
-    // Read API key from local config.js (never committed to GitHub)
-    const apiKey = window.OUTREACH_CONFIG?.ANTHROPIC_API_KEY;
+    // Key priority: localStorage (set via ⚙️ Settings) → config.js (local file)
+    const storedKey = localStorage.getItem('outreach_api_key');
+    const configKey = window.OUTREACH_CONFIG?.ANTHROPIC_API_KEY;
+    const apiKey = (storedKey && storedKey !== 'your-api-key-here') ? storedKey
+                 : (configKey && configKey !== 'your-api-key-here') ? configKey
+                 : null;
 
-    if (!apiKey || apiKey === 'your-api-key-here') {
-        const msg = 'AI features need an API key. Create config.js in the same folder as this file and add your Anthropic API key. See the comment at the top of this HTML file for instructions.';
+    if (!apiKey) {
+        const msg = 'AI features need an API key. Click ⚙️ in the header to add your Anthropic API key — it saves to your browser and works on any device you use this app from.';
         console.warn(msg);
         return msg;
     }
@@ -1255,6 +1296,8 @@ const app = {
         this.updateMondayBadge();
         // Populate AI log summary immediately — no need to open Analytics first
         setTimeout(() => this.renderAILogSummary(), 100);
+        // Reflect key status in settings button
+        this.updateSettingsKeyStatus();
     },
 
     // ---- DATA ----
@@ -3069,6 +3112,67 @@ New contacts this week (sample): ${newContacts.slice(0,5).map(c => `${c.company}
     },
 
     // ---- MODAL HELPERS ----
+    // ---- SETTINGS (API KEY) ----
+    openSettings() {
+        const stored = localStorage.getItem('outreach_api_key') || '';
+        document.getElementById('apiKeyInput').value = stored;
+        document.getElementById('keyStatusBanner').style.display = 'none';
+        this.updateSettingsKeyStatus();
+        this.openModal('settingsModal');
+    },
+
+    saveAPIKey() {
+        const key = document.getElementById('apiKeyInput').value.trim();
+        if (!key) { alert('Please enter an API key'); return; }
+        if (!key.startsWith('sk-ant-')) {
+            const banner = document.getElementById('keyStatusBanner');
+            banner.style.display = 'block';
+            banner.style.background = 'rgba(196,30,58,0.08)';
+            banner.style.color = 'var(--priority-hot)';
+            banner.textContent = "That doesn't look like an Anthropic key (should start with sk-ant-). Double-check and try again.";
+            return;
+        }
+        localStorage.setItem('outreach_api_key', key);
+        const banner = document.getElementById('keyStatusBanner');
+        banner.style.display = 'block';
+        banner.style.background = 'rgba(107,142,35,0.1)';
+        banner.style.color = 'var(--priority-low)';
+        banner.textContent = '✅ API key saved! AI features are now active.';
+        this.updateSettingsKeyStatus();
+        setTimeout(() => this.closeModal('settingsModal'), 1200);
+    },
+
+    clearAPIKey() {
+        if (!confirm('Remove the saved API key? AI features will stop working until you add it again.')) return;
+        localStorage.removeItem('outreach_api_key');
+        document.getElementById('apiKeyInput').value = '';
+        this.updateSettingsKeyStatus();
+        const banner = document.getElementById('keyStatusBanner');
+        banner.style.display = 'block';
+        banner.style.background = 'rgba(212,132,47,0.1)';
+        banner.style.color = 'var(--priority-medium)';
+        banner.textContent = 'API key removed.';
+    },
+
+    toggleKeyVisibility() {
+        const inp = document.getElementById('apiKeyInput');
+        inp.type = inp.type === 'password' ? 'text' : 'password';
+    },
+
+    updateSettingsKeyStatus() {
+        const stored = localStorage.getItem('outreach_api_key');
+        const config = window.OUTREACH_CONFIG?.ANTHROPIC_API_KEY;
+        const hasKey = (stored && stored !== 'your-api-key-here') ||
+                       (config && config !== 'your-api-key-here');
+        const btn = document.getElementById('settingsBtn');
+        const status = document.getElementById('settingsKeyStatus');
+        if (btn) btn.style.borderColor = hasKey ? 'var(--priority-low)' : 'var(--priority-hot)';
+        if (status) {
+            status.textContent = hasKey ? 'AI active' : 'No API key';
+            status.style.color = hasKey ? 'var(--priority-low)' : 'var(--priority-hot)';
+        }
+    },
+
     openModal(id) { document.getElementById(id)?.classList.add('active'); },
     closeModal(id) { document.getElementById(id)?.classList.remove('active'); },
 };
