@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kering · The Clock Is Ticking | Theta Innovation Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --company-primary: #2C1810;
+  --company-accent: #B8860B;
+  --kering-red: #C41E3A;
+  --ink: #0E1A18;
+  --ink-soft: #1E2D2A;
+  --paper: #F7F5F0;
+  --paper-warm: #EFEBE2;
+  --muted: #8A9490;
+  --core-green: #2D6A4F;
+  --edge-amber: #B5841A;
+  --beyond-crimson: #8B1A1A;
+  --gold: #B8860B;
+  --gold-light: rgba(184,134,11,0.1);
+  --border: rgba(184,134,11,0.18);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--paper); color:var(--ink); line-height:1.7; overflow-x:hidden; }
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding:0 3rem; height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(14,26,24,0.88); backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(184,134,11,0.15);
+}
+.nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.05rem; font-weight:500; letter-spacing:0.18em; color:var(--gold); text-transform:uppercase; }
+.nav-links { display:flex; gap:2.5rem; }
+.nav-links a { font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.5); text-decoration:none; transition:color 0.3s; }
+.nav-links a:hover { color:var(--gold); }
+
+/* HERO */
+.hero { position:relative; min-height:100vh; display:flex; align-items:center; background:var(--ink); overflow:hidden; }
+.hero-grid {
+  position:absolute; inset:0; pointer-events:none;
+  background-image: linear-gradient(rgba(184,134,11,0.045) 1px,transparent 1px), linear-gradient(90deg,rgba(184,134,11,0.045) 1px,transparent 1px);
+  background-size:72px 72px;
+  animation:gridDrift 50s linear infinite;
+}
+@keyframes gridDrift { from{transform:translateY(0)} to{transform:translateY(72px)} }
+.hero-radial {
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 55% 70% at 15% 55%, rgba(196,30,58,0.09) 0%,transparent 65%),
+    radial-gradient(ellipse 45% 45% at 85% 20%, rgba(184,134,11,0.07) 0%,transparent 60%),
+    radial-gradient(ellipse 30% 40% at 75% 85%, rgba(44,24,16,0.6) 0%,transparent 70%);
+}
+.hero-noise {
+  position:absolute; inset:0; pointer-events:none; opacity:0.028;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:128px;
+}
+.hero-content { position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:7rem 3rem 5rem; width:100%; }
+.hero-kicker {
+  font-size:0.68rem; letter-spacing:0.32em; text-transform:uppercase; color:var(--gold); margin-bottom:2rem;
+  opacity:0; animation:fadeUp 0.8s 0.3s forwards;
+  display:flex; align-items:center; gap:1rem;
+}
+.hero-kicker::before { content:''; display:block; width:36px; height:1px; background:var(--gold); opacity:0.5; }
+.hero-headline {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(3.4rem,7.5vw,7rem);
+  font-weight:300; line-height:1.03; color:#fff; margin-bottom:1.5rem;
+  opacity:0; animation:fadeUp 0.9s 0.5s forwards;
+}
+.hero-headline em { font-style:italic; color:var(--gold); }
+.hero-subtitle {
+  font-size:1.1rem; font-weight:300; line-height:1.75; color:rgba(255,255,255,0.55);
+  max-width:640px; margin-bottom:4rem;
+  opacity:0; animation:fadeUp 0.9s 0.7s forwards;
+}
+.hero-meta {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:0;
+  border-top:1px solid rgba(184,134,11,0.22); padding-top:2.5rem;
+  opacity:0; animation:fadeUp 0.9s 0.9s forwards;
+}
+.meta-item { padding:0 2rem 0 0; }
+.meta-item:not(:last-child) { border-right:1px solid rgba(184,134,11,0.15); margin-right:2rem; }
+.meta-label { font-size:0.62rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); opacity:0.7; margin-bottom:0.4rem; }
+.meta-value { font-family:'Cormorant Garamond',serif; font-size:1.45rem; font-weight:400; color:#fff; }
+.meta-sub { font-size:0.72rem; color:rgba(255,255,255,0.38); margin-top:0.2rem; }
+.scroll-indicator {
+  position:absolute; right:3rem; top:50%; transform:translateY(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:1rem; z-index:2;
+  opacity:0; animation:fadeIn 1s 1.2s forwards;
+}
+.scroll-line { width:1px; height:80px; background:linear-gradient(to bottom,transparent,var(--gold)); animation:scrollLine 2.2s ease-in-out infinite; }
+@keyframes scrollLine { 0%{transform:scaleY(0);transform-origin:top;opacity:0} 50%{transform:scaleY(1);transform-origin:top;opacity:1} 100%{transform:scaleY(1);transform-origin:bottom;opacity:0} }
+.scroll-text { font-size:0.58rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold); writing-mode:vertical-rl; opacity:0.55; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* SHARED */
+.section-white { background:#fff; }
+.section-warm { background:var(--paper-warm); }
+.section-ink { background:var(--ink); color:#fff; }
+.container { max-width:1200px; margin:0 auto; padding:6rem 3rem; }
+.container-wide { max-width:1400px; margin:0 auto; padding:6rem 3rem; }
+.section-label {
+  font-size:0.62rem; letter-spacing:0.32em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem;
+  display:flex; align-items:center; gap:1rem;
+}
+.section-label::before { content:''; display:block; width:28px; height:1px; background:var(--gold); opacity:0.6; }
+h2.section-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2rem,4vw,3.2rem); font-weight:300; line-height:1.15; margin-bottom:2rem; letter-spacing:-0.01em; }
+h2.section-title em { font-style:italic; color:var(--gold); }
+.section-white h2.section-title, .section-warm h2.section-title { color:var(--ink); }
+.section-ink h2.section-title { color:#fff; }
+p { font-size:1.02rem; line-height:1.82; color:#3a3a3a; margin-bottom:1.4rem; }
+.section-ink p { color:rgba(255,255,255,0.72); }
+
+/* CRISIS STRIP */
+.crisis-strip {
+  background:var(--kering-red);
+  padding:1.6rem 3rem;
+  display:flex; align-items:center; gap:3rem;
+  overflow:hidden; position:relative;
+}
+.crisis-strip::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:rgba(255,255,255,0.3); }
+.crisis-ticker-label { font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; color:rgba(255,255,255,0.7); white-space:nowrap; }
+.crisis-ticker-items { display:flex; gap:4rem; align-items:center; flex-wrap:wrap; }
+.crisis-ticker-item { display:flex; flex-direction:column; gap:0.2rem; }
+.crisis-ticker-val { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:300; color:#fff; line-height:1; }
+.crisis-ticker-desc { font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.65); }
+
+/* ABOUT */
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:start; }
+.hidden-fact { background:var(--ink); color:#fff; padding:2rem 2.5rem; margin-top:2.5rem; border-left:3px solid var(--gold); }
+.hidden-fact-label { font-size:0.62rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--gold); margin-bottom:0.8rem; }
+.hidden-fact p { color:rgba(255,255,255,0.78); font-size:0.93rem; margin:0; }
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px; }
+.stat-cell { background:var(--paper); padding:2.5rem 2rem; transition:background 0.3s; }
+.stat-cell:hover { background:var(--gold-light); }
+.stat-number { font-family:'Cormorant Garamond',serif; font-size:3.2rem; font-weight:300; color:var(--ink); line-height:1; margin-bottom:0.5rem; }
+.stat-unit { font-size:1.1rem; color:var(--gold); }
+.stat-desc { font-size:0.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:0.3rem; }
+.stat-cell.neg .stat-number { color:var(--kering-red); }
+.stat-cell.pos .stat-number { color:var(--core-green); }
+
+.belief-strip { background:var(--company-primary); padding:5rem 3rem; text-align:center; }
+.belief-quote { font-family:'Cormorant Garamond',serif; font-size:clamp(1.6rem,3vw,2.5rem); font-style:italic; font-weight:300; color:#fff; max-width:860px; margin:0 auto 1.5rem; line-height:1.5; }
+.belief-attr { font-size:0.72rem; letter-spacing:0.22em; text-transform:uppercase; color:rgba(184,134,11,0.82); }
+
+/* TIMELINE */
+.timeline { position:relative; }
+.timeline-line { position:absolute; left:7rem; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,transparent,var(--gold) 8%,var(--gold) 92%,transparent); opacity:0.28; }
+.timeline-entry { display:grid; grid-template-columns:7rem auto; gap:3rem; padding:0 0 3.5rem; position:relative; }
+.timeline-year { font-family:'Cormorant Garamond',serif; font-size:1.35rem; font-weight:300; color:var(--muted); text-align:right; padding-top:0.1rem; position:relative; }
+.timeline-dot { position:absolute; right:-3.4rem; top:0.45rem; width:10px; height:10px; border-radius:50%; border:2px solid var(--gold); background:var(--paper-warm); }
+.timeline-dot.filled { background:var(--gold); }
+.timeline-phase { font-size:0.58rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); margin-bottom:0.4rem; }
+.timeline-title { font-family:'Cormorant Garamond',serif; font-size:1.32rem; font-weight:400; color:var(--ink); margin-bottom:0.5rem; }
+.timeline-body { font-size:0.93rem; color:#555; margin:0; line-height:1.72; }
+.timeline-inflection .timeline-title { color:var(--company-primary); }
+.timeline-inflection .timeline-dot { width:14px; height:14px; background:var(--gold); border-color:var(--gold); right:-3.6rem; top:0.3rem; }
+.timeline-crisis .timeline-title { color:var(--kering-red); }
+.timeline-crisis .timeline-dot { background:var(--kering-red); border-color:var(--kering-red); width:14px; height:14px; right:-3.6rem; top:0.3rem; }
+
+/* THETA MAP */
+.theta-map-grid { display:grid; grid-template-columns:340px 1fr; gap:4rem; align-items:start; }
+.zone-legend { display:flex; flex-direction:column; gap:1.5rem; }
+.zone-pill { padding:1.5rem 2rem; border-radius:2px; position:relative; overflow:hidden; }
+.zone-pill::before { content:''; position:absolute; top:0; left:0; bottom:0; width:3px; }
+.zone-core { background:rgba(45,106,79,0.07); }
+.zone-core::before { background:var(--core-green); }
+.zone-edge { background:rgba(181,132,26,0.07); }
+.zone-edge::before { background:var(--edge-amber); }
+.zone-beyond { background:rgba(139,26,26,0.07); }
+.zone-beyond::before { background:var(--beyond-crimson); }
+.zone-pill-label { font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem; font-weight:500; }
+.zone-core .zone-pill-label { color:var(--core-green); }
+.zone-edge .zone-pill-label { color:var(--edge-amber); }
+.zone-beyond .zone-pill-label { color:var(--beyond-crimson); }
+.zone-pill-title { font-family:'Cormorant Garamond',serif; font-size:1.28rem; font-weight:400; color:var(--ink); margin-bottom:0.4rem; }
+.zone-pill p { font-size:0.86rem; color:#555; margin:0; line-height:1.65; }
+.reading-card { background:var(--ink); color:rgba(255,255,255,0.72); padding:1.5rem 2rem; margin-top:1rem; font-size:0.84rem; line-height:1.72; }
+.reading-card strong { color:var(--gold); }
+.chart-container { position:relative; height:480px; }
+
+/* PORTFOLIO */
+.portfolio-grid { display:grid; grid-template-columns:380px 1fr; gap:5rem; align-items:center; }
+.doughnut-wrap { position:relative; height:340px; }
+.doughnut-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:none; }
+.doughnut-center-label { font-family:'Cormorant Garamond',serif; font-size:1.05rem; color:var(--ink); line-height:1.35; }
+.doughnut-center-sub { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-top:0.3rem; }
+.allocation-bars { display:flex; flex-direction:column; gap:2.5rem; }
+.alloc-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.6rem; }
+.alloc-name { font-size:0.84rem; font-weight:500; color:var(--ink); }
+.alloc-pct { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; }
+.alloc-track { height:4px; background:rgba(0,0,0,0.08); position:relative; }
+.alloc-fill { height:100%; position:absolute; top:0; left:0; }
+.alloc-benchmark { position:absolute; top:-6px; width:2px; height:16px; background:var(--ink); opacity:0.28; }
+.alloc-commentary { font-size:0.8rem; color:var(--muted); margin-top:0.6rem; line-height:1.65; }
+
+/* COMPETITORS */
+.competitor-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:1.5px; margin-bottom:4rem; }
+.comp-card { background:var(--paper); padding:2rem 1.5rem; transition:transform 0.25s,box-shadow 0.25s; }
+.comp-card:hover { transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,0.1); }
+.comp-card.featured { background:#fff; border:1.5px solid rgba(196,30,58,0.35); box-shadow:0 4px 24px rgba(196,30,58,0.1); }
+.comp-name { font-family:'Cormorant Garamond',serif; font-size:1.28rem; font-weight:400; color:var(--ink); margin-bottom:0.3rem; }
+.comp-tag { font-size:0.7rem; color:var(--muted); margin-bottom:1.4rem; line-height:1.55; }
+.comp-zone-row { display:flex; align-items:flex-start; gap:0.6rem; margin-bottom:0.8rem; }
+.zone-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:0.35rem; }
+.zone-dot-core { background:var(--core-green); }
+.zone-dot-edge { background:var(--edge-amber); }
+.zone-dot-beyond { background:var(--beyond-crimson); }
+.comp-zone-text { font-size:0.78rem; color:#555; line-height:1.55; }
+.comp-verdict { display:inline-block; margin-top:1.2rem; padding:0.3rem 0.9rem; font-size:0.62rem; letter-spacing:0.15em; text-transform:uppercase; border:1px solid; }
+.verdict-strong { border-color:var(--core-green); color:var(--core-green); }
+.verdict-crisis { border-color:var(--kering-red); color:var(--kering-red); }
+.verdict-fortress { border-color:var(--company-primary); color:var(--company-primary); }
+.verdict-focused { border-color:var(--edge-amber); color:var(--edge-amber); }
+.verdict-ascending { border-color:var(--beyond-crimson); color:var(--beyond-crimson); }
+.radar-wrap { height:440px; max-width:640px; margin:0 auto; }
+
+/* S&W */
+.sw-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; }
+.sw-panel { padding:2.5rem; }
+.sw-panel-strength { border:1px solid rgba(45,106,79,0.25); background:rgba(45,106,79,0.03); }
+.sw-panel-weakness { border:1px solid rgba(139,26,26,0.2); background:rgba(139,26,26,0.02); }
+.sw-title { font-family:'Cormorant Garamond',serif; font-size:1.45rem; font-weight:400; margin-bottom:2rem; }
+.sw-panel-strength .sw-title { color:var(--core-green); }
+.sw-panel-weakness .sw-title { color:var(--beyond-crimson); }
+.sw-item { display:flex; gap:1.2rem; margin-bottom:1.8rem; align-items:flex-start; }
+.sw-marker { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.72rem; font-weight:600; margin-top:0.1rem; }
+.sw-panel-strength .sw-marker { background:rgba(45,106,79,0.12); color:var(--core-green); }
+.sw-panel-weakness .sw-marker { background:rgba(139,26,26,0.1); color:var(--beyond-crimson); }
+.sw-lead { font-weight:500; color:var(--ink); font-size:0.93rem; margin-bottom:0.3rem; }
+.sw-desc { font-size:0.86rem; color:#666; line-height:1.68; margin:0; }
+
+/* DIAGNOSTIC */
+.diagnostic-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; }
+.diag-block { margin-bottom:2.5rem; }
+.diag-label { font-size:0.62rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); opacity:0.72; margin-bottom:0.8rem; }
+.diag-title { font-family:'Cormorant Garamond',serif; font-size:1.22rem; font-weight:300; color:rgba(255,255,255,0.9); margin-bottom:0.8rem; }
+.diag-body { font-size:0.88rem; color:rgba(255,255,255,0.58); line-height:1.78; margin:0; }
+.archetype-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.8rem; }
+.archetype-chip { padding:0.35rem 0.9rem; border:1px solid; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; }
+.chip-ok { border-color:var(--core-green); color:var(--core-green); }
+.chip-mid { border-color:var(--edge-amber); color:var(--edge-amber); }
+.chip-gap { border-color:var(--beyond-crimson); color:var(--beyond-crimson); }
+.tension-box { background:rgba(184,134,11,0.08); border-left:3px solid var(--gold); padding:1.5rem 2rem; }
+.tension-box p { color:rgba(255,255,255,0.75); font-size:0.9rem; margin:0; line-height:1.75; }
+.inline-bars { display:flex; flex-direction:column; gap:1.2rem; margin-top:1rem; }
+.inline-bar-row { display:flex; align-items:center; gap:1rem; }
+.inline-bar-label { font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.45); width:70px; flex-shrink:0; }
+.inline-bar-track { flex:1; height:3px; background:rgba(255,255,255,0.1); position:relative; }
+.inline-bar-actual { height:100%; position:absolute; top:0; left:0; }
+.inline-bar-bench { position:absolute; top:-4px; width:2px; height:11px; background:rgba(255,255,255,0.3); }
+.inline-bar-pct { font-size:0.72rem; color:rgba(255,255,255,0.55); width:40px; text-align:right; flex-shrink:0; }
+.verdict-block { background:rgba(184,134,11,0.06); border:1px solid rgba(184,134,11,0.22); padding:2rem 2.5rem; margin-top:1.5rem; }
+.verdict-headline { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:300; color:#fff; margin-bottom:0.8rem; }
+.verdict-sub { font-size:0.88rem; color:rgba(255,255,255,0.58); line-height:1.78; margin:0; }
+
+/* INSIGHT STRIP */
+.insight-strip { padding:4rem 3rem; text-align:center; }
+.insight-strip-dark { background:var(--ink); }
+.insight-strip-brand { background:var(--company-primary); }
+.insight-quote { font-family:'Cormorant Garamond',serif; font-size:clamp(1.5rem,2.8vw,2.2rem); font-style:italic; font-weight:300; max-width:860px; margin:0 auto; line-height:1.5; color:#fff; }
+.insight-quote em { color:var(--gold); }
+
+/* ZONES DEEP DIVE */
+.zone-deep-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:2px; }
+.zdg-cell { padding:2.5rem 2rem; }
+.zdg-core { background:rgba(45,106,79,0.07); border-top:3px solid var(--core-green); }
+.zdg-edge { background:rgba(181,132,26,0.07); border-top:3px solid var(--edge-amber); }
+.zdg-beyond { background:rgba(139,26,26,0.06); border-top:3px solid var(--beyond-crimson); }
+.zdg-label { font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; font-weight:500; margin-bottom:0.8rem; }
+.zdg-core .zdg-label { color:var(--core-green); }
+.zdg-edge .zdg-label { color:var(--edge-amber); }
+.zdg-beyond .zdg-label { color:var(--beyond-crimson); }
+.zdg-status { display:inline-block; font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; padding:0.2rem 0.7rem; border:1px solid; margin-bottom:1rem; }
+.status-crisis { border-color:var(--kering-red); color:var(--kering-red); }
+.status-promising { border-color:var(--edge-amber); color:var(--edge-amber); }
+.status-bold { border-color:var(--beyond-crimson); color:var(--beyond-crimson); }
+.zdg-title { font-family:'Cormorant Garamond',serif; font-size:1.28rem; font-weight:400; color:var(--ink); margin-bottom:0.8rem; }
+.zdg-body { font-size:0.86rem; color:#555; line-height:1.72; margin-bottom:1rem; }
+.zdg-list { list-style:none; }
+.zdg-list li { padding:0.5rem 0; border-bottom:1px solid rgba(0,0,0,0.07); font-size:0.8rem; color:#555; display:flex; align-items:flex-start; gap:0.5rem; }
+.zdg-list li::before { content:''; opacity:0.4; flex-shrink:0; font-size:0.7rem; }
+
+/* DE MEO PANEL */
+.demeo-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:start; }
+.demeo-panel { background:var(--ink); padding:3rem; border-left:3px solid var(--gold); }
+.demeo-panel-title { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; color:#fff; margin-bottom:1.2rem; }
+.demeo-panel p { color:rgba(255,255,255,0.68); font-size:0.9rem; margin-bottom:1rem; }
+.obsession-list { list-style:none; margin-top:1.2rem; }
+.obsession-list li { padding:0.9rem 0; border-bottom:1px solid rgba(184,134,11,0.15); display:flex; gap:1rem; align-items:flex-start; }
+.obsession-num { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:300; color:rgba(184,134,11,0.4); line-height:1; flex-shrink:0; width:30px; }
+.obsession-text { font-size:0.84rem; color:rgba(255,255,255,0.65); line-height:1.65; }
+.obsession-text strong { color:rgba(255,255,255,0.9); }
+
+/* MISSING EDGE */
+.missing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-top:2rem; }
+.missing-tile { background:#fff; padding:2rem 1.8rem; transition:box-shadow 0.25s; border-top:3px solid transparent; }
+.missing-tile:hover { box-shadow:0 8px 30px rgba(0,0,0,0.08); }
+.missing-tile.amber { border-top-color:var(--edge-amber); }
+.missing-tile.crimson { border-top-color:var(--beyond-crimson); }
+.missing-tile.green { border-top-color:var(--core-green); }
+.missing-icon { font-size:1.6rem; margin-bottom:0.8rem; }
+.missing-zone { display:inline-block; font-size:0.58rem; letter-spacing:0.15em; text-transform:uppercase; padding:0.2rem 0.6rem; margin-bottom:0.8rem; }
+.mz-edge { background:rgba(181,132,26,0.12); color:var(--edge-amber); }
+.mz-beyond { background:rgba(139,26,26,0.1); color:var(--beyond-crimson); }
+.mz-core { background:rgba(45,106,79,0.1); color:var(--core-green); }
+.missing-title { font-family:'Cormorant Garamond',serif; font-size:1.18rem; font-weight:400; color:var(--ink); margin-bottom:0.5rem; }
+.missing-body { font-size:0.83rem; color:#666; line-height:1.7; margin-bottom:0.8rem; }
+.missing-who { font-size:0.75rem; border-top:1px solid rgba(0,0,0,0.07); padding-top:0.7rem; color:var(--muted); }
+.missing-who strong { color:var(--ink); }
+
+/* AI PANEL */
+.ai-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; }
+.ai-compare { display:flex; flex-direction:column; gap:1.5rem; }
+.ai-row { display:grid; grid-template-columns:1fr 1fr; gap:2px; }
+.ai-cell { padding:1.4rem 1.8rem; }
+.ai-cell-kering { background:rgba(196,30,58,0.06); border-left:3px solid var(--kering-red); }
+.ai-cell-lvmh { background:rgba(26,58,74,0.06); border-left:3px solid var(--company-primary); }
+.ai-cell-label { font-size:0.58rem; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem; }
+.ai-cell-kering .ai-cell-label { color:var(--kering-red); }
+.ai-cell-lvmh .ai-cell-label { color:var(--company-primary); }
+.ai-cell-content { font-size:0.84rem; color:#555; line-height:1.65; }
+.ai-dimension { font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); text-align:center; padding:0.5rem; background:var(--paper-warm); }
+
+/* MARKET SECTION */
+.market-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; }
+.market-shift-table { width:100%; border-collapse:collapse; }
+.market-shift-table th { text-align:left; padding:0.8rem 1rem; font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; background:var(--ink); color:var(--gold); font-weight:400; }
+.market-shift-table td { padding:0.9rem 1rem; border-bottom:1px solid rgba(0,0,0,0.07); font-size:0.86rem; color:#444; }
+.market-shift-table tr:nth-child(even) td { background:rgba(0,0,0,0.025); }
+
+/* FOOTER */
+footer { background:var(--ink); padding:3rem; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(184,134,11,0.1); }
+.footer-left { font-size:0.72rem; color:rgba(255,255,255,0.38); letter-spacing:0.1em; }
+.footer-left span { color:var(--gold); margin-right:1rem; }
+.footer-right { font-family:'Cormorant Garamond',serif; font-size:0.95rem; color:rgba(255,255,255,0.35); letter-spacing:0.08em; }
+
+/* FADE */
+.fade-up { opacity:0; transform:translateY(24px); transition:opacity 0.7s ease,transform 0.7s ease; }
+.fade-up.visible { opacity:1; transform:translateY(0); }
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:0 1.5rem;}
+  .nav-links{display:none;}
+  .container,.container-wide{padding:4rem 1.5rem;}
+  .about-grid,.theta-map-grid,.portfolio-grid,.sw-grid,.diagnostic-grid,
+  .zone-deep-grid,.demeo-grid,.ai-grid,.market-grid,.missing-grid{grid-template-columns:1fr;}
+  .hero-meta{grid-template-columns:1fr 1fr; gap:1.5rem;}
+  .meta-item:not(:last-child){border-right:none;margin-right:0;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .competitor-grid{grid-template-columns:1fr 1fr;}
+  .scroll-indicator{display:none;}
+  .timeline-entry{grid-template-columns:5rem auto;gap:2rem;}
+  .timeline-line{left:5rem;}
+  .timeline-dot{right:-2.4rem;}
+  .crisis-strip{flex-direction:column;align-items:flex-start;gap:1rem;}
+  .crisis-ticker-items{flex-wrap:wrap;}
+  footer{flex-direction:column;gap:1rem;text-align:center;}
+  .ai-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Kering x Theta</div>
+  <div class="nav-links">
+    <a href="#about">Overview</a>
+    <a href="#timeline">Arc</a>
+    <a href="#theta-map">Innovation Map</a>
+    <a href="#de-meo">De Meo</a>
+    <a href="#competitors">Competitors</a>
+    <a href="#missing-edge">Missing Edge</a>
+    <a href="#diagnostic">Diagnostic</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-radial"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Innovation Case Study &middot; Luxury Portfolio Governance</div>
+    <h1 class="hero-headline">
+      The Clock<br>Is <em>Ticking</em>
+    </h1>
+    <p class="hero-subtitle">Kering carries one of fashion's most storied portfolios, a visionary new CEO, and the boldest wellness bet in the luxury industry. It is also running out of the one thing no vision can replace.</p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">Founded</div>
+        <div class="meta-value">1963</div>
+        <div class="meta-sub">Rennes, France</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Market Cap</div>
+        <div class="meta-value">~&euro;40B</div>
+        <div class="meta-sub">vs &euro;95B peak (2022)</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">2025 Revenue</div>
+        <div class="meta-value">&euro;15.9B</div>
+        <div class="meta-sub">Down 13% year-over-year</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Theta Verdict</div>
+        <div class="meta-value">Stressed</div>
+        <div class="meta-sub">Core crisis &middot; Edge gap &middot; Bold Beyond</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Read</span>
+  </div>
+</div>
+
+<!-- CRISIS STRIP -->
+<div class="crisis-strip">
+  <div class="crisis-ticker-label">Live Indicators</div>
+  <div class="crisis-ticker-items">
+    <div class="crisis-ticker-item"><div class="crisis-ticker-val">10</div><div class="crisis-ticker-desc">Consecutive Gucci Declines</div></div>
+    <div class="crisis-ticker-item"><div class="crisis-ticker-val">-22%</div><div class="crisis-ticker-desc">Gucci 2025 Revenue</div></div>
+    <div class="crisis-ticker-item"><div class="crisis-ticker-val">-60%</div><div class="crisis-ticker-desc">Alexander McQueen</div></div>
+    <div class="crisis-ticker-item"><div class="crisis-ticker-val">11.1%</div><div class="crisis-ticker-desc">Operating Margin (vs 28% peak)</div></div>
+    <div class="crisis-ticker-item"><div class="crisis-ticker-val">8x</div><div class="crisis-ticker-desc">Valuation Gap vs LVMH</div></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="section-white" id="about">
+  <div class="container">
+    <div class="section-label">What Kering Is</div>
+    <div class="about-grid fade-up">
+      <div>
+        <h2 class="section-title">A portfolio of <em>extraordinary</em> houses that bet everything on one engine</h2>
+        <p>Kering is what happens when a single brand does not just anchor a portfolio but becomes the portfolio. Gucci, Saint Laurent, Bottega Veneta, Balenciaga, Alexander McQueen, Boucheron, Pomellato: these are not supporting characters in a diversified play. They are satellites orbiting a sun that is now dimming. For a decade, Gucci generated roughly two-thirds of group profit. That concentration made the numbers beautiful and the strategy fragile in equal measure.</p>
+        <p>The group traces its origins to 1963, when Fran&ccedil;ois Pinault founded a timber trading company in Brittany. What followed was one of the most unlikely transformations in business history: from sawdust to silk, from commodity to couture. The pivot to luxury in the late 1990s was not an evolution but a reinvention, one that eventually produced a market cap approaching one hundred billion euros at its peak and a cultural moment that redefined what it meant to sell desire.</p>
+        <div class="hidden-fact">
+          <div class="hidden-fact-label">Hidden Fact</div>
+          <p>Before Kering became Kering, it was called PPR: Pinault-Printemps-Redoute. The Redoute in that name was a mail-order catalogue business selling furniture and clothing to French households. The same holding company that would own Gucci and Saint Laurent once mailed flat-pack shelving to suburban France. The rebrand to Kering in 2013 was not just a name change; it was a declaration that the company's past was a different species entirely.</p>
+        </div>
+      </div>
+      <div>
+        <div class="stat-grid">
+          <div class="stat-cell neg">
+            <div class="stat-number">-13<span class="stat-unit">%</span></div>
+            <div class="stat-desc">2025 Group Revenue</div>
+          </div>
+          <div class="stat-cell pos">
+            <div class="stat-number">+3<span class="stat-unit">%</span></div>
+            <div class="stat-desc">Bottega Veneta (sole bright spot)</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number">50<span class="stat-unit">yr</span></div>
+            <div class="stat-desc">L'Or&eacute;al JV Horizon</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number">&euro;4<span class="stat-unit">B</span></div>
+            <div class="stat-desc">Beauty Division Sale to L'Or&eacute;al</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="belief-strip">
+    <div class="belief-quote">"No industrial company can survive producing three to sell one."</div>
+    <div class="belief-attr">Luca de Meo &mdash; CEO, Kering, 2025</div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="section-warm" id="timeline">
+  <div class="container">
+    <div class="section-label">The Arc</div>
+    <h2 class="section-title" style="margin-bottom:3.5rem;">From <em>timber</em> to turnaround:<br>the story no one tells cleanly</h2>
+    <div class="timeline fade-up">
+      <div class="timeline-line"></div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">1963<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Origin</div>
+          <div class="timeline-title">Fran&ccedil;ois Pinault founds a timber trading company in Rennes</div>
+          <p class="timeline-body">There is nothing in the sawmills of Brittany that predicts what this family will eventually own. But the instinct that drives the trade is the same one that will later acquire Gucci: an eye for value that the market has yet to price correctly.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">1999<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Transformation</div>
+          <div class="timeline-title">The Gucci acquisition changes everything</div>
+          <p class="timeline-body">Fran&ccedil;ois-Henri Pinault's father had already been pivoting the group toward retail through the 1990s. The Gucci acquisition under the PPR umbrella was the final declaration: this was no longer a French conglomerate with fashion interests, it was a luxury group with a flagship capable of generating billions.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">2001<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Portfolio Build</div>
+          <div class="timeline-title">Bottega Veneta, Balenciaga, Alexander McQueen acquired</div>
+          <p class="timeline-body">The portfolio strategy becomes visible: assemble a constellation of houses with distinct creative identities. In theory, this mirrors LVMH's model of diversification. In practice, none of these houses ever grow large enough to function as a second engine when the first begins to stall.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry timeline-inflection">
+        <div class="timeline-year">2013<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Inflection &middot; Identity</div>
+          <div class="timeline-title">PPR becomes Kering: a declaration of pure-play luxury ambition</div>
+          <p class="timeline-body">The rebrand was more than cosmetic. It signaled Fran&ccedil;ois-Henri's intention to compete with LVMH on its own terms. The name Kering is derived from the Breton word "ker," meaning home, a signal about custodianship of creative houses. The ambition was enormous. The concentration risk was already embedded in the structure.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry timeline-inflection">
+        <div class="timeline-year">2015<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Inflection &middot; Peak</div>
+          <div class="timeline-title">Alessandro Michele is appointed at Gucci. The decade-long boom begins.</div>
+          <p class="timeline-body">What Michele produced at Gucci between 2015 and 2022 was not merely a creative direction but a complete cultural universe: maximalist, gender-fluid, intellectual, obsessive. The brand tripled revenue. The market cap approached one hundred billion euros. The Instagram era was precisely the medium for which Michele's vision had been built. Every quarter reinforced the thesis that concentration, when the one brand is working, feels like genius.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry timeline-crisis">
+        <div class="timeline-year">2022<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Crisis &middot; Dual Collapse</div>
+          <div class="timeline-title">Michele departs. The Balenciaga scandal erupts. Both second engines fail simultaneously.</div>
+          <p class="timeline-body">November 2022 may be the month Kering's decade-long narrative broke in two places at once. Alessandro Michele, the architect of Gucci's boom, departed after years of mutual creative drift. Within weeks, Balenciaga, Kering's fastest-growing brand at an estimated two and a half billion in revenue, released campaigns that triggered a global boycott. The portfolio had no second engine. Both candidates for that role went dark within thirty days of each other.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry timeline-crisis">
+        <div class="timeline-year">2023<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Crisis &middot; Reset Fails</div>
+          <div class="timeline-title">Sabato De Sarno is appointed. The "back to elegance" reset underwhelms.</div>
+          <p class="timeline-body">The new creative director's collections were critically received as technically proficient but culturally inert. Gucci had shed its maximalist identity without acquiring a new one. The brand entered a limbo that luxury cannot afford: not heritage, not trend, not quiet luxury, not cultural heat. Just absence.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">2024<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Escalation</div>
+          <div class="timeline-title">Profit warnings. Margin collapse from 28% to 11%. The 8x gap to LVMH becomes visible.</div>
+          <p class="timeline-body">The market saw what the annual reports confirmed: Gucci's decline was not a correction but a structural event. The group operating margin fell from a 2022 peak near twenty-eight percent to eleven point one percent. For investors accustomed to Kering trading as a proxy for luxury excellence, this was not a speed bump. It was a reckoning.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry timeline-inflection">
+        <div class="timeline-year">Sep 2025<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Inflection &middot; Outsider</div>
+          <div class="timeline-title">Luca de Meo becomes Kering's first non-Pinault CEO in history</div>
+          <p class="timeline-body">The hire is its own thesis statement. Poached from Renault, an automotive executive with a public LinkedIn habit and genuine curiosity about AI, de Meo is Kering's admission that the problems require a kind of thinking the family has not historically rewarded. The question the market is sitting with: is he a turnaround CEO or a transition CEO? The answer determines whether Kering's next chapter is written by ambition or by patience.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">Jan 2026<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Signal</div>
+          <div class="timeline-title">Kering Innovation Day: 14 startups, Google, Snap, and agentic AI as explicit priority</div>
+          <p class="timeline-body">De Meo personally tried Snap AR filters. He visited a Los Angeles digital artist's studio. He publicly stated the ambition: a consistent client experience twenty-four hours a day, seven days a week, three hundred sixty-five days a year, everywhere. The energy is real. The question the Theta framework forces is whether energy is being confused with an engine.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section class="section-white" id="theta-map">
+  <div class="container-wide">
+    <div class="section-label">Theta Innovation Map</div>
+    <h2 class="section-title">Where Kering's bets <em>actually</em> live</h2>
+    <div class="theta-map-grid fade-up">
+      <div>
+        <div class="zone-legend">
+          <div class="zone-pill zone-core">
+            <div class="zone-pill-label">Core Zone &middot; ~85% (benchmark: 70%)</div>
+            <div class="zone-pill-title">Emergency, Not Optimization</div>
+            <p>Kering's Core allocation is not the result of strategic choice. It is the arithmetic of survival. Gucci inventory rationalization, 75 boutique closures, 925 million euros in cost savings, McQueen workforce restructuring in Italy: these are stabilization actions, not competitive advantages. The Core is consuming resources that in a healthy portfolio would fund Edge and Beyond. This is what a sequencing failure looks like from the inside.</p>
+          </div>
+          <div class="zone-pill zone-edge">
+            <div class="zone-pill-label">Edge Zone &middot; ~10% (benchmark: 20%)</div>
+            <div class="zone-pill-title">Events, Not Engines</div>
+            <p>The Innovation Day in January 2026 was genuinely exciting. Fourteen startups, two of the world's most capable technology companies, a CEO who personally engaged with every demo. But a single annual event is not an innovation engine. LVMH's La Maison des Startups receives fifteen hundred applications per year and runs continuously. Kering's program runs once. The gap between these two models is not a difference in enthusiasm. It is a structural difference in how new ideas get from the outside world into deployed products.</p>
+          </div>
+          <div class="zone-pill zone-beyond">
+            <div class="zone-pill-label">Beyond Zone &middot; ~5% (benchmark: 10%)</div>
+            <div class="zone-pill-title">Visionary and Unfunded</div>
+            <p>The L'Or&eacute;al joint venture is legitimately the most ambitious single Beyond bet in luxury today. Kering sold its beauty licenses for four billion euros and entered a fifty-year partnership to co-develop what neither company could build alone: a medical luxury category combining fifteen years of L'Or&eacute;al skin aging science with Kering's ultra-HNWI relationships and prime global real estate. This is exactly what a Beyond Zone bet should look like. The constraint is the same as everywhere else in the portfolio: the cash to fund it must come from a Core that is not yet generating it.</p>
+          </div>
+        </div>
+        <div class="reading-card" style="margin-top:1.5rem;">
+          <strong>The Theta Lens:</strong> Every dot in the Core quadrant is a repair action, not an investment. The Edge quadrant has energy but no continuous pipeline. The Beyond quadrant has one bet that is both genuinely bold and structurally underfunded. The white space that should concern portfolio governance leaders most is the entire lower-right: no wearable technology play, no generative engine optimization strategy, no post-purchase engagement layer, no continuous startup ingestion mechanism.
+        </div>
+      </div>
+      <div>
+        <div class="chart-container">
+          <canvas id="scatterChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ZONE DEEP DIVE -->
+<section class="section-warm">
+  <div class="container">
+    <div class="section-label">Zone by Zone</div>
+    <h2 class="section-title">What is <em>actually happening</em> in each zone</h2>
+    <div class="zone-deep-grid fade-up">
+      <div class="zdg-cell zdg-core">
+        <div class="zdg-label">Core Zone</div>
+        <span class="zdg-status status-crisis">In Crisis</span>
+        <div class="zdg-title">The repairs that must work before anything else can</div>
+        <p class="zdg-body">De Meo's automotive instincts are most visible here. He diagnosed the production inefficiency immediately: "no industrial company can survive producing three to sell one." His supply chain interventions, inventory AI, and distribution rationalization are the right actions. They are Core actions. They do not generate growth. They create the precondition for growth. The 85% resource allocation to Core is not a strategy failure; it is a necessity. The failure was the decade in which growth masked the underlying structural fragility.</p>
+        <ul class="zdg-list">
+          <li>Gucci: Q4 2025 showed -10%, a narrowing from -21% in Q1. Fragile stabilization.</li>
+          <li>925 million euros in cost savings delivered across 2025</li>
+          <li>75 boutique closures to align distribution with actual demand levels</li>
+          <li>McQueen Italian workforce restructuring underway; brand down 60%</li>
+          <li>Production ratio target: reduce from 3:1 toward 2:1 by 2027</li>
+        </ul>
+      </div>
+      <div class="zdg-cell zdg-edge">
+        <div class="zdg-label">Edge Zone</div>
+        <span class="zdg-status status-promising">Promising, Underpowered</span>
+        <div class="zdg-title">The energy that has not yet become infrastructure</div>
+        <p class="zdg-body">There is something genuinely interesting in de Meo's Edge posture that gets lost in the financial narrative. He is not running innovation theater. His LinkedIn posts about visiting LA digital artists, trying Snap filters, and thinking about consistent AI client experience are primary data about how a new CEO is actually learning. The Generation Award expanded to MENA. The Innovation Day attracted serious partners. But there is a structural gap between annual events and continuous ingestion. A startup that presents at Kering's Innovation Day has no guaranteed path to deployment. At LVMH, the path is the program.</p>
+        <ul class="zdg-list">
+          <li>Innovation Day (Jan 2026): 14 startups, Google Cloud, Snap AR demonstration</li>
+          <li>Generation Award: expanded to MENA; 500+ applications in first Saudi edition</li>
+          <li>Agentic AI stated goal: "same experience 24/7/365 everywhere" via centralized platform</li>
+          <li>Google Vertex AI as infrastructure layer; Anthropic model pilots under evaluation</li>
+          <li>Bottega AI clienteling pilot in key Asian markets: promising, unscaled</li>
+        </ul>
+      </div>
+      <div class="zdg-cell zdg-beyond">
+        <div class="zdg-label">Beyond Zone</div>
+        <span class="zdg-status status-bold">Bold, Long Horizon</span>
+        <div class="zdg-title">The bet that could define a category, if the Core survives long enough to fund it</div>
+        <p class="zdg-body">The L'Or&eacute;al joint venture deserves to be read carefully because it is unlike any other Beyond bet in the luxury industry. It is not a research board. It is not a sustainability pledge. It is a structural combination of two entirely different capabilities: L'Or&eacute;al brings biological age diagnostics, LED therapy, injectable-adjacent protocols, and fifteen years of skin aging science. Kering brings the one thing L'Or&eacute;al cannot buy: a trusted relationship with ultra-high-net-worth individuals who spend fifty to five hundred thousand dollars per year on health and longevity. The product that does not yet exist is medical luxury: spa treatments in Gucci flagships backed by clinical science. The fifty-year horizon is not an exaggeration. It is the correct frame for a category that has to be built before it can be sold.</p>
+        <ul class="zdg-list">
+          <li>L'Or&eacute;al JV: closing H1 2026; 50-year strategic partnership on wellness and longevity</li>
+          <li>L'Or&eacute;al brings: biological age testing, skin aging research pipeline, clinical credibility</li>
+          <li>Kering brings: ultra-HNWI access, flagship real estate, luxury brand trust</li>
+          <li>No other luxury group has combined science-backed wellness with owned distribution at this scale</li>
+          <li>LVMH comparison: Dior Reverse Aging Board is scientific. Kering's JV is experiential and retail-ready.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO ALLOCATION -->
+<section class="section-white" id="allocation">
+  <div class="container">
+    <div class="section-label">Portfolio Allocation</div>
+    <h2 class="section-title">The gap between where resources go<br>and where the <em>future lives</em></h2>
+    <p style="max-width:700px; margin-bottom:3rem;">The 70/20/10 allocation is not a mandate. It is a diagnostic tool. When a company deviates from it, the framework asks: is the deviation intentional or accidental? For Kering in 2025, the answer is neither. The deviation is a consequence. The Core requires 85% of available resources because the Core is broken. This is the innovation portfolio of a company not making strategic choices but managing constraints.</p>
+    <div class="portfolio-grid fade-up">
+      <div>
+        <div class="doughnut-wrap">
+          <canvas id="doughnutChart"></canvas>
+          <div class="doughnut-center">
+            <div class="doughnut-center-label">Core Crisis<br>Edge Gap<br>Beyond Bold</div>
+            <div class="doughnut-center-sub">Kering 2025</div>
+          </div>
+        </div>
+      </div>
+      <div class="allocation-bars">
+        <div class="alloc-item">
+          <div class="alloc-header">
+            <span class="alloc-name">Core Zone</span>
+            <span class="alloc-pct" style="color:var(--kering-red)">85%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill" style="width:85%;background:var(--kering-red)"></div>
+            <div class="alloc-benchmark" style="left:70%"></div>
+          </div>
+          <div class="alloc-commentary">15% above the Theta benchmark. This overage is not investment; it is consumption. Every euro above 70% is a repair cost rather than a capability investment. The benchmark exists at 70% to force a company to fund its future even while optimizing its present. Kering cannot currently afford that luxury.</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-header">
+            <span class="alloc-name">Edge Zone</span>
+            <span class="alloc-pct" style="color:var(--edge-amber)">10%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill" style="width:10%;background:var(--edge-amber)"></div>
+            <div class="alloc-benchmark" style="left:20%"></div>
+          </div>
+          <div class="alloc-commentary">10% below benchmark. This is the most dangerous gap in the portfolio. The Edge zone is where the next S-curve is built. Without a funded, continuous Edge engine, Kering has no growth mechanism for 2028 to 2032, regardless of whether Gucci recovers.</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-header">
+            <span class="alloc-name">Beyond Zone</span>
+            <span class="alloc-pct" style="color:var(--beyond-crimson)">5%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill" style="width:5%;background:var(--beyond-crimson)"></div>
+            <div class="alloc-benchmark" style="left:10%"></div>
+          </div>
+          <div class="alloc-commentary">5% below benchmark, and the L'Or&eacute;al JV is essentially carrying all of it. One bet, well-chosen but underfunded. The Theta framework asks: is there a second Beyond bet? Currently, the answer is no. The portfolio's future rests on a single speculative horizon.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DE MEO -->
+<section class="section-warm" id="de-meo">
+  <div class="container">
+    <div class="section-label">The Outsider</div>
+    <h2 class="section-title">Luca de Meo and the <em>questions</em><br>luxury never asked itself</h2>
+    <div class="demeo-grid fade-up">
+      <div>
+        <p>De Meo's appointment is unusual in a way that gets underreported. He is not unusual for being an outsider to Kering. He is unusual for being an outsider to luxury itself. His formation is entirely automotive: Fiat, Volkswagen Group, Renault. He spent twenty years thinking about how to make manufacturing efficient, how to reduce waste, how to deploy technology at scale across a portfolio of brands. He arrived at Kering and applied that lens without apology.</p>
+        <p>The results are visible in his language. "Producing three to sell one" is not a phrase a luxury executive invents. It is an automotive quality metric applied to a fashion house, and it landed with precision because it named something everyone in the industry knew and no one had said plainly. His LinkedIn presence is similarly instructive: he posts about visiting digital artists' studios, about trying augmented reality filters, about what AI could mean for creative teams. These are not communications managed by a press office. They are a CEO broadcasting his learning curve in real time.</p>
+        <p>The critical question for portfolio governance is one the case study deliberately leaves open: is de Meo a turnaround CEO or a transition CEO? The distinction matters enormously. A turnaround CEO makes bold, permanent structural changes and builds an institution. A transition CEO steadies the ship for the next generation. The Pinault family has not clarified which mandate they gave him. The market does not know which role he believes he is playing. That ambiguity is not a minor communication gap; it is a governance signal that the Theta framework would flag as a leadership risk.</p>
+        <div style="background:var(--ink); padding:1.8rem 2rem; margin-top:1.5rem; border-left:3px solid var(--gold);">
+          <div style="font-size:0.6rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:0.8rem;">The Unasked Question</div>
+          <p style="color:rgba(255,255,255,0.72);font-size:0.9rem;margin:0;line-height:1.75;">If de Meo has a five-year mandate, the innovation investments he makes today compound into genuine advantages. If he has an eighteen-month mandate to stabilize the financials and hand over to a Pinault heir, every Edge bet he makes is orphaned the moment he leaves. The portfolio governance implications of these two scenarios are entirely different.</p>
+        </div>
+      </div>
+      <div class="demeo-panel">
+        <div class="demeo-panel-title">De Meo's Three Obsessions</div>
+        <p>Observed across his public communications, Innovation Day appearances, and leadership statements since September 2025. These are the conceptual lenses he applies to Kering's problems.</p>
+        <ul class="obsession-list">
+          <li>
+            <div class="obsession-num">01</div>
+            <div class="obsession-text"><strong>Supply chain discipline as creative freedom.</strong> His conviction that overproduction is not a luxury quirk but an operational failure with cultural consequences. When you produce three to sell one, you destroy scarcity. When you destroy scarcity, you destroy pricing power. The fix is not just efficiency; it is brand restoration.</div>
+          </li>
+          <li>
+            <div class="obsession-num">02</div>
+            <div class="obsession-text"><strong>AI as the consistent experience layer.</strong> His stated ambition of "same experience 24/7/365 everywhere" frames AI not as a cost reduction tool but as a brand consistency mechanism. This is an automotive CEO's instinct: in automotive, you do not let the car experience vary by dealership. Why would a luxury brand?</div>
+          </li>
+          <li>
+            <div class="obsession-num">03</div>
+            <div class="obsession-text"><strong>The creative director as collaborator, not oracle.</strong> Post-Michele, post-Demna, de Meo's implicit thesis is that no single creative mind should be able to hold an entire brand's fate in their hands. The system must be robust enough to survive a creative cycle. This is a structural argument disguised as a people argument.</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSIGHT 1 -->
+<div class="insight-strip insight-strip-brand fade-up">
+  <div class="insight-quote">
+    "Energy is not an innovation engine. The difference between LVMH and Kering in 2026<br>is not one of <em>ambition</em>. It is one of architecture."
+  </div>
+</div>
+
+<!-- COMPETITORS -->
+<section class="section-white" id="competitors">
+  <div class="container-wide">
+    <div class="section-label">Competitive Landscape</div>
+    <h2 class="section-title">Five houses. <em>One</em> story the numbers tell differently for each.</h2>
+    <p style="max-width:700px; margin-bottom:3rem;">The 8x valuation gap between LVMH and Kering is commonly described as a size gap. It is more precisely a sequencing gap: one company has spent twenty years building the infrastructure to fund its future from its present. The other built a magnificent present and neglected the infrastructure entirely.</p>
+    <div class="competitor-grid fade-up">
+      <div class="comp-card featured">
+        <div class="comp-name">Kering</div>
+        <div class="comp-tag">The Stressed Repositioner &middot; Gucci -22%, but the wellness bet is the luxury industry's boldest horizon play</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">Core in emergency repair: Gucci -22%, McQueen -60%, margins at 11%. The Core is the crisis, not the foundation.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">Innovation Day, Generation Award, de Meo's AI ambitions: real energy, event-based structure. No continuous pipeline.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">L'Or&eacute;al JV: 50-year horizon, medical luxury category creation. One bet, bold, underfunded.</div></div>
+        <div class="comp-verdict verdict-crisis">Crisis in Motion</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">LVMH</div>
+        <div class="comp-tag">The Balanced Empire &middot; &euro;80.8B, 75 Maisons, systematic innovation at three horizons simultaneously</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">A IDEA demand forecasting, Sephora 74M loyalty members, One Route logistics: world-class operational Core.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">La Maison des Startups: 1,500+ applications/year, 700+ collaborations since 2018. An engine, not an event.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">Dior Reverse Aging Board, Genesis soil platform, Agla&eacute; Ventures. Funded. Active. Compounding.</div></div>
+        <div class="comp-verdict verdict-strong">Balanced Builder</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Herm&egrave;s</div>
+        <div class="comp-tag">The Core-Only Fortress &middot; P/E 49.9x, +9% in 2025. Proof that scarcity is a complete strategy.</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">13 new workshops in 15 years. Price increases of 6-8% annually with zero demand elasticity. Unmatched Core.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">Deliberate restraint. No AI clienteling, no digital experiments. The brand IS the strategy.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">No visible speculative bets. Scarcity is its thesis and it has not needed a second one.</div></div>
+        <div class="comp-verdict verdict-fortress">Scarcity Fortress</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Richemont</div>
+        <div class="comp-tag">The Focused Jeweler &middot; Only major luxury group expected to show positive 2025 organic growth</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">Cartier and Van Cleef own 17% of the French jewelry market. Hard luxury's permanence insulates against fashion cycles.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">YNAP divestiture showed strategic self-awareness: exit what you cannot own at excellence. Digital passport initiatives.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">Conservative. The moat is deep enough that modest Beyond allocation is currently sufficient.</div></div>
+        <div class="comp-verdict verdict-focused">Disciplined Focus</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Prada Group</div>
+        <div class="comp-tag">The Quiet Ascendant &middot; Versace acquisition, supply chain discipline, ascending while others fight in public</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">Severed 222 Italian supplier relationships post-labor investigation. Supply chain discipline as brand signal.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">Versace acquisition at approximately $1.3B; luxury-athleisure positioning; portfolio breadth building.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">No visible speculative bets. Consolidation phase. Not the right moment for Beyond.</div></div>
+        <div class="comp-verdict verdict-ascending">Quietly Rising</div>
+      </div>
+    </div>
+    <div class="radar-wrap fade-up">
+      <canvas id="radarChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- S&W -->
+<section class="section-warm" id="sw">
+  <div class="container">
+    <div class="section-label">What Kering Owns and What It Does Not</div>
+    <h2 class="section-title">Honest capital. <em>Honest</em> gaps.</h2>
+    <div class="sw-grid fade-up">
+      <div class="sw-panel sw-panel-strength">
+        <div class="sw-title">Structural Strengths</div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">The L'Or&eacute;al JV as category creation, not product extension</div>
+            <p class="sw-desc">Most luxury wellness plays are products: a Chanel face cream with better science, a Dior serum with a Harvard endorsement. The L'Or&eacute;al JV is different. It is an attempt to build a category that does not yet exist, medical luxury, by combining clinical science with ultra-HNWI distribution. The fifty-year horizon is not hyperbole; it is the correct framing for a category that must be created before it can be sold.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">Bottega Veneta as the portfolio's quiet proof point</div>
+            <p class="sw-desc">While Gucci was pursuing growth at any cost, Matthieu Blazy and his predecessor Tomas Maier were building Bottega into something different: a brand with craft credibility, discretion, and a client who does not chase trends. The brand grew three percent in a year when the group fell thirteen. This is not a coincidence. It is evidence that the quiet luxury positioning Kering failed to protect at Gucci is alive and functioning inside the same portfolio.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">De Meo's outsider perspective as competitive intelligence</div>
+            <p class="sw-desc">An automotive executive arriving in luxury sees things that luxury executives normalize. "Producing three to sell one" is a statement that has been true of Gucci for years. It took someone who spent a career in just-in-time manufacturing to say it clearly in a shareholder letter. This is the Maverick function the Theta framework describes: not a rebel, but someone who asks the questions the institution has stopped asking.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">Real estate holdings as the crisis buffer no one discusses</div>
+            <p class="sw-desc">Kering owns significant prime real estate globally, Gucci flagships on Fifth Avenue, Avenue Montaigne, Ginza. These assets function as a balance sheet cushion that pure luxury analysts tend to underweight. Even with Gucci's cash flow compressed, the property portfolio provides collateral, optionality, and time. The Pinault family's formation in construction and real estate means this asset is understood and managed with unusual sophistication.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">The Artémis ecosystem as underutilized strategic infrastructure</div>
+            <p class="sw-desc">The Pinault family holding company owns Christie's auction house and Chateau Latour alongside Kering. Christie's alone represents an unactivated advantage in authentication, resale, and ultra-HNWI client events. Imagine Gucci-certified pre-owned authenticated through Christie's provenance expertise. The infrastructure exists. The integration does not.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">Sustainability leadership as a regulatory hedge, not just a positioning</div>
+            <p class="sw-desc">Kering publishes an Environmental Profit and Loss statement. It has invested in regenerative materials, circular design, and supply chain transparency for years. EU digital product passport regulation becomes mandatory by 2030. LVMH built the Aura Blockchain Consortium. Kering built the practices; it has not yet built the platform. The science is there. The infrastructure remains an open question.</p>
+          </div>
+        </div>
+      </div>
+      <div class="sw-panel sw-panel-weakness">
+        <div class="sw-title">Structural Vulnerabilities</div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">The creative direction gap is still open</div>
+            <p class="sw-desc">Sabato De Sarno's Gucci reset has not worked. The brand is neither its old self nor a compelling new proposition. In luxury, creative no-man's-land is more dangerous than creative failure: a failed creative direction gives you something to exit and replace. Absence gives you nothing. Kering has not yet made the decision that the market has been pricing in for twelve months.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">The Edge gap has no timeline for closing</div>
+            <p class="sw-desc">Innovation Day happens once a year. The Generation Award selects startups but provides no guaranteed path to deployment. LVMH processes fifteen hundred applications continuously and has built seven hundred partnerships over six years. Kering has not published a timeline for building an equivalent mechanism. Without one, the current event-based model is likely to remain event-based.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">Talent attraction is a hidden crisis</div>
+            <p class="sw-desc">Alessandro Michele left. Demna's role was diminished after the scandal. The message to creative talent is nuanced in ways Kering may not fully control: Kering embraces mavericks during boom cycles and distances itself from them during busts. The top creative directors in the next generation are watching. LVMH, which protects Jonathan Anderson and imports Pharrell Williams, is offering a different proposition: we back you through the cycle, not just in the up.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">China is a structural loss, not a cyclical correction</div>
+            <p class="sw-desc">Chinese consumers shifted after the pandemic and have not returned to Gucci. The shift is generational and cultural: young Chinese luxury buyers now prefer Herm&egrave;s, Chanel, and local heritage brands that demonstrate genuine cultural understanding. Gucci's Michele-era maximalism read as Western import. Kering has no China-specific creative strategy, no local cultural investment, and no brand that speaks to the post-nationalist luxury consumer in China.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">The Balenciaga scandal's structural residue</div>
+            <p class="sw-desc">The controversy created a consequence that persists beyond the reputational damage: it fundamentally altered the group's tolerance for creative risk. Where Demna's provocation was once a competitive advantage generating cultural heat, the post-scandal culture has moved toward control and oversight. The Theta framework describes this as a psychological safety collapse. When the cost of failure becomes catastrophic, the organization stops experimenting. This is the invisible tax the scandal placed on every subsequent creative decision.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">Succession and governance ambiguity is being priced by the market</div>
+            <p class="sw-desc">Fran&ccedil;ois-Henri Pinault is chairman. De Meo is CEO. Five Pinault children hold roles across the Artémis and Kering ecosystem. No succession path has been clarified publicly. LVMH trades partly on the market's confidence in Arnault's long-term vision. Kering's governance structure creates a discount because no one can model what decision-making looks like in two years, let alone five.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI COMPARISON -->
+<section class="section-white" id="ai">
+  <div class="container">
+    <div class="section-label">AI Architecture</div>
+    <h2 class="section-title">Two approaches to the same <em>problem</em></h2>
+    <p style="max-width:720px; margin-bottom:3rem;">De Meo's centralized AI thesis and LVMH's decentralized model represent genuinely different theories about how innovation works inside a multi-brand luxury group. Neither is obviously correct. They reflect different portfolio structures, different urgencies, and different founding instincts about where control should live.</p>
+    <div class="ai-grid fade-up">
+      <div class="ai-compare">
+        <div class="ai-dimension">AI Infrastructure Approach</div>
+        <div class="ai-row">
+          <div class="ai-cell ai-cell-kering">
+            <div class="ai-cell-label">Kering</div>
+            <div class="ai-cell-content">Centralized platform: Google Cloud and Vertex AI as group-wide foundation. Individual brand applications built on central APIs. Faster deployment, less redundancy.</div>
+          </div>
+          <div class="ai-cell ai-cell-lvmh">
+            <div class="ai-cell-label">LVMH</div>
+            <div class="ai-cell-content">Decentralized by Maison: each house experiments independently. La Maison des Startups feeds innovations to willing adopters. Slower but preserves brand autonomy.</div>
+          </div>
+        </div>
+        <div class="ai-dimension">Clienteling</div>
+        <div class="ai-row">
+          <div class="ai-cell ai-cell-kering">
+            <div class="ai-cell-label">Kering</div>
+            <div class="ai-cell-content">Bottega pilot in Asian markets. Group-wide deployment planned but dependent on central platform build-out. Stated goal: consistent experience across all touchpoints.</div>
+          </div>
+          <div class="ai-cell ai-cell-lvmh">
+            <div class="ai-cell-label">LVMH</div>
+            <div class="ai-cell-content">Kahoona AI at Dior: 2025 Innovation Award winner. Predictive segmentation from anonymous browsing. WhatsApp and WeChat deployed. Real-world traction at brand level.</div>
+          </div>
+        </div>
+        <div class="ai-dimension">Agentic Commerce Strategy</div>
+        <div class="ai-row">
+          <div class="ai-cell ai-cell-kering">
+            <div class="ai-cell-label">Kering</div>
+            <div class="ai-cell-content">Google and Snap partnership signals intent. Agentic AI explicitly named as a priority by de Meo. No public roadmap for how Kering brands will appear in AI-mediated discovery channels.</div>
+          </div>
+          <div class="ai-cell ai-cell-lvmh">
+            <div class="ai-cell-label">LVMH</div>
+            <div class="ai-cell-content">Also absent. Bernard Arnault's AI investments through Agla&eacute; Ventures are observational, not deployed. This is a shared blind spot across the entire luxury sector.</div>
+          </div>
+        </div>
+        <div class="ai-dimension">Supply Chain AI</div>
+        <div class="ai-row">
+          <div class="ai-cell ai-cell-kering">
+            <div class="ai-cell-label">Kering</div>
+            <div class="ai-cell-content">Inventory optimization AI piloting to reduce 3:1 production ratio. De Meo's automotive background gives this real credibility: he has done this before at Renault and VW Group.</div>
+          </div>
+          <div class="ai-cell ai-cell-lvmh">
+            <div class="ai-cell-label">LVMH</div>
+            <div class="ai-cell-content">A IDEA: group-wide demand forecasting deployed across 75 Maisons. Multi-year head start. The One Route logistics program reduces CO2 and coordination costs simultaneously.</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p>De Meo's centralized approach is not a mistake. It is the rational choice for a smaller portfolio where redundancy is a luxury Kering cannot afford. When LVMH lets fifty Maisons run separate AI experiments, it can absorb the failure cost because fifty experiments generate learning even when most fail. Kering has fourteen brands. The economics of decentralized experimentation are different.</p>
+        <p>The risk of centralization is different but real. A centralized AI platform built for efficiency may resist the nuances that make each brand distinct. The same system that optimizes Gucci's inventory allocation should not be making the same recommendations for Bottega Veneta, whose value proposition depends on craft processes that do not optimize in the same ways. Whether de Meo's team has designed for this is not yet visible from the outside.</p>
+        <p>The more important observation is the one both Kering and LVMH share: neither company has a public strategy for the world where AI agents shop on behalf of their customers. Amazon Rufus purchases from third-party sites within its app. OpenAI sells directly through ChatGPT integrations. If the primary discovery layer for luxury goods shifts from editorial to algorithmic, the question "is our brand in the model?" becomes as important as "is our flagship on the right street?" Kering named agentic AI as a priority at its January 2026 Innovation Day. Neither Kering nor LVMH has published a roadmap for what that means in practice.</p>
+        <div style="background:rgba(196,30,58,0.06); border-left:3px solid var(--kering-red); padding:1.5rem 2rem; margin-top:1.5rem;">
+          <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--kering-red);margin-bottom:0.7rem;">The Shared Blind Spot</div>
+          <p style="font-size:0.88rem;color:#555;margin:0;line-height:1.75;">Shopping-related searches on AI platforms grew 4,700% in 2024 to 2025. The luxury industry's response so far has been to optimize for human-led discovery. This is not a technology gap. It is a philosophical one. The luxury mindset of controlling the narrative and owning the channel is structurally incompatible with a world where an AI agent decides what to recommend before the customer enters any brand's ecosystem.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET SHIFT -->
+<section class="section-warm" id="market">
+  <div class="container">
+    <div class="section-label">The Customer Question</div>
+    <h2 class="section-title">Who was Gucci's customer, where did they go,<br>and who has not yet been <em>invited in</em></h2>
+    <div class="market-grid fade-up">
+      <div>
+        <p>The Michele-era Gucci customer was built for a specific cultural moment: Instagram aesthetics, logomania, accessible entry points, and a brand that felt like a movement rather than a heritage institution. When that moment ended, the customer did not disappear. They realigned. Understanding where they went reveals as much about Kering's strategic options as any financial analysis.</p>
+        <table class="market-shift-table" style="margin-bottom:2rem;">
+          <thead>
+            <tr><th>Former Gucci Customer</th><th>Where They Went</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Young Chinese aspirational</td><td>Herm&egrave;s, Chanel, Shang Xia, local heritage brands</td></tr>
+            <tr><td>Millennial logomania lover</td><td>Bottega Veneta (quiet luxury), Prada, Miu Miu</td></tr>
+            <tr><td>Fashion-forward eclectic</td><td>Emerging designers, vintage luxury, Balenciaga (pre-scandal)</td></tr>
+            <tr><td>Status-driven affluent</td><td>Herm&egrave;s, Loro Piana, Brunello Cucinelli</td></tr>
+            <tr><td>Entry-level luxury first-timer</td><td>Louis Vuitton (accessible price points, stronger brand health)</td></tr>
+          </tbody>
+        </table>
+        <p>The irony the Theta framework surfaces: the quiet luxury trend that destroyed Gucci's value proposition benefits Bottega Veneta, which Kering also owns. Customers who left Gucci for discretion largely found it inside the same portfolio, in a brand one-quarter Gucci's size that Kering has not yet invested in as a second pillar.</p>
+      </div>
+      <div>
+        <p style="font-weight:500; color:var(--ink); margin-bottom:1.5rem;">Three customer segments Kering has not yet fully reached:</p>
+        <div style="display:flex; flex-direction:column; gap:1.5rem;">
+          <div style="background:#fff; padding:1.8rem 2rem; border-top:3px solid var(--gold);">
+            <div style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Untapped Segment 01</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--ink);margin-bottom:0.6rem;">The Ultra-HNWI Wellness Seeker (45-70)</div>
+            <p style="font-size:0.84rem;color:#666;margin:0;line-height:1.68;">Spending $50,000 to $500,000 annually on biohacking, longevity clinics, and personalized health. This is the L'Or&eacute;al JV's eventual target. The question is whether Kering can build an Edge-level version now, perhaps pop-up wellness clinics in flagship stores, while waiting for the JV to mature.</p>
+          </div>
+          <div style="background:#fff; padding:1.8rem 2rem; border-top:3px solid var(--edge-amber);">
+            <div style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--edge-amber);margin-bottom:0.6rem;">Untapped Segment 02</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--ink);margin-bottom:0.6rem;">Gen Z Quiet Luxury (16-24)</div>
+            <p style="font-size:0.84rem;color:#666;margin:0;line-height:1.68;">Saves for investment pieces, values sustainability and discretion, rejects logomania as a previous generation's status signal. Bottega Veneta is ideally positioned for this group. Kering has not yet deployed Bottega as its Gen Z vehicle. The brand receives modest investment relative to its strategic potential.</p>
+          </div>
+          <div style="background:#fff; padding:1.8rem 2rem; border-top:3px solid var(--beyond-crimson);">
+            <div style="font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--beyond-crimson);margin-bottom:0.6rem;">Untapped Segment 03</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--ink);margin-bottom:0.6rem;">The Tech-Adjacent Luxury Consumer</div>
+            <p style="font-size:0.84rem;color:#666;margin:0;line-height:1.68;">Owns Apple Vision Pro, uses AI agents for discovery, is willing to pay premium for technology-integrated products. Kering's eyewear portfolio sits at the exact intersection of luxury and wearable technology. There is no hardware strategy to match the opportunity.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MISSING EDGE -->
+<section class="section-white" id="missing-edge">
+  <div class="container-wide">
+    <div class="section-label">The White Spaces</div>
+    <h2 class="section-title">Edge innovations <em>Kering does not have</em><br>that its competitors and adjacent industries do</h2>
+    <p style="max-width:720px; margin-bottom:0.5rem;">The Theta framework asks not just what is present in the portfolio but what is conspicuously absent. These are not prescriptions. They are observations about where innovation is happening in the ecosystem around Kering, and what the absence of parallel activity inside Kering might mean for its position in 2028 to 2032.</p>
+    <div class="missing-grid fade-up">
+      <div class="missing-tile amber">
+        <div class="missing-icon">&#127760;</div>
+        <span class="missing-zone mz-edge">Edge Zone</span>
+        <div class="missing-title">Continuous Startup Ingestion Engine</div>
+        <p class="missing-body">An annual Innovation Day is not an innovation infrastructure. The equivalent of LVMH's La Maison des Startups, a year-round program receiving hundreds of applications and running ten to twenty active pilots simultaneously, does not exist at Kering. The gap is not resources. It is architecture.</p>
+        <div class="missing-who"><strong>Who has it:</strong> LVMH (La Maison des Startups, 1,500+ applications/year). <strong>Kering equivalent:</strong> None. Innovation Day is an event.</div>
+      </div>
+      <div class="missing-tile amber">
+        <div class="missing-icon">&#129488;</div>
+        <span class="missing-zone mz-edge">Edge Zone</span>
+        <div class="missing-title">Generative Engine Optimization (GEO)</div>
+        <p class="missing-body">When an AI agent is asked to recommend a gift for someone who loves fashion, which brands appear? GEO is the practice of structuring brand content, catalog data, and semantic signals so that AI models surface a brand in discovery contexts. No luxury group has a public GEO strategy. The window for first-mover advantage is open.</p>
+        <div class="missing-who"><strong>Who is building it:</strong> Glara, Brandback, early-stage startups. <strong>Luxury status:</strong> Universal blind spot, including LVMH.</div>
+      </div>
+      <div class="missing-tile amber">
+        <div class="missing-icon">&#128083;</div>
+        <span class="missing-zone mz-edge">Edge Zone</span>
+        <div class="missing-title">Wearable Technology Partnership</div>
+        <p class="missing-body">Ray-Ban Meta smart glasses became the bestseller in sixty percent of EMEA Ray-Ban stores in Q3 2024. Kering owns eyewear brands including Gucci. The category intersection of luxury eyewear and wearable technology is real, accessible, and currently occupied by a mass brand partnering with a tech giant. Kering has the luxury credibility; the partnership does not exist.</p>
+        <div class="missing-who"><strong>Who has it:</strong> EssilorLuxottica and Meta. <strong>Kering advantage:</strong> Gucci eyewear carries more brand equity. The partnership is unbuilt.</div>
+      </div>
+      <div class="missing-tile green">
+        <div class="missing-icon">&#128393;</div>
+        <span class="missing-zone mz-core">Core Adjacent</span>
+        <div class="missing-title">Post-Purchase Engagement Layer</div>
+        <p class="missing-body">The digital receipt, opened at rates above seventy percent, is the highest-engagement surface in commerce. A customer who just purchased a Bottega Veneta bag is at peak emotional investment. What happens next? Currently: a standard email receipt. Startups like Slip have demonstrated that this moment can deliver care instructions, loyalty enrollment, and styling recommendations as a branded experience.</p>
+        <div class="missing-who"><strong>Who has built it:</strong> Slip (digital receipt platform). <strong>Luxury status:</strong> Underdeveloped across the sector. A white space available to anyone who moves first.</div>
+      </div>
+      <div class="missing-tile amber">
+        <div class="missing-icon">&#128279;</div>
+        <span class="missing-zone mz-edge">Edge Zone</span>
+        <div class="missing-title">Digital Product Passport at Group Level</div>
+        <p class="missing-body">EU regulation will mandate digital product passports for luxury goods by 2030. LVMH built the Aura Blockchain Consortium with Prada and Richemont in 2021. Kering's sustainability practices are ahead of most competitors; the authentication infrastructure is not. Prada participates in Aura. Kering brands do not, leaving them outside the industry standard being set today.</p>
+        <div class="missing-who"><strong>Who has built it:</strong> LVMH (Aura Blockchain Consortium), Richemont. <strong>Kering status:</strong> No group-level program. Regulatory deadline is five years away.</div>
+      </div>
+      <div class="missing-tile amber">
+        <div class="missing-icon">&#127807;</div>
+        <span class="missing-zone mz-edge">Edge Zone</span>
+        <div class="missing-title">Vestiaire Integration (Resale as Revenue)</div>
+        <p class="missing-body">Kering invested in Vestiaire Collective in 2021. Four years later, the investment remains passive. The circular economy consumer, wealthy, sustainability-conscious, and willing to pay for authenticated pre-owned luxury, is being served by an independent platform rather than a Kering-integrated experience. Gucci-certified pre-owned sold through Gucci.com with blockchain authentication is a value proposition that does not yet exist.</p>
+        <div class="missing-who"><strong>What Kering owns:</strong> A stake in Vestiaire Collective. <strong>What it has not built:</strong> Brand integration, authentication, or a commercial circular economy strategy.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSIGHT 2 -->
+<div class="insight-strip insight-strip-dark fade-up">
+  <div class="insight-quote">
+    "The question for Kering is not whether it has the <em>ambition</em>.<br>It has the ambition. The question is whether it has the sequencing."
+  </div>
+</div>
+
+<!-- DIAGNOSTIC -->
+<section class="section-ink" id="diagnostic">
+  <div class="container">
+    <div class="section-label" style="opacity:0.8;">Theta Diagnostic</div>
+    <h2 class="section-title" style="margin-bottom:3rem;">Reading Kering's <em>innovation architecture</em><br>with unsparing clarity</h2>
+    <div class="diagnostic-grid fade-up">
+      <div>
+        <div class="diag-block">
+          <div class="diag-label">Portfolio Mapping</div>
+          <div class="diag-title">All three zones exist. Only one is resourced.</div>
+          <p class="diag-body">The Theta portfolio spans Core, Edge, and Beyond, which is already an improvement on pure Core companies like Oracle at its most stagnant. But the resource distribution exposes the structural problem: Core is at 85% because it is broken, not because it is excellent. Edge is at 10% because there is nothing left after the Core emergency. Beyond is at 5% and consists of one bet. This is not a diversified innovation portfolio. It is a single-speed crisis response with a beautiful long-horizon footnote.</p>
+          <div class="archetype-row">
+            <span class="archetype-chip chip-gap">Core Crisis</span>
+            <span class="archetype-chip chip-mid">Edge Underfunded</span>
+            <span class="archetype-chip chip-ok">Beyond Bold</span>
+          </div>
+        </div>
+        <div class="diag-block">
+          <div class="diag-label">Leadership and Culture</div>
+          <div class="diag-title">Outsider energy meets unresolved governance</div>
+          <p class="diag-body">De Meo scores high on the Theta Leadership Trifecta's Agility and Courage dimensions: he accepted a crisis assignment, named problems that luxury executives do not name, and is visibly learning in public. His Consciousness score is harder to assess from the outside, because consciousness in the Theta framework is about leading from awareness rather than ego, and the mandate ambiguity between him and the Pinault family is the single most important unknown in the entire analysis. A conscious leader resolves this ambiguity. An ego-driven structure perpetuates it.</p>
+        </div>
+        <div class="diag-block">
+          <div class="diag-label">Maverick Inventory</div>
+          <div class="diag-title">Mavericks exist but are not structurally protected</div>
+          <p class="diag-body">The Theta framework asks not whether mavericks are celebrated during boom cycles but whether they are protected during bust cycles. Kering's history answers this precisely. Michele was celebrated during the boom and effectively managed out as the narrative changed. Demna was celebrated until the scandal and then distanced. Matthieu Blazy at Bottega is working brilliantly, but he is working brilliantly in a quiet corner of the portfolio with modest investment. The pattern is: Kering attracts mavericks, benefits from them, and does not build the institutional structures that would protect them when the cycle turns.</p>
+        </div>
+        <div class="diag-block">
+          <div class="diag-label">Zone Allocation vs Benchmark</div>
+          <div class="inline-bars">
+            <div class="inline-bar-row">
+              <span class="inline-bar-label">Core</span>
+              <div class="inline-bar-track">
+                <div class="inline-bar-actual" style="width:85%;background:var(--kering-red)"></div>
+                <div class="inline-bar-bench" style="left:70%"></div>
+              </div>
+              <span class="inline-bar-pct">85%</span>
+            </div>
+            <div class="inline-bar-row">
+              <span class="inline-bar-label">Edge</span>
+              <div class="inline-bar-track">
+                <div class="inline-bar-actual" style="width:10%;background:var(--edge-amber)"></div>
+                <div class="inline-bar-bench" style="left:20%"></div>
+              </div>
+              <span class="inline-bar-pct">10%</span>
+            </div>
+            <div class="inline-bar-row">
+              <span class="inline-bar-label">Beyond</span>
+              <div class="inline-bar-track">
+                <div class="inline-bar-actual" style="width:5%;background:var(--beyond-crimson)"></div>
+                <div class="inline-bar-bench" style="left:10%"></div>
+              </div>
+              <span class="inline-bar-pct">5%</span>
+            </div>
+          </div>
+          <p class="diag-body" style="margin-top:0.8rem;font-size:0.78rem;">Vertical markers indicate Theta benchmarks (70/20/10). Kering's Core overallocation is not strategic; it is a consequence. The Edge gap is the most structurally dangerous deviation in the portfolio.</p>
+        </div>
+      </div>
+      <div>
+        <div class="diag-block">
+          <div class="diag-label">Customer Signal Architecture</div>
+          <div class="diag-title">Listening to the mainstream, missing the signals at the edges</div>
+          <p class="diag-body">The Theta framework distinguishes between listening to mainstream customers (Early and Late Majority) and listening to early adopters and non-consumers who signal future shifts. Kering's customer listening is heavily weighted toward mainstream feedback, which is why Gucci's decline took ten quarters to fully register in strategic response. The early adopters who shifted to quiet luxury, who moved to Bottega or Herm&egrave;s, were sending signals from 2020 onward. The institutional response waited for them to become mainstream news.</p>
+        </div>
+        <div class="diag-block">
+          <div class="diag-label">The Critical Tension</div>
+          <div class="tension-box">
+            <p>Kering is attempting to do three things simultaneously in order of diminishing cash availability: stabilize a Core that is generating losses, build an Edge engine that requires investment, and protect a Beyond bet that requires capital the Core is not yet providing. The Theta framework does not prescribe which of these to prioritize. But it does illuminate why the sequencing is so difficult: the tools needed to fix the Core (operational discipline, distribution rationalization, creative direction reset) are different from the tools needed to build the Edge (startup infrastructure, continuous innovation pipeline, external talent ingestion), and both sets of tools compete for the same scarce management attention. De Meo has one CEO's worth of attention to divide among three urgent problems.</p>
+          </div>
+        </div>
+        <div class="diag-block">
+          <div class="diag-label">Relativity Assessment</div>
+          <div class="diag-title">The benchmark that matters most is not LVMH</div>
+          <p class="diag-body">It is tempting to measure Kering entirely against LVMH. The comparison is useful but it can also be paralyzing. The more important reference point is Kering's own historical self and the question of whether the trajectory is improving. Q4 2025 showed a Gucci decline of minus ten percent against a Q1 2025 decline of minus twenty-one percent. That is not recovery. But it is a narrowing. The Theta framework asks: is the company getting better at getting better? The sequential improvement in Gucci suggests yes, cautiously. The absence of a funded Edge engine suggests the underlying architecture has not yet changed.</p>
+        </div>
+        <div class="verdict-block">
+          <div class="verdict-headline">Verdict: The Stressed Repositioner</div>
+          <p class="verdict-sub">Kering is a company with genuine Beyond vision, real Edge energy, and a Core that is consuming everything. The Theta framework does not render a judgment on whether Kering will succeed; that depends on variables the framework cannot model: whether Gucci's creative direction is resolved in the next six months, whether the Pinault family gives de Meo a genuine turnaround mandate, and whether the L'Or&eacute;al JV receives the capital it needs before the market loses patience with the long horizon. What the framework can say is this: the architecture of innovation at Kering is incomplete. The energy is real. The pipeline is not. And the clock, as the title of this case study suggests, is ticking.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ONE QUESTION -->
+<div style="background:var(--company-primary); padding:5rem 3rem; text-align:center;">
+  <div style="font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(184,134,11,0.7);margin-bottom:1.5rem;">The Question Kering Must Sit With</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:300;color:#fff;max-width:860px;margin:0 auto;line-height:1.4;font-style:italic;">
+    "Can we build a continuous Edge engine before Gucci's decline consumes all available room to build anything at all?"
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left"><span>Theta Framework</span>Strategic Case Study &middot; 2026</div>
+  <div class="footer-right">Kering &middot; The Clock Is Ticking</div>
+</footer>
+
+<script>
+// SCROLL ANIMATIONS
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible'); obs.unobserve(e.target);} });
+}, {threshold:0.1, rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+// POINT LABEL PLUGIN
+const pointLabelPlugin = {
+  id:'pointLabels',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    chart.data.datasets.forEach((ds, di) => {
+      const meta = chart.getDatasetMeta(di);
+      meta.data.forEach((point, i) => {
+        const dp = ds.data[i];
+        if(!dp.label) return;
+        ctx.save();
+        ctx.font = '11px "DM Sans", sans-serif';
+        ctx.fillStyle = 'rgba(30,45,42,0.72)';
+        ctx.textAlign = 'left';
+        ctx.fillText(dp.label, point.x + 10, point.y + 4);
+        ctx.restore();
+      });
+    });
+  }
+};
+
+// SCATTER CHART
+new Chart(document.getElementById('scatterChart').getContext('2d'), {
+  type:'scatter',
+  plugins:[pointLabelPlugin],
+  data:{
+    datasets:[
+      {
+        label:'Core Zone',
+        data:[
+          {x:1.2,y:1.2,label:'Gucci Inventory Fix'},
+          {x:1.1,y:1.0,label:'75 Boutique Closures'},
+          {x:1.4,y:1.1,label:'Cost Savings Program'},
+          {x:1.5,y:1.3,label:'McQueen Restructure'},
+          {x:1.7,y:1.4,label:'Bottega AI Pilot'},
+        ],
+        backgroundColor:'rgba(45,106,79,0.78)', pointRadius:9, pointHoverRadius:12
+      },
+      {
+        label:'Edge Zone',
+        data:[
+          {x:2.6,y:2.8,label:'Group Data Platform'},
+          {x:2.8,y:3.0,label:'Agentic AI Goal'},
+          {x:2.4,y:2.5,label:'GenAI Content Creation'},
+          {x:2.9,y:2.7,label:'Innovation Day (Google, Snap)'},
+          {x:2.3,y:2.2,label:'Generation Award'},
+        ],
+        backgroundColor:'rgba(181,132,26,0.82)', pointRadius:9, pointHoverRadius:12
+      },
+      {
+        label:'Beyond Zone',
+        data:[
+          {x:3.8,y:4.0,label:"L'Or\u00e9al JV \u00b7 Wellness"},
+          {x:3.4,y:3.6,label:'Generation Award MENA'},
+        ],
+        backgroundColor:'rgba(139,26,26,0.82)', pointRadius:9, pointHoverRadius:12
+      }
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom', labels:{font:{family:'DM Sans',size:12},color:'#3a3a3a',padding:20}},
+      tooltip:{backgroundColor:'rgba(14,26,24,0.92)',titleFont:{family:'DM Sans',size:12},bodyFont:{family:'DM Sans',size:11},padding:12,cornerRadius:2}
+    },
+    scales:{
+      x:{
+        min:0.5, max:4.5,
+        title:{display:true,text:'Market Reach  \u2192  Existing \u00b7 New \u00b7 Emerging \u00b7 Speculative',font:{family:'DM Sans',size:11},color:'#8A9490'},
+        grid:{color:'rgba(184,134,11,0.07)'},
+        ticks:{display:false},
+        border:{color:'rgba(184,134,11,0.18)'}
+      },
+      y:{
+        min:0.5, max:4.5,
+        title:{display:true,text:'Technology Change  \u2192  Incremental \u00b7 Moderate \u00b7 High \u00b7 Radical',font:{family:'DM Sans',size:11},color:'#8A9490'},
+        grid:{color:'rgba(184,134,11,0.07)'},
+        ticks:{display:false},
+        border:{color:'rgba(184,134,11,0.18)'}
+      }
+    }
+  }
+});
+
+// DOUGHNUT
+new Chart(document.getElementById('doughnutChart').getContext('2d'), {
+  type:'doughnut',
+  data:{
+    labels:['Core Zone (85%)','Edge Zone (10%)','Beyond Zone (5%)'],
+    datasets:[{
+      data:[85,10,5],
+      backgroundColor:['rgba(196,30,58,0.82)','rgba(181,132,26,0.82)','rgba(139,26,26,0.82)'],
+      borderWidth:0, hoverOffset:6
+    }]
+  },
+  options:{
+    cutout:'68%', responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{font:{family:'DM Sans',size:12},color:'#3a3a3a',padding:18}},
+      tooltip:{backgroundColor:'rgba(14,26,24,0.92)',titleFont:{family:'DM Sans'},bodyFont:{family:'DM Sans'},padding:12,cornerRadius:2}
+    }
+  }
+});
+
+// RADAR
+new Chart(document.getElementById('radarChart').getContext('2d'), {
+  type:'radar',
+  data:{
+    labels:['Core Strength','Edge Momentum','Beyond Vision','AI Readiness','Brand Resilience','Portfolio Depth'],
+    datasets:[
+      {label:'Kering',data:[38,52,70,50,40,38],borderColor:'rgba(196,30,58,0.9)',backgroundColor:'rgba(196,30,58,0.1)',borderWidth:2,pointRadius:4,pointBackgroundColor:'rgba(196,30,58,0.9)'},
+      {label:'LVMH',data:[90,82,56,72,86,96],borderColor:'rgba(184,134,11,0.9)',backgroundColor:'rgba(184,134,11,0.09)',borderWidth:2,pointRadius:4,pointBackgroundColor:'rgba(184,134,11,0.9)'},
+      {label:'Herm\u00e8s',data:[96,22,18,20,98,42],borderColor:'rgba(44,24,16,0.8)',backgroundColor:'rgba(44,24,16,0.06)',borderWidth:2,pointRadius:4,pointBackgroundColor:'rgba(44,24,16,0.8)'},
+      {label:'Richemont',data:[82,46,34,42,80,50],borderColor:'rgba(181,132,26,0.7)',backgroundColor:'rgba(181,132,26,0.06)',borderWidth:2,pointRadius:4,pointBackgroundColor:'rgba(181,132,26,0.7)'},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{font:{family:'DM Sans',size:12},color:'#3a3a3a',padding:20}},
+      tooltip:{backgroundColor:'rgba(14,26,24,0.92)',titleFont:{family:'DM Sans'},bodyFont:{family:'DM Sans'},padding:12,cornerRadius:2}
+    },
+    scales:{
+      r:{
+        min:0, max:100,
+        ticks:{display:false},
+        grid:{color:'rgba(184,134,11,0.1)'},
+        angleLines:{color:'rgba(184,134,11,0.1)'},
+        pointLabels:{font:{family:'DM Sans',size:12},color:'#3a3a3a'}
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
