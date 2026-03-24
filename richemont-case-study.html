@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Richemont — The Decentralized Fortress of Luxury Houses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #8B6914;
+    --primary-light: #C4952A;
+    --primary-dim: rgba(139,105,20,0.18);
+    --accent: #3D2B1F;
+    --ink: #0E1A18;
+    --ink-soft: #1E2D2A;
+    --ink-mid: #2E3F3C;
+    --paper: #F7F5F0;
+    --paper-warm: #EFEBE2;
+    --paper-deep: #E6E0D2;
+    --muted: #8A9490;
+    --muted-light: #B0BAAF;
+    --core-green: #2D6A4F;
+    --core-green-light: rgba(45,106,79,0.12);
+    --edge-amber: #B5841A;
+    --edge-amber-light: rgba(181,132,26,0.12);
+    --beyond-crimson: #8B1A1A;
+    --beyond-crimson-light: rgba(139,26,26,0.12);
+    --border: rgba(139,105,20,0.15);
+    --border-soft: rgba(14,26,24,0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(14,26,24,0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(139,105,20,0.2);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--primary-light);
+    text-transform: uppercase;
+  }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(247,245,240,0.55);
+    text-decoration: none;
+    transition: color 0.25s;
+  }
+  .nav-links a:hover { color: var(--primary-light); }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    background: var(--ink);
+    display: flex; flex-direction: column; justify-content: center;
+    overflow: hidden;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(139,105,20,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139,105,20,0.07) 1px, transparent 1px);
+    background-size: 80px 80px;
+    animation: gridDrift 30s linear infinite;
+  }
+  @keyframes gridDrift { from { transform: translate(0,0); } to { transform: translate(80px,80px); } }
+
+  .hero-radial {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 70% 40%, rgba(139,105,20,0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 20% 70%, rgba(61,43,31,0.3) 0%, transparent 60%);
+  }
+  .hero-noise {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    opacity: 0.4;
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: 0 80px;
+    max-width: 1100px;
+  }
+
+  .hero-kicker {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 0.7rem; font-weight: 500; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--primary-light);
+    margin-bottom: 36px;
+    opacity: 0; animation: fadeUp 0.8s 0.3s forwards;
+  }
+  .hero-kicker::before {
+    content: ''; display: inline-block; width: 32px; height: 1px;
+    background: var(--primary-light);
+  }
+
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 6vw, 5.2rem);
+    font-weight: 300;
+    line-height: 1.08;
+    color: var(--paper);
+    max-width: 820px;
+    margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 0.9s 0.5s forwards;
+  }
+  .hero-headline em {
+    font-style: italic;
+    color: var(--primary-light);
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(247,245,240,0.6);
+    max-width: 560px;
+    margin-bottom: 56px;
+    opacity: 0; animation: fadeUp 0.9s 0.7s forwards;
+  }
+
+  .hero-meta {
+    display: flex; gap: 0;
+    border-top: 1px solid rgba(139,105,20,0.25);
+    padding-top: 28px;
+    opacity: 0; animation: fadeUp 0.9s 0.9s forwards;
+  }
+  .hero-meta-item {
+    flex: 1;
+    padding: 0 28px 0 0;
+    border-right: 1px solid rgba(139,105,20,0.2);
+    margin-right: 28px;
+  }
+  .hero-meta-item:last-child { border-right: none; margin-right: 0; }
+  .hero-meta-label {
+    font-size: 0.62rem; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 5px;
+  }
+  .hero-meta-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem; font-weight: 500;
+    color: rgba(247,245,240,0.85);
+  }
+
+  .hero-scroll {
+    position: absolute; right: 48px; bottom: 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    opacity: 0; animation: fadeUp 0.9s 1.2s forwards;
+  }
+  .hero-scroll span {
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); writing-mode: vertical-rl;
+  }
+  .scroll-line {
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, var(--primary-light), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(0.7); }
+    50% { opacity: 1; transform: scaleY(1); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== SECTIONS ===== */
+  section { position: relative; }
+
+  .section-white { background: #fff; }
+  .section-paper { background: var(--paper-warm); }
+  .section-ink { background: var(--ink); color: var(--paper); }
+  .section-deep { background: var(--ink-soft); color: var(--paper); }
+
+  .container {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 64px;
+  }
+
+  .section-pad { padding: 100px 0; }
+  .section-pad-lg { padding: 120px 0; }
+
+  /* ===== FADE IN ON SCROLL ===== */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== SECTION LABEL ===== */
+  .section-label {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--primary);
+    margin-bottom: 20px;
+  }
+  .section-label::before {
+    content: ''; display: block; width: 24px; height: 1px;
+    background: var(--primary);
+  }
+  .section-ink .section-label, .section-deep .section-label {
+    color: var(--primary-light);
+  }
+  .section-ink .section-label::before, .section-deep .section-label::before {
+    background: var(--primary-light);
+  }
+
+  /* ===== TYPOGRAPHY ===== */
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .section-ink h2, .section-deep h2 { color: var(--paper); }
+  h2 em { font-style: italic; color: var(--primary); }
+  .section-ink h2 em, .section-deep h2 em { color: var(--primary-light); }
+
+  h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; font-weight: 500; line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .section-ink h3, .section-deep h3 { color: var(--paper); }
+
+  p {
+    font-size: 0.975rem; font-weight: 300; line-height: 1.8;
+    color: var(--ink-mid);
+    margin-bottom: 18px;
+  }
+  .section-ink p, .section-deep p { color: rgba(247,245,240,0.72); }
+  p:last-child { margin-bottom: 0; }
+
+  /* ===== ABOUT SECTION ===== */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 72px;
+    align-items: start;
+    margin-top: 56px;
+  }
+
+  .hidden-fact {
+    background: var(--ink);
+    border-radius: 3px;
+    padding: 32px 36px;
+    margin-top: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hidden-fact::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--primary-light), var(--primary));
+  }
+  .hidden-fact-label {
+    font-size: 0.62rem; font-weight: 500; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--primary-light);
+    margin-bottom: 12px;
+  }
+  .hidden-fact p {
+    font-size: 0.9rem; color: rgba(247,245,240,0.75); line-height: 1.7;
+    margin-bottom: 0;
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .stat-item {
+    background: white;
+    padding: 32px 28px;
+    border: 1px solid var(--border-soft);
+  }
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem; font-weight: 400;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-number span {
+    font-size: 1.4rem;
+    color: var(--primary);
+  }
+  .stat-label {
+    font-size: 0.72rem; font-weight: 400; letter-spacing: 0.06em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ===== BELIEF STRIP ===== */
+  .belief-strip {
+    background: var(--ink);
+    padding: 72px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid rgba(139,105,20,0.2);
+    border-bottom: 1px solid rgba(139,105,20,0.2);
+  }
+  .belief-strip::before {
+    content: '\201C';
+    position: absolute;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18rem;
+    color: rgba(139,105,20,0.06);
+    top: -40px; left: 60px;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .belief-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--paper);
+    max-width: 780px;
+    margin: 0 auto 20px;
+    line-height: 1.5;
+    position: relative; z-index: 1;
+  }
+  .belief-attribution {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--primary-light);
+    position: relative; z-index: 1;
+  }
+
+  /* ===== TIMELINE ===== */
+  .timeline { margin-top: 60px; position: relative; }
+  .timeline-track {
+    position: absolute; left: 100px; top: 0; bottom: 0;
+    width: 1px; background: var(--border);
+  }
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 100px 32px 1fr;
+    gap: 0 24px;
+    margin-bottom: 48px;
+    align-items: flex-start;
+    position: relative;
+  }
+  .timeline-year {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem; font-weight: 500;
+    color: var(--muted);
+    text-align: right;
+    padding-top: 3px;
+  }
+  .timeline-dot-wrap {
+    display: flex; justify-content: center;
+    position: relative; z-index: 1;
+  }
+  .timeline-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--paper-warm);
+    border: 2px solid var(--primary);
+    margin-top: 5px;
+  }
+  .timeline-dot.filled {
+    background: var(--primary);
+  }
+  .timeline-phase {
+    font-size: 0.62rem; font-weight: 500; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--primary);
+    margin-bottom: 5px;
+  }
+  .timeline-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem; font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .timeline-desc {
+    font-size: 0.875rem; font-weight: 300; line-height: 1.7;
+    color: var(--muted);
+    margin-bottom: 0;
+  }
+
+  /* ===== THETA MAP ===== */
+  .theta-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 56px;
+    align-items: start;
+    margin-top: 56px;
+  }
+  .zone-legend { display: flex; flex-direction: column; gap: 16px; }
+  .zone-pill {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 18px 20px;
+    border-radius: 3px;
+    background: white;
+    border: 1px solid var(--border-soft);
+  }
+  .zone-icon {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 4px;
+  }
+  .zone-icon.core { background: var(--core-green); }
+  .zone-icon.edge { background: var(--edge-amber); }
+  .zone-icon.beyond { background: var(--beyond-crimson); }
+  .zone-pill-title {
+    font-size: 0.8rem; font-weight: 500; color: var(--ink);
+    margin-bottom: 4px; letter-spacing: 0.04em;
+  }
+  .zone-pill-desc {
+    font-size: 0.75rem; font-weight: 300; color: var(--muted);
+    line-height: 1.55; margin-bottom: 0;
+  }
+
+  .chart-wrap {
+    background: white;
+    border: 1px solid var(--border-soft);
+    padding: 32px;
+    border-radius: 3px;
+  }
+  .chart-title {
+    font-size: 0.68rem; font-weight: 500; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  /* ===== ALLOCATION ===== */
+  .allocation-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 56px;
+    align-items: center;
+    margin-top: 56px;
+  }
+  .doughnut-wrap {
+    background: white;
+    border: 1px solid var(--border-soft);
+    padding: 36px;
+    border-radius: 3px;
+    position: relative;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .doughnut-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+  }
+  .doughnut-center-label {
+    font-size: 0.62rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  .allocation-bars { display: flex; flex-direction: column; gap: 32px; }
+  .alloc-item {}
+  .alloc-label-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .alloc-name {
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink);
+  }
+  .alloc-vals {
+    font-size: 0.75rem; color: var(--muted);
+  }
+  .alloc-track {
+    height: 6px; background: var(--paper-deep);
+    border-radius: 3px; position: relative; overflow: visible;
+    margin-bottom: 8px;
+  }
+  .alloc-bar {
+    height: 100%; border-radius: 3px;
+    position: absolute; left: 0; top: 0;
+    transition: width 1.2s cubic-bezier(0.16,1,0.3,1);
+  }
+  .alloc-bar.actual { opacity: 0.9; }
+  .alloc-benchmark-tick {
+    position: absolute; top: -5px;
+    width: 2px; height: 16px;
+    border-radius: 1px;
+    background: var(--muted);
+  }
+  .alloc-comment {
+    font-size: 0.78rem; font-weight: 300; color: var(--muted);
+    font-style: italic;
+    margin-bottom: 0;
+  }
+
+  /* ===== COMPETITORS ===== */
+  .competitor-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 48px;
+    margin-bottom: 64px;
+  }
+  .competitor-card {
+    background: white;
+    border: 1px solid var(--border-soft);
+    border-radius: 3px;
+    padding: 28px 24px;
+    position: relative;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .competitor-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(14,26,24,0.1);
+  }
+  .competitor-card.featured {
+    border-color: var(--primary);
+    background: linear-gradient(135deg, rgba(139,105,20,0.04), white);
+  }
+  .competitor-card.featured::before {
+    content: 'Subject';
+    position: absolute; top: -1px; right: 20px;
+    background: var(--primary);
+    color: white;
+    font-size: 0.58rem; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 0 0 4px 4px;
+  }
+  .comp-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem; font-weight: 500;
+    color: var(--ink); margin-bottom: 4px;
+  }
+  .comp-tag {
+    font-size: 0.7rem; font-weight: 300; color: var(--muted);
+    margin-bottom: 18px; font-style: italic;
+  }
+  .comp-zones { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+  .comp-zone-row { display: flex; align-items: center; gap: 9px; }
+  .comp-zone-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  }
+  .comp-zone-text { font-size: 0.75rem; color: var(--ink-mid); }
+  .verdict-chip {
+    display: inline-block;
+    font-size: 0.62rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 12px; border-radius: 20px;
+    background: var(--paper-warm);
+    color: var(--muted);
+  }
+
+  /* ===== S&W ===== */
+  .sw-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 56px;
+  }
+  .sw-panel {
+    background: white;
+    border-radius: 3px;
+    padding: 36px;
+    border: 1px solid var(--border-soft);
+  }
+  .sw-panel.strengths { border-top: 3px solid var(--core-green); }
+  .sw-panel.weaknesses { border-top: 3px solid var(--beyond-crimson); }
+  .sw-panel-title {
+    font-size: 0.7rem; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; margin-bottom: 28px;
+  }
+  .sw-panel.strengths .sw-panel-title { color: var(--core-green); }
+  .sw-panel.weaknesses .sw-panel-title { color: var(--beyond-crimson); }
+  .sw-item { display: flex; gap: 14px; margin-bottom: 22px; }
+  .sw-item:last-child { margin-bottom: 0; }
+  .sw-marker {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; font-weight: 600; flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .sw-panel.strengths .sw-marker { background: var(--core-green-light); color: var(--core-green); }
+  .sw-panel.weaknesses .sw-marker { background: var(--beyond-crimson-light); color: var(--beyond-crimson); }
+  .sw-text {}
+  .sw-lead { font-size: 0.875rem; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .sw-body { font-size: 0.82rem; font-weight: 300; color: var(--muted); line-height: 1.6; margin-bottom: 0; }
+
+  /* ===== DIAGNOSTIC ===== */
+  .diagnostic-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    margin-top: 56px;
+  }
+  .diag-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(139,105,20,0.2);
+    border-radius: 3px;
+    padding: 32px;
+    margin-bottom: 24px;
+  }
+  .diag-card-title {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--primary-light);
+    margin-bottom: 18px;
+  }
+  .diag-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .diag-row:last-child { border-bottom: none; }
+  .diag-row-label { font-size: 0.8rem; color: rgba(247,245,240,0.7); }
+  .diag-row-val {
+    font-size: 0.78rem; font-weight: 500;
+    padding: 3px 10px; border-radius: 20px;
+  }
+  .val-strong { background: rgba(45,106,79,0.25); color: #5BA881; }
+  .val-moderate { background: rgba(181,132,26,0.2); color: #D4A93A; }
+  .val-low { background: rgba(139,26,26,0.25); color: #D47070; }
+  .val-absent { background: rgba(255,255,255,0.07); color: rgba(247,245,240,0.4); }
+
+  .tension-block {
+    background: rgba(139,26,26,0.12);
+    border: 1px solid rgba(139,26,26,0.3);
+    border-radius: 3px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+  }
+  .tension-label {
+    font-size: 0.62rem; font-weight: 500; letter-spacing: 0.16em;
+    text-transform: uppercase; color: #D47070;
+    margin-bottom: 10px;
+  }
+  .tension-text {
+    font-size: 0.875rem; font-weight: 300; color: rgba(247,245,240,0.75);
+    line-height: 1.7; margin-bottom: 0;
+  }
+
+  .inline-zone-bar { margin-bottom: 14px; }
+  .inline-zone-bar-label {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 7px;
+  }
+  .inline-zone-bar-name { font-size: 0.75rem; color: rgba(247,245,240,0.7); }
+  .inline-zone-bar-val { font-size: 0.72rem; color: var(--muted-light); }
+  .inline-track {
+    height: 5px; background: rgba(255,255,255,0.08);
+    border-radius: 3px; position: relative;
+  }
+  .inline-fill {
+    height: 100%; border-radius: 3px; position: absolute;
+  }
+  .inline-bench {
+    position: absolute; top: -4px;
+    width: 2px; height: 13px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 1px;
+  }
+
+  .relativity-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    margin-top: 0;
+  }
+  .rel-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 3px;
+    padding: 14px 16px;
+  }
+  .rel-item-label { font-size: 0.68rem; color: var(--muted-light); margin-bottom: 4px; }
+  .rel-item-val { font-size: 0.82rem; font-weight: 500; color: rgba(247,245,240,0.85); }
+
+  /* ===== ARCHETYPE ===== */
+  .archetype-verdict {
+    text-align: center;
+    padding: 56px 0 0;
+    border-top: 1px solid rgba(139,105,20,0.2);
+    margin-top: 56px;
+  }
+  .archetype-label {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--primary-light);
+    margin-bottom: 14px;
+  }
+  .archetype-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 4vw, 3.2rem); font-weight: 300;
+    color: var(--paper);
+    margin-bottom: 16px;
+  }
+  .archetype-name em { color: var(--primary-light); font-style: italic; }
+  .archetype-desc {
+    font-size: 0.95rem; font-weight: 300;
+    color: rgba(247,245,240,0.6);
+    max-width: 600px; margin: 0 auto;
+    line-height: 1.75;
+  }
+
+  /* ===== ONE QUESTION ===== */
+  .one-question-section {
+    background: var(--primary);
+    padding: 80px 64px;
+    text-align: center;
+  }
+  .oq-label {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.22em;
+    text-transform: uppercase; color: rgba(255,255,255,0.6);
+    margin-bottom: 20px;
+  }
+  .oq-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.4rem, 2.8vw, 2.2rem); font-style: italic; font-weight: 300;
+    color: white;
+    max-width: 760px; margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--ink);
+    padding: 36px 64px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid rgba(139,105,20,0.15);
+  }
+  .footer-left {
+    font-size: 0.7rem; font-weight: 300; color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .footer-right {
+    font-size: 0.7rem; font-weight: 300; color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem; font-weight: 400;
+    color: rgba(247,245,240,0.3);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* ===== RADAR CHART SECTION ===== */
+  .radar-wrap {
+    background: white;
+    border: 1px solid var(--border-soft);
+    border-radius: 3px;
+    padding: 32px;
+    margin-top: 32px;
+  }
+
+  /* ===== PULL QUOTE ===== */
+  .pull-quote {
+    border-left: 3px solid var(--primary);
+    padding: 20px 28px;
+    margin: 32px 0;
+    background: var(--paper-deep);
+    border-radius: 0 3px 3px 0;
+  }
+  .pull-quote-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem; font-style: italic; font-weight: 300;
+    color: var(--ink);
+    line-height: 1.55; margin-bottom: 8px;
+  }
+  .pull-quote-source {
+    font-size: 0.68rem; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--primary);
+    margin-bottom: 0;
+  }
+  .section-ink .pull-quote, .section-deep .pull-quote {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--primary-light);
+  }
+  .section-ink .pull-quote-text { color: rgba(247,245,240,0.85); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    .hero-content { padding: 0 32px; }
+    .hero-meta { flex-wrap: wrap; gap: 16px; }
+    .hero-meta-item { border-right: none; margin-right: 0; min-width: 45%; }
+    .container { padding: 0 28px; }
+    .about-grid, .theta-grid, .allocation-grid, .sw-grid,
+    .diagnostic-grid, .competitor-grid { grid-template-columns: 1fr; }
+    .competitor-grid { grid-template-columns: 1fr 1fr; }
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .timeline-item { grid-template-columns: 70px 20px 1fr; }
+    .timeline-track { left: 70px; }
+    .belief-strip { padding: 48px 32px; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Theta Framework</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#timeline">Timeline</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#competitors">Competitors</a></li>
+    <li><a href="#diagnostic">Diagnostic</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-radial"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Framework Case Study &nbsp;&nbsp; Hard Luxury &nbsp;&nbsp; Innovation Analysis</div>
+    <h1 class="hero-headline">
+      The Decentralized <em>Fortress</em><br>of Luxury Houses
+    </h1>
+    <p class="hero-sub">
+      Richemont commands hard luxury with unmatched precision. Its Core is impenetrable, its Edge is credible, and its balance sheet is a fortress. The question no one inside is asking: what lies beyond the walls?
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Founded</div>
+        <div class="hero-meta-value">1988, Geneva</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Employees</div>
+        <div class="hero-meta-value">40,000+</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Market Cap</div>
+        <div class="hero-meta-value">~€90 Billion</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Theta Archetype</div>
+        <div class="hero-meta-value">Tech-Enabled Fortress</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section-white section-pad">
+  <div class="container">
+    <div class="fade-in">
+      <div class="section-label">The Business</div>
+      <h2>Precision over scale.<br><em>Patience over momentum.</em></h2>
+    </div>
+    <div class="about-grid fade-in">
+      <div>
+        <p>
+          Richemont is not trying to be LVMH. That distinction is not a weakness; it is the entire strategy. While rivals built sprawling empires spanning champagne to sneakers, the Rupert family chose a narrower, deeper path: own the most iconic names in hard luxury, protect their heritage with unusual patience, and let the margins speak for themselves. More than 70 percent of the group's profits now flow from just two houses, Cartier and Van Cleef and Arpels. That concentration, which looks like a liability in a diversification-obsessed era, has proven to be the source of almost everything the company does well.
+        </p>
+        <p>
+          The architecture is a holding company in the Swiss tradition: decentralized by conviction, not default. Brand CEOs operate with a level of autonomy that would seem reckless elsewhere. The implicit contract between Geneva and the maisons is: deliver on your heritage, grow on your terms, and we will leave you alone. It is an unusual agreement in an industry increasingly dominated by operational templates and shared services. Whether it is still the right structure for a company that needs to move faster in Edge and Beyond is the defining governance question of Nicolas Bos's tenure.
+        </p>
+        <div class="hidden-fact">
+          <div class="hidden-fact-label">Overlooked</div>
+          <p>In 2002, Cartier launched a lower-priced product range as part of a corporate rescue. Within two years, those entry-level pieces accounted for more than 20 percent of group sales. The company that now champions scarcity and deliberate slowdown once saved itself by democratizing access. That tension between accessibility and exclusivity has never fully been resolved.</p>
+        </div>
+      </div>
+      <div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="stat-number">€20.5<span>B</span></div>
+            <div class="stat-label">Annual Revenue (2024)</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">72<span>%</span></div>
+            <div class="stat-label">Profits from Jewelry</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">€7.6<span>B</span></div>
+            <div class="stat-label">Net Cash Position</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">126</div>
+            <div class="stat-label">Nationalities on Staff</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BELIEF STRIP -->
+<div class="belief-strip fade-in">
+  <div class="belief-quote">
+    "Wine is a lifestyle, it's not a business. What we have to do is just to be one or two percent better every year."
+  </div>
+  <div class="belief-attribution">Johann Rupert, Chairman and Founder</div>
+</div>
+
+<!-- TIMELINE -->
+<section id="timeline" class="section-paper section-pad">
+  <div class="container">
+    <div class="fade-in">
+      <div class="section-label">Origin to Present</div>
+      <h2>A company built<br>on <em>deliberate accumulation.</em></h2>
+      <p style="max-width:560px; margin-top:16px;">
+        Richemont's arc is not one of disruption or reinvention. It is a story of patient assembly, strategic patience, and the occasional bold gamble that tested the very culture it was building.
+      </p>
+    </div>
+    <div class="timeline fade-in">
+      <div class="timeline-track"></div>
+      <div class="timeline-item">
+        <div class="timeline-year">1988</div>
+        <div class="timeline-dot-wrap"><div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Origin</div>
+          <div class="timeline-title">The Spin-off That Changed Everything</div>
+          <p class="timeline-desc">Anton Rupert's luxury and tobacco interests are separated into distinct entities. The new company inherits Cartier, Piaget, Dunhill, and Montblanc — a collection of names, not yet a strategy.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1996–2000</div>
+        <div class="timeline-dot-wrap"><div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Inflection Point</div>
+          <div class="timeline-title">The Watchmaking Consolidation</div>
+          <p class="timeline-desc">Vacheron Constantin, Jaeger-LeCoultre, IWC, and A. Lange and Söhne enter the portfolio in rapid succession. In four years, Richemont secures the most formidable collection of horological heritage in private hands. It is Edge-heavy, acquisition-driven innovation.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1999</div>
+        <div class="timeline-dot-wrap"><div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Strategic Move</div>
+          <div class="timeline-title">Van Cleef and Arpels at $400M</div>
+          <p class="timeline-desc">A bet that completes the jewelry crown alongside Cartier. At the time, the price is questioned. By 2024, the maison generates revenues exceeding $4 billion annually. Patience validated.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2002</div>
+        <div class="timeline-dot-wrap"><div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Inflection Point</div>
+          <div class="timeline-title">The Crisis and the Rescue</div>
+          <p class="timeline-desc">Runaway costs, stagnant innovation, and mounting debt force Johann Rupert back into the CEO seat. He closes underperforming boutiques, replaces brand management, and restructures. Core-focused survival mode — but the rescue seeds an important cultural scar: near-collapse is possible, and it will not be forgotten.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2008</div>
+        <div class="timeline-dot-wrap"><div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Strategic Clarity</div>
+          <div class="timeline-title">Exit from Non-Luxury Assets</div>
+          <p class="timeline-desc">Tobacco and diversified holdings are sold. Richemont becomes a pure luxury play — a statement of identity as much as strategy. The message to the market: we do one thing, and we do it without compromise.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2015</div>
+        <div class="timeline-dot-wrap"><div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Inflection Point</div>
+          <div class="timeline-title">The $2.7 Billion Digital Bet</div>
+          <p class="timeline-desc">Richemont acquires YOOX NET-A-PORTER in a move that shocks the luxury establishment. It is the most aggressive Edge investment in the company's history — and ultimately one that will test the limits of a traditional luxury holding company's ability to manage a technology-driven platform.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2021</div>
+        <div class="timeline-dot-wrap"><div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Ecosystem Play</div>
+          <div class="timeline-title">Aura Blockchain Consortium</div>
+          <p class="timeline-desc">Co-founded with LVMH and Prada, Aura introduces provenance tracking at scale. By 2026, over 80 million products are registered. It is Richemont's most open, collaborative, and forward-looking structural innovation.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2024</div>
+        <div class="timeline-dot-wrap"><div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">New Chapter</div>
+          <div class="timeline-title">Nicolas Bos Takes the Group CEO Role</div>
+          <p class="timeline-desc">After a decade without a formal Group CEO, Bos — the architect of Van Cleef's remarkable revival — steps into a new kind of mandate: deepen the Core, preserve the culture, and decide how much of the future to build versus protect against.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2025</div>
+        <div class="timeline-dot-wrap"><div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Strategic Retreat</div>
+          <div class="timeline-title">YNAP Divested to Mytheresa</div>
+          <p class="timeline-desc">A decade after the bold YNAP wager, Richemont exits the investment. The divestment is pragmatic and honest — but it signals that when Edge bets demand the operational DNA of a tech company, a luxury holding company will eventually reach its limits.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section id="portfolio" class="section-white section-pad">
+  <div class="container">
+    <div class="fade-in">
+      <div class="section-label">Theta Innovation Map</div>
+      <h2>Where the bets<br>are <em>actually</em> being placed.</h2>
+      <p style="max-width:580px; margin-top:16px;">
+        Mapping Richemont's initiatives against market reach and technology change reveals a portfolio that is disciplined in the Core, credible in the Edge, and conspicuously silent in the Beyond. Each axis tells a different story about strategic intent.
+      </p>
+    </div>
+    <div class="theta-grid fade-in">
+      <div class="zone-legend">
+        <div class="zone-pill">
+          <div class="zone-icon core"></div>
+          <div>
+            <div class="zone-pill-title">Core Zone (🟩)</div>
+            <p class="zone-pill-desc">Existing markets, incremental improvement. Optimize the engine that funds everything else. Richemont does this with exceptional discipline.</p>
+          </div>
+        </div>
+        <div class="zone-pill">
+          <div class="zone-icon edge"></div>
+          <div>
+            <div class="zone-pill-title">Edge Zone (🟨)</div>
+            <p class="zone-pill-desc">New markets, architectural reconfiguration. Building the next S-curve. Richemont is active here — AI, blockchain, pre-owned. But these serve the Core rather than transcend it.</p>
+          </div>
+        </div>
+        <div class="zone-pill">
+          <div class="zone-icon beyond"></div>
+          <div>
+            <div class="zone-pill-title">Beyond Zone (🟥)</div>
+            <p class="zone-pill-desc">Speculative futures, radical bets. Planting seeds for 2040. In Richemont's portfolio, this space is largely empty — not from inability, but from cultural disposition.</p>
+          </div>
+        </div>
+        <div class="diag-card" style="background:var(--paper-warm); border-color:var(--border-soft); margin-top:8px;">
+          <div class="diag-card-title" style="color:var(--primary);">Reading This Map</div>
+          <p style="font-size:0.78rem; color:var(--muted); line-height:1.65; margin-bottom:0;">Dot size reflects relative investment level. Notice that the largest dots cluster in the lower-left: Richemont's heaviest bets remain in territory it already controls.</p>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">Initiative Scatter — Market Reach vs. Technology Change</div>
+        <canvas id="scatterChart" height="360"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section class="section-paper section-pad">
+  <div class="container">
+    <div class="fade-in">
+      <div class="section-label">Portfolio Allocation</div>
+      <h2>The 70-20-10 reality:<br><em>beautiful in the Core, cautious everywhere else.</em></h2>
+      <p style="max-width:580px; margin-top:16px;">
+        The Theta benchmark prescribes 70 percent to Core, 20 to Edge, 10 to Beyond. Richemont's actual allocation is not a strategic failure — it is a precise expression of a cultural choice. The question is whether that choice is still appropriate.
+      </p>
+    </div>
+    <div class="allocation-grid fade-in">
+      <div class="doughnut-wrap">
+        <div class="chart-title">Estimated Portfolio Allocation</div>
+        <canvas id="doughnutChart" width="260" height="260"></canvas>
+        <div style="font-size:0.72rem; color:var(--muted); text-align:center; margin-top:18px; font-style:italic; font-weight:300;">
+          Richemont does not publicly report<br>R&D split by zone; estimates based on disclosed initiatives.
+        </div>
+      </div>
+      <div class="allocation-bars">
+        <div class="alloc-item">
+          <div class="alloc-label-row">
+            <div class="alloc-name">🟩 Core</div>
+            <div class="alloc-vals">Actual ~78% &nbsp;·&nbsp; Benchmark 70%</div>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-bar actual" style="width:78%; background:var(--core-green);"></div>
+            <div class="alloc-benchmark-tick" style="left:70%;"></div>
+          </div>
+          <p class="alloc-comment">Overweight by design. Manufacturing 4.0, clienteling, boutique excellence — these are Richemont's native language. Every resource here defends what already works.</p>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-label-row">
+            <div class="alloc-name">🟨 Edge</div>
+            <div class="alloc-vals">Actual ~17% &nbsp;·&nbsp; Benchmark 20%</div>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-bar actual" style="width:17%; background:var(--edge-amber);"></div>
+            <div class="alloc-benchmark-tick" style="left:20%;"></div>
+          </div>
+          <p class="alloc-comment">Credible but not aggressive. The Lisbon Tech Hub, Aura, and Watchfinder are genuine bets — but each one ultimately serves the existing business rather than opening genuinely new territory.</p>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-label-row">
+            <div class="alloc-name">🟥 Beyond</div>
+            <div class="alloc-vals">Actual &lt;5% &nbsp;·&nbsp; Benchmark 10%</div>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-bar actual" style="width:5%; background:var(--beyond-crimson);"></div>
+            <div class="alloc-benchmark-tick" style="left:10%;"></div>
+          </div>
+          <p class="alloc-comment">The most revealing number in Richemont's portfolio. Not the size of the gap, but its nature: it is not the result of spending and failing in Beyond. It is the result of not arriving there at all.</p>
+        </div>
+        <div class="pull-quote" style="margin-top:8px;">
+          <div class="pull-quote-text">A healthy innovation portfolio spans all three zones. Companies that innovate only in the Core optimize themselves into irrelevance.</div>
+          <div class="pull-quote-source">Theta Framework — Christine Pamela</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INNOVATION CULTURE -->
+<section class="section-white section-pad">
+  <div class="container">
+    <div class="fade-in">
+      <div class="section-label">Innovation Culture</div>
+      <h2>The Maverick problem:<br><em>celebrated in Lisbon, invisible in Geneva.</em></h2>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:64px; margin-top:48px;" class="fade-in">
+      <div>
+        <h3>Where Innovation Lives</h3>
+        <p>
+          Richemont's innovation culture has always been brand-first rather than group-first. At Jaeger-LeCoultre, the culture of artisanal obsession produces masters who spend decades perfecting a single complication. At Van Cleef, the creative director holds a kind of court that would be unrecognizable in most corporate structures. These are pockets of genuine maverick energy — protected not by HR policy but by heritage.
+        </p>
+        <p>
+          The Lisbon Tech Hub, launched in 2025 with 400 specialists and an ambition to employ twice that by 2028, represents a structurally different kind of innovation. It is explicitly cross-disciplinary, deliberately separated from Geneva, and designed to move at a different tempo. In Theta terms, it functions as Richemont's closest approximation to a Skunkworks environment.
+        </p>
+        <div class="pull-quote">
+          <div class="pull-quote-text">Mavericks are the wildflowers in a monoculture. The ones who ask "why not" when everyone else says "that's not how we do things."</div>
+          <div class="pull-quote-source">Theta Framework — Christine Pamela</div>
+        </div>
+      </div>
+      <div>
+        <h3>Where It Stalls</h3>
+        <p>
+          The deeper cultural tension is structural. Richemont's decentralization model, which liberates brand creativity, simultaneously prevents group-level innovation. There is no mechanism for an idea born in the Tech Hub to reach Cartier without traversing the very bureaucracy the Hub was designed to bypass. The holding company governs capital; it does not govern culture.
+        </p>
+        <p>
+          Psychological safety assessment reveals a pattern common to family-controlled, heritage-driven organizations: dissent is tolerated within the creative ateliers, but strategic dissent — questioning the model itself — is not a celebrated practice. The dual-class share structure that concentrates 51 percent of voting rights in the Rupert family is not only a governance mechanism. It is a cultural statement that the ultimate vision belongs to the founders, and the organization's job is to execute it faithfully.
+        </p>
+        <p>
+          This is not inherently wrong. But it creates a specific innovation risk: the company is structurally dependent on the Rupert family's willingness to ask questions that its own organization is not designed to surface.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section id="competitors" class="section-paper section-pad">
+  <div class="container">
+    <div class="fade-in">
+      <div class="section-label">Competitive Positioning</div>
+      <h2>The peer group:<br><em>no one is winning the Beyond game.</em></h2>
+      <p style="max-width:580px; margin-top:16px;">
+        The most striking finding in a cross-competitor Theta analysis is not Richemont's Beyond deficit — it is that the entire luxury industry shares it. What separates the players is how they are spending their Edge investments and what kind of company they are trying to become.
+      </p>
+    </div>
+    <div class="competitor-grid fade-in">
+      <div class="competitor-card featured">
+        <div class="comp-name">Richemont</div>
+        <div class="comp-tag">Tech-Enabled Fortress</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div><span class="comp-zone-text">Core: Dominant (jewelry 72% profits)</span></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div><span class="comp-zone-text">Edge: Active, practical, AI-led</span></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson)"></div><span class="comp-zone-text">Beyond: Absent from portfolio</span></div>
+        </div>
+        <div class="verdict-chip" style="background:rgba(139,105,20,0.12); color:var(--primary);">Industry-leading Edge</div>
+      </div>
+      <div class="competitor-card">
+        <div class="comp-name">LVMH</div>
+        <div class="comp-tag">The Ecosystem Builder</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div><span class="comp-zone-text">Core: Large but softening</span></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div><span class="comp-zone-text">Edge: Broad, MaIA at scale</span></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson)"></div><span class="comp-zone-text">Beyond: Ecosystem moves (media, hospitality)</span></div>
+        </div>
+        <div class="verdict-chip">Best Beyond visibility</div>
+      </div>
+      <div class="competitor-card">
+        <div class="comp-name">Kering</div>
+        <div class="comp-tag">The Desperate Rebuilder</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div><span class="comp-zone-text">Core: Crisis (Gucci -22%)</span></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div><span class="comp-zone-text">Edge: Survival-driven, manufacturing push</span></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson)"></div><span class="comp-zone-text">Beyond: Preclusive — no capacity</span></div>
+        </div>
+        <div class="verdict-chip">High potential delta</div>
+      </div>
+      <div class="competitor-card">
+        <div class="comp-name">Hermès</div>
+        <div class="comp-tag">The Conscious Fortress</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--core-green)"></div><span class="comp-zone-text">Core: Near-perfect, €16B revenue</span></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--edge-amber)"></div><span class="comp-zone-text">Edge: Deliberately minimal</span></div>
+          <div class="comp-zone-row"><div class="comp-zone-dot" style="background:var(--beyond-crimson)"></div><span class="comp-zone-text">Beyond: Strategic absence</span></div>
+        </div>
+        <div class="verdict-chip">Long-term concentration risk</div>
+      </div>
+    </div>
+
+    <div class="fade-in">
+      <h3 style="margin-bottom:8px;">Theta Benchmark: Six Dimensions</h3>
+      <p style="margin-bottom:0; max-width:560px; font-size:0.875rem; color:var(--muted);">
+        Comparing all four groups across Core Strength, Edge Momentum, Beyond Vision, AI Readiness, Manufacturing Excellence, and Brand Ecosystem maturity.
+      </p>
+      <div class="radar-wrap" style="max-width:600px; margin-top:28px;">
+        <canvas id="radarChart" height="360"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRENGTHS AND WEAKNESSES -->
+<section class="section-white section-pad">
+  <div class="container">
+    <div class="fade-in">
+      <div class="section-label">Strategic Assessment</div>
+      <h2>What Richemont<br><em>has built and what it hasn't.</em></h2>
+    </div>
+    <div class="sw-grid fade-in">
+      <div class="sw-panel strengths">
+        <div class="sw-panel-title">Where the Company Excels</div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <div class="sw-lead">The jewelry moat is genuinely unassailable</div>
+            <p class="sw-body">Cartier and Van Cleef and Arpels generate over 70 percent of group profits at margins that exceed 30 percent. The Love bracelet has been sold continuously since 1969. This is not product-market fit; it is cultural permanence.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <div class="sw-lead">Blockchain leadership with genuine industry traction</div>
+            <p class="sw-body">Aura Blockchain Consortium has registered over 80 million products. Critically, it includes competitors. That willingness to build a collective infrastructure rather than a proprietary advantage signals a rare form of strategic generosity.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <div class="sw-lead">A balance sheet designed for patience</div>
+            <p class="sw-body">Net cash of €7.6 billion is not simply financial strength — it is the material expression of Richemont's philosophy. You do not need to chase returns when your balance sheet allows you to wait for the right ones.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <div class="sw-lead">Practical AI integration that improves before it disrupts</div>
+            <p class="sw-body">The Cartier watch identification tool — capable of identifying any piece from 174 years of history — is a precise metaphor for how Richemont approaches technology: in service of heritage, not in spite of it.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-text">
+            <div class="sw-lead">Decentralization that preserves brand individuality at scale</div>
+            <p class="sw-body">IWC and Van Cleef share a parent but not a voice. The holding company model has successfully maintained distinctive brand identities across a portfolio that could easily have been homogenized into irrelevance.</p>
+          </div>
+        </div>
+      </div>
+      <div class="sw-panel weaknesses">
+        <div class="sw-panel-title">Where the Gaps Are Showing</div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-text">
+            <div class="sw-lead">No visible Beyond portfolio — at all</div>
+            <p class="sw-body">There is no frontier research unit, no moonshot mandate, no dedicated capital for 10-year speculative bets. The absence is not from scarcity of resources. It is from absence of intent. That is a different kind of problem.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-text">
+            <div class="sw-lead">YNAP retreat signals structural limits on Edge ambition</div>
+            <p class="sw-body">A decade of investment in the world's leading luxury e-commerce platform, followed by divestment. The lesson drawn appears to be "we are not a tech platform company." The deeper question is whether that self-definition will hold as the industry evolves.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-text">
+            <div class="sw-lead">Specialist Watchmakers in structural decline without a clear next curve</div>
+            <p class="sw-body">IWC, Piaget, and Jaeger-LeCoultre declined 13 percent in 2024. The turnaround strategy — greater autonomy, high-end repositioning — is sound. But the S-curve question remains unanswered: what replaces this division if the recovery stalls?</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-text">
+            <div class="sw-lead">Governance concentration creates a single point of strategic failure</div>
+            <p class="sw-body">With 51 percent voting control held by the Rupert family on 10 percent economic ownership, the company's strategic direction depends on one family's vision. That vision has been extraordinary. What succeeds it is unclear.</p>
+          </div>
+        </div>
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-text">
+            <div class="sw-lead">China concentration without a visible mitigation strategy</div>
+            <p class="sw-body">Asia Pacific accounts for 40 percent of sales. Mainland China is moderating. The Americas and Japan are compensating. But no public roadmap addresses what structural diversification looks like over a 10-year horizon.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section id="diagnostic" class="section-ink section-pad-lg">
+  <div class="container">
+    <div class="fade-in">
+      <div class="section-label">Theta Diagnostic</div>
+      <h2>The full picture:<br><em>where the architecture holds and where it doesn't.</em></h2>
+    </div>
+    <div class="diagnostic-grid fade-in">
+      <div>
+        <div class="diag-card">
+          <div class="diag-card-title">Portfolio Mapping</div>
+          <div class="diag-row">
+            <div class="diag-row-label">Core Zone health</div>
+            <div class="diag-row-val val-strong">Dominant</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Edge Zone maturity</div>
+            <div class="diag-row-val val-moderate">Credible</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Beyond Zone presence</div>
+            <div class="diag-row-val val-absent">Absent</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">S-Curve next source identified</div>
+            <div class="diag-row-val val-moderate">Partial</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">70-20-10 alignment</div>
+            <div class="diag-row-val val-low">Skewed Core</div>
+          </div>
+        </div>
+
+        <div class="diag-card">
+          <div class="diag-card-title">Leadership and Culture</div>
+          <div class="diag-row">
+            <div class="diag-row-label">Leadership Agility</div>
+            <div class="diag-row-val val-moderate">3 / 5</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Leadership Consciousness</div>
+            <div class="diag-row-val val-strong">4 / 5</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Leadership Courage</div>
+            <div class="diag-row-val val-moderate">3 / 5</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Maverick protection</div>
+            <div class="diag-row-val val-moderate">Partial</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Failure intelligence</div>
+            <div class="diag-row-val val-low">Low</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Psychological safety</div>
+            <div class="diag-row-val val-low">Low (outside Hub)</div>
+          </div>
+        </div>
+
+        <div class="diag-card">
+          <div class="diag-card-title">Mavericks and Risk Tolerance</div>
+          <div class="diag-row">
+            <div class="diag-row-label">Mavericks: do they exist?</div>
+            <div class="diag-row-val val-moderate">Yes, but hidden</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Space to operate freely</div>
+            <div class="diag-row-val val-moderate">Structured only</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Failure tolerated as learning</div>
+            <div class="diag-row-val val-moderate">In tech; not in product</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Cultural risk tolerance</div>
+            <div class="diag-row-val val-low">Conservative</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="diag-card">
+          <div class="diag-card-title">Zone Allocation vs. Theta Benchmark</div>
+          <div class="inline-zone-bar">
+            <div class="inline-zone-bar-label">
+              <span class="inline-zone-bar-name">🟩 Core</span>
+              <span class="inline-zone-bar-val">~78% actual &nbsp;|&nbsp; 70% benchmark</span>
+            </div>
+            <div class="inline-track">
+              <div class="inline-fill" style="width:78%; background:var(--core-green);"></div>
+              <div class="inline-bench" style="left:70%;"></div>
+            </div>
+          </div>
+          <div class="inline-zone-bar">
+            <div class="inline-zone-bar-label">
+              <span class="inline-zone-bar-name">🟨 Edge</span>
+              <span class="inline-zone-bar-val">~17% actual &nbsp;|&nbsp; 20% benchmark</span>
+            </div>
+            <div class="inline-track">
+              <div class="inline-fill" style="width:34%; background:var(--edge-amber);"></div>
+              <div class="inline-bench" style="left:40%;"></div>
+            </div>
+          </div>
+          <div class="inline-zone-bar" style="margin-bottom:0;">
+            <div class="inline-zone-bar-label">
+              <span class="inline-zone-bar-name">🟥 Beyond</span>
+              <span class="inline-zone-bar-val">&lt;5% actual &nbsp;|&nbsp; 10% benchmark</span>
+            </div>
+            <div class="inline-track">
+              <div class="inline-fill" style="width:10%; background:var(--beyond-crimson);"></div>
+              <div class="inline-bench" style="left:20%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tension-block">
+          <div class="tension-label">Critical Tension</div>
+          <p class="tension-text">
+            Richemont's greatest structural risk is not competitive — LVMH and Kering face their own vulnerabilities. It is philosophical. The company is built on the belief that the definition of luxury is stable: that what made a Cartier tank watch covetable in 1950 will continue to make it covetable in 2040. That belief has been correct for 35 years. The question is whether it will remain correct for the next 35 — and whether Richemont is structurally capable of testing the assumption.
+          </p>
+        </div>
+
+        <div class="diag-card">
+          <div class="diag-card-title">Customer Signal Architecture</div>
+          <div class="diag-row">
+            <div class="diag-row-label">Listening to Early Majority</div>
+            <div class="diag-row-val val-strong">Strong</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Early Adopter signal capture</div>
+            <div class="diag-row-val val-moderate">Partial</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Non-consumption analysis</div>
+            <div class="diag-row-val val-absent">None visible</div>
+          </div>
+          <div class="diag-row">
+            <div class="diag-row-label">Innovator-segment listening</div>
+            <div class="diag-row-val val-low">Weak</div>
+          </div>
+        </div>
+
+        <div class="diag-card">
+          <div class="diag-card-title">Relativity Assessment</div>
+          <div class="relativity-grid">
+            <div class="rel-item">
+              <div class="rel-item-label">vs. Luxury Peers</div>
+              <div class="rel-item-val">At benchmark</div>
+            </div>
+            <div class="rel-item">
+              <div class="rel-item-label">vs. Tech Sector</div>
+              <div class="rel-item-val">Below</div>
+            </div>
+            <div class="rel-item">
+              <div class="rel-item-label">vs. Own Ambition</div>
+              <div class="rel-item-val">On track</div>
+            </div>
+            <div class="rel-item">
+              <div class="rel-item-label">vs. Historical Self</div>
+              <div class="rel-item-val">Improving</div>
+            </div>
+            <div class="rel-item" style="grid-column:1/-1;">
+              <div class="rel-item-label">vs. Frontier Possibility</div>
+              <div class="rel-item-val" style="color:#D47070;">Far</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="archetype-verdict fade-in">
+      <div class="archetype-label">Theta Strategic Archetype</div>
+      <div class="archetype-name">The <em>Tech-Enabled Fortress</em></div>
+      <p class="archetype-desc">
+        Core: impenetrable. Edge: credible and practically deployed. Beyond: silent. Richemont is not ignoring the future — it is betting that the future, for luxury, looks very much like the present: rarer, more beautiful, better authenticated. That is a coherent vision. It is also a single point of philosophical failure.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ONE QUESTION -->
+<div class="one-question-section fade-in">
+  <div class="oq-label">The Theta One Question</div>
+  <div class="oq-text">
+    "If you are not imagining 2040 today, who is — and what are they imagining?"
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-logo">Theta Framework</div>
+    <div style="margin-top:6px;">By Christine Pamela &nbsp;·&nbsp; Strategic Case Study Series &nbsp;·&nbsp; 2025</div>
+  </div>
+  <div class="footer-right">Strategic Case Study</div>
+</footer>
+
+<script>
+  // ===== SCROLL ANIMATIONS =====
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // ===== CHART DEFAULTS =====
+  Chart.defaults.font.family = "'DM Sans', sans-serif";
+  const tooltipBg = 'rgba(14,26,24,0.92)';
+  const ttDefaults = {
+    backgroundColor: tooltipBg,
+    titleColor: '#F7F5F0',
+    bodyColor: 'rgba(247,245,240,0.75)',
+    borderColor: 'rgba(139,105,20,0.3)',
+    borderWidth: 1,
+    padding: 12,
+    cornerRadius: 3
+  };
+
+  // ===== SCATTER CHART =====
+  const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+  const scatterData = {
+    datasets: [
+      {
+        label: 'Core Zone',
+        data: [
+          { x: 1.1, y: 1.3, label: 'Manufacturing 4.0' },
+          { x: 1.3, y: 1.6, label: 'Clienteling AI' },
+          { x: 1.2, y: 1.1, label: 'Boutique Excellence' },
+          { x: 1.8, y: 1.9, label: 'Watchfinder' },
+        ],
+        backgroundColor: 'rgba(45,106,79,0.75)',
+        pointRadius: [14, 12, 10, 13],
+        pointHoverRadius: [16, 14, 12, 15],
+      },
+      {
+        label: 'Edge Zone',
+        data: [
+          { x: 2.4, y: 2.8, label: 'Lisbon Tech Hub' },
+          { x: 2.5, y: 2.6, label: 'YNAP (divested)' },
+          { x: 2.9, y: 3.1, label: 'Aura Blockchain' },
+          { x: 3.0, y: 3.3, label: 'AI Forecasting' },
+        ],
+        backgroundColor: 'rgba(181,132,26,0.75)',
+        pointRadius: [16, 11, 14, 12],
+        pointHoverRadius: [18, 13, 16, 14],
+      },
+      {
+        label: 'Beyond Zone',
+        data: [
+          { x: 3.5, y: 4.1, label: 'Digital Twins' },
+          { x: 3.7, y: 4.4, label: 'Gen AI Storytelling' },
+        ],
+        backgroundColor: 'rgba(139,26,26,0.65)',
+        pointRadius: [9, 8],
+        pointHoverRadius: [11, 10],
+      }
+    ]
+  };
+
+  const labelPlugin = {
+    id: 'pointLabels',
+    afterDatasetsDraw(chart) {
+      const ctx = chart.ctx;
+      chart.data.datasets.forEach((dataset, i) => {
+        const meta = chart.getDatasetMeta(i);
+        meta.data.forEach((point, j) => {
+          const label = dataset.data[j].label;
+          if (!label) return;
+          ctx.save();
+          ctx.font = '500 11px DM Sans, sans-serif';
+          ctx.fillStyle = 'rgba(30,45,42,0.85)';
+          ctx.fillText(label, point.x + (dataset.pointRadius[j] || 8) + 5, point.y + 4);
+          ctx.restore();
+        });
+      });
+    }
+  };
+
+  new Chart(scatterCtx, {
+    type: 'scatter',
+    data: scatterData,
+    plugins: [labelPlugin],
+    options: {
+      responsive: true,
+      animation: { duration: 1200, easing: 'easeOutQuart' },
+      scales: {
+        x: {
+          min: 0.5, max: 4.5,
+          title: { display: true, text: 'Market Reach  →  Existing · New · Emerging · Speculative', font: { size: 10, weight: '500' }, color: '#8A9490' },
+          grid: { color: 'rgba(139,105,20,0.07)' },
+          ticks: { display: false }
+        },
+        y: {
+          min: 0.5, max: 5.2,
+          title: { display: true, text: 'Technology Change  →  Low · Moderate · High · Radical', font: { size: 10, weight: '500' }, color: '#8A9490' },
+          grid: { color: 'rgba(139,105,20,0.07)' },
+          ticks: { display: false }
+        }
+      },
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, pointStyleWidth: 10, font: { size: 11 }, color: '#2E3F3C' } },
+        tooltip: { ...ttDefaults, callbacks: { label: (ctx) => ' ' + ctx.raw.label } }
+      }
+    }
+  });
+
+  // ===== DOUGHNUT CHART =====
+  const dCtx = document.getElementById('doughnutChart').getContext('2d');
+  new Chart(dCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Core (~78%)', 'Edge (~17%)', 'Beyond (<5%)'],
+      datasets: [{
+        data: [78, 17, 5],
+        backgroundColor: ['rgba(45,106,79,0.85)', 'rgba(181,132,26,0.85)', 'rgba(139,26,26,0.75)'],
+        borderWidth: 0,
+        hoverOffset: 4
+      }]
+    },
+    options: {
+      cutout: '68%',
+      responsive: true,
+      animation: { duration: 1400, easing: 'easeOutQuart' },
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, font: { size: 11 }, color: '#2E3F3C' } },
+        tooltip: { ...ttDefaults }
+      }
+    }
+  });
+
+  // ===== RADAR CHART =====
+  const rCtx = document.getElementById('radarChart').getContext('2d');
+  new Chart(rCtx, {
+    type: 'radar',
+    data: {
+      labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'AI Readiness', 'Manufacturing', 'Brand Ecosystem'],
+      datasets: [
+        {
+          label: 'Richemont',
+          data: [90, 78, 12, 74, 82, 65],
+          backgroundColor: 'rgba(139,105,20,0.15)',
+          borderColor: 'rgba(139,105,20,0.9)',
+          pointBackgroundColor: 'rgba(139,105,20,0.9)',
+          borderWidth: 2, pointRadius: 4
+        },
+        {
+          label: 'LVMH',
+          data: [72, 72, 30, 70, 75, 80],
+          backgroundColor: 'rgba(45,106,79,0.1)',
+          borderColor: 'rgba(45,106,79,0.7)',
+          pointBackgroundColor: 'rgba(45,106,79,0.7)',
+          borderWidth: 1.5, pointRadius: 3
+        },
+        {
+          label: 'Kering',
+          data: [38, 55, 10, 50, 48, 45],
+          backgroundColor: 'rgba(139,26,26,0.08)',
+          borderColor: 'rgba(139,26,26,0.55)',
+          pointBackgroundColor: 'rgba(139,26,26,0.55)',
+          borderWidth: 1.5, pointRadius: 3
+        },
+        {
+          label: 'Hermès',
+          data: [98, 22, 5, 30, 92, 55],
+          backgroundColor: 'rgba(100,100,120,0.08)',
+          borderColor: 'rgba(100,100,150,0.55)',
+          pointBackgroundColor: 'rgba(100,100,150,0.55)',
+          borderWidth: 1.5, pointRadius: 3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      animation: { duration: 1400 },
+      scales: {
+        r: {
+          min: 0, max: 100,
+          grid: { color: 'rgba(139,105,20,0.12)' },
+          angleLines: { color: 'rgba(139,105,20,0.12)' },
+          pointLabels: { font: { size: 11, weight: '500' }, color: '#2E3F3C' },
+          ticks: { display: false }
+        }
+      },
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, font: { size: 11 }, color: '#2E3F3C' } },
+        tooltip: { ...ttDefaults }
+      }
+    }
+  });
+</script>
+</body>
+</html>
