@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prada Group — The Innovation Gap Behind One of Fashion's Most Admired Houses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --prada-black: #0A0A0A;
+    --prada-gold: #B8A07A;
+    --prada-gold-light: #D4BC98;
+    --ink: #0E1A18;
+    --ink-soft: #1E2D2A;
+    --paper: #F7F5F0;
+    --paper-warm: #EFEBE2;
+    --muted: #8A9490;
+    --core-green: #2D6A4F;
+    --core-green-light: #4A9270;
+    --edge-amber: #B5841A;
+    --edge-amber-light: #D4A030;
+    --beyond-crimson: #8B1A1A;
+    --beyond-crimson-light: #B02020;
+    --border-warm: rgba(184,160,122,0.18);
+    --border-dark: rgba(184,160,122,0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3rem;
+    height: 64px;
+    background: rgba(10,10,10,0.82);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(184,160,122,0.12);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.35em;
+    color: var(--prada-gold);
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--prada-gold); }
+  .nav-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(184,160,122,0.6);
+    font-weight: 300;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    background: var(--prada-black);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(184,160,122,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(184,160,122,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridDrift 25s linear infinite;
+  }
+  @keyframes gridDrift {
+    0% { background-position: 0 0; }
+    100% { background-position: 60px 60px; }
+  }
+
+  .hero-radial {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 75% 45%, rgba(184,160,122,0.06) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 15% 70%, rgba(139,26,26,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-noise {
+    position: absolute;
+    inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 3rem;
+    padding-top: 64px;
+  }
+
+  .hero-kicker {
+    font-size: 0.65rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--prada-gold);
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .hero-kicker::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 1px;
+    background: var(--prada-gold);
+    opacity: 0.6;
+  }
+
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.2rem, 6vw, 5.8rem);
+    font-weight: 300;
+    line-height: 1.05;
+    color: #fff;
+    max-width: 820px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.5s;
+  }
+  .hero-headline em {
+    font-style: italic;
+    color: var(--prada-gold);
+  }
+
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.5);
+    max-width: 560px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.75s;
+  }
+
+  .hero-meta {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    border-top: 1px solid rgba(184,160,122,0.12);
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 1.1s;
+  }
+  .hero-meta-item {
+    padding: 1.6rem 3rem;
+    border-right: 1px solid rgba(184,160,122,0.12);
+  }
+  .hero-meta-item:last-child { border-right: none; }
+  .meta-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(184,160,122,0.5);
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+  .meta-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    color: rgba(255,255,255,0.85);
+    font-weight: 400;
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    right: 3rem;
+    bottom: 7.5rem;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards 1.4s;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, rgba(184,160,122,0.6), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%,100% { opacity: 0.4; transform: scaleY(0.8); }
+    50% { opacity: 1; transform: scaleY(1); }
+  }
+  .scroll-text {
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(184,160,122,0.4);
+    writing-mode: vertical-rl;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ── SECTIONS ── */
+  section { position: relative; }
+
+  .section-white { background: #fff; }
+  .section-paper { background: var(--paper-warm); }
+  .section-ink {
+    background: var(--ink);
+    color: #fff;
+  }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 7rem 3rem;
+  }
+
+  .section-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--prada-gold);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--prada-gold);
+    opacity: 0.6;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 4vw, 3.6rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 3rem;
+    color: var(--ink);
+  }
+  .section-ink .section-title { color: #fff; }
+
+  .section-title em { font-style: italic; color: var(--prada-gold); }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+  .about-prose p {
+    font-size: 1.02rem;
+    line-height: 1.85;
+    color: #2A2A2A;
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+  }
+  .hidden-fact {
+    margin-top: 2.5rem;
+    background: var(--ink);
+    color: #fff;
+    padding: 2rem 2.2rem;
+    border-left: 2px solid var(--prada-gold);
+  }
+  .hidden-fact-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--prada-gold);
+    margin-bottom: 0.8rem;
+  }
+  .hidden-fact p {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.75);
+    font-weight: 300;
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border-warm);
+  }
+  .stat-cell {
+    background: var(--paper);
+    padding: 2rem 1.8rem;
+  }
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.2rem;
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .stat-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+
+  /* ── BELIEF STRIP ── */
+  .belief-strip {
+    background: var(--ink);
+    padding: 5rem 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .belief-strip::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(184,160,122,0.05) 0%, transparent 70%);
+  }
+  .belief-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 3vw, 2.6rem);
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(255,255,255,0.92);
+    max-width: 820px;
+    margin: 0 auto;
+    line-height: 1.4;
+    position: relative;
+    z-index: 1;
+  }
+  .belief-quote span { color: var(--prada-gold); }
+  .belief-attr {
+    margin-top: 1.5rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(184,160,122,0.5);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 3.5rem; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--prada-gold), rgba(184,160,122,0.1));
+  }
+  .tl-item {
+    position: relative;
+    padding-bottom: 3.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .tl-item.visible { opacity: 1; transform: translateY(0); }
+  .tl-dot {
+    position: absolute;
+    left: -3.85rem;
+    top: 0.3rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--paper-warm);
+    border: 1.5px solid var(--prada-gold);
+  }
+  .tl-dot.filled {
+    background: var(--prada-gold);
+    box-shadow: 0 0 12px rgba(184,160,122,0.4);
+  }
+  .tl-year {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    color: var(--prada-gold);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3rem;
+  }
+  .tl-phase {
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .tl-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-bottom: 0.6rem;
+    color: var(--ink);
+  }
+  .tl-desc {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #4A4A4A;
+    font-weight: 300;
+    max-width: 600px;
+  }
+
+  /* ── THETA MAP ── */
+  .theta-map-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .zone-legend { display: flex; flex-direction: column; gap: 1.2rem; }
+  .zone-pill {
+    padding: 1.5rem 1.8rem;
+    border-left: 3px solid;
+    background: rgba(0,0,0,0.015);
+  }
+  .zone-pill.core { border-color: var(--core-green); }
+  .zone-pill.edge { border-color: var(--edge-amber); }
+  .zone-pill.beyond { border-color: var(--beyond-crimson); }
+
+  .zone-pill-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+  .zone-pill.core .zone-pill-label { color: var(--core-green); }
+  .zone-pill.edge .zone-pill-label { color: var(--edge-amber); }
+  .zone-pill.beyond .zone-pill-label { color: var(--beyond-crimson); }
+
+  .zone-pill-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+    font-weight: 300;
+  }
+
+  .reading-card {
+    margin-top: 2rem;
+    padding: 1.5rem 1.8rem;
+    border: 1px solid var(--border-warm);
+    background: rgba(184,160,122,0.03);
+  }
+  .reading-card-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--prada-gold);
+    margin-bottom: 0.8rem;
+  }
+  .reading-card p {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  .chart-container { position: relative; width: 100%; height: 440px; }
+
+  /* ── ALLOCATION ── */
+  .alloc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .alloc-donut-wrap { position: relative; width: 100%; height: 340px; }
+  .alloc-donut-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+    pointer-events: none;
+  }
+  .alloc-donut-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--ink);
+    display: block;
+    line-height: 1.2;
+  }
+  .alloc-donut-sub {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-top: 0.3rem;
+  }
+
+  .alloc-bars { display: flex; flex-direction: column; gap: 2.5rem; }
+  .alloc-bar-item {}
+  .alloc-bar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.6rem;
+  }
+  .alloc-bar-name {
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .alloc-bar-name.core { color: var(--core-green); }
+  .alloc-bar-name.edge { color: var(--edge-amber); }
+  .alloc-bar-name.beyond { color: var(--beyond-crimson); }
+  .alloc-bar-pcts {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--muted);
+  }
+  .alloc-bar-track {
+    height: 6px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 3px;
+    position: relative;
+    margin-bottom: 0.8rem;
+  }
+  .alloc-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    position: absolute;
+    left: 0;
+    transition: width 1.2s ease;
+  }
+  .alloc-bar-fill.actual { top: 0; }
+  .alloc-bar-fill.target {
+    top: 0;
+    opacity: 0.3;
+  }
+  .alloc-commentary {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  /* ── COMPETITORS ── */
+  .competitor-grid {
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap: 1rem;
+    margin-bottom: 4rem;
+  }
+  .comp-card {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.07);
+    padding: 1.6rem 1.4rem;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .comp-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.08);
+  }
+  .comp-card.featured {
+    border-color: rgba(184,160,122,0.4);
+    background: rgba(184,160,122,0.03);
+  }
+  .comp-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+    color: var(--ink);
+  }
+  .comp-tag {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 1.2rem;
+    line-height: 1.4;
+  }
+  .comp-zone-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.78rem;
+    color: #444;
+  }
+  .comp-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .comp-dot.core { background: var(--core-green); }
+  .comp-dot.edge { background: var(--edge-amber); }
+  .comp-dot.beyond { background: var(--beyond-crimson); }
+  .comp-verdict {
+    margin-top: 1.2rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.7rem;
+    display: inline-block;
+    border-radius: 2px;
+  }
+  .verdict-lead { background: rgba(45,106,79,0.1); color: var(--core-green); }
+  .verdict-contend { background: rgba(181,132,26,0.1); color: var(--edge-amber); }
+  .verdict-pivot { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+  .verdict-strug { background: rgba(100,100,100,0.1); color: var(--muted); }
+
+  .radar-wrap { max-width: 540px; margin: 0 auto; }
+
+  /* ── S&W ── */
+  .sw-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+  .sw-panel {
+    padding: 2.5rem;
+    border-top: 2px solid;
+  }
+  .sw-panel.strengths { border-color: var(--core-green); background: rgba(45,106,79,0.03); }
+  .sw-panel.weaknesses { border-color: var(--beyond-crimson); background: rgba(139,26,26,0.03); }
+  .sw-panel-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+    color: var(--ink);
+  }
+  .sw-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    align-items: flex-start;
+  }
+  .sw-marker {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .sw-marker.s { background: rgba(45,106,79,0.12); color: var(--core-green); }
+  .sw-marker.w { background: rgba(139,26,26,0.12); color: var(--beyond-crimson); }
+  .sw-item-body {}
+  .sw-item-lead {
+    font-weight: 500;
+    font-size: 0.92rem;
+    color: var(--ink);
+    margin-bottom: 0.35rem;
+  }
+  .sw-item-desc {
+    font-size: 0.84rem;
+    line-height: 1.65;
+    color: #555;
+    font-weight: 300;
+  }
+
+  /* ── DIAGNOSTIC ── */
+  .diag-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  .diag-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(184,160,122,0.1);
+    padding: 2rem 2.2rem;
+    margin-bottom: 1.5rem;
+  }
+  .diag-card-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--prada-gold);
+    margin-bottom: 1rem;
+  }
+  .diag-card p {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.6);
+    font-weight: 300;
+  }
+
+  .leader-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .leader-name {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.75);
+  }
+  .leader-bar-track {
+    flex: 1;
+    margin: 0 1.2rem;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    position: relative;
+  }
+  .leader-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--prada-gold);
+  }
+  .leader-score {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--prada-gold);
+    width: 2.5rem;
+    text-align: right;
+  }
+
+  .tension-box {
+    background: rgba(139,26,26,0.12);
+    border: 1px solid rgba(139,26,26,0.25);
+    padding: 1.8rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .tension-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--beyond-crimson-light);
+    margin-bottom: 0.8rem;
+  }
+  .tension-box p {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.65);
+    font-weight: 300;
+  }
+
+  .zone-inline-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.1rem;
+  }
+  .zib-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    width: 4.5rem;
+    flex-shrink: 0;
+  }
+  .zib-label.core { color: var(--core-green-light); }
+  .zib-label.edge { color: var(--edge-amber-light); }
+  .zib-label.beyond { color: var(--beyond-crimson-light); }
+  .zib-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    position: relative;
+  }
+  .zib-actual, .zib-target {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1.2s ease;
+  }
+  .zib-actual { opacity: 0.9; z-index: 2; }
+  .zib-target { opacity: 0.25; z-index: 1; }
+  .core .zib-actual, .zib-actual.core { background: var(--core-green); }
+  .core .zib-target, .zib-target.core { background: var(--core-green); }
+  .edge .zib-actual, .zib-actual.edge { background: var(--edge-amber); }
+  .edge .zib-target, .zib-target.edge { background: var(--edge-amber); }
+  .beyond .zib-actual, .zib-actual.beyond { background: var(--beyond-crimson); }
+  .beyond .zib-target, .zib-target.beyond { background: var(--beyond-crimson); }
+  .zib-pcts {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.5);
+    width: 5rem;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .verdict-archetype {
+    margin-top: 3rem;
+    border-top: 1px solid rgba(184,160,122,0.15);
+    padding-top: 2.5rem;
+  }
+  .archetype-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.2rem;
+  }
+  .archetype-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--prada-gold);
+  }
+  .archetype-chips {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .archetype-chip {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .chip-ok { background: rgba(45,106,79,0.2); color: var(--core-green-light); }
+  .chip-mid { background: rgba(181,132,26,0.2); color: var(--edge-amber-light); }
+  .chip-low { background: rgba(139,26,26,0.2); color: var(--beyond-crimson-light); }
+  .verdict-archetype p {
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: rgba(255,255,255,0.55);
+    font-weight: 300;
+    max-width: 700px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--prada-black);
+    padding: 2.5rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(184,160,122,0.1);
+  }
+  .footer-left {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(184,160,122,0.35);
+  }
+  .footer-right {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(184,160,122,0.35);
+  }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 0 1.5rem; }
+    .nav-links { display: none; }
+    .hero-content { padding: 0 1.5rem; padding-top: 64px; }
+    .hero-meta { grid-template-columns: repeat(2,1fr); }
+    .scroll-indicator { display: none; }
+    .section-inner { padding: 4rem 1.5rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .theta-map-grid { grid-template-columns: 1fr; }
+    .alloc-grid { grid-template-columns: 1fr; }
+    .competitor-grid { grid-template-columns: 1fr 1fr; }
+    .sw-grid { grid-template-columns: 1fr; }
+    .diag-grid { grid-template-columns: 1fr; }
+    .belief-strip { padding: 3.5rem 1.5rem; }
+    footer { flex-direction: column; gap: 0.8rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">Prada</span>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#timeline">Timeline</a></li>
+    <li><a href="#innovation">Innovation Map</a></li>
+    <li><a href="#competitors">Competitors</a></li>
+    <li><a href="#diagnostic">Diagnostic</a></li>
+  </ul>
+  <span class="nav-tag">Theta Framework / Strategic Case Study</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-radial"></div>
+  <div class="hero-noise"></div>
+
+  <div class="hero-content">
+    <p class="hero-kicker">Theta Innovation Framework &nbsp;|&nbsp; Portfolio Governance Series</p>
+    <h1 class="hero-headline">The Innovation Gap Behind<br>One of Fashion's Most<br><em>Admired Houses.</em></h1>
+    <p class="hero-sub">Prada Group has built something rare: a house whose cultural brilliance is beyond question. What the numbers surface, quietly but unmistakably, is the distance between that brilliance and the systematic future-building that the next decade will demand.</p>
+  </div>
+
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <span class="meta-label">Founded</span>
+      <span class="meta-value">Milan, 1913</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="meta-label">Group Revenue (2025)</span>
+      <span class="meta-value">€5.72 Billion</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="meta-label">Maisons</span>
+      <span class="meta-value">Prada / Miu Miu / Versace</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="meta-label">Theta Archetype</span>
+      <span class="meta-value">Disciplined Explorer</span>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section-white" id="about">
+  <div class="section-inner">
+    <p class="section-label fade-up">The Company</p>
+    <h2 class="section-title fade-up">A brand built on the<br>courage to be <em>misunderstood.</em></h2>
+
+    <div class="about-grid">
+      <div class="about-prose fade-up">
+        <p>Prada does not fit the conventional narrative of luxury. Founded as a leather goods shop in Milan in 1913, it spent its first six decades in quiet respectability before nearly collapsing in the 1970s. What saved it was not a rescue from a conglomerate, a celebrity endorsement campaign, or a market pivot. What saved it was a philosophy: the conviction that intelligence, not aspiration, should be the currency of luxury.</p>
+        <p>When Miuccia Prada and Patrizio Bertelli took the helm in 1978, they were an improbable pairing. She was a political science graduate and Communist activist who described herself as ashamed to make handbags. He was an industrial operator with an obsessive eye for manufacturing precision. Together, they created something luxury had rarely seen: a house with a genuine point of view. Not about status. About ideas.</p>
+        <p>The nylon backpack of the 1980s, the "ugly chic" collections of 1996, the Miu Miu phenomenon of the 2020s, and now the audacious acquisition of Versace in 2025 are not separate events. They are chapters in a single story about a company that has always grown by refusing to do what was expected of it. The question the Theta lens surfaces is sharper: does that instinct, powerful as it is, constitute a systematic innovation strategy? Or is it something more fragile?</p>
+
+        <div class="hidden-fact">
+          <p class="hidden-fact-label">Less Known</p>
+          <p>Miuccia Prada holds a PhD in political science and spent years training as a mime artist at the Piccolo Teatro di Milano before fashion found her. The same theatrical instinct for embodying contradictions, and the political training in questioning power structures, runs through every Prada collection. The house was not built by a designer. It was built by a philosopher who could also cut a coat.</p>
+        </div>
+      </div>
+
+      <div class="fade-up">
+        <div class="stat-grid">
+          <div class="stat-cell">
+            <span class="stat-number">+35%</span>
+            <span class="stat-desc">Miu Miu retail growth in 2025, making it the group's undisputed growth engine</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-number">&minus;1%</span>
+            <span class="stat-desc">Main Prada brand retail performance in 2025, flat against a growing group</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-number">€1.25B</span>
+            <span class="stat-desc">Acquisition price for Versace in December 2025, the group's largest strategic bet</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-number">3%</span>
+            <span class="stat-desc">Estimated investment in Beyond zone innovation, against a 10% industry benchmark</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BELIEF STRIP -->
+<div class="belief-strip">
+  <p class="belief-quote">"I'm not interested in making beautiful clothes. I'm interested in making clothes that <span>mean something.</span>"</p>
+  <p class="belief-attr">Miuccia Prada &nbsp;&mdash;&nbsp; Founder and Creative Director</p>
+</div>
+
+<!-- TIMELINE -->
+<section class="section-paper" id="timeline">
+  <div class="section-inner">
+    <p class="section-label fade-up">Innovation Arc</p>
+    <h2 class="section-title fade-up">A company that has always grown <em>against the grain.</em></h2>
+
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-year">1913</p>
+        <p class="tl-phase">Foundation</p>
+        <h3 class="tl-title">A leather goods shop in Milan</h3>
+        <p class="tl-desc">Mario Prada opens Fratelli Prada selling leather goods, luggage, and accessories to Milan's aristocracy. A solid Core business, deeply conventional, with no particular innovation ambition beyond quality. Mario famously believed women had no place running the company.</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot filled"></div>
+        <p class="tl-year">1978</p>
+        <p class="tl-phase">Inflection Point / Maverick Arrival</p>
+        <h3 class="tl-title">The Communist Takes the Helm</h3>
+        <p class="tl-desc">Miuccia Prada, granddaughter of Mario, assumes leadership alongside Patrizio Bertelli, defying the family's patriarchal legacy. She brings an entirely different orientation: political, intellectual, and skeptical of fashion's complicity in vanity. The house is near bankruptcy. The reinvention begins not with a strategy, but with a worldview.</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot filled"></div>
+        <p class="tl-year">1984 &ndash; 1989</p>
+        <p class="tl-phase">Edge Breakthrough / Disruptive Product</p>
+        <h3 class="tl-title">The Nylon Backpack Rewrites Luxury</h3>
+        <p class="tl-desc">Prada introduces a backpack made from military-grade Pocono nylon, the same fabric used in parachutes. In a market saturated with leather and status insignia, this was the opposite of what anyone expected. Critics were baffled. Consumers made it a cultural totem. The lesson embedded itself in the brand's DNA: the most radical move is often the most restrained one.</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-year">1992</p>
+        <p class="tl-phase">Adjacent Expansion</p>
+        <h3 class="tl-title">Miu Miu Is Born</h3>
+        <p class="tl-desc">Miuccia launches Miu Miu, named after her childhood nickname, as a laboratory for ideas too experimental for the main line. It is positioned as younger, more playful, more willing to fail. At the time, few see it as the future growth engine it will become. It is a seed planted without expectation of a particular harvest.</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot filled"></div>
+        <p class="tl-year">1996</p>
+        <p class="tl-phase">Cultural Rupture / The "Ugly Chic" Moment</p>
+        <h3 class="tl-title">Banal Eccentricity and the Shift in What Beautiful Means</h3>
+        <p class="tl-desc">While Tom Ford's Gucci is selling sex and supermodels, Miuccia presents a collection in muddy browns, avocado greens, and 1950s domestic prints. Critics call it "sludge." Industry observers are baffled. Within a decade, every major fashion house has adopted the aesthetic vocabulary she invented. She did not follow beauty. She moved the definition of it.</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-year">2000 &ndash; 2015</p>
+        <p class="tl-phase">Consolidation / Core Dominance</p>
+        <h3 class="tl-title">The Scaling Years</h3>
+        <p class="tl-desc">Bertelli builds one of luxury's most sophisticated industrial operations: owned manufacturing, vertical integration, global retail expansion. The house becomes profitable and respected. Critical acclaim is sustained. But the innovation metabolism slows. The Core is optimized; the Edge is explored within limits; the Beyond is essentially absent. This is the period that sets the structural patterns Prada is still managing today.</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-year">2019</p>
+        <p class="tl-phase">Edge Initiative / Sustainability</p>
+        <h3 class="tl-title">Re-Nylon and the Aura Blockchain</h3>
+        <p class="tl-desc">Prada converts its iconic nylon to Re-Nylon, made from recycled ocean plastics and fishing nets, and becomes a founding member of the Aura Blockchain Consortium alongside LVMH and Richemont. Both moves signal genuine commitment to innovation beyond product. Neither is yet scaled into a transformational capability.</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-year">2020</p>
+        <p class="tl-phase">Creative Partnership / Edge</p>
+        <h3 class="tl-title">Raf Simons Joins as Co-Creative Director</h3>
+        <p class="tl-desc">Simons, whose own industrial design background mirrors Miuccia's cross-disciplinary instincts, is brought in to share creative direction. Collections earn near-universal critical acclaim. The partnership is culturally significant. Yet the commercial translation into ready-to-wear growth and new customer acquisition remains the missing link between brilliant Edge and scalable Core.</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot filled"></div>
+        <p class="tl-year">2022 &ndash; 2025</p>
+        <p class="tl-phase">Growth Divergence / The Two-Speed Company</p>
+        <h3 class="tl-title">Miu Miu Explodes. Prada Stalls.</h3>
+        <p class="tl-desc">Miu Miu achieves 93% growth in 2024 and 35% in 2025, driven by the girlhood aesthetic, viral products, and Gen Z cultural capture. The main Prada brand declines one percent in 2025. The first non-family CEO, Gianfranco D'Attis, departs after two years. The group is healthy; the flagship is stagnant. The innovation gap between the two brands becomes impossible to ignore.</p>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot filled"></div>
+        <p class="tl-year">2025</p>
+        <p class="tl-phase">Strategic Expansion / Portfolio Bet</p>
+        <h3 class="tl-title">Versace: The Most Consequential Bet in Prada's History</h3>
+        <p class="tl-desc">Prada acquires Versace for €1.25 billion from Capri Holdings. Versace arrives in operating loss, with revenue of €684 million and a 20% sales decline. Pieter Mulier is appointed Creative Director, with a first collection planned for 2027. The acquisition is adjacent, not transformational. It diversifies the Core portfolio. It does not create a new S-curve.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section class="section-white" id="innovation">
+  <div class="section-inner">
+    <p class="section-label fade-up">Innovation Portfolio</p>
+    <h2 class="section-title fade-up">The map reveals what <em>the narrative conceals.</em></h2>
+
+    <div class="theta-map-grid fade-up">
+      <div>
+        <div class="zone-legend">
+          <div class="zone-pill core">
+            <p class="zone-pill-label">Core Zone</p>
+            <p class="zone-pill-desc">Existing markets, incremental improvement. Optimize and defend. The engine that funds everything else.</p>
+          </div>
+          <div class="zone-pill edge">
+            <p class="zone-pill-label">Edge Zone</p>
+            <p class="zone-pill-desc">Moderate to high technology change, new market reach. Build the next S-curve before the current one collapses.</p>
+          </div>
+          <div class="zone-pill beyond">
+            <p class="zone-pill-label">Beyond Zone</p>
+            <p class="zone-pill-desc">Radical bets, speculative horizons. Plant seeds for 2030 and beyond. Where the future of luxury is being decided.</p>
+          </div>
+        </div>
+        <div class="reading-card">
+          <p class="reading-card-label">How to Read This Map</p>
+          <p>Each dot represents a current Prada initiative. Horizontal position reflects market reach: existing to speculative. Vertical position reflects technology change: incremental to extreme. Dot size reflects investment weight. The pattern tells the story the balance sheet does not.</p>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="scatterChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section class="section-paper">
+  <div class="section-inner">
+    <p class="section-label fade-up">70 / 20 / 10 Analysis</p>
+    <h2 class="section-title fade-up">Where resources actually go <em>versus where they should.</em></h2>
+
+    <div class="alloc-grid fade-up">
+      <div>
+        <div class="alloc-donut-wrap">
+          <canvas id="donutChart"></canvas>
+          <div class="alloc-donut-overlay">
+            <span class="alloc-donut-label">All Three<br>Zones Active</span>
+            <span class="alloc-donut-sub">Allocation imbalanced</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="alloc-bars">
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-name core">Core Zone</span>
+            <span class="alloc-bar-pcts">Actual 85% &nbsp;/&nbsp; Target 70%</span>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill actual" style="width:85%;background:var(--core-green);"></div>
+            <div class="alloc-bar-fill target" style="width:70%;background:var(--core-green);top:0;"></div>
+          </div>
+          <p class="alloc-commentary">Prada is fifteen points overweight in Core. The Versace acquisition is the largest driver: a multi-billion integration consuming leadership attention, operational bandwidth, and strategic capital. Core is not a problem unless it crowds out the zones that build the future, which here, it does.</p>
+        </div>
+
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-name edge">Edge Zone</span>
+            <span class="alloc-bar-pcts">Actual 12% &nbsp;/&nbsp; Target 20%</span>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill actual" style="width:12%;background:var(--edge-amber);"></div>
+            <div class="alloc-bar-fill target" style="width:20%;background:var(--edge-amber);top:0;"></div>
+          </div>
+          <p class="alloc-commentary">Nearly all of Prada's Edge investment is Miu Miu. A single point of success is not a portfolio. Miu Miu will mature. The Aura Blockchain and Re-Nylon are Edge-adjacent but underfunded as platforms. The gap between stated ambition and Edge allocation is eight percentage points of compounding strategic risk.</p>
+        </div>
+
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-name beyond">Beyond Zone</span>
+            <span class="alloc-bar-pcts">Actual 3% &nbsp;/&nbsp; Target 10%</span>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-fill actual" style="width:3%;background:var(--beyond-crimson);"></div>
+            <div class="alloc-bar-fill target" style="width:10%;background:var(--beyond-crimson);top:0;"></div>
+          </div>
+          <p class="alloc-commentary">Three percent. This is the number that should concern any portfolio governance leader examining Prada. LVMH and Kering are both investing at or above the ten percent benchmark in Beyond. Prada has no formalized R&D for biotech materials, no circular economy platform, and no systematic AI integration. The seeds for 2030 are not being planted.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section class="section-white" id="competitors">
+  <div class="section-inner">
+    <p class="section-label fade-up">Competitive Positioning</p>
+    <h2 class="section-title fade-up">Who is building the future <em>of luxury</em>, and who is managing it?</h2>
+
+    <div class="competitor-grid fade-up">
+
+      <div class="comp-card featured">
+        <p class="comp-name">Prada Group</p>
+        <p class="comp-tag">Intellectual anchor. Dual-speed portfolio. Versace integration in progress.</p>
+        <div class="comp-zone-row"><div class="comp-dot core"></div><span>Core: Profitable but stagnant flagship</span></div>
+        <div class="comp-zone-row"><div class="comp-dot edge"></div><span>Edge: Miu Miu excelling; single point of reliance</span></div>
+        <div class="comp-zone-row"><div class="comp-dot beyond"></div><span>Beyond: Re-Nylon, Aura; structurally underweight</span></div>
+        <span class="comp-verdict verdict-contend">Disciplined Explorer</span>
+      </div>
+
+      <div class="comp-card">
+        <p class="comp-name">LVMH</p>
+        <p class="comp-tag">75 Maisons. Decentralized innovation. AI embedded in operations.</p>
+        <div class="comp-zone-row"><div class="comp-dot core"></div><span>Core: Systematic retail innovation across all Maisons</span></div>
+        <div class="comp-zone-row"><div class="comp-dot edge"></div><span>Edge: Multiple simultaneous bets; new categories, new creative directors</span></div>
+        <div class="comp-zone-row"><div class="comp-dot beyond"></div><span>Beyond: AI for design, operations, client augmentation at scale</span></div>
+        <span class="comp-verdict verdict-lead">Balanced Builder</span>
+      </div>
+
+      <div class="comp-card">
+        <p class="comp-name">Kering</p>
+        <p class="comp-tag">Explicit 70-20-10 framework. Gucci-dependent. Building adjacent platforms.</p>
+        <div class="comp-zone-row"><div class="comp-dot core"></div><span>Core: AI inventory forecasting, supply chain optimization</span></div>
+        <div class="comp-zone-row"><div class="comp-dot edge"></div><span>Edge: Kering Beaute, Kering Eyewear as new engines</span></div>
+        <div class="comp-zone-row"><div class="comp-dot beyond"></div><span>Beyond: Early; intentional framework but uneven execution</span></div>
+        <span class="comp-verdict verdict-contend">Disciplined Explorer</span>
+      </div>
+
+      <div class="comp-card">
+        <p class="comp-name">Hermes</p>
+        <p class="comp-tag">Scarcity as strategy. Craft as moat. Unmatched pricing power.</p>
+        <div class="comp-zone-row"><div class="comp-dot core"></div><span>Core: Excellence by design; scarcity and wait-lists are strategy</span></div>
+        <div class="comp-zone-row"><div class="comp-dot edge"></div><span>Edge: Selective; new categories only when craft standards are met</span></div>
+        <div class="comp-zone-row"><div class="comp-dot beyond"></div><span>Beyond: Minimal; philosophy makes radical bets ideologically difficult</span></div>
+        <span class="comp-verdict verdict-lead">Profitable Stagnant (by design)</span>
+      </div>
+
+      <div class="comp-card">
+        <p class="comp-name">Kering / Gucci</p>
+        <p class="comp-tag">Creative transition. Declining revenue. Searching for next identity.</p>
+        <div class="comp-zone-row"><div class="comp-dot core"></div><span>Core: Under pressure; revenue declining despite operational investment</span></div>
+        <div class="comp-zone-row"><div class="comp-dot edge"></div><span>Edge: Sabato De Sarno creative direction not yet gaining traction</span></div>
+        <div class="comp-zone-row"><div class="comp-dot beyond"></div><span>Beyond: Virtual worlds investments; early traction unclear</span></div>
+        <span class="comp-verdict verdict-strug">Transitioning</span>
+      </div>
+
+    </div>
+
+    <div class="radar-wrap fade-up">
+      <canvas id="radarChart" style="max-height:420px;"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- STRENGTHS & WEAKNESSES -->
+<section class="section-paper">
+  <div class="section-inner">
+    <p class="section-label fade-up">Strategic Profile</p>
+    <h2 class="section-title fade-up">The assets are extraordinary.<br><em>So are the gaps.</em></h2>
+
+    <div class="sw-grid fade-up">
+      <div class="sw-panel strengths">
+        <h3 class="sw-panel-title">Where Prada Leads</h3>
+
+        <div class="sw-item">
+          <div class="sw-marker s">S</div>
+          <div class="sw-item-body">
+            <p class="sw-item-lead">Maverick DNA embedded in the founding identity</p>
+            <p class="sw-item-desc">Miuccia Prada is not a designed persona. She is genuinely a political activist who reframed what beauty means in fashion. That authentic unconventionality is nearly impossible to replicate and functions as a structural competitive advantage in a market where authenticity is everything.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker s">S</div>
+          <div class="sw-item-body">
+            <p class="sw-item-lead">Miu Miu as a proven Edge engine</p>
+            <p class="sw-item-desc">With 35% growth in 2025 following 93% in 2024, Miu Miu demonstrates that Prada knows how to build an Edge success. The girlhood aesthetic, viral product strategy, and Gen Z cultural capture show a house that can read early adopter signals and scale them. The question is whether this capability lives in the organization or in one brand.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker s">S</div>
+          <div class="sw-item-body">
+            <p class="sw-item-lead">Vertical integration as a quality and sustainability moat</p>
+            <p class="sw-item-desc">Prada's owned manufacturing infrastructure, including its Tuscan industrial park, provides quality control, traceability, and manufacturing credibility that few competitors can claim. Re-Nylon's authenticity as a sustainability initiative depends entirely on this control. Rivals are trying to build what Prada already has.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker s">S</div>
+          <div class="sw-item-body">
+            <p class="sw-item-lead">Aura Blockchain as an undervalued strategic asset</p>
+            <p class="sw-item-desc">As a founding member of the Aura Blockchain Consortium with LVMH and Richemont, Prada has positioned itself at the intersection of luxury and digital trust. Digital product passports, authentication, and circularity tracking are not marketing initiatives. They are infrastructure for the next decade of luxury commerce.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker s">S</div>
+          <div class="sw-item-body">
+            <p class="sw-item-lead">Creative courage with a commercial floor</p>
+            <p class="sw-item-desc">Prada has consistently made bold creative moves that initially confounded the market and later defined it. The 1996 "ugly chic" collection, the nylon bet, the Raf Simons partnership: each was counterintuitive. Yet the group remains profitable. The combination of creative risk-taking with operational discipline is rare in luxury.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sw-panel weaknesses">
+        <h3 class="sw-panel-title">Where Prada Lags</h3>
+
+        <div class="sw-item">
+          <div class="sw-marker w">W</div>
+          <div class="sw-item-body">
+            <p class="sw-item-lead">Single point of Edge failure in Miu Miu</p>
+            <p class="sw-item-desc">Miu Miu is carrying the entire Edge portfolio. When a brand this dependent on cultural momentum eventually matures, as all brands do, there is no second Edge engine ready. The group's innovation diversity is dangerously low for a company with multi-brand ambitions.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker w">W</div>
+          <div class="sw-item-body">
+            <p class="sw-item-lead">The Beyond zone is functionally absent</p>
+            <p class="sw-item-desc">Three percent of innovation investment in the Beyond zone is not a strategy. It is an oversight. While competitors build AI capabilities, biotech material pipelines, and circular platform infrastructure, Prada has no formal function, no dedicated budget, and no systematic talent acquisition for the 2030 luxury landscape.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker w">W</div>
+          <div class="sw-item-body">
+            <p class="sw-item-lead">The Raf Simons partnership has not translated commercially</p>
+            <p class="sw-item-desc">Five years into one of the most critically acclaimed creative partnerships in fashion, the main Prada brand declined one percent in 2025. Cultural significance and commercial performance are decoupled. There is no systematic mechanism to translate runway brilliance into new customer acquisition or category expansion. This is the innovation bottleneck in the creative-to-commercial pipeline.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker w">W</div>
+          <div class="sw-item-body">
+            <p class="sw-item-lead">A two-speed organizational culture that limits signal flow</p>
+            <p class="sw-item-desc">Creative teams operate in a high-trust, psychologically safe environment. Operational teams do not. This means the most valuable signals, the front-line observations from store associates, customer service interactions, and supply chain anomalies, rarely reach strategy. An organization cannot innovate systematically with only half of its intelligence activated.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker w">W</div>
+          <div class="sw-item-body">
+            <p class="sw-item-lead">Versace introduces complexity without a new S-curve</p>
+            <p class="sw-item-desc">The acquisition is strategically coherent as portfolio diversification. But Versace arrived in operating loss with a 20% revenue decline. It will absorb leadership attention, capital, and operational focus for at least two to three years. During that same window, competitors will be compounding their AI, sustainability, and platform capabilities. Prada is managing a turnaround when it should be building a future.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section class="section-ink" id="diagnostic">
+  <div class="section-inner">
+    <p class="section-label fade-up" style="color:var(--prada-gold);">Theta Diagnostic</p>
+    <h2 class="section-title fade-up" style="color:#fff;">The full picture, stripped of <em>narrative comfort.</em></h2>
+
+    <div class="diag-grid fade-up">
+
+      <div>
+        <div class="diag-card">
+          <p class="diag-card-label">Innovation Archetype Mapping</p>
+          <p>Core initiatives cluster around Versace integration, Prada brand optimization, and Re-Nylon extension. Edge is almost exclusively Miu Miu with nascent Aura development. Beyond is effectively absent, represented by isolated sustainability R&D and the SEA BEYOND UNESCO partnership, neither of which constitutes a systematic capability-building program.</p>
+        </div>
+
+        <div class="diag-card">
+          <p class="diag-card-label">Leadership and Culture</p>
+          <div style="margin-top:0.5rem;">
+            <div class="leader-row">
+              <span class="leader-name">Leadership Courage</span>
+              <div class="leader-bar-track"><div class="leader-bar-fill" style="width:75%;"></div></div>
+              <span class="leader-score">3.75</span>
+            </div>
+            <div class="leader-row">
+              <span class="leader-name">Leadership Consciousness</span>
+              <div class="leader-bar-track"><div class="leader-bar-fill" style="width:70%;"></div></div>
+              <span class="leader-score">3.50</span>
+            </div>
+            <div class="leader-row">
+              <span class="leader-name">Leadership Agility</span>
+              <div class="leader-bar-track"><div class="leader-bar-fill" style="width:65%;"></div></div>
+              <span class="leader-score">3.25</span>
+            </div>
+            <div class="leader-row">
+              <span class="leader-name">Psychological Safety</span>
+              <div class="leader-bar-track"><div class="leader-bar-fill" style="width:56%;"></div></div>
+              <span class="leader-score">2.80</span>
+            </div>
+            <div class="leader-row">
+              <span class="leader-name">Failure Intelligence</span>
+              <div class="leader-bar-track"><div class="leader-bar-fill" style="width:40%;"></div></div>
+              <span class="leader-score">2.00</span>
+            </div>
+            <div class="leader-row" style="border-bottom:none;">
+              <span class="leader-name">Open Source Ethos</span>
+              <div class="leader-bar-track"><div class="leader-bar-fill" style="width:60%;"></div></div>
+              <span class="leader-score">3.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="diag-card">
+          <p class="diag-card-label">Mavericks and Innovation Culture</p>
+          <p>Prada's creative mavericks, led by Miuccia and Raf Simons, are among the most protected and celebrated in the industry. The organizational failure is the boundary: maverick protection ends where the creative department ends. Operational mavericks, those who question supply chain assumptions, retail models, or brand positioning from outside the design studio, are not systematically identified, protected, or leveraged. The maverick inventory is rich but geographically constrained.</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="diag-card">
+          <p class="diag-card-label">Customer Signal Architecture</p>
+          <p>Prada listens well to its mainstream customers and, through Miu Miu, to early adopters in the Gen Z segment. The structural gap is in non-consumer analysis and innovator-tier signals. The customers who are confused by Prada, who considered it and chose otherwise, and the consumers who do not yet know they need what Prada could offer, are not systematically captured. Those are precisely the signals that generate breakthrough innovation.</p>
+        </div>
+
+        <div class="tension-box">
+          <p class="tension-label">Critical Structural Tension</p>
+          <p>Prada's most significant innovation risk is philosophical, not financial. Miuccia Prada's worldview, shaped by political science, feminist activism, and a deep skepticism of commercialism and technology, is the source of the brand's Edge brilliance. It is also the source of its Beyond blindness. The same instincts that made Prada matter are resisting the systematic, technology-forward, platform-driven investment that the 2030 luxury landscape will demand. This tension is not resolvable by hiring alone.</p>
+        </div>
+
+        <div class="diag-card">
+          <p class="diag-card-label">Zone Allocation vs. Benchmark</p>
+          <div style="margin-top:1rem;">
+            <div class="zone-inline-bar">
+              <span class="zib-label core">Core</span>
+              <div class="zib-track">
+                <div class="zib-actual core" style="width:85%;"></div>
+                <div class="zib-target core" style="width:70%;"></div>
+              </div>
+              <span class="zib-pcts">85% / 70%</span>
+            </div>
+            <div class="zone-inline-bar">
+              <span class="zib-label edge">Edge</span>
+              <div class="zib-track">
+                <div class="zib-actual edge" style="width:12%;"></div>
+                <div class="zib-target edge" style="width:20%;"></div>
+              </div>
+              <span class="zib-pcts">12% / 20%</span>
+            </div>
+            <div class="zone-inline-bar">
+              <span class="zib-label beyond">Beyond</span>
+              <div class="zib-track">
+                <div class="zib-actual beyond" style="width:3%;"></div>
+                <div class="zib-target beyond" style="width:10%;"></div>
+              </div>
+              <span class="zib-pcts">3% / 10%</span>
+            </div>
+          </div>
+          <p style="margin-top:1rem;font-size:0.75rem;color:rgba(255,255,255,0.35);line-height:1.5;">Solid bars = actual allocation. Transparent bars = Theta benchmark target.</p>
+        </div>
+
+        <div class="diag-card">
+          <p class="diag-card-label">Relativity Assessment</p>
+          <p>Against direct luxury competitors, Prada performs above average, Miu Miu's cultural leadership and group profitability are genuine. Against tech sector benchmarks and digital native companies, Prada is materially behind in AI, data ecosystems, and platform thinking. Against its own stated ambition of becoming a multi-brand group competing with LVMH, it remains structurally undersized, with a combined revenue of approximately six billion against LVMH's eighty-six billion. The gap between narrative ambition and capability investment is the defining strategic risk.</p>
+        </div>
+
+        <div class="verdict-archetype">
+          <div class="archetype-row">
+            <span class="archetype-title">Disciplined Explorer</span>
+            <div class="archetype-chips">
+              <span class="archetype-chip chip-ok">Core ✓</span>
+              <span class="archetype-chip chip-mid">Edge &#9651;</span>
+              <span class="archetype-chip chip-low">Beyond ✗</span>
+            </div>
+          </div>
+          <p>Prada is a company with genuine intellectual courage, a proven Edge success in Miu Miu, and a Core that funds both. What it does not have is a systematic capability for the future. The Disciplined Explorer archetype describes a company that knows how to explore, has the discipline to fund it, but has not yet formalized the Beyond horizon as a strategic imperative. The next five years will determine whether that omission is recoverable or consequential.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-left">Theta Innovation Framework &nbsp;|&nbsp; By Christine Pamela &nbsp;|&nbsp; 2025</span>
+  <span class="footer-right">Strategic Case Study &nbsp;|&nbsp; Portfolio Governance Series</span>
+</footer>
+
+<script>
+// ── SCROLL ANIMATIONS ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.fade-up, .tl-item').forEach(el => observer.observe(el));
+
+// ── CHART DEFAULTS ──
+Chart.defaults.font.family = 'DM Sans, sans-serif';
+Chart.defaults.color = '#8A9490';
+
+const tooltipDefaults = {
+  backgroundColor: 'rgba(14,26,24,0.94)',
+  titleColor: '#D4BC98',
+  bodyColor: 'rgba(255,255,255,0.72)',
+  borderColor: 'rgba(184,160,122,0.2)',
+  borderWidth: 1,
+  padding: 12,
+  cornerRadius: 2,
+};
+
+// ── SCATTER CHART ──
+const scatterData = {
+  datasets: [
+    {
+      label: 'Core Zone',
+      data: [
+        { x: 1.2, y: 1.1, label: 'Re-Nylon Program' },
+        { x: 1.5, y: 1.3, label: 'Versace Integration' },
+        { x: 1.1, y: 1.0, label: 'Prada Leather Goods' },
+        { x: 2.0, y: 1.2, label: 'Rong Zhai Cultural Space' },
+        { x: 1.8, y: 1.1, label: 'Luna Rossa Partnership' },
+        { x: 1.3, y: 1.2, label: 'Prada RTW Expansion' },
+      ],
+      backgroundColor: 'rgba(45,106,79,0.75)',
+      borderColor: 'rgba(45,106,79,0.9)',
+      pointRadius: (ctx) => {
+        const sizes = [14, 22, 18, 10, 10, 13];
+        return sizes[ctx.dataIndex] || 12;
+      },
+      pointHoverRadius: 16,
+    },
+    {
+      label: 'Edge Zone',
+      data: [
+        { x: 3.2, y: 2.8, label: 'Miu Miu Global' },
+        { x: 2.4, y: 2.2, label: 'Aura Blockchain' },
+        { x: 2.6, y: 2.4, label: 'Digital Product Passports' },
+        { x: 2.2, y: 2.0, label: 'Gen Z Social Commerce' },
+      ],
+      backgroundColor: 'rgba(181,132,26,0.75)',
+      borderColor: 'rgba(181,132,26,0.9)',
+      pointRadius: [22, 12, 12, 10],
+      pointHoverRadius: 16,
+    },
+    {
+      label: 'Beyond Zone',
+      data: [
+        { x: 3.8, y: 3.5, label: 'Sustainable Materials R&D' },
+        { x: 3.4, y: 3.2, label: 'Circular Fashion Exploration' },
+      ],
+      backgroundColor: 'rgba(139,26,26,0.75)',
+      borderColor: 'rgba(139,26,26,0.9)',
+      pointRadius: [9, 8],
+      pointHoverRadius: 14,
+    }
+  ]
+};
+
+const labelPlugin = {
+  id: 'pointLabels',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    chart.data.datasets.forEach((dataset, di) => {
+      const meta = chart.getDatasetMeta(di);
+      meta.data.forEach((point, i) => {
+        const label = dataset.data[i].label;
+        if (!label) return;
+        ctx.save();
+        ctx.font = '500 11px DM Sans, sans-serif';
+        ctx.fillStyle = 'rgba(30,30,30,0.75)';
+        ctx.textAlign = 'left';
+        ctx.fillText(label, point.x + (chart.data.datasets[di].pointRadius?.[i] || 12) + 6, point.y + 4);
+        ctx.restore();
+      });
+    });
+  }
+};
+
+new Chart(document.getElementById('scatterChart'), {
+  type: 'scatter',
+  data: scatterData,
+  plugins: [labelPlugin],
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { padding: 20, pointStyle: 'circle', usePointStyle: true }
+      },
+      tooltip: {
+        ...tooltipDefaults,
+        callbacks: {
+          label: ctx => `${ctx.dataset.data[ctx.dataIndex].label || ''}`
+        }
+      }
+    },
+    scales: {
+      x: {
+        min: 0, max: 5,
+        title: {
+          display: true,
+          text: 'Market Reach  →  Existing · New · Emerging · Speculative',
+          color: '#8A9490',
+          font: { size: 11, weight: '400' },
+          padding: { top: 12 }
+        },
+        ticks: { display: false },
+        grid: { color: 'rgba(184,160,122,0.06)' },
+        border: { color: 'rgba(184,160,122,0.15)' }
+      },
+      y: {
+        min: 0, max: 5,
+        title: {
+          display: true,
+          text: 'Technology Change  →  Incremental · Moderate · High · Radical · Extreme',
+          color: '#8A9490',
+          font: { size: 11, weight: '400' },
+          padding: { bottom: 12 }
+        },
+        ticks: { display: false },
+        grid: { color: 'rgba(184,160,122,0.06)' },
+        border: { color: 'rgba(184,160,122,0.15)' }
+      }
+    }
+  }
+});
+
+// ── DONUT CHART ──
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Core Zone (85%)', 'Edge Zone (12%)', 'Beyond Zone (3%)'],
+    datasets: [{
+      data: [85, 12, 3],
+      backgroundColor: [
+        'rgba(45,106,79,0.8)',
+        'rgba(181,132,26,0.8)',
+        'rgba(139,26,26,0.8)'
+      ],
+      borderWidth: 0,
+      cutout: '68%'
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { padding: 18, pointStyle: 'circle', usePointStyle: true }
+      },
+      tooltip: {
+        ...tooltipDefaults,
+        callbacks: {
+          label: ctx => ` ${ctx.label}`
+        }
+      }
+    }
+  }
+});
+
+// ── RADAR CHART ──
+new Chart(document.getElementById('radarChart'), {
+  type: 'radar',
+  data: {
+    labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'Brand Equity', 'Sustainability', 'Digital Ecosystem'],
+    datasets: [
+      {
+        label: 'Prada Group',
+        data: [72, 60, 22, 82, 65, 38],
+        backgroundColor: 'rgba(184,160,122,0.12)',
+        borderColor: 'rgba(184,160,122,0.8)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(184,160,122,0.9)',
+        pointRadius: 4,
+      },
+      {
+        label: 'LVMH',
+        data: [92, 85, 82, 95, 72, 88],
+        backgroundColor: 'rgba(45,106,79,0.08)',
+        borderColor: 'rgba(45,106,79,0.7)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(45,106,79,0.8)',
+        pointRadius: 4,
+      },
+      {
+        label: 'Kering',
+        data: [68, 62, 60, 78, 75, 58],
+        backgroundColor: 'rgba(181,132,26,0.08)',
+        borderColor: 'rgba(181,132,26,0.7)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(181,132,26,0.8)',
+        pointRadius: 4,
+      },
+      {
+        label: 'Hermes',
+        data: [88, 45, 28, 98, 60, 35],
+        backgroundColor: 'rgba(139,26,26,0.08)',
+        borderColor: 'rgba(139,26,26,0.7)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(139,26,26,0.8)',
+        pointRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { padding: 18, pointStyle: 'circle', usePointStyle: true }
+      },
+      tooltip: tooltipDefaults
+    },
+    scales: {
+      r: {
+        min: 0,
+        max: 100,
+        ticks: { display: false },
+        grid: { color: 'rgba(184,160,122,0.1)' },
+        angleLines: { color: 'rgba(184,160,122,0.1)' },
+        pointLabels: { font: { size: 11 }, color: '#4A4A4A' }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
