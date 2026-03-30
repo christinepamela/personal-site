@@ -1,0 +1,2000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bayer AG — Theta Innovation Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bayer-blue: #10519E;
+    --bayer-green: #00A651;
+    --bayer-accent: #C8A951;
+    --ink: #0E1A18;
+    --ink-soft: #1E2D2A;
+    --paper: #F7F5F0;
+    --paper-warm: #EFEBE2;
+    --muted: #8A9490;
+    --core-green: #2D6A4F;
+    --edge-amber: #B5841A;
+    --beyond-crimson: #8B1A1A;
+    --border: rgba(16,81,158,0.13);
+    --border-warm: rgba(16,81,158,0.09);
+    --nav-h: 64px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ─────────────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: var(--nav-h);
+    background: rgba(247,245,240,0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--bayer-blue);
+    letter-spacing: 0.02em;
+  }
+  .nav-logo span { font-style: italic; color: var(--bayer-accent); }
+  .nav-links {
+    display: flex; gap: 36px; list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.7rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--bayer-blue); }
+
+  /* ── HERO ────────────────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    background: var(--ink);
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 120px 80px 80px;
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(16,81,158,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(16,81,158,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridDrift 20s linear infinite;
+  }
+  @keyframes gridDrift {
+    from { transform: translate(0,0); }
+    to { transform: translate(60px, 60px); }
+  }
+
+  .hero-radial {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 55% at 70% 40%, rgba(16,81,158,0.22) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(200,169,81,0.1) 0%, transparent 60%);
+  }
+
+  .hero-noise {
+    position: absolute; inset: 0; pointer-events: none; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 820px; }
+
+  .hero-kicker {
+    font-size: 0.68rem; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--bayer-accent);
+    margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 5.5vw, 5rem);
+    font-weight: 300;
+    color: #F0EDE6;
+    line-height: 1.08;
+    margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+  }
+  .hero-headline em {
+    font-style: italic;
+    color: var(--bayer-accent);
+  }
+
+  .hero-sub {
+    font-size: 1.05rem; font-weight: 300; line-height: 1.7;
+    color: rgba(240,237,230,0.62);
+    max-width: 580px; margin-bottom: 64px;
+    opacity: 0; animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-meta {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid rgba(240,237,230,0.12);
+    padding-top: 32px; gap: 0;
+    opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .hero-meta-item {
+    padding: 0 28px 0 0;
+    border-right: 1px solid rgba(240,237,230,0.1);
+  }
+  .hero-meta-item:first-child { padding-left: 0; }
+  .hero-meta-item:last-child { border-right: none; }
+  .meta-label {
+    font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(240,237,230,0.38); margin-bottom: 6px;
+  }
+  .meta-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem; font-weight: 500; color: rgba(240,237,230,0.85);
+  }
+
+  .scroll-indicator {
+    position: absolute; right: 48px; bottom: 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    opacity: 0; animation: fadeUp 1s 1.2s forwards;
+  }
+  .scroll-line {
+    width: 1px; height: 64px; background: rgba(240,237,230,0.15);
+    position: relative; overflow: hidden;
+  }
+  .scroll-line::after {
+    content: ''; position: absolute; top: -100%; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(to bottom, transparent, var(--bayer-accent));
+    animation: scrollAnim 2s 1.5s ease-in-out infinite;
+  }
+  @keyframes scrollAnim {
+    0% { top: -100%; } 100% { top: 100%; }
+  }
+  .scroll-text {
+    font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(240,237,230,0.3); writing-mode: vertical-rl;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTIONS COMMON ─────────────────────────────────── */
+  section { padding: 100px 80px; }
+
+  .section-kicker {
+    font-size: 0.62rem; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--bayer-blue);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 400; line-height: 1.15;
+    color: var(--ink); margin-bottom: 48px;
+  }
+  .section-title em { font-style: italic; color: var(--bayer-accent); }
+
+  .section-title-light {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 400; line-height: 1.15;
+    color: #F0EDE6; margin-bottom: 48px;
+  }
+  .section-title-light em { font-style: italic; color: var(--bayer-accent); }
+
+  .reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── ABOUT ───────────────────────────────────────────── */
+  .about-section { background: #fff; }
+
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start;
+  }
+
+  .about-prose p {
+    font-size: 1.02rem; line-height: 1.82; color: #2A3632;
+    margin-bottom: 22px; font-weight: 300;
+  }
+
+  .hidden-fact {
+    margin-top: 32px;
+    background: var(--ink);
+    border-radius: 2px;
+    padding: 28px 32px;
+    position: relative; overflow: hidden;
+  }
+  .hidden-fact::before {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+    background: var(--bayer-accent);
+  }
+  .hf-label {
+    font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--bayer-accent); margin-bottom: 10px;
+  }
+  .hf-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem; font-style: italic;
+    color: rgba(240,237,230,0.85); line-height: 1.6;
+  }
+
+  .stat-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+  }
+  .stat-card {
+    background: var(--paper-warm);
+    padding: 36px 32px;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem; font-weight: 300; color: var(--bayer-blue);
+    line-height: 1; margin-bottom: 8px;
+  }
+  .stat-label {
+    font-size: 0.72rem; font-weight: 400; letter-spacing: 0.06em;
+    color: var(--muted); text-transform: uppercase;
+  }
+
+  .belief-strip {
+    margin-top: 72px;
+    background: var(--bayer-blue);
+    padding: 56px 80px;
+    position: relative; overflow: hidden;
+  }
+  .belief-strip::before {
+    content: '\201C';
+    position: absolute; top: -20px; left: 60px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18rem; line-height: 1;
+    color: rgba(255,255,255,0.04);
+    pointer-events: none;
+  }
+  .belief-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.4rem, 2.5vw, 2.1rem);
+    font-style: italic; font-weight: 300;
+    color: rgba(240,237,230,0.9);
+    line-height: 1.5; max-width: 760px;
+    position: relative; z-index: 1;
+  }
+  .belief-attr {
+    margin-top: 20px;
+    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(240,237,230,0.45);
+    position: relative; z-index: 1;
+  }
+
+  /* ── TIMELINE ────────────────────────────────────────── */
+  .timeline-section { background: var(--paper-warm); }
+
+  .timeline {
+    position: relative;
+    padding-left: 120px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 80px; top: 0; bottom: 0;
+    width: 1px; background: rgba(16,81,158,0.18);
+  }
+
+  .tl-item {
+    position: relative;
+    padding-bottom: 48px;
+  }
+  .tl-item:last-child { padding-bottom: 0; }
+
+  .tl-dot {
+    position: absolute; left: -48px; top: 6px;
+    width: 12px; height: 12px; border-radius: 50%;
+    border: 2px solid var(--bayer-blue);
+    background: var(--paper-warm);
+    transform: translateX(-50%);
+  }
+  .tl-dot.filled { background: var(--bayer-blue); }
+  .tl-dot.milestone {
+    width: 16px; height: 16px;
+    border-color: var(--bayer-accent);
+    background: var(--bayer-accent);
+    box-shadow: 0 0 0 4px rgba(200,169,81,0.2);
+  }
+
+  .tl-year {
+    position: absolute; left: -120px; top: 2px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem; font-weight: 500;
+    color: var(--bayer-blue); width: 60px; text-align: right;
+  }
+
+  .tl-phase {
+    display: inline-block;
+    font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--bayer-accent); margin-bottom: 6px;
+  }
+
+  .tl-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem; font-weight: 500; color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .tl-desc {
+    font-size: 0.88rem; line-height: 1.7; color: #4A5650; font-weight: 300;
+    max-width: 560px;
+  }
+
+  .tl-inflection {
+    margin-top: 10px;
+    background: rgba(16,81,158,0.06);
+    border-left: 2px solid var(--bayer-blue);
+    padding: 10px 16px;
+    font-size: 0.82rem; font-style: italic; color: var(--bayer-blue);
+    max-width: 520px;
+  }
+
+  /* ── THETA MAP ───────────────────────────────────────── */
+  .theta-section { background: #fff; }
+
+  .theta-grid {
+    display: grid; grid-template-columns: 1fr 1.5fr; gap: 64px; align-items: start;
+  }
+
+  .zone-legend { margin-bottom: 32px; }
+  .zone-pill {
+    display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px;
+  }
+  .zone-dot {
+    width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-top: 3px;
+  }
+  .zone-dot.core { background: var(--core-green); }
+  .zone-dot.edge { background: var(--edge-amber); }
+  .zone-dot.beyond { background: var(--beyond-crimson); }
+
+  .zone-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem; font-weight: 500; color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .zone-desc {
+    font-size: 0.78rem; line-height: 1.55; color: var(--muted); font-weight: 300;
+  }
+
+  .reading-card {
+    background: var(--paper-warm);
+    padding: 24px 28px; border-radius: 2px;
+    margin-top: 24px;
+  }
+  .rc-label {
+    font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--bayer-accent); margin-bottom: 10px;
+  }
+  .rc-text {
+    font-size: 0.84rem; line-height: 1.7; color: #4A5650; font-weight: 300;
+  }
+
+  .chart-wrap {
+    position: relative; background: var(--paper);
+    padding: 24px; border: 1px solid var(--border-warm);
+  }
+  .chart-wrap canvas { max-height: 480px; }
+
+  /* ── ALLOCATION ──────────────────────────────────────── */
+  .alloc-section { background: var(--paper-warm); }
+
+  .alloc-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center;
+  }
+
+  .donut-wrap {
+    position: relative; max-width: 340px; margin: 0 auto;
+  }
+  .donut-overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+  .donut-label {
+    font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .donut-zones {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-weight: 500; color: var(--ink);
+  }
+
+  .alloc-bars { display: flex; flex-direction: column; gap: 32px; }
+
+  .alloc-bar-item {}
+  .alloc-bar-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .abh-zone {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem; font-weight: 500;
+  }
+  .abh-zone.core { color: var(--core-green); }
+  .abh-zone.edge { color: var(--edge-amber); }
+  .abh-zone.beyond { color: var(--beyond-crimson); }
+  .abh-pct { font-size: 0.78rem; color: var(--muted); }
+
+  .bar-track {
+    height: 6px; background: rgba(16,81,158,0.1);
+    border-radius: 3px; position: relative; margin-bottom: 8px;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 3px;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    width: 0;
+  }
+  .bar-fill.core { background: var(--core-green); }
+  .bar-fill.edge { background: var(--edge-amber); }
+  .bar-fill.beyond { background: var(--beyond-crimson); }
+
+  .bar-benchmark {
+    position: absolute; top: -3px; height: 12px; width: 2px;
+    background: var(--ink); opacity: 0.3;
+  }
+
+  .alloc-comment {
+    font-size: 0.78rem; line-height: 1.6; color: #4A5650; font-weight: 300;
+    font-style: italic;
+  }
+
+  /* ── COMPETITORS ─────────────────────────────────────── */
+  .comp-section { background: #fff; }
+
+  .comp-cards {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 2px; margin-bottom: 64px;
+  }
+
+  .comp-card {
+    background: var(--paper);
+    padding: 28px 24px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .comp-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(14,26,24,0.08);
+  }
+  .comp-card.featured {
+    background: rgba(16,81,158,0.04);
+    border: 1px solid rgba(16,81,158,0.18);
+  }
+
+  .cc-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem; font-weight: 500; color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .cc-tag {
+    font-size: 0.65rem; letter-spacing: 0.1em; color: var(--muted);
+    text-transform: uppercase; margin-bottom: 18px; line-height: 1.4;
+  }
+
+  .cc-zone-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 0; border-bottom: 1px solid var(--border);
+    font-size: 0.76rem; color: #4A5650;
+  }
+  .cc-zone-row:last-of-type { border-bottom: none; }
+  .cc-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .cc-dot.strong { opacity: 1; }
+  .cc-dot.mid { opacity: 0.55; }
+  .cc-dot.weak { opacity: 0.25; }
+
+  .verdict-chip {
+    margin-top: 16px;
+    display: inline-block;
+    font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 2px;
+  }
+  .verdict-chip.balanced { background: rgba(45,106,79,0.1); color: var(--core-green); }
+  .verdict-chip.transitioning { background: rgba(181,132,26,0.1); color: var(--edge-amber); }
+  .verdict-chip.stagnant { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+  .verdict-chip.focused { background: rgba(16,81,158,0.1); color: var(--bayer-blue); }
+
+  .radar-wrap { background: var(--paper); padding: 24px; border: 1px solid var(--border-warm); max-height: 440px; }
+  .radar-wrap canvas { max-height: 400px; }
+
+  /* ── STRENGTHS & WEAKNESSES ──────────────────────────── */
+  .sw-section { background: var(--paper-warm); }
+
+  .sw-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+  }
+
+  .sw-panel { padding: 40px; }
+  .sw-panel.strengths { border: 1px solid rgba(45,106,79,0.25); background: rgba(45,106,79,0.03); }
+  .sw-panel.weaknesses { border: 1px solid rgba(139,26,26,0.25); background: rgba(139,26,26,0.03); }
+
+  .sw-panel-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 500; margin-bottom: 32px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .sw-panel.strengths .sw-panel-title { color: var(--core-green); }
+  .sw-panel.weaknesses .sw-panel-title { color: var(--beyond-crimson); }
+
+  .sw-item { display: flex; gap: 16px; margin-bottom: 24px; }
+  .sw-item:last-child { margin-bottom: 0; }
+
+  .sw-marker {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.05em;
+  }
+  .sw-panel.strengths .sw-marker { background: var(--core-green); color: #fff; }
+  .sw-panel.weaknesses .sw-marker { background: var(--beyond-crimson); color: #fff; }
+
+  .sw-content {}
+  .sw-lead { font-size: 0.9rem; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .sw-body { font-size: 0.82rem; line-height: 1.65; color: #4A5650; font-weight: 300; }
+
+  /* ── DIAGNOSTIC ──────────────────────────────────────── */
+  .diag-section {
+    background: var(--ink);
+    color: #F0EDE6;
+    padding: 100px 80px;
+  }
+
+  .diag-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 72px;
+  }
+
+  .diag-block { margin-bottom: 48px; }
+
+  .diag-label {
+    font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--bayer-accent); margin-bottom: 14px;
+  }
+
+  .archetype-boxes {
+    display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;
+  }
+  .archetype-box {
+    padding: 14px 18px;
+    border: 1px solid rgba(240,237,230,0.1);
+    display: flex; align-items: center; justify-content: space-between;
+    border-radius: 2px;
+  }
+  .archetype-box.active { border-color: var(--bayer-accent); background: rgba(200,169,81,0.06); }
+  .arch-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem; font-weight: 400; color: rgba(240,237,230,0.8);
+  }
+  .arch-status { font-size: 0.9rem; }
+
+  .assess-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid rgba(240,237,230,0.07);
+  }
+  .assess-row:last-child { border-bottom: none; }
+  .assess-key { font-size: 0.78rem; color: rgba(240,237,230,0.55); }
+  .assess-val { font-size: 0.78rem; font-weight: 500; }
+  .assess-val.high { color: #6EC07A; }
+  .assess-val.mid { color: var(--bayer-accent); }
+  .assess-val.low { color: #E07070; }
+
+  .critical-tension {
+    background: rgba(139,26,26,0.15);
+    border: 1px solid rgba(139,26,26,0.35);
+    padding: 24px 28px; border-radius: 2px; margin-top: 8px;
+  }
+  .ct-label { font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: #E07070; margin-bottom: 10px; }
+  .ct-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem; font-style: italic;
+    color: rgba(240,237,230,0.8); line-height: 1.6;
+  }
+
+  .inline-bar-item { margin-bottom: 14px; }
+  .ib-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.72rem; }
+  .ib-zone { color: rgba(240,237,230,0.6); }
+  .ib-pct { color: rgba(240,237,230,0.4); }
+  .ib-track { height: 4px; background: rgba(240,237,230,0.08); border-radius: 2px; position: relative; }
+  .ib-fill { height: 100%; border-radius: 2px; }
+  .ib-bench {
+    position: absolute; top: -2px; height: 8px; width: 1.5px;
+    background: rgba(240,237,230,0.3);
+  }
+
+  .relativity-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid rgba(240,237,230,0.07);
+    gap: 16px;
+  }
+  .relativity-row:last-child { border-bottom: none; }
+  .rel-key { font-size: 0.78rem; color: rgba(240,237,230,0.55); flex: 1; }
+  .rel-pos {
+    font-size: 0.72rem; font-weight: 500; padding: 3px 10px;
+    border-radius: 2px; white-space: nowrap;
+  }
+  .rel-pos.above { background: rgba(110,192,122,0.15); color: #6EC07A; }
+  .rel-pos.at { background: rgba(200,169,81,0.15); color: var(--bayer-accent); }
+  .rel-pos.below { background: rgba(224,112,112,0.15); color: #E07070; }
+
+  .verdict-block {
+    grid-column: 1 / -1;
+    border-top: 1px solid rgba(240,237,230,0.1);
+    padding-top: 48px;
+  }
+
+  .verdict-archetype {
+    display: flex; gap: 40px; align-items: flex-start;
+    margin-bottom: 40px;
+  }
+  .va-label {
+    font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--bayer-accent); margin-bottom: 12px;
+  }
+  .va-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; font-weight: 300; color: #F0EDE6; line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .va-checks { display: flex; gap: 10px; }
+  .va-check { font-size: 1.2rem; }
+
+  .verdict-narrative {
+    font-size: 0.92rem; line-height: 1.82; color: rgba(240,237,230,0.65);
+    font-weight: 300; max-width: 820px; margin-bottom: 32px;
+  }
+
+  .one-question {
+    background: rgba(16,81,158,0.18);
+    border-left: 3px solid var(--bayer-blue);
+    padding: 28px 32px;
+    max-width: 680px;
+  }
+  .oq-label {
+    font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--bayer-blue); margin-bottom: 10px;
+  }
+  .oq-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem; font-style: italic; font-weight: 300;
+    color: rgba(240,237,230,0.88); line-height: 1.55;
+  }
+
+  /* ── FOOTER ──────────────────────────────────────────── */
+  footer {
+    background: var(--ink-soft);
+    padding: 32px 80px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid rgba(240,237,230,0.06);
+  }
+  .footer-left {
+    font-size: 0.68rem; letter-spacing: 0.1em; color: rgba(240,237,230,0.3);
+  }
+  .footer-left span { color: rgba(240,237,230,0.18); }
+  .footer-right {
+    font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(240,237,230,0.22);
+  }
+
+  /* ── MONSANTO SECTION ────────────────────────────────── */
+  .monsanto-section {
+    background: #1A0A0A;
+    padding: 100px 80px;
+    position: relative; overflow: hidden;
+  }
+  .monsanto-section::before {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 55% 50% at 80% 30%, rgba(139,26,26,0.28) 0%, transparent 70%),
+      radial-gradient(ellipse 35% 40% at 10% 80%, rgba(200,169,81,0.06) 0%, transparent 60%);
+  }
+  .monsanto-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start;
+    position: relative; z-index: 1;
+  }
+  .monsanto-prose p {
+    font-size: 1rem; line-height: 1.85; color: rgba(240,237,230,0.68);
+    margin-bottom: 22px; font-weight: 300;
+  }
+  .monsanto-prose p strong { color: rgba(240,237,230,0.9); font-weight: 500; }
+  .m-facts { display: flex; flex-direction: column; gap: 2px; }
+  .m-fact-card {
+    padding: 22px 28px; background: rgba(139,26,26,0.12);
+    border-left: 3px solid rgba(139,26,26,0.45);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .m-fact-card:hover { background: rgba(139,26,26,0.2); border-left-color: var(--beyond-crimson); }
+  .mfc-label { font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(224,112,112,0.7); margin-bottom: 6px; }
+  .mfc-val { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 300; color: #E07070; line-height: 1; margin-bottom: 5px; }
+  .mfc-desc { font-size: 0.76rem; line-height: 1.55; color: rgba(240,237,230,0.42); font-weight: 300; }
+  .accountability-strip {
+    grid-column: 1 / -1; margin-top: 48px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px;
+    position: relative; z-index: 1;
+  }
+  .acc-pillar { padding: 36px 32px; background: rgba(240,237,230,0.03); border: 1px solid rgba(240,237,230,0.07); }
+  .acc-pillar-num { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 300; line-height: 1; color: rgba(240,237,230,0.07); margin-bottom: -12px; }
+  .acc-pillar-title { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 500; color: rgba(240,237,230,0.8); margin-bottom: 10px; }
+  .acc-pillar-status { display: inline-block; font-size: 0.56rem; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 10px; border-radius: 2px; margin-bottom: 12px; }
+  .acc-pillar-status.yes { background: rgba(110,192,122,0.15); color: #6EC07A; }
+  .acc-pillar-status.partial { background: rgba(200,169,81,0.15); color: var(--bayer-accent); }
+  .acc-pillar-status.no { background: rgba(224,112,112,0.15); color: #E07070; }
+  .acc-pillar-body { font-size: 0.8rem; line-height: 1.7; color: rgba(240,237,230,0.42); font-weight: 300; }
+  .ghostwrite-callout {
+    grid-column: 1 / -1; margin-top: 2px;
+    background: rgba(200,169,81,0.07); border: 1px solid rgba(200,169,81,0.2);
+    padding: 32px 40px; position: relative; z-index: 1;
+  }
+  .gc-label { font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--bayer-accent); margin-bottom: 12px; }
+  .gc-text { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-style: italic; font-weight: 300; color: rgba(240,237,230,0.78); line-height: 1.65; max-width: 840px; }
+
+  /* ── MARKET CONFIDENCE SECTION ───────────────────────── */
+  .confidence-section { background: var(--paper-warm); padding: 100px 80px; }
+  .confidence-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 72px; align-items: start; }
+  .valuation-chart-wrap { background: #fff; padding: 28px; border: 1px solid var(--border-warm); }
+  .valuation-numbers { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 32px; }
+  .val-card { padding: 26px 24px; background: #fff; }
+  .val-card.red-tint { background: rgba(139,26,26,0.04); border: 1px solid rgba(139,26,26,0.15); }
+  .val-card.blue-tint { background: rgba(16,81,158,0.03); border: 1px solid rgba(16,81,158,0.12); }
+  .val-num { font-family: 'Cormorant Garamond', serif; font-size: 2.1rem; font-weight: 300; line-height: 1; margin-bottom: 7px; }
+  .val-num.red { color: var(--beyond-crimson); }
+  .val-num.blue { color: var(--bayer-blue); }
+  .val-num.gold { color: var(--bayer-accent); }
+  .val-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .confidence-prose p { font-size: 0.95rem; line-height: 1.82; color: #2A3632; margin-bottom: 20px; font-weight: 300; }
+  .investor-verdict { margin-top: 24px; background: var(--ink); padding: 28px 32px; border-radius: 2px; position: relative; overflow: hidden; }
+  .investor-verdict::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--beyond-crimson); }
+  .iv-label { font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: #E07070; margin-bottom: 10px; }
+  .iv-text { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-style: italic; font-weight: 300; color: rgba(240,237,230,0.8); line-height: 1.6; }
+
+  /* ── CEO THETA SECTION ───────────────────────────────── */
+  .ceo-section { background: #fff; padding: 100px 80px; }
+  .ceo-chart-wrap { background: var(--paper); padding: 28px; border: 1px solid var(--border-warm); margin-bottom: 48px; }
+  .ceo-chart-wrap canvas { max-height: 460px; }
+  .ceo-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+  .ceo-table th { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 10px 16px; border-bottom: 1px solid var(--border); text-align: left; font-weight: 400; }
+  .ceo-table th:not(:first-child) { text-align: center; }
+  .ceo-table td { padding: 11px 16px; border-bottom: 1px solid rgba(16,81,158,0.06); font-size: 0.8rem; color: #2A3632; }
+  .ceo-table td:not(:first-child) { text-align: center; }
+  .ceo-table tr:last-child td { border-bottom: none; }
+  .ceo-table tr.featured-row td { background: rgba(16,81,158,0.04); font-weight: 500; }
+  .ceo-table tr.featured-row td:first-child { border-left: 3px solid var(--bayer-blue); }
+  .ceo-table tr.danger-row td { background: rgba(139,26,26,0.04); }
+  .ceo-table tr.danger-row td:first-child { border-left: 3px solid var(--beyond-crimson); }
+  .pct-pill { display: inline-block; padding: 2px 8px; border-radius: 2px; font-size: 0.7rem; font-weight: 500; }
+  .pct-core { background: rgba(45,106,79,0.1); color: var(--core-green); }
+  .pct-edge { background: rgba(181,132,26,0.1); color: var(--edge-amber); }
+  .pct-beyond { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+  .ceo-insight { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .ci-card { padding: 28px 32px; background: var(--paper-warm); border-radius: 2px; }
+  .ci-ceo { font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bayer-blue); margin-bottom: 8px; }
+  .ci-observation { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-style: italic; font-weight: 400; color: var(--ink); line-height: 1.6; }
+
+  /* ── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 900px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    section { padding: 64px 24px; }
+    .hero { padding: 100px 24px 64px; }
+    .hero-meta { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    .hero-meta-item { border-right: none; padding: 0; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .theta-grid { grid-template-columns: 1fr; gap: 40px; }
+    .alloc-grid { grid-template-columns: 1fr; gap: 40px; }
+    .comp-cards { grid-template-columns: 1fr 1fr; }
+    .sw-grid { grid-template-columns: 1fr; }
+    .diag-grid { grid-template-columns: 1fr; gap: 40px; }
+    .monsanto-section { padding: 64px 24px; }
+    .monsanto-grid { grid-template-columns: 1fr; gap: 40px; }
+    .accountability-strip { grid-template-columns: 1fr; }
+    .confidence-section { padding: 64px 24px; }
+    .confidence-grid { grid-template-columns: 1fr; gap: 40px; }
+    .ceo-section { padding: 64px 24px; }
+    .ceo-insight { grid-template-columns: 1fr; }
+    .verdict-archetype { flex-direction: column; gap: 16px; }
+    .belief-strip { padding: 40px 24px; }
+    .timeline { padding-left: 80px; }
+    footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Theta<span> × </span>Bayer</div>
+  <ul class="nav-links">
+    <li><a href="#about">Profile</a></li>
+    <li><a href="#timeline">Timeline</a></li>
+    <li><a href="#monsanto">Monsanto</a></li>
+    <li><a href="#confidence">Confidence</a></li>
+    <li><a href="#ceo-theta">CEO Lens</a></li>
+    <li><a href="#map">Innovation Map</a></li>
+    <li><a href="#competitors">Landscape</a></li>
+    <li><a href="#diagnostic">Diagnostic</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-radial"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Innovation Case Study &nbsp;·&nbsp; Bayer AG &nbsp;·&nbsp; 2026</div>
+    <h1 class="hero-headline">
+      Brilliant science.<br>
+      <em>Inherited sins.</em>
+    </h1>
+    <p class="hero-sub">
+      A portfolio governance analysis of one of the world's most consequential life sciences companies, its structural innovation paradox, and the accountability question its balance sheet alone cannot answer.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="meta-label">Founded</div>
+        <div class="meta-val">1863, Barmen</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="meta-label">Employees</div>
+        <div class="meta-val">~96,000</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="meta-label">Revenue (FY2024)</div>
+        <div class="meta-val">€46.6B</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="meta-label">Theta Archetype</div>
+        <div class="meta-val">Disconnected Visionary</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="section-kicker reveal">Company Profile</div>
+  <h2 class="section-title reveal">161 years of chemistry,<br><em>two decisions that defined everything</em></h2>
+
+  <div class="about-grid reveal">
+    <div class="about-prose">
+      <p>
+        Bayer did not start in medicine. It started in dye. Friedrich Bayer and Johann Friedrich Weskott founded the company in 1863 to manufacture synthetic colorants for the textile industry. The pivot to pharmaceuticals came almost accidentally, through the same chemical intuition that gave the world Aspirin in 1899 and, in the same breath, the commercial launch of Heroin as a cough suppressant. Bayer has always been a company that moves before the world is ready to follow it, and occasionally before it is ready itself.
+      </p>
+      <p>
+        Today, Bayer operates through three divisions: Pharmaceuticals, anchored by oncology and cardiology; Crop Science, the world's largest crop protection business acquired through the catastrophic purchase of Monsanto in 2018; and Consumer Health, the steady, unglamorous engine of brands like Aspirin and Claritin. The company's stated mission, "Health for all, Hunger for none," is not marketing language. It is, by any honest reading, the ambition of an organization that genuinely believes it can solve civilizational problems. The question Theta forces us to ask is whether its innovation architecture has ever matched that belief.
+      </p>
+      <div class="hidden-fact">
+        <div class="hf-label">Overlooked Fact</div>
+        <div class="hf-text">Bayer lost the trademark to its own name "Aspirin" in the United States as war reparations after WWI. It only regained the US rights in 1994, after paying $1 billion to SmithKline Beecham. For 75 years, any company could call its acetylsalicylic acid "aspirin" in America except the company that invented it.</div>
+      </div>
+    </div>
+    <div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-num">€6.2B</div>
+          <div class="stat-label">R&D Spend, FY2024</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">5</div>
+          <div class="stat-label">Major Drug Approvals, 2025</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">125K+</div>
+          <div class="stat-label">Roundup Lawsuits at Peak</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">93%</div>
+          <div class="stat-label">Stock Recovery from 52-Week Low</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="belief-strip reveal">
+    <div class="belief-quote">"The most advanced company isn't always the one with the most futuristic tech. Context decides the curve. And for Bayer, the context is a company carrying a $63 billion decision that the market has never forgiven."</div>
+    <div class="belief-attr">Theta Framework &mdash; The Relativity Principle</div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline-section" id="timeline">
+  <div class="section-kicker reveal">Strategic Arc</div>
+  <h2 class="section-title reveal">From dye to <em>gene therapy</em>: the arc of a company<br>that kept outrunning its own accountability</h2>
+
+  <div class="timeline reveal">
+
+    <div class="tl-item">
+      <div class="tl-dot filled"></div>
+      <div class="tl-year">1863</div>
+      <div class="tl-phase">Origin</div>
+      <div class="tl-title">Synthetic dyes in Barmen</div>
+      <div class="tl-desc">Friedrich Bayer and Johann Weskott begin manufacturing aniline dyes for the textile trade. The company's innovation is chemical, not medical. But chemistry, they will learn, has no loyalty to any one industry.</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot milestone"></div>
+      <div class="tl-year">1899</div>
+      <div class="tl-phase">First Inflection</div>
+      <div class="tl-title">Aspirin, and also Heroin</div>
+      <div class="tl-desc">In the same year, Bayer commercialises acetylsalicylic acid as Aspirin and diacetylmorphine as Heroin. One becomes the most successful drug in human history. The other is one of the most destructive substances in human history. The company moves fast and learns slowly.</div>
+      <div class="tl-inflection">Theta signal: Core innovation at its most potent, and most blind. The capacity for breakthroughs and the failure to see consequences operating simultaneously.</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1925</div>
+      <div class="tl-phase">Consolidation</div>
+      <div class="tl-title">Absorbed into IG Farben</div>
+      <div class="tl-desc">Bayer is folded into the IG Farben chemical cartel, losing its independent identity. During WWII, IG Farben uses forced labor and is deeply implicated in the Nazi regime. After the war, the Allies dissolve it. Bayer re-emerges in 1951 carrying an institutional memory it has never fully named.</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1951–2002</div>
+      <div class="tl-phase">Reconstruction Era</div>
+      <div class="tl-title">Four decades of disciplined Core</div>
+      <div class="tl-desc">Six CEOs across five decades rebuild Bayer as a global chemical and pharmaceutical company. International expansion grows steadily under Hansen and Grünewald. Schneider lists on the NYSE and recovers the Aspirin trademark. Edge investment grows to 25%. The company is prudent, profitable, and fundamentally risk-averse.</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot filled"></div>
+      <div class="tl-year">2002–2016</div>
+      <div class="tl-phase">Edge Era</div>
+      <div class="tl-title">Wenning and Dekkers: the Edge builders</div>
+      <div class="tl-desc">Wenning restructures Bayer as a holding company and makes adjacent acquisitions: Aventis CropScience, Schering AG. Dekkers goes further, spinning off the plastics business (Covestro) to focus on life sciences and pushing Edge investment to 35%. This is the period of greatest strategic discipline in Bayer's modern history.</div>
+      <div class="tl-inflection">Theta signal: The closest Bayer ever came to a healthy 70-20-10 portfolio. Edge investment peaked. But the culture that would sustain it was never built.</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot milestone"></div>
+      <div class="tl-year">2018</div>
+      <div class="tl-phase">Second Inflection — The Defining Bet</div>
+      <div class="tl-title">Monsanto: $63 billion and no shareholder vote</div>
+      <div class="tl-desc">Werner Baumann closes the largest acquisition in Bayer's history, making it the world's biggest agricultural company. Under German law, no shareholder vote is required. The Roundup litigation is known and underestimated. Within 24 months, more than 100,000 lawsuits are filed alleging Roundup causes non-Hodgkin lymphoma. The market cap begins a collapse that will wipe out more value than the deal itself cost.</div>
+      <div class="tl-inflection">Theta signal: A Core bet mistaken for transformation. Monsanto was market consolidation dressed as vision. Edge collapsed. The barbell was born.</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">2019–2021</div>
+      <div class="tl-phase">Quiet Beyond</div>
+      <div class="tl-title">BlueRock and AskBio: the silent bets</div>
+      <div class="tl-desc">While managing the Roundup litigation publicly, Baumann quietly acquires BlueRock Therapeutics (cell therapy for Parkinson's) and AskBio (gene therapy for heart failure and rare disease). These are genuine Beyond bets, radical in ambition. But they are isolated. No bridge to Core. No scaling strategy. No cultural integration.</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot filled"></div>
+      <div class="tl-year">2023–Now</div>
+      <div class="tl-phase">Stabilisation</div>
+      <div class="tl-title">Bill Anderson and the transformation question</div>
+      <div class="tl-desc">An outsider, formerly of Roche and Genentech, takes the helm. Anderson cuts 13,500 jobs, pursues settlement, and publicly acknowledges that what happened with Monsanto was wrong. Five drug approvals in 2025. Partnerships with Cradle and Soufflé for AI-driven drug discovery. The stock recovers 93% from its trough. But the accountability gap remains open, the Edge portfolio remains underfunded, and the one question the company has never answered stays unanswered.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- MONSANTO -->
+<section class="monsanto-section" id="monsanto">
+  <div class="section-kicker" style="color:#E07070; position:relative; z-index:1;" >The Defining Scandal</div>
+  <h2 class="section-title-light reveal" style="position:relative;z-index:1;">They saw the problem.<br><em>They bought it anyway.</em></h2>
+
+  <div class="monsanto-grid">
+    <div class="monsanto-prose reveal">
+      <p>The Roundup lawsuits were not a surprise that ambushed Bayer after the deal closed. <strong>The litigation existed before the acquisition was signed.</strong> Internal documents later revealed in court showed Monsanto officials discussing strategies to ghostwrite scientific research, recruit academics as front authors, and cast institutional doubt on any study linking glyphosate to cancer. This was known. It was assessed. And Bayer's leadership proceeded with a $63 billion all-cash offer without putting the decision to a shareholder vote.</p>
+      <p>The legal case rested on documented evidence of what courts described as "ghost management" of scientific literature. A US federal judge ruled this evidence was admissible and went to the heart of whether Monsanto acted with malice. Bayer inherited not just the liability but the behaviour, the culture, the documented willingness of an organisation to manufacture doubt about harm it may have known it was causing.</p>
+      <p><strong>Over 125,000 people filed lawsuits</strong> alleging long-term dermal and inhalation exposure to Roundup caused their non-Hodgkin lymphoma. Agricultural workers. Landscapers. Homeowners. The pattern across cases was consistent enough that a US federal judge allowed the evidence of ghostwriting to be presented to juries as proof of intent. Bayer has settled most claims. The $7.25 billion settlement announced in February 2026 contains no admission of liability or wrongdoing.</p>
+      <p>The settlement resolves the financial exposure. It does not answer the moral question. A company that pays without admitting has not yet decided what it believes about itself.</p>
+    </div>
+    <div class="m-facts reveal">
+      <div class="m-fact-card">
+        <div class="mfc-label">Acquisition Price</div>
+        <div class="mfc-val">$63B</div>
+        <div class="mfc-desc">Paid in cash, 2018. No shareholder vote required under German law. Management pushed it through despite significant investor opposition.</div>
+      </div>
+      <div class="m-fact-card">
+        <div class="mfc-label">Peak Lawsuits</div>
+        <div class="mfc-val">125,000+</div>
+        <div class="mfc-desc">Alleging Roundup caused non-Hodgkin lymphoma. Primary claimants: agricultural workers, landscapers, and residential users with long-term high-exposure.</div>
+      </div>
+      <div class="m-fact-card">
+        <div class="mfc-label">Settlement (2026)</div>
+        <div class="mfc-val">$7.25B</div>
+        <div class="mfc-desc">Proposed to resolve most remaining claims. No admission of liability. Plaintiff lawyers representing ~20,000 clients challenged it as unfair and negotiated behind closed doors.</div>
+      </div>
+      <div class="m-fact-card">
+        <div class="mfc-label">Annual Legal Cost</div>
+        <div class="mfc-val">~€5B</div>
+        <div class="mfc-desc">Expected outflow in 2026 alone, creating negative free cash flow of up to €2.5 billion. This is what the Monsanto bet costs every year it remains unresolved.</div>
+      </div>
+      <div class="m-fact-card">
+        <div class="mfc-label">Securities Fraud Settlement</div>
+        <div class="mfc-val">$38M</div>
+        <div class="mfc-desc">Paid to resolve investor claims that management misled shareholders about due diligence. The court noted executives pursued the merger despite awareness of risks while assuring investors otherwise.</div>
+      </div>
+    </div>
+
+    <div class="accountability-strip reveal">
+      <div class="acc-pillar">
+        <div class="acc-pillar-num">01</div>
+        <div class="acc-pillar-title">Transparency Plan</div>
+        <div class="acc-pillar-status partial">Partial</div>
+        <div class="acc-pillar-body">Bayer now publishes dedicated fact-based discourse reports on glyphosate, GMOs, and crop protection. It commissioned an external law firm to review pre-acquisition legal opinions. The manager responsible for the "stakeholder file" scandal left the company. Bayer apologised publicly. This is more transparency than most companies in its position have produced. It is still primarily defensive transparency, designed to limit future exposure rather than illuminate the past.</div>
+      </div>
+      <div class="acc-pillar">
+        <div class="acc-pillar-num">02</div>
+        <div class="acc-pillar-title">Innovation Plan</div>
+        <div class="acc-pillar-status partial">Underway</div>
+        <div class="acc-pillar-body">Five drug approvals in 2025. AI partnerships. Gene therapy and cell therapy acquisitions now in clinical development. Anderson is rebuilding the pharmaceutical narrative with genuine pipeline momentum. The Beyond bets are real and credible. The Edge gap, the structural void between Core and Beyond, remains unfilled and unowned. A transparency plan and an innovation plan are not the same as a recovery. They are necessary but not sufficient.</div>
+      </div>
+      <div class="acc-pillar">
+        <div class="acc-pillar-num">03</div>
+        <div class="acc-pillar-title">Accountability</div>
+        <div class="acc-pillar-status no">Absent</div>
+        <div class="acc-pillar-body">No individual has been publicly named. No independent investigation with public findings has been commissioned. No executive has been held personally responsible for the decision to proceed with full knowledge of the litigation risks and the ghostwriting conduct. The settlement pays without admitting. The internal conversation about what was done and who authorised it, as far as any public record shows, has not happened. Accountability is not the same as a settlement. It is not the same as an apology. It requires naming what happened, who decided, and what changed as a result. That conversation is still waiting.</div>
+      </div>
+      <div class="ghostwrite-callout">
+        <div class="gc-label">The Ghostwriting Record</div>
+        <div class="gc-text">Court documents in the Roundup litigation revealed that Monsanto officials discussed ghostwriting scientific research and recruiting prominent academics as front authors to publish findings that cast doubt on any glyphosate-cancer link. A US federal judge ruled this evidence admissible as proof of intent. Bayer, on acquiring Monsanto, inherited this conduct as part of its institutional history. The external review it commissioned examined the legal opinions given before the acquisition. It did not examine the conduct itself. That distinction matters.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET CONFIDENCE -->
+<section class="confidence-section" id="confidence">
+  <div class="section-kicker reveal">Market and Investor Confidence</div>
+  <h2 class="section-title reveal">The company is now worth less<br>than <em>the deal that broke it</em></h2>
+
+  <div class="confidence-grid">
+    <div>
+      <div class="valuation-numbers reveal">
+        <div class="val-card">
+          <div class="val-num blue">€143B</div>
+          <div class="val-label">Market cap, 2015 (pre-deal)</div>
+        </div>
+        <div class="val-card red-tint">
+          <div class="val-num red">~€32B</div>
+          <div class="val-label">Market cap at trough, 2024</div>
+        </div>
+        <div class="val-card red-tint">
+          <div class="val-num red">$63B</div>
+          <div class="val-label">Price paid for Monsanto</div>
+        </div>
+        <div class="val-card blue-tint">
+          <div class="val-num gold">~€50B</div>
+          <div class="val-label">Market cap, March 2026</div>
+        </div>
+      </div>
+      <div class="valuation-chart-wrap reveal">
+        <canvas id="valuationChart" height="200"></canvas>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="confidence-prose">
+        <p>The arithmetic is stark. Bayer paid $63 billion for Monsanto in 2018. Its current market capitalisation is approximately €50 billion. The company is worth less than what it paid for a single acquisition. This is not a rounding error or a sector-wide valuation adjustment. This is the market's verdict on a decision made in full knowledge of the risks.</p>
+        <p>From its 2015 peak of €143 billion, Bayer has destroyed more than €90 billion in shareholder value. The trough in 2024 of approximately €32 billion means the company was briefly valued at half the cost of Monsanto alone. The subsequent recovery of 93% from the 52-week low reflects growing confidence in the pharmaceutical pipeline and in Anderson's settlement strategy, not a restored belief in the company's fundamental integrity.</p>
+        <p>Institutional investors remain cautious. Goldman Sachs has placed Bayer on its Conviction Buy list. JPMorgan carries an Overweight rating. But analysts simultaneously note that the settlement must be completed, the Supreme Court ruling on product liability preemption must be favourable, and the pharma pipeline must deliver. All three conditions must hold. None is guaranteed.</p>
+        <p>One top-15 shareholder delivered the most pointed assessment in the public record: they explicitly warned against "a reheated five-point plan from five years ago." That phrasing is a reference to the failed 2020 settlement strategy under Baumann, which was also described at the time as a breakthrough. The market has seen this before. It knows what a reheated plan looks like.</p>
+      </div>
+      <div class="investor-verdict">
+        <div class="iv-label">Investor Signal, 2026</div>
+        <div class="iv-text">"Shareholders have already borne sacrifices such as dividend cuts. Now there must be no more half-measures." A top-15 Bayer shareholder, February 2026</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CEO THETA COMPARISON -->
+<section class="ceo-section" id="ceo-theta">
+  <div class="section-kicker reveal">Leadership Through the Theta Lens</div>
+  <h2 class="section-title reveal">Twelve CEOs. One pattern.<br><em>Edge has never had a permanent home.</em></h2>
+
+  <div class="ceo-chart-wrap reveal">
+    <canvas id="ceoChart"></canvas>
+  </div>
+
+  <table class="ceo-table reveal">
+    <thead>
+      <tr>
+        <th>CEO &amp; Era</th>
+        <th>Core %</th>
+        <th>Edge %</th>
+        <th>Beyond %</th>
+        <th>Defining Strategic Character</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Bayer / Weskott &nbsp;<span style="color:var(--muted);font-size:0.72rem;">1863</span></td>
+        <td><span class="pct-pill pct-core">80%</span></td>
+        <td><span class="pct-pill pct-edge">15%</span></td>
+        <td><span class="pct-pill pct-beyond">5%</span></td>
+        <td>Founders building from scratch. Core was creation, not defence.</td>
+      </tr>
+      <tr>
+        <td>Duisberg &nbsp;<span style="color:var(--muted);font-size:0.72rem;">1925</span></td>
+        <td><span class="pct-pill pct-core">90%</span></td>
+        <td><span class="pct-pill pct-edge">5%</span></td>
+        <td><span class="pct-pill pct-beyond">5%</span></td>
+        <td>Consolidation into IG Farben. Scale over innovation. Edge collapsed.</td>
+      </tr>
+      <tr>
+        <td>Haberland &nbsp;<span style="color:var(--muted);font-size:0.72rem;">1951</span></td>
+        <td><span class="pct-pill pct-core">85%</span></td>
+        <td><span class="pct-pill pct-edge">10%</span></td>
+        <td><span class="pct-pill pct-beyond">5%</span></td>
+        <td>Post-war reconstruction. Restoring what was lost, not building what was next.</td>
+      </tr>
+      <tr>
+        <td>Hansen &nbsp;<span style="color:var(--muted);font-size:0.72rem;">1961</span></td>
+        <td><span class="pct-pill pct-core">80%</span></td>
+        <td><span class="pct-pill pct-edge">15%</span></td>
+        <td><span class="pct-pill pct-beyond">5%</span></td>
+        <td>International expansion as Edge. Geography as the frontier.</td>
+      </tr>
+      <tr>
+        <td>Grünewald &nbsp;<span style="color:var(--muted);font-size:0.72rem;">1974</span></td>
+        <td><span class="pct-pill pct-core">75%</span></td>
+        <td><span class="pct-pill pct-edge">20%</span></td>
+        <td><span class="pct-pill pct-beyond">5%</span></td>
+        <td>First CEO to explicitly frame ecology as strategy. Edge thinking, not just execution.</td>
+      </tr>
+      <tr>
+        <td>Strenger &nbsp;<span style="color:var(--muted);font-size:0.72rem;">1984</span></td>
+        <td><span class="pct-pill pct-core">80%</span></td>
+        <td><span class="pct-pill pct-edge">15%</span></td>
+        <td><span class="pct-pill pct-beyond">5%</span></td>
+        <td>Financial consolidation. No strategic transformation.</td>
+      </tr>
+      <tr>
+        <td>Schneider &nbsp;<span style="color:var(--muted);font-size:0.72rem;">1992</span></td>
+        <td><span class="pct-pill pct-core">70%</span></td>
+        <td><span class="pct-pill pct-edge">25%</span></td>
+        <td><span class="pct-pill pct-beyond">5%</span></td>
+        <td>NYSE listing. Aspirin trademark recovery. First real Edge push in the modern era.</td>
+      </tr>
+      <tr>
+        <td>Wenning &nbsp;<span style="color:var(--muted);font-size:0.72rem;">2002</span></td>
+        <td><span class="pct-pill pct-core">65%</span></td>
+        <td><span class="pct-pill pct-edge">30%</span></td>
+        <td><span class="pct-pill pct-beyond">5%</span></td>
+        <td>Holding company restructure. Aventis CropScience and Schering acquisitions. Closest to ideal balance.</td>
+      </tr>
+      <tr>
+        <td>Dekkers &nbsp;<span style="color:var(--muted);font-size:0.72rem;">2010</span></td>
+        <td><span class="pct-pill pct-core">60%</span></td>
+        <td><span class="pct-pill pct-edge">35%</span></td>
+        <td><span class="pct-pill pct-beyond">5%</span></td>
+        <td>Covestro spin-off. Purest life science focus. Edge peaked. The culture to sustain it was never built.</td>
+      </tr>
+      <tr class="danger-row">
+        <td>Baumann &nbsp;<span style="color:var(--muted);font-size:0.72rem;">2016</span></td>
+        <td><span class="pct-pill pct-core">80%</span></td>
+        <td><span class="pct-pill pct-edge">10%</span></td>
+        <td><span class="pct-pill pct-beyond">10%</span></td>
+        <td>$63B Monsanto bet. The barbell born. Edge abandoned. Beyond quietly seeded while Core imploded.</td>
+      </tr>
+      <tr class="featured-row">
+        <td>Anderson &nbsp;<span style="color:var(--muted);font-size:0.72rem;">2023</span></td>
+        <td><span class="pct-pill pct-core">70%</span></td>
+        <td><span class="pct-pill pct-edge">10%</span></td>
+        <td><span class="pct-pill pct-beyond">20%</span></td>
+        <td>Outsider stabilising Core, protecting Beyond. Edge still unmanned. The bridge still missing.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="ceo-insight reveal">
+    <div class="ci-card">
+      <div class="ci-ceo">Wenning and Dekkers, 2002 to 2016</div>
+      <div class="ci-observation">The only two CEOs in Bayer's modern history who approached the Theta ideal. Dekkers pushed Edge to 35%, sold Covestro, and aligned the company around life sciences with a discipline no predecessor had matched. The pity is that the culture required to sustain that Edge was never institutionalised. When Baumann arrived, the Edge evaporated in four years.</div>
+    </div>
+    <div class="ci-card">
+      <div class="ci-ceo">Baumann, 2016 to 2023</div>
+      <div class="ci-observation">The Theta analysis reveals something the headlines miss. Baumann did not abandon Beyond. He quietly seeded it, acquiring BlueRock and AskBio while the litigation dominated every public narrative. What he destroyed was Edge, the one zone that no CEO before him had ever institutionalised, and that no CEO after him has yet rebuilt. The barbell is his legacy, not the scandal alone.</div>
+    </div>
+  </div>
+
+  <div class="reveal" style="margin-top:40px; background:var(--ink); padding:40px 48px; position:relative; overflow:hidden;">
+    <div style="position:absolute;top:-20px;left:32px;font-family:'Cormorant Garamond',serif;font-size:14rem;line-height:1;color:rgba(255,255,255,0.03);pointer-events:none;">∞</div>
+    <div style="position:relative;z-index:1;">
+      <div style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--bayer-accent);margin-bottom:18px;">The Pattern No CEO Has Broken</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;">
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:#F0EDE6;line-height:1.2;margin-bottom:16px;">Beyond has never been built at Bayer. It has only ever been bought.</div>
+          <p style="font-size:0.88rem;line-height:1.8;color:rgba(240,237,230,0.55);font-weight:300;">BlueRock Therapeutics: acquired. AskBio: acquired. Cradle AI: partnered. Soufflé Therapeutics: partnered. Century Therapeutics: acquired stake. Vividion: acquired. Every single Beyond capability Bayer possesses today was originated outside its walls, by people who were not Bayer employees, in cultures that were not Bayer's culture. The company has not once, in 161 years, grown a radical innovation from within.</p>
+        </div>
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:#F0EDE6;line-height:1.2;margin-bottom:16px;">And when it buys them, it keeps them separate on purpose.</div>
+          <p style="font-size:0.88rem;line-height:1.8;color:rgba(240,237,230,0.55);font-weight:300;">Bayer's own leadership described its approach explicitly: BlueRock and AskBio are deliberately kept "at arm's length." The stated reason is to preserve their entrepreneurial culture and their agility. The unstated implication is that Bayer knows its own culture would destroy them if integration were attempted. A company that must quarantine its Beyond bets from itself has not solved the innovation problem. It has outsourced it.</p>
+        </div>
+      </div>
+      <div style="margin-top:32px;padding-top:28px;border-top:1px solid rgba(240,237,230,0.08);">
+        <div style="font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(240,237,230,0.3);margin-bottom:10px;">Theta Signal</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;font-weight:300;color:rgba(240,237,230,0.7);line-height:1.6;max-width:800px;">An acquisition strategy for Beyond is not an innovation strategy. It is a venture capital strategy with a pharma coat. The difference matters: venture capital exits. Bayer has to scale. And you cannot scale what you have systematically refused to integrate.</div>
+      </div>
+    </div>
+  </div>
+<section class="theta-section" id="map">
+  <div class="section-kicker reveal">Theta Innovation Map</div>
+  <h2 class="section-title reveal">A portfolio shaped like a barbell:<br><em>strong at both ends, hollow in the middle</em></h2>
+
+  <div class="theta-grid">
+    <div class="reveal">
+      <div class="zone-legend">
+        <div class="zone-pill">
+          <div class="zone-dot core"></div>
+          <div>
+            <div class="zone-name">Core Zone</div>
+            <div class="zone-desc">Existing markets. Low to moderate technology change. Defend, optimize, generate cash to fund the future. Bayer's Core is dense and profitable, anchored by pharma lifecycle management and crop protection chemicals.</div>
+          </div>
+        </div>
+        <div class="zone-pill">
+          <div class="zone-dot edge"></div>
+          <div>
+            <div class="zone-name">Edge Zone</div>
+            <div class="zone-desc">New markets. Moderate to high technology change. This is where next S-curves are built. Bayer's Edge is critically underpopulated. The initiatives that exist are treated as Core adjacencies, not new market entries.</div>
+          </div>
+        </div>
+        <div class="zone-pill">
+          <div class="zone-dot beyond"></div>
+          <div>
+            <div class="zone-name">Beyond Zone</div>
+            <div class="zone-desc">Emerging and speculative. Radical technology change. Bayer's Beyond bets are genuine and impressive: gene therapy, cell therapy, AI-driven drug discovery. But every single one was acquired or partnered externally. Not one originated inside Bayer. They are kept deliberately separate from the main organisation to preserve their cultures, which is an admission that Bayer's own culture cannot produce them.</div>
+          </div>
+        </div>
+      </div>
+      <div class="reading-card">
+        <div class="rc-label">Reading the Map</div>
+        <div class="rc-text">Dot size reflects relative investment weight. The most significant structural finding is not where the dots sit. It is the empty space between Core and Beyond, the Edge gap, where the next S-curve is built. Bayer has placed bold bets on the future while leaving the bridge between present and future unmanned.</div>
+      </div>
+    </div>
+    <div class="chart-wrap reveal">
+      <canvas id="scatterChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section class="alloc-section" id="allocation">
+  <div class="section-kicker reveal">70-20-10 Allocation Analysis</div>
+  <h2 class="section-title reveal">The numbers reveal what the<br><em>narrative tries to obscure</em></h2>
+
+  <div class="alloc-grid">
+    <div class="reveal">
+      <div class="donut-wrap">
+        <canvas id="donutChart" height="340"></canvas>
+        <div class="donut-overlay">
+          <div class="donut-label">Zones Active</div>
+          <div class="donut-zones">Core · Edge · Beyond</div>
+        </div>
+      </div>
+    </div>
+    <div class="alloc-bars reveal">
+
+      <div class="alloc-bar-item">
+        <div class="alloc-bar-header">
+          <span class="abh-zone core">Core Zone</span>
+          <span class="abh-pct">Actual ~78% &nbsp;/&nbsp; Target 70%</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill core" data-width="78" style="width:0%"></div>
+          <div class="bar-benchmark" style="left:70%"></div>
+        </div>
+        <div class="alloc-comment">Litigation costs and cultural risk aversion are compressing discretionary spend back toward the familiar. The over-investment in Core is not strategic. It is defensive.</div>
+      </div>
+
+      <div class="alloc-bar-item">
+        <div class="alloc-bar-header">
+          <span class="abh-zone edge">Edge Zone</span>
+          <span class="abh-pct">Actual ~11% &nbsp;/&nbsp; Target 20%</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill edge" data-width="11" style="width:0%"></div>
+          <div class="bar-benchmark" style="left:20%"></div>
+        </div>
+        <div class="alloc-comment">The critical gap. No one at Bayer owns the Edge portfolio. No dedicated budget line. No stage-appropriate metrics. The bridge between today and tomorrow is structurally unmanned.</div>
+      </div>
+
+      <div class="alloc-bar-item">
+        <div class="alloc-bar-header">
+          <span class="abh-zone beyond">Beyond Zone</span>
+          <span class="abh-pct">Actual ~11% &nbsp;/&nbsp; Target 10%</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill beyond" data-width="11" style="width:0%"></div>
+          <div class="bar-benchmark" style="left:10%"></div>
+        </div>
+        <div class="alloc-comment">On paper, Beyond is adequately funded. In practice, AskBio and BlueRock operate in silos with no explicit path to scale. Funding a bet is not the same as knowing how to win it.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section class="comp-section" id="competitors">
+  <div class="section-kicker reveal">Competitive Landscape</div>
+  <h2 class="section-title reveal">How Bayer's peers are <em>navigating the same curve</em></h2>
+
+  <div class="comp-cards reveal">
+
+    <div class="comp-card featured">
+      <div class="cc-name">Bayer AG</div>
+      <div class="cc-tag">Disconnected Visionary</div>
+      <div class="cc-zone-row"><div class="cc-dot core strong" style="background:var(--core-green)"></div>Core: Pharma + Crop (dense)</div>
+      <div class="cc-zone-row"><div class="cc-dot edge weak" style="background:var(--edge-amber)"></div>Edge: Critically thin</div>
+      <div class="cc-zone-row"><div class="cc-dot beyond strong" style="background:var(--beyond-crimson)"></div>Beyond: Gene + Cell therapy</div>
+      <div class="verdict-chip transitioning">Transitioning</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="cc-name">Novartis</div>
+      <div class="cc-tag">Disciplined Explorer</div>
+      <div class="cc-zone-row"><div class="cc-dot core strong" style="background:var(--core-green)"></div>Core: Branded pharma</div>
+      <div class="cc-zone-row"><div class="cc-dot edge strong" style="background:var(--edge-amber)"></div>Edge: Radioligand therapy</div>
+      <div class="cc-zone-row"><div class="cc-dot beyond mid" style="background:var(--beyond-crimson)"></div>Beyond: Gene therapy (Zolgensma)</div>
+      <div class="verdict-chip balanced">Balanced</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="cc-name">Syngenta</div>
+      <div class="cc-tag">Core Consolidator</div>
+      <div class="cc-zone-row"><div class="cc-dot core strong" style="background:var(--core-green)"></div>Core: Global market leader, crop chem</div>
+      <div class="cc-zone-row"><div class="cc-dot edge mid" style="background:var(--edge-amber)"></div>Edge: Biologicals, precision ag</div>
+      <div class="cc-zone-row"><div class="cc-dot beyond weak" style="background:var(--beyond-crimson)"></div>Beyond: Limited frontier R&D</div>
+      <div class="verdict-chip focused">Core-focused</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="cc-name">Roche</div>
+      <div class="cc-tag">Balanced Builder</div>
+      <div class="cc-zone-row"><div class="cc-dot core strong" style="background:var(--core-green)"></div>Core: Oncology, diagnostics</div>
+      <div class="cc-zone-row"><div class="cc-dot edge strong" style="background:var(--edge-amber)"></div>Edge: Personalised medicine</div>
+      <div class="cc-zone-row"><div class="cc-dot beyond strong" style="background:var(--beyond-crimson)"></div>Beyond: AI diagnostics, RNA</div>
+      <div class="verdict-chip balanced">Balanced</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="cc-name">Corteva</div>
+      <div class="cc-tag">Agri Specialist</div>
+      <div class="cc-zone-row"><div class="cc-dot core strong" style="background:var(--core-green)"></div>Core: Seeds + crop protection</div>
+      <div class="cc-zone-row"><div class="cc-dot edge mid" style="background:var(--edge-amber)"></div>Edge: Biologicals, digital farming</div>
+      <div class="cc-zone-row"><div class="cc-dot beyond weak" style="background:var(--beyond-crimson)"></div>Beyond: Minimal</div>
+      <div class="verdict-chip focused">Agri-focused</div>
+    </div>
+
+  </div>
+
+  <div class="radar-wrap reveal">
+    <canvas id="radarChart"></canvas>
+  </div>
+</section>
+
+<!-- STRENGTHS & WEAKNESSES -->
+<section class="sw-section" id="sw">
+  <div class="section-kicker reveal">Strategic Assessment</div>
+  <h2 class="section-title reveal">What Bayer genuinely has,<br>and <em>what it is still avoiding</em></h2>
+
+  <div class="sw-grid reveal">
+    <div class="sw-panel strengths">
+      <div class="sw-panel-title">Strengths</div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <div class="sw-lead">A pharma pipeline that is genuinely delivering</div>
+          <div class="sw-body">Five pivotal drug approvals in 2025, including Nubeqa, now treating over 200,000 prostate cancer patients, demonstrates that Bayer's pharmaceutical R&D machinery, when focused, produces results that matter at scale.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <div class="sw-lead">Beyond bets that are structurally credible</div>
+          <div class="sw-body">BlueRock (Parkinson's cell therapy) and AskBio (gene therapy for heart failure and rare disease) are not science projects. They are acquisitions of proven teams with real clinical data. Bayer did not buy lottery tickets. It bought partial answers.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <div class="sw-lead">Leadership with the courage to admit what predecessors would not</div>
+          <div class="sw-body">Bill Anderson publicly acknowledged the Monsanto conduct as wrong and commissioned external review. In a sector where legal exposure routinely silences leaders, this is not a small thing.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <div class="sw-lead">Global distribution infrastructure that most biotech cannot replicate</div>
+          <div class="sw-body">When AskBio or BlueRock therapies are ready to scale, they will need regulatory relationships, manufacturing networks, and commercial presence in 90+ countries. Bayer has all of this. The question is whether the organisation knows how to use it for therapies that do not follow traditional commercial models.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">S</div>
+        <div class="sw-content">
+          <div class="sw-lead">AI integration that goes beyond press release</div>
+          <div class="sw-body">The PRINCE platform (internal AI for drug discovery), the Cradle partnership for antibody engineering, and the Soufflé partnership for siRNA are not announcements. They are working systems producing real output within Bayer's R&D process.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sw-panel weaknesses">
+      <div class="sw-panel-title">Tensions</div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <div class="sw-lead">No one owns the Edge: a structurally unmanned zone</div>
+          <div class="sw-body">Across twelve CEOs, Edge investment has never been institutionalised. It has existed only as a CEO's personal focus, dismantled whenever leadership changes. Bayer has no Edge portfolio owner, no dedicated budget, and no stage-appropriate metrics. This is not a gap. It is a void.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <div class="sw-lead">A settlement that settles the bill but not the question</div>
+          <div class="sw-body">The $7.25 billion Roundup settlement includes no admission of liability. It resolves the financial exposure without closing the accountability gap. The internal conversation about what was done, who authorised it, and what it means for the company's moral identity has not happened.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <div class="sw-lead">Beyond bets with no commercial bridge</div>
+          <div class="sw-body">Gene therapies require entirely new commercial models: different pricing structures, different payer relationships, different patient engagement. Bayer is building the science in parallel with clinical trials. It is not building the commercial model in parallel. Waiting until approval is waiting too long.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <div class="sw-lead">Psychological safety at 2 out of 5: a fear-driven culture</div>
+          <div class="sw-body">The litigation legacy has created a pathological risk aversion inside the organisation. Experiments create risk. Risk creates liability. The implicit rule that governs innovation is: do not create new legal exposure. This rule kills Edge innovation before it begins.</div>
+        </div>
+      </div>
+
+      <div class="sw-item">
+        <div class="sw-marker">W</div>
+        <div class="sw-content">
+          <div class="sw-lead">Crop Science: a division whose strategic identity is now ambiguous</div>
+          <div class="sw-body">Is Crop Science a second S-curve or a liability engine? Bayer has not answered this. Digital farming and regenerative agriculture are being developed as add-ons to chemical sales, not as new market entries. The organic farming community, a market Bayer helped define itself against, is not a customer Bayer has a relationship with.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section class="diag-section" id="diagnostic">
+  <div class="section-kicker" style="color:var(--bayer-accent)">Theta Diagnostic</div>
+  <h2 class="section-title-light reveal">The full picture, <em>unfiltered</em></h2>
+
+  <div class="diag-grid">
+
+    <div>
+      <div class="diag-block reveal">
+        <div class="diag-label">Portfolio Archetype Match</div>
+        <div class="archetype-boxes">
+          <div class="archetype-box"><span class="arch-name">The Balanced Builder</span><span class="arch-status">✗</span></div>
+          <div class="archetype-box"><span class="arch-name">The Disciplined Explorer</span><span class="arch-status">✗</span></div>
+          <div class="archetype-box"><span class="arch-name">The Legacy-Rich, Vision-Poor</span><span class="arch-status">~</span></div>
+          <div class="archetype-box active"><span class="arch-name">The Disconnected Visionary</span><span class="arch-status" style="color:var(--bayer-accent)">✓</span></div>
+          <div class="archetype-box"><span class="arch-name">The Lost Giant</span><span class="arch-status">✗</span></div>
+        </div>
+      </div>
+
+      <div class="diag-block reveal">
+        <div class="diag-label">Leadership and Culture</div>
+        <div class="assess-row"><span class="assess-key">CEO Agility (Anderson)</span><span class="assess-val mid">3 / 5</span></div>
+        <div class="assess-row"><span class="assess-key">CEO Consciousness</span><span class="assess-val mid">3 / 5</span></div>
+        <div class="assess-row"><span class="assess-key">CEO Courage</span><span class="assess-val high">4 / 5</span></div>
+        <div class="assess-row"><span class="assess-key">Psychological Safety</span><span class="assess-val low">2 / 5</span></div>
+        <div class="assess-row"><span class="assess-key">Failure Intelligence</span><span class="assess-val low">2 / 5</span></div>
+        <div class="assess-row"><span class="assess-key">Open Source Ethos</span><span class="assess-val low">2 / 5</span></div>
+        <div class="assess-row"><span class="assess-key">Maverick Protection</span><span class="assess-val low">2 / 5</span></div>
+        <div class="assess-row"><span class="assess-key">Detachment Capacity</span><span class="assess-val low">1 / 5</span></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="diag-block reveal">
+        <div class="diag-label">Allocation vs. Theta Benchmark</div>
+        <div class="inline-bar-item">
+          <div class="ib-header"><span class="ib-zone">Core Zone</span><span class="ib-pct">78% actual / 70% target</span></div>
+          <div class="ib-track">
+            <div class="ib-fill" style="width:78%; background:var(--core-green);"></div>
+            <div class="ib-bench" style="left:70%"></div>
+          </div>
+        </div>
+        <div class="inline-bar-item">
+          <div class="ib-header"><span class="ib-zone">Edge Zone</span><span class="ib-pct">11% actual / 20% target</span></div>
+          <div class="ib-track">
+            <div class="ib-fill" style="width:11%; background:var(--edge-amber);"></div>
+            <div class="ib-bench" style="left:20%"></div>
+          </div>
+        </div>
+        <div class="inline-bar-item">
+          <div class="ib-header"><span class="ib-zone">Beyond Zone</span><span class="ib-pct">11% actual / 10% target</span></div>
+          <div class="ib-track">
+            <div class="ib-fill" style="width:11%; background:var(--beyond-crimson);"></div>
+            <div class="ib-bench" style="left:10%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="diag-block reveal">
+        <div class="diag-label">Relativity Assessment</div>
+        <div class="relativity-row"><span class="rel-key">vs. Industry baseline (pharma peers)</span><span class="rel-pos at">At Baseline</span></div>
+        <div class="relativity-row"><span class="rel-key">vs. Tech sector (digital natives)</span><span class="rel-pos below">Below</span></div>
+        <div class="relativity-row"><span class="rel-key">vs. Stated ambition ("Health for all")</span><span class="rel-pos below">Behind</span></div>
+        <div class="relativity-row"><span class="rel-key">vs. Historical self (5 years ago)</span><span class="rel-pos at">Improving</span></div>
+        <div class="relativity-row"><span class="rel-key">vs. What is possible (frontier)</span><span class="rel-pos below">Far</span></div>
+      </div>
+
+      <div class="diag-block reveal">
+        <div class="diag-label">Critical Tension</div>
+        <div class="critical-tension">
+          <div class="ct-label">The Structural Risk</div>
+          <div class="ct-text">Bayer's model for innovation is "acquire, isolate, and wait." It has never built Beyond internally. It has never sustained Edge institutionally. The Beyond bets are genuine. The question is whether a company that has never scaled radical innovation through its own commercial engine can do so now, under debt pressure, litigation, and a culture that still punishes experiments.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict-block reveal">
+      <div class="verdict-archetype">
+        <div>
+          <div class="va-label">Theta Archetype</div>
+          <div class="va-name">The Disconnected<br>Visionary</div>
+          <div class="va-checks">
+            <span class="va-check" title="Core">✅</span>
+            <span class="va-check" title="Edge" style="opacity:0.35">△</span>
+            <span class="va-check" title="Beyond">✅</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="verdict-narrative">
+        Bayer has an innovation plan. Five drug approvals in 2025. Gene therapy in clinical development. AI in the pipeline. The Beyond bets are real. What it does not have is an Edge, the structural middle zone where next S-curves are built, and it has never institutionalised one across twelve CEOs. The barbell, heavy on Core and Beyond with nothing in between, is not a mistake made by Baumann. It is the natural shape of a company that treats innovation as acquisition rather than capability.
+      </p>
+      <p class="verdict-narrative" style="margin-top:-16px;">
+        Bayer has a transparency plan. It publishes fact-based discourse reports. It apologised for the stakeholder file scandal. It commissioned external review of its pre-acquisition legal opinions. This is more transparency than most companies in comparable legal exposure produce. It is still defensive transparency, designed to limit future harm rather than illuminate past decisions. Transparency without accountability is a press release.
+      </p>
+      <p class="verdict-narrative" style="margin-top:-16px;">
+        What Bayer does not have is an accountability plan. No individual has been named. No independent investigation with public findings has been published. The $7.25 billion settlement contains no admission of liability. The internal conversation about who decided to proceed with the Monsanto acquisition despite documented ghostwriting conduct, despite known litigation exposure, despite a securities fraud settlement that later noted executives misled investors about due diligence, that conversation has not been made public. A company that pays without admitting has not yet reckoned with itself. And a company that has not reckoned with itself cannot credibly claim to be different from who it was.
+      </p>
+
+      <div class="one-question">
+        <div class="oq-label">The One Question</div>
+        <div class="oq-text">You have an innovation plan. You have a transparency plan. When does the accountability plan begin?</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Theta Innovation Framework <span>&nbsp;·&nbsp;</span> By Christine Pamela <span>&nbsp;·&nbsp;</span> 2026</div>
+  <div class="footer-right">Strategic Case Study</div>
+</footer>
+
+<script>
+// ── VALUATION CHART ──────────────────────────────
+const valuationCtx = document.getElementById('valuationChart').getContext('2d');
+new Chart(valuationCtx, {
+  type: 'bar',
+  data: {
+    labels: ['2015\nPeak', '2016\nDeal Annc.', '2018\nDeal Close', '2020\nLitigation', '2022', '2024\nTrough', '2026\nNow'],
+    datasets: [
+      {
+        label: 'Bayer Market Cap (€B)',
+        data: [143, 116, 91, 72, 60, 32, 50],
+        backgroundColor: (ctx) => {
+          const v = ctx.raw;
+          if (v <= 40) return 'rgba(139,26,26,0.75)';
+          if (v <= 75) return 'rgba(181,132,26,0.7)';
+          return 'rgba(16,81,158,0.7)';
+        },
+        borderWidth: 0,
+        borderRadius: 2,
+      },
+      {
+        label: 'Monsanto Purchase Price ($63B)',
+        data: [63,63,63,63,63,63,63],
+        type: 'line',
+        borderColor: 'rgba(224,112,112,0.6)',
+        borderWidth: 1.5,
+        borderDash: [6,4],
+        pointRadius: 0,
+        fill: false,
+        tension: 0,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { font: { family: 'DM Sans', size: 11 }, color: '#4A5650', usePointStyle: true, padding: 18 }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        titleFont: { family: 'DM Sans', size: 11 },
+        bodyFont: { family: 'DM Sans', size: 11 },
+        callbacks: { label: (c) => ` ${c.dataset.label}: €${c.raw}B` }
+      },
+      annotation: {}
+    },
+    scales: {
+      x: {
+        ticks: { font: { family: 'DM Sans', size: 10 }, color: '#8A9490' },
+        grid: { display: false }
+      },
+      y: {
+        ticks: { font: { family: 'DM Sans', size: 10 }, color: '#8A9490', callback: v => `€${v}B` },
+        grid: { color: 'rgba(16,81,158,0.06)' }
+      }
+    }
+  }
+});
+
+// ── CEO THETA CHART ───────────────────────────────
+const ceoCtx = document.getElementById('ceoChart').getContext('2d');
+const ceoLabels = ['Founders\n1863','Duisberg\n1925','Haberland\n1951','Hansen\n1961','Grünewald\n1974','Strenger\n1984','Schneider\n1992','Wenning\n2002','Dekkers\n2010','Baumann\n2016','Anderson\n2023'];
+new Chart(ceoCtx, {
+  type: 'bar',
+  data: {
+    labels: ceoLabels,
+    datasets: [
+      {
+        label: 'Core %',
+        data: [80,90,85,80,75,80,70,65,60,80,70],
+        backgroundColor: 'rgba(45,106,79,0.72)',
+        borderWidth: 0, borderRadius: 2,
+        stack: 'stack'
+      },
+      {
+        label: 'Edge %',
+        data: [15,5,10,15,20,15,25,30,35,10,10],
+        backgroundColor: 'rgba(181,132,26,0.8)',
+        borderWidth: 0, borderRadius: 2,
+        stack: 'stack'
+      },
+      {
+        label: 'Beyond %',
+        data: [5,5,5,5,5,5,5,5,5,10,20],
+        backgroundColor: 'rgba(139,26,26,0.75)',
+        borderWidth: 0, borderRadius: 2,
+        stack: 'stack'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { font: { family: 'DM Sans', size: 11 }, color: '#4A5650', usePointStyle: true, padding: 20 }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        titleFont: { family: 'DM Sans', size: 11 },
+        bodyFont: { family: 'DM Sans', size: 11 },
+        callbacks: { label: (c) => ` ${c.dataset.label}: ${c.raw}%` }
+      }
+    },
+    scales: {
+      x: {
+        stacked: true,
+        ticks: { font: { family: 'DM Sans', size: 9 }, color: '#8A9490', maxRotation: 0 },
+        grid: { display: false }
+      },
+      y: {
+        stacked: true,
+        min: 0, max: 100,
+        ticks: { font: { family: 'DM Sans', size: 10 }, color: '#8A9490', callback: v => v + '%' },
+        grid: { color: 'rgba(16,81,158,0.06)' }
+      }
+    }
+  }
+});
+
+// ── INTERSECTION OBSERVER ──────────────────────────
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      // Animate bar fills
+      e.target.querySelectorAll('.bar-fill').forEach(b => {
+        const w = b.getAttribute('data-width');
+        if (w) setTimeout(() => { b.style.width = w + '%'; }, 200);
+      });
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+reveals.forEach(r => observer.observe(r));
+
+// ── SCATTER CHART ─────────────────────────────────
+const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+
+const pointLabels = {
+  core: [
+    { x: 1.2, y: 1.1, label: 'Aspirin & OTC Optimization' },
+    { x: 1.5, y: 1.5, label: 'Nubeqa Lifecycle Mgmt' },
+    { x: 1.3, y: 1.3, label: 'Crop Protection Portfolio' },
+    { x: 2.0, y: 2.0, label: 'Digital Farming (FieldView)' },
+  ],
+  edge: [
+    { x: 2.5, y: 3.2, label: 'siRNA Therapies (Soufflé)' },
+    { x: 2.8, y: 3.5, label: 'Cell Therapy (BlueRock)' },
+  ],
+  beyond: [
+    { x: 3.4, y: 4.2, label: 'Gene Therapy (AskBio)' },
+    { x: 3.7, y: 4.5, label: 'AI Antibody Design (Cradle)' },
+    { x: 3.0, y: 4.8, label: 'Regen Agriculture' },
+    { x: 4.0, y: 4.9, label: 'PRINCE AI Platform' },
+  ]
+};
+
+const labelPlugin = {
+  id: 'labelPlugin',
+  afterDatasetsDraw(chart) {
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.font = '11px DM Sans, sans-serif';
+    ctx.fillStyle = '#4A5650';
+    chart.data.datasets.forEach((ds, di) => {
+      const zone = ['core','edge','beyond'][di];
+      const labels = pointLabels[zone];
+      ds.data.forEach((pt, i) => {
+        const meta = chart.getDatasetMeta(di);
+        const el = meta.data[i];
+        if (el && labels[i]) {
+          ctx.fillText(labels[i].label, el.x + 10, el.y + 4);
+        }
+      });
+    });
+    ctx.restore();
+  }
+};
+
+new Chart(scatterCtx, {
+  type: 'scatter',
+  plugins: [labelPlugin],
+  data: {
+    datasets: [
+      {
+        label: 'Core',
+        data: pointLabels.core.map(p => ({ x: p.x, y: p.y })),
+        backgroundColor: 'rgba(45,106,79,0.75)',
+        pointRadius: [10, 14, 12, 8],
+        pointHoverRadius: [13, 17, 15, 11],
+      },
+      {
+        label: 'Edge',
+        data: pointLabels.edge.map(p => ({ x: p.x, y: p.y })),
+        backgroundColor: 'rgba(181,132,26,0.75)',
+        pointRadius: [9, 10],
+        pointHoverRadius: [12, 13],
+      },
+      {
+        label: 'Beyond',
+        data: pointLabels.beyond.map(p => ({ x: p.x, y: p.y })),
+        backgroundColor: 'rgba(139,26,26,0.75)',
+        pointRadius: [11, 10, 9, 9],
+        pointHoverRadius: [14, 13, 12, 12],
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          font: { family: 'DM Sans', size: 11 },
+          color: '#4A5650',
+          usePointStyle: true,
+          pointStyleWidth: 10,
+          padding: 20
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        titleFont: { family: 'DM Sans', size: 11 },
+        bodyFont: { family: 'DM Sans', size: 11 },
+        callbacks: {
+          label: (ctx) => {
+            const zone = ['core','edge','beyond'][ctx.datasetIndex];
+            const l = pointLabels[zone][ctx.dataIndex];
+            return l ? l.label : '';
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        min: 0.5, max: 4.7,
+        title: {
+          display: true,
+          text: 'Market Reach   →   Existing · New · Emerging · Speculative',
+          font: { family: 'DM Sans', size: 10 },
+          color: '#8A9490'
+        },
+        ticks: { display: false },
+        grid: { color: 'rgba(16,81,158,0.06)' }
+      },
+      y: {
+        min: 0.5, max: 5.5,
+        title: {
+          display: true,
+          text: 'Technology Change   →   Low · Moderate · High · Radical · Extreme',
+          font: { family: 'DM Sans', size: 10 },
+          color: '#8A9490'
+        },
+        ticks: { display: false },
+        grid: { color: 'rgba(16,81,158,0.06)' }
+      }
+    }
+  }
+});
+
+// ── DONUT CHART ───────────────────────────────────
+const donutCtx = document.getElementById('donutChart').getContext('2d');
+new Chart(donutCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Core (78%)', 'Edge (11%)', 'Beyond (11%)'],
+    datasets: [{
+      data: [78, 11, 11],
+      backgroundColor: [
+        'rgba(45,106,79,0.8)',
+        'rgba(181,132,26,0.8)',
+        'rgba(139,26,26,0.8)'
+      ],
+      borderWidth: 0,
+      hoverOffset: 6
+    }]
+  },
+  options: {
+    cutout: '68%',
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          font: { family: 'DM Sans', size: 11 },
+          color: '#4A5650',
+          usePointStyle: true,
+          pointStyleWidth: 10,
+          padding: 18
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        titleFont: { family: 'DM Sans', size: 11 },
+        bodyFont: { family: 'DM Sans', size: 11 }
+      }
+    }
+  }
+});
+
+// ── RADAR CHART ───────────────────────────────────
+const radarCtx = document.getElementById('radarChart').getContext('2d');
+new Chart(radarCtx, {
+  type: 'radar',
+  data: {
+    labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'AI Readiness', 'Commercial Scale', 'Pipeline Depth'],
+    datasets: [
+      {
+        label: 'Bayer',
+        data: [78, 28, 72, 58, 82, 74],
+        borderColor: 'rgba(16,81,158,0.85)',
+        backgroundColor: 'rgba(16,81,158,0.1)',
+        pointBackgroundColor: 'rgba(16,81,158,0.85)',
+        borderWidth: 2, pointRadius: 4
+      },
+      {
+        label: 'Novartis',
+        data: [80, 72, 68, 70, 78, 80],
+        borderColor: 'rgba(45,106,79,0.75)',
+        backgroundColor: 'rgba(45,106,79,0.07)',
+        pointBackgroundColor: 'rgba(45,106,79,0.75)',
+        borderWidth: 2, pointRadius: 4
+      },
+      {
+        label: 'Roche',
+        data: [85, 75, 78, 82, 88, 85],
+        borderColor: 'rgba(181,132,26,0.75)',
+        backgroundColor: 'rgba(181,132,26,0.07)',
+        pointBackgroundColor: 'rgba(181,132,26,0.75)',
+        borderWidth: 2, pointRadius: 4
+      },
+      {
+        label: 'Syngenta',
+        data: [88, 52, 32, 48, 72, 50],
+        borderColor: 'rgba(139,26,26,0.65)',
+        backgroundColor: 'rgba(139,26,26,0.06)',
+        pointBackgroundColor: 'rgba(139,26,26,0.65)',
+        borderWidth: 2, pointRadius: 4
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          font: { family: 'DM Sans', size: 11 },
+          color: '#4A5650',
+          usePointStyle: true,
+          pointStyleWidth: 10,
+          padding: 20
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(14,26,24,0.92)',
+        titleFont: { family: 'DM Sans', size: 11 },
+        bodyFont: { family: 'DM Sans', size: 11 }
+      }
+    },
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { display: false },
+        grid: { color: 'rgba(16,81,158,0.1)' },
+        angleLines: { color: 'rgba(16,81,158,0.1)' },
+        pointLabels: {
+          font: { family: 'DM Sans', size: 11 },
+          color: '#4A5650'
+        }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
