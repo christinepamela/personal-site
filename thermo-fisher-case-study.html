@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thermo Fisher Scientific — Theta Innovation Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --company-primary: #0A6E9E;
+    --company-accent: #C9973A;
+    --ink: #0E1A18;
+    --ink-soft: #1E2D2A;
+    --paper: #F7F5F0;
+    --paper-warm: #EFEBE2;
+    --muted: #8A9490;
+    --core-green: #2D6A4F;
+    --edge-amber: #B5841A;
+    --beyond-crimson: #8B1A1A;
+    --border: rgba(10,110,158,0.15);
+    --border-light: rgba(10,110,158,0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(14,26,24,0.82);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(10,110,158,0.2);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--company-primary);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--company-accent); font-style: italic; }
+  .nav-links {
+    display: flex; gap: 32px; list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(247,245,240,0.55);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--company-accent); }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    background: var(--ink);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    overflow: hidden;
+    padding: 0 0 80px 0;
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(10,110,158,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(10,110,158,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridShift 20s linear infinite;
+  }
+  @keyframes gridShift {
+    0% { transform: translate(0,0); }
+    100% { transform: translate(60px, 60px); }
+  }
+
+  .hero-noise {
+    position: absolute; inset: 0; opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 256px;
+  }
+
+  .hero-radial {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 60% 40%, rgba(10,110,158,0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 20% 80%, rgba(201,151,58,0.08) 0%, transparent 60%);
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    max-width: 900px;
+    padding: 0 80px;
+  }
+
+  .hero-kicker {
+    display: inline-block;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--company-accent);
+    border: 1px solid rgba(201,151,58,0.35);
+    padding: 5px 14px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 5.5vw, 5.2rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--paper);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s forwards;
+  }
+  .hero-headline em {
+    font-style: italic;
+    color: var(--company-accent);
+    font-weight: 400;
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: rgba(247,245,240,0.55);
+    max-width: 520px;
+    line-height: 1.7;
+    margin-bottom: 52px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.7s forwards;
+  }
+
+  .hero-meta {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid rgba(10,110,158,0.25);
+    padding-top: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+  .hero-meta-item {
+    padding-right: 24px;
+    border-right: 1px solid rgba(10,110,158,0.15);
+  }
+  .hero-meta-item:last-child { border-right: none; padding-left: 24px; padding-right: 0; }
+  .hero-meta-item:not(:first-child) { padding-left: 24px; }
+  .meta-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .meta-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--paper);
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    right: 48px; bottom: 80px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0;
+    animation: fadeIn 1s 1.4s forwards;
+  }
+  .scroll-indicator span {
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(247,245,240,0.3);
+    writing-mode: vertical-rl;
+  }
+  .scroll-line {
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, rgba(247,245,240,0.15), rgba(201,151,58,0.6));
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { transform: scaleY(1); opacity: 0.5; }
+    50% { transform: scaleY(0.6); opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ── SECTION BASE ── */
+  section { position: relative; }
+  .section-white { background: #fff; }
+  .section-warm { background: var(--paper-warm); }
+  .section-ink { background: var(--ink); color: var(--paper); }
+
+  .container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 100px 60px;
+  }
+
+  .section-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--company-primary);
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 3.5vw, 2.9rem);
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 48px;
+  }
+  .section-title em { font-style: italic; color: var(--company-accent); }
+  .section-ink .section-title em { color: var(--company-accent); }
+
+  /* ── FADE ON SCROLL ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.75s ease, transform 0.75s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 72px;
+    align-items: start;
+  }
+  .prose p {
+    font-size: 1.02rem;
+    line-height: 1.75;
+    color: #2a3634;
+    margin-bottom: 20px;
+  }
+  .hidden-fact {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 28px 32px;
+    margin-top: 32px;
+    border-left: 3px solid var(--company-accent);
+  }
+  .hidden-fact .fact-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--company-accent);
+    margin-bottom: 10px;
+    display: block;
+  }
+  .hidden-fact p {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: rgba(247,245,240,0.8);
+    margin: 0;
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .stat-cell {
+    background: var(--paper-warm);
+    padding: 28px 24px;
+  }
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-number span { color: var(--company-primary); }
+  .stat-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .belief-strip {
+    background: var(--company-primary);
+    padding: 64px 80px;
+    text-align: center;
+  }
+  .belief-strip blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.4rem, 2.5vw, 2.1rem);
+    font-weight: 300;
+    font-style: italic;
+    color: #fff;
+    max-width: 780px;
+    margin: 0 auto 20px;
+    line-height: 1.45;
+  }
+  .belief-strip cite {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    font-style: normal;
+  }
+
+  /* ── TIMELINE ── */
+  .timeline-wrap { position: relative; padding-left: 140px; }
+  .timeline-line {
+    position: absolute;
+    left: 120px; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(10,110,158,0.3) 5%, rgba(10,110,158,0.3) 95%, transparent);
+  }
+  .timeline-item {
+    position: relative;
+    padding: 0 0 52px 36px;
+  }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-dot {
+    position: absolute;
+    left: -5px; top: 6px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--paper-warm);
+    border: 2px solid rgba(10,110,158,0.4);
+  }
+  .timeline-dot.major {
+    width: 14px; height: 14px;
+    left: -7px;
+    background: var(--company-primary);
+    border-color: var(--company-primary);
+    box-shadow: 0 0 0 4px rgba(10,110,158,0.15);
+  }
+  .timeline-year {
+    position: absolute;
+    left: -140px;
+    top: 2px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 300;
+    color: var(--muted);
+    width: 100px;
+    text-align: right;
+  }
+  .timeline-phase {
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--company-accent);
+    margin-bottom: 4px;
+  }
+  .timeline-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .timeline-desc {
+    font-size: 0.88rem;
+    color: #5a6d6a;
+    line-height: 1.6;
+    max-width: 560px;
+  }
+  .timeline-item.inflection .timeline-title { color: var(--company-primary); }
+
+  /* ── THETA MAP ── */
+  .map-grid {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 60px;
+    align-items: start;
+  }
+  .zone-legend { margin-bottom: 32px; }
+  .zone-pill {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .zone-pill:last-child { border-bottom: none; }
+  .zone-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .dot-core { background: var(--core-green); }
+  .dot-edge { background: var(--edge-amber); }
+  .dot-beyond { background: var(--beyond-crimson); }
+  .zone-name {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .zone-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+  .reading-card {
+    background: var(--ink);
+    padding: 20px 22px;
+    border-left: 3px solid var(--company-primary);
+    margin-top: 24px;
+  }
+  .reading-card p {
+    font-size: 0.82rem;
+    color: rgba(247,245,240,0.65);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .reading-card strong { color: rgba(247,245,240,0.9); font-weight: 500; }
+
+  .chart-container { position: relative; height: 420px; }
+
+  /* ── ALLOCATION ── */
+  .alloc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 72px;
+    align-items: center;
+  }
+  .doughnut-wrap {
+    position: relative;
+    width: 260px; height: 260px;
+    margin: 0 auto;
+  }
+  .doughnut-center {
+    position: absolute;
+    inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+  .doughnut-center .big {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .zone-pills-row {
+    display: flex; flex-direction: column; gap: 3px;
+    margin-top: 4px;
+  }
+  .zone-chip {
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    font-weight: 600;
+    border-radius: 2px;
+  }
+  .chip-core { background: rgba(45,106,79,0.15); color: var(--core-green); }
+  .chip-edge { background: rgba(181,132,26,0.15); color: var(--edge-amber); }
+  .chip-beyond { background: rgba(139,26,26,0.15); color: var(--beyond-crimson); }
+
+  .bar-items { display: flex; flex-direction: column; gap: 32px; }
+  .bar-item {}
+  .bar-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .bar-zone {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .bar-zone.core { color: var(--core-green); }
+  .bar-zone.edge { color: var(--edge-amber); }
+  .bar-zone.beyond { color: var(--beyond-crimson); }
+  .bar-pct { font-size: 0.82rem; color: var(--muted); }
+  .bar-track {
+    height: 6px;
+    background: rgba(14,26,24,0.08);
+    border-radius: 3px;
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+  .bar-benchmark {
+    position: absolute;
+    top: -4px; bottom: -4px;
+    width: 2px;
+    background: rgba(14,26,24,0.25);
+  }
+  .bar-comment { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── COMPETITORS ── */
+  .competitor-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 60px;
+  }
+  .competitor-card {
+    border: 1px solid var(--border);
+    padding: 22px 18px;
+    background: var(--paper);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .competitor-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(14,26,24,0.08);
+  }
+  .competitor-card.featured {
+    border-color: var(--company-primary);
+    background: rgba(10,110,158,0.04);
+    box-shadow: 0 0 0 1px rgba(10,110,158,0.12);
+  }
+  .comp-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .comp-tag {
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+  .comp-zones { display: flex; flex-direction: column; gap: 8px; }
+  .comp-zone-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cz-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%; flex-shrink: 0;
+  }
+  .cz-text { font-size: 0.75rem; color: #4a5e5a; line-height: 1.3; }
+  .verdict {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-light);
+  }
+  .verdict-chip {
+    display: inline-block;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    font-weight: 600;
+    border-radius: 2px;
+  }
+  .chip-leader { background: rgba(45,106,79,0.12); color: var(--core-green); }
+  .chip-balanced { background: rgba(10,110,158,0.1); color: var(--company-primary); }
+  .chip-focused { background: rgba(181,132,26,0.12); color: var(--edge-amber); }
+  .chip-harvesting { background: rgba(139,26,26,0.1); color: var(--beyond-crimson); }
+  .chip-executing { background: rgba(90,90,90,0.1); color: #5a5a5a; }
+
+  .radar-wrap { max-width: 560px; margin: 0 auto; height: 400px; }
+
+  /* ── SW ── */
+  .sw-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  .sw-panel { padding: 36px; }
+  .sw-panel.strengths {
+    background: rgba(45,106,79,0.05);
+    border: 1px solid rgba(45,106,79,0.18);
+  }
+  .sw-panel.weaknesses {
+    background: rgba(139,26,26,0.04);
+    border: 1px solid rgba(139,26,26,0.16);
+  }
+  .sw-panel-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 28px;
+  }
+  .sw-panel.strengths .sw-panel-title { color: var(--core-green); }
+  .sw-panel.weaknesses .sw-panel-title { color: var(--beyond-crimson); }
+  .sw-item {
+    display: flex; gap: 14px; align-items: flex-start;
+    margin-bottom: 24px;
+  }
+  .sw-item:last-child { margin-bottom: 0; }
+  .sw-marker {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .sw-panel.strengths .sw-marker {
+    background: rgba(45,106,79,0.15);
+    color: var(--core-green);
+  }
+  .sw-panel.weaknesses .sw-marker {
+    background: rgba(139,26,26,0.12);
+    color: var(--beyond-crimson);
+  }
+  .sw-content {}
+  .sw-lead {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .sw-body { font-size: 0.83rem; color: #5a6d6a; line-height: 1.55; }
+
+  /* ── DIAGNOSTIC ── */
+  .diagnostic-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+  .diag-block { margin-bottom: 40px; }
+  .diag-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--company-primary);
+    margin-bottom: 12px;
+    display: block;
+  }
+  .archetype-boxes { display: flex; flex-direction: column; gap: 8px; }
+  .arch-box {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid rgba(247,245,240,0.1);
+  }
+  .arch-icon { font-size: 1rem; }
+  .arch-name { font-size: 0.85rem; color: rgba(247,245,240,0.7); }
+  .arch-box.active {
+    border-color: var(--company-primary);
+    background: rgba(10,110,158,0.12);
+  }
+  .arch-box.active .arch-name { color: #fff; font-weight: 500; }
+
+  .leader-assess { }
+  .leader-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(247,245,240,0.07);
+  }
+  .leader-row:last-child { border-bottom: none; }
+  .leader-dim { font-size: 0.82rem; color: rgba(247,245,240,0.6); }
+  .leader-score {
+    display: flex; gap: 4px;
+  }
+  .score-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: rgba(247,245,240,0.15);
+  }
+  .score-dot.filled { background: var(--company-accent); }
+
+  .tension-block {
+    background: rgba(139,26,26,0.15);
+    border: 1px solid rgba(139,26,26,0.35);
+    padding: 20px 22px;
+  }
+  .tension-title {
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(139,26,26,0.8);
+    margin-bottom: 10px;
+  }
+  .tension-text {
+    font-size: 0.88rem;
+    color: rgba(247,245,240,0.75);
+    line-height: 1.6;
+  }
+
+  .diag-bar-item { margin-bottom: 18px; }
+  .diag-bar-header {
+    display: flex; justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .diag-bar-label { font-size: 0.78rem; color: rgba(247,245,240,0.6); }
+  .diag-bar-val { font-size: 0.78rem; color: rgba(247,245,240,0.45); }
+  .diag-bar-track {
+    height: 4px;
+    background: rgba(247,245,240,0.08);
+    border-radius: 2px;
+    position: relative;
+  }
+  .diag-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+  .diag-bar-bench {
+    position: absolute;
+    top: -5px; bottom: -5px;
+    width: 1px;
+    background: rgba(247,245,240,0.25);
+  }
+
+  .relativity-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(247,245,240,0.07);
+  }
+  .relativity-row:last-child { border-bottom: none; }
+  .rel-ref { font-size: 0.8rem; color: rgba(247,245,240,0.55); }
+  .rel-badge {
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    font-weight: 600;
+  }
+  .rel-above { background: rgba(45,106,79,0.2); color: #5dba8a; }
+  .rel-on { background: rgba(10,110,158,0.2); color: #5ab4e0; }
+  .rel-behind { background: rgba(181,132,26,0.2); color: #d4a84a; }
+  .rel-catching { background: rgba(247,245,240,0.08); color: rgba(247,245,240,0.45); }
+
+  .verdict-block {
+    grid-column: 1 / -1;
+    border-top: 1px solid rgba(247,245,240,0.1);
+    padding-top: 40px;
+    margin-top: 20px;
+    text-align: center;
+  }
+  .verdict-archetype-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--company-accent);
+    margin-bottom: 12px;
+    display: block;
+  }
+  .verdict-archetype {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+    font-weight: 400;
+    color: var(--paper);
+    margin-bottom: 16px;
+  }
+  .verdict-symbols {
+    display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;
+  }
+  .v-sym {
+    font-size: 1.4rem;
+  }
+  .verdict-text {
+    font-size: 0.88rem;
+    color: rgba(247,245,240,0.55);
+    max-width: 580px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink-soft);
+    border-top: 1px solid rgba(10,110,158,0.15);
+    padding: 32px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-left {
+    font-size: 0.72rem;
+    color: rgba(247,245,240,0.3);
+    letter-spacing: 0.06em;
+  }
+  .footer-left strong {
+    color: rgba(247,245,240,0.55);
+    font-weight: 500;
+  }
+  .footer-right {
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(247,245,240,0.25);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    .hero-content { padding: 0 32px; }
+    .hero-meta { grid-template-columns: repeat(2, 1fr); }
+    .hero-meta-item:nth-child(2) { border-right: none; }
+    .hero-meta-item:nth-child(3) { padding-left: 0; border-right: 1px solid rgba(10,110,158,0.15); }
+    .container { padding: 72px 32px; }
+    .about-grid, .map-grid, .alloc-grid, .sw-grid, .diagnostic-grid { grid-template-columns: 1fr; gap: 40px; }
+    .competitor-grid { grid-template-columns: 1fr 1fr; }
+    .belief-strip { padding: 48px 32px; }
+    .timeline-wrap { padding-left: 80px; }
+    .timeline-line { left: 60px; }
+    .timeline-year { left: -75px; font-size: 1rem; }
+    footer { flex-direction: column; gap: 12px; text-align: center; padding: 24px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Theta<span> ×</span> TMO</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#timeline">Timeline</a></li>
+    <li><a href="#map">Innovation Map</a></li>
+    <li><a href="#allocation">Allocation</a></li>
+    <li><a href="#competitors">Competitors</a></li>
+    <li><a href="#diagnostic">Diagnostic</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-radial"></div>
+
+  <div class="hero-content">
+    <span class="hero-kicker">Theta Innovation Case Study &nbsp;|&nbsp; Life Science Tools</span>
+    <h1 class="hero-headline">
+      The cost of<br><em>being the best</em>
+    </h1>
+    <p class="hero-sub">Thermo Fisher Scientific commands the life science tools industry with $44.5 billion in revenue and an unrivaled operational machine. The question no one is asking loudly enough is whether the same system that built this empire is quietly preventing the next one.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="meta-label">Founded</div>
+        <div class="meta-value">1956 / 2006</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="meta-label">Employees</div>
+        <div class="meta-value">122,000+</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="meta-label">FY2025 Revenue</div>
+        <div class="meta-value">$44.56B</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="meta-label">Theta Archetype</div>
+        <div class="meta-value">Harvesting Giant</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section-white">
+  <div class="container">
+    <div class="about-grid fade-up">
+      <div class="prose">
+        <span class="section-label">What They Do</span>
+        <h2 class="section-title">Science's silent<br><em>infrastructure</em></h2>
+        <p>Thermo Fisher Scientific does not discover cures. It makes discovery possible. From the test tubes and pipettes on a bench researcher's desk to the electron microscope imaging proteins at the atomic scale, from the bioreactor manufacturing a clinical-stage therapy to the data platform managing a Phase III trial across sixty countries, Thermo Fisher is the layer beneath the science. It is the infrastructure through which the life sciences industry breathes.</p>
+        <p>The company's architecture is deceptively simple: combine the world's best analytical instruments with the world's most comprehensive lab supply distribution, then climb the value chain into contract research and manufacturing. What Marc Casper understood when others did not is that the most durable position in life sciences is not owning a molecule but owning the system that helps everyone else find theirs. Four business segments, 122,000 employees, and over 750,000 products later, this thesis has proven remarkably robust.</p>
+
+        <div class="hidden-fact">
+          <span class="fact-label">The detail most people miss</span>
+          <p>The Thermo Fisher we know did not emerge from a dramatic founding moment. Fisher Scientific was incorporated in 1902 as a supplier of school laboratory equipment in Pittsburgh. For its first century, it was a catalogue business. The scientific instrument empire we debate today was built almost entirely between 2006 and 2025, through acquisitions totaling over $60 billion. In fewer than twenty years, Casper transformed a distributor into the world's most powerful life science platform. That speed of transformation, more than any single product, is the most underappreciated fact about this company.</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="stat-grid">
+          <div class="stat-cell">
+            <div class="stat-number"><span>$44.5</span>B</div>
+            <div class="stat-desc">FY2025 revenue, 4% organic growth despite significant headwinds</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number"><span>$60</span>B+</div>
+            <div class="stat-desc">Cumulative acquisition spend since 2006, reshaping the category definition</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number"><span>$17.4</span>B</div>
+            <div class="stat-desc">PPD acquisition in 2021, the boldest single bet on services over instruments</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number"><span>750k</span>+</div>
+            <div class="stat-desc">Products in portfolio, making Thermo Fisher the closest thing to a monopoly on lab supply</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="belief-strip fade-up">
+    <blockquote>"Our Mission is to enable our customers to make the world healthier, cleaner and safer. We do this by accelerating life sciences research, solving complex analytical challenges, improving patient diagnostics and therapies, and increasing laboratory productivity."</blockquote>
+    <cite>Marc N. Casper, President &amp; CEO</cite>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline" class="section-warm">
+  <div class="container">
+    <span class="section-label">Company Arc</span>
+    <h2 class="section-title fade-up">A hundred years of<br><em>becoming indispensable</em></h2>
+
+    <div class="timeline-wrap">
+      <div class="timeline-line"></div>
+
+      <div class="timeline-item fade-up">
+        <div class="timeline-year">1902</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">Origin</div>
+        <div class="timeline-title">Fisher Scientific founded in Pittsburgh</div>
+        <div class="timeline-desc">Chester G. Fisher establishes a laboratory equipment supply company. For decades, it is a catalogue business, the Amazon of scientific consumables before Amazon existed.</div>
+      </div>
+
+      <div class="timeline-item fade-up">
+        <div class="timeline-year">1956</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">Origin</div>
+        <div class="timeline-title">Thermo Electron founded by an MIT professor</div>
+        <div class="timeline-desc">George Hatsopoulos founds Thermo Electron at MIT, pursuing instrumentation and energy technology. The company's early culture is built on engineering excellence and speculative thinking.</div>
+      </div>
+
+      <div class="timeline-item inflection fade-up">
+        <div class="timeline-year">2006</div>
+        <div class="timeline-dot major"></div>
+        <div class="timeline-phase">Inflection I — Architecture</div>
+        <div class="timeline-title">The merger that invented a category</div>
+        <div class="timeline-desc">Thermo Electron merges with Fisher Scientific in a $13.1 billion deal. Marijn Dekkers creates the one-stop-shop model: innovative instruments married to the world's largest lab distribution network. This is not a merger. It is a new market architecture.</div>
+      </div>
+
+      <div class="timeline-item fade-up">
+        <div class="timeline-year">2009</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">Leadership Transition</div>
+        <div class="timeline-title">Marc Casper becomes CEO</div>
+        <div class="timeline-desc">Casper inherits a platform and immediately sets about perfecting it. The PPI Business System becomes the operational religion. Acquisitions shift from transformational to capability-expanding.</div>
+      </div>
+
+      <div class="timeline-item fade-up">
+        <div class="timeline-year">2013</div>
+        <div class="timeline-dot major"></div>
+        <div class="timeline-phase">Inflection II — Portfolio</div>
+        <div class="timeline-title">Life Technologies acquired for $13.6 billion</div>
+        <div class="timeline-desc">The acquisition of Life Technologies (parent of Invitrogen, Gibco, Ion Torrent) transforms Thermo Fisher into the definitive leader in genetic analysis and bioscience consumables. PCR, sequencing, cell culture: all now under one roof.</div>
+      </div>
+
+      <div class="timeline-item fade-up">
+        <div class="timeline-year">2016</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">Category Expansion</div>
+        <div class="timeline-title">FEI acquired for $4.2 billion</div>
+        <div class="timeline-desc">Entry into high-end electron microscopy. The FEI Titan and later cryo-EM platforms become the tool of choice for structural biology, earning Nobel Prize-adjacent recognition. Thermo Fisher gains a genuine frontier instrument franchise.</div>
+      </div>
+
+      <div class="timeline-item fade-up">
+        <div class="timeline-year">2017</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">Model Shift</div>
+        <div class="timeline-title">Patheon acquired for $7.2 billion</div>
+        <div class="timeline-desc">A decisive move from selling tools into doing the work. Patheon, a leading CDMO, positions Thermo Fisher as a manufacturer of drug substances and finished products. The business model begins its migration up the value chain.</div>
+      </div>
+
+      <div class="timeline-item inflection fade-up">
+        <div class="timeline-year">2021</div>
+        <div class="timeline-dot major"></div>
+        <div class="timeline-phase">Inflection III — Services Platform</div>
+        <div class="timeline-title">PPD acquired for $17.4 billion</div>
+        <div class="timeline-desc">The largest deal in company history. PPD is a global contract research organization, a full-service clinical trial business. Combined with Patheon, Thermo Fisher can now take a molecule from early research to commercial manufacturing without leaving its own ecosystem. The Accelerator platform is born.</div>
+      </div>
+
+      <div class="timeline-item fade-up">
+        <div class="timeline-year">2023</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">Proteomics Expansion</div>
+        <div class="timeline-title">Olink acquired for $3.1 billion</div>
+        <div class="timeline-desc">Next-generation protein analysis added to the portfolio. Proteomics is increasingly central to drug target discovery. Thermo Fisher positions itself at the intersection of genomics and proteomics, two of the fastest-evolving scientific domains.</div>
+      </div>
+
+      <div class="timeline-item fade-up">
+        <div class="timeline-year">2025</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">Digital Turn</div>
+        <div class="timeline-title">OpenAI partnership and Clario acquisition announced</div>
+        <div class="timeline-desc">A $9 billion agreement to acquire Clario (digital endpoints for clinical trials) and a strategic AI partnership with OpenAI signal intent to embed intelligence across the entire drug development continuum. Thermo Fisher enters the era of AI-augmented science.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section id="map" class="section-white">
+  <div class="container">
+    <span class="section-label">Theta Innovation Map</span>
+    <h2 class="section-title fade-up">Where the bets<br><em>actually land</em></h2>
+
+    <div class="map-grid">
+      <div class="fade-up">
+        <div class="zone-legend">
+          <div class="zone-pill">
+            <div class="zone-dot dot-core"></div>
+            <div>
+              <div class="zone-name">Core Zone</div>
+              <div class="zone-desc">Existing markets, incremental improvement. Optimize and defend. 70% benchmark allocation.</div>
+            </div>
+          </div>
+          <div class="zone-pill">
+            <div class="zone-dot dot-edge"></div>
+            <div>
+              <div class="zone-name">Edge Zone</div>
+              <div class="zone-desc">New markets, moderate to high tech change. Building the next S-curve. 20% benchmark.</div>
+            </div>
+          </div>
+          <div class="zone-pill">
+            <div class="zone-dot dot-beyond"></div>
+            <div>
+              <div class="zone-name">Beyond Zone</div>
+              <div class="zone-desc">Radical bets, speculative horizons. Shape the future. 10% benchmark allocation.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reading-card">
+          <p><strong>Reading this map:</strong> Dot size reflects relative investment weight. The X-axis represents market reach (Existing to Speculative). The Y-axis represents degree of technology change. Concentration in the lower-left signals Core dominance. Thermo Fisher's map reveals a dense Core cluster, active Edge investment through acquisition, and a near-empty Beyond quadrant. The smallest Beyond dot (Quantum Sensing) reflects early-stage research signals with no confirmed public investment at scale.</p>
+        </div>
+      </div>
+
+      <div class="chart-container fade-up">
+        <canvas id="scatterChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section id="allocation" class="section-warm">
+  <div class="container">
+    <span class="section-label">Portfolio Allocation</span>
+    <h2 class="section-title fade-up">The 70-20-10 lens:<br><em>where conviction reveals itself</em></h2>
+
+    <div class="alloc-grid">
+      <div class="fade-up" style="display:flex;flex-direction:column;align-items:center;">
+        <div class="doughnut-wrap">
+          <canvas id="doughnutChart"></canvas>
+          <div class="doughnut-center">
+            <span class="big">Zones Active</span>
+            <div class="zone-pills-row">
+              <span class="zone-chip chip-core">Core ✓</span>
+              <span class="zone-chip chip-edge">Edge ✓</span>
+              <span class="zone-chip chip-beyond">Beyond △</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bar-items fade-up">
+        <div class="bar-item">
+          <div class="bar-header">
+            <span class="bar-zone core">Core Zone</span>
+            <span class="bar-pct">Actual ~78% &nbsp;|&nbsp; Benchmark 70%</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:78%;background:var(--core-green);"></div>
+            <div class="bar-benchmark" style="left:70%;"></div>
+          </div>
+          <div class="bar-comment">Overweight by approximately 8 percentage points. The PPI Business System, recurring consumables model, and acquisition of services businesses all amplify Core concentration. This is the company's identity, not an accident.</div>
+        </div>
+
+        <div class="bar-item">
+          <div class="bar-header">
+            <span class="bar-zone edge">Edge Zone</span>
+            <span class="bar-pct">Actual ~17% &nbsp;|&nbsp; Benchmark 20%</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:17%;background:var(--edge-amber);"></div>
+            <div class="bar-benchmark" style="left:20%;"></div>
+          </div>
+          <div class="bar-comment">Broadly in range, but the composition matters. Edge investment is concentrated in acquisition-led expansion rather than organic incubation, meaning the company pays a premium for categories others proved out.</div>
+        </div>
+
+        <div class="bar-item">
+          <div class="bar-header">
+            <span class="bar-zone beyond">Beyond Zone</span>
+            <span class="bar-pct">Actual &lt;5% &nbsp;|&nbsp; Benchmark 10%</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:5%;background:var(--beyond-crimson);"></div>
+            <div class="bar-benchmark" style="left:10%;"></div>
+          </div>
+          <div class="bar-comment">The most significant structural gap. For a company with Thermo Fisher's margins and resources, a Beyond deficit of 5+ percentage points translates to $400M or more annually not being deployed toward transformational bets. This is not a resource problem. It is a design problem.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section id="competitors" class="section-white">
+  <div class="container">
+    <span class="section-label">Competitive Landscape</span>
+    <h2 class="section-title fade-up">The industry reads the<br><em>same signals differently</em></h2>
+
+    <div class="competitor-grid fade-up">
+
+      <div class="competitor-card featured">
+        <div class="comp-name">Thermo Fisher</div>
+        <div class="comp-tag">Harvesting Giant &mdash; TMO</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--core-green)"></div><div class="cz-text">Core: Dominant. PPI-driven optimization, consumables moat, services scale.</div></div>
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--edge-amber)"></div><div class="cz-text">Edge: Active via acquisition. AI partnerships emerging organically.</div></div>
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--beyond-crimson)"></div><div class="cz-text">Beyond: Structural gap. No dedicated advanced projects unit visible.</div></div>
+        </div>
+        <div class="verdict"><span class="verdict-chip chip-harvesting">Harvesting Giant</span></div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="comp-name">Danaher</div>
+        <div class="comp-tag">Balanced Builder &mdash; DHR</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--core-green)"></div><div class="cz-text">Core: DBS-powered excellence, diagnostics and bioprocessing.</div></div>
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--edge-amber)"></div><div class="cz-text">Edge: Point-of-care expansion, Cepheid platform growth.</div></div>
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--beyond-crimson)"></div><div class="cz-text">Beyond: Danaher Ventures creates structural exploration capacity.</div></div>
+        </div>
+        <div class="verdict"><span class="verdict-chip chip-balanced">Balanced Builder</span></div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="comp-name">Sartorius</div>
+        <div class="comp-tag">Focused Explorer &mdash; SRT</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--core-green)"></div><div class="cz-text">Core: Single-use bioprocessing dominance, biopharma focus.</div></div>
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--edge-amber)"></div><div class="cz-text">Edge: Cell and gene therapy manufacturing expansion.</div></div>
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--beyond-crimson)"></div><div class="cz-text">Beyond: Eveo cell therapy platform, 5% R&amp;D intensity, organic bets.</div></div>
+        </div>
+        <div class="verdict"><span class="verdict-chip chip-focused">Focused Explorer</span></div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="comp-name">Agilent</div>
+        <div class="comp-tag">Executing Harvester &mdash; A</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--core-green)"></div><div class="cz-text">Core: Chromatography and mass spec excellence, CrossLab services.</div></div>
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--edge-amber)"></div><div class="cz-text">Edge: BIOVECTRA CDMO addition, specialized niche manufacturing.</div></div>
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--beyond-crimson)"></div><div class="cz-text">Beyond: Thin. Instrument-focused; limited structural exploration.</div></div>
+        </div>
+        <div class="verdict"><span class="verdict-chip chip-executing">Executing Harvester</span></div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="comp-name">MilliporeSigma</div>
+        <div class="comp-tag">Platform Builder &mdash; MRCG</div>
+        <div class="comp-zones">
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--core-green)"></div><div class="cz-text">Core: 300,000+ products, bioprocessing and testing leadership.</div></div>
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--edge-amber)"></div><div class="cz-text">Edge: ADC manufacturing, viral vectors, HUB organoids acquisition.</div></div>
+          <div class="comp-zone-row"><div class="cz-dot" style="background:var(--beyond-crimson)"></div><div class="cz-text">Beyond: Organoid platforms, Aptegra, parent co. long-horizon capital.</div></div>
+        </div>
+        <div class="verdict"><span class="verdict-chip chip-leader">Platform Builder</span></div>
+      </div>
+
+    </div>
+
+    <div class="fade-up">
+      <div class="radar-wrap">
+        <canvas id="radarChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S&W -->
+<section id="sw" class="section-warm">
+  <div class="container">
+    <span class="section-label">Strategic Assessment</span>
+    <h2 class="section-title fade-up">What the data reveals<br><em>and what it conceals</em></h2>
+
+    <div class="sw-grid fade-up">
+      <div class="sw-panel strengths">
+        <div class="sw-panel-title">Structural Strengths</div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">The one-stop-shop moat is nearly unreplicable</div>
+            <div class="sw-body">No competitor has simultaneously matched Thermo Fisher's depth in instruments, consumables, CRO, and CDMO services. Large pharma procurement teams have consolidated vendors; leaving Thermo Fisher means rebuilding relationships across forty-plus categories at once.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">Recurring revenue insulates from capital spending cycles</div>
+            <div class="sw-body">Reagents, kits, and consumables are not discretionary. When pharma clients freeze instrument budgets, they still consume Gibco media, Invitrogen reagents, and PPD trial services. This buffer explains why Thermo Fisher consistently outperforms peers during industry downturns.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">The PPI Business System is a genuine competitive weapon</div>
+            <div class="sw-body">Most companies have operational improvement programs. Few have turned one into a culture. PPI drives productivity gains that are then reinvested in price competitiveness and margin, creating a compounding flywheel that smaller rivals cannot match on cost.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">The Accelerator platform creates genuine ecosystem lock-in</div>
+            <div class="sw-body">By connecting drug discovery, clinical trials, and commercial manufacturing through shared data and systems, Thermo Fisher is not just a vendor. It is becoming the operating system for mid-to-large pharma drug development. Platform switching costs are asymmetric and growing.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">M&amp;A track record is genuinely exceptional</div>
+            <div class="sw-body">Across more than $60 billion in acquisitions since 2006, Thermo Fisher has suffered remarkably few high-profile integration failures. The integration playbook, anchored by PPI, has absorbed businesses as complex as PPD without losing their client relationships or core talent at scale.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">COVID-19 response revealed latent organisational agility</div>
+            <div class="sw-body">Thermo Fisher's response to the pandemic, producing billions of PCR tests and becoming a key logistics partner for vaccine distribution, demonstrated that the organisation can mobilise with extraordinary speed when the context demands it. That capacity has not disappeared; it is dormant.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sw-panel weaknesses">
+        <div class="sw-panel-title">Structural Tensions</div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">The Beyond zone is not underfunded; it is structurally absent</div>
+            <div class="sw-body">Unlike Danaher's venture arm or Sartorius's R&amp;D culture, Thermo Fisher has no structural mechanism for speculative bets. There is no Advanced Projects unit, no protected innovation budget with a 10-year horizon, no Maverick Fellowship. The absence is architectural, not accidental.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">PPI creates process immunity to uncertainty</div>
+            <div class="sw-body">The same discipline that makes PPI powerful in Core operations makes it toxic to exploration. Initiatives that cannot show a measurable return within 24 months face structural defunding. This is not a cultural failure of courage; it is a logical outcome of the incentive architecture Casper built.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">China exposure is a structural vulnerability, not a cyclical headwind</div>
+            <div class="sw-body">The mid-single-digit revenue decline in China is not a tariff story alone. Beijing is deliberately cultivating domestic life science tools competitors, from reagent suppliers to instrument manufacturers. The $400 million headwind is the visible cost; the structural market share erosion may be the larger, slower threat.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">Innovation access is acquisition-dependent, not cultivation-dependent</div>
+            <div class="sw-body">When Thermo Fisher needs innovation, it buys it. Olink for proteomics, Clario for digital endpoints, FEI for electron microscopy. This works until the category has already been proved by someone else, meaning the company consistently arrives second to the technology and pays a premium for validated market positions.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">Listening architecture is tuned for customers who already exist</div>
+            <div class="sw-body">Thermo Fisher's customer signal infrastructure is optimised for the Early and Late Majority, the 68% who have already made purchasing decisions. Signals from innovators, early adopters, and non-consumers, where the next S-curve will originate, are systematically under-weighted in product development decisions.</div>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">Fifteen years of consistent strategy may be the company's greatest risk</div>
+            <div class="sw-body">Casper's strategy has been "remarkably consistent" since 2009, a phrase that appears in investor presentations as a virtue. In an industry where AI, synthetic biology, and decentralised diagnostics are compressing the timeline for disruption, consistency and conviction can look identical from the outside until the moment they diverge.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section id="diagnostic" class="section-ink">
+  <div class="container">
+    <span class="section-label" style="color:var(--company-accent)">Theta Diagnostic</span>
+    <h2 class="section-title fade-up" style="color:var(--paper);">The portrait of a<br><em>disciplined explorer</em> at rest</h2>
+
+    <div class="diagnostic-grid">
+
+      <!-- LEFT COLUMN -->
+      <div>
+        <div class="diag-block fade-up">
+          <span class="diag-label">Portfolio Mapping</span>
+          <div class="archetype-boxes">
+            <div class="arch-box active"><span class="arch-icon">✓</span><span class="arch-name">Core — Dominant. Deeply optimised, high-margin recurring revenue.</span></div>
+            <div class="arch-box" style="border-color:rgba(181,132,26,0.4);background:rgba(181,132,26,0.07)"><span class="arch-icon" style="color:var(--edge-amber)">△</span><span class="arch-name" style="color:rgba(247,245,240,0.6)">Edge — Present, primarily through acquisition. Organic incubation thin.</span></div>
+            <div class="arch-box"><span class="arch-icon" style="color:rgba(139,26,26,0.7)">×</span><span class="arch-name" style="color:rgba(247,245,240,0.35)">Beyond — Structurally absent. No dedicated unit. No protected budget.</span></div>
+          </div>
+        </div>
+
+        <div class="diag-block fade-up">
+          <span class="diag-label">Leadership and Culture</span>
+          <div class="leader-assess">
+            <div class="leader-row">
+              <span class="leader-dim">Agility in execution</span>
+              <div class="leader-score">
+                <div class="score-dot filled"></div><div class="score-dot filled"></div><div class="score-dot filled"></div><div class="score-dot filled"></div><div class="score-dot"></div>
+              </div>
+            </div>
+            <div class="leader-row">
+              <span class="leader-dim">Consciousness / self-awareness</span>
+              <div class="leader-score">
+                <div class="score-dot filled"></div><div class="score-dot filled"></div><div class="score-dot filled"></div><div class="score-dot filled"></div><div class="score-dot"></div>
+              </div>
+            </div>
+            <div class="leader-row">
+              <span class="leader-dim">Courage in M&amp;A</span>
+              <div class="leader-score">
+                <div class="score-dot filled"></div><div class="score-dot filled"></div><div class="score-dot filled"></div><div class="score-dot filled"></div><div class="score-dot filled"></div>
+              </div>
+            </div>
+            <div class="leader-row">
+              <span class="leader-dim">Courage in speculative bets</span>
+              <div class="leader-score">
+                <div class="score-dot filled"></div><div class="score-dot filled"></div><div class="score-dot"></div><div class="score-dot"></div><div class="score-dot"></div>
+              </div>
+            </div>
+            <div class="leader-row">
+              <span class="leader-dim">Maverick cultivation</span>
+              <div class="leader-score">
+                <div class="score-dot filled"></div><div class="score-dot filled"></div><div class="score-dot"></div><div class="score-dot"></div><div class="score-dot"></div>
+              </div>
+            </div>
+            <div class="leader-row">
+              <span class="leader-dim">Failure intelligence</span>
+              <div class="leader-score">
+                <div class="score-dot filled"></div><div class="score-dot filled"></div><div class="score-dot"></div><div class="score-dot"></div><div class="score-dot"></div>
+              </div>
+            </div>
+            <div class="leader-row">
+              <span class="leader-dim">Psychological safety</span>
+              <div class="leader-score">
+                <div class="score-dot filled"></div><div class="score-dot filled"></div><div class="score-dot filled"></div><div class="score-dot"></div><div class="score-dot"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="diag-block fade-up">
+          <span class="diag-label">Mavericks and Risk Tolerance</span>
+          <p style="font-size:0.86rem;color:rgba(247,245,240,0.55);line-height:1.65;">Thermo Fisher accesses Mavericks through acquisition rather than cultivation. Founder-led businesses like FEI, Patheon, and Olink brought unconventional thinkers into the organisation, but the post-integration PPI system gradually normalises them into process. There is no formal mechanism to identify, protect, or give air cover to internal rebels. The company's risk tolerance is high for proven-market M&amp;A and structurally low for unproven-horizon exploration.</p>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div>
+        <div class="diag-block fade-up">
+          <span class="diag-label">Customer Signal Alignment</span>
+          <p style="font-size:0.86rem;color:rgba(247,245,240,0.55);line-height:1.65;margin-bottom:16px;">Signal infrastructure is heavily weighted toward the Early and Late Majority, the 68% of the adoption curve who have already made a decision. Innovators and early adopters, who carry the signals of what life science tools will need to do in 2030, are engaged selectively through key opinion leader programs but not systematically embedded in product development. Non-consumer analysis is absent.</p>
+        </div>
+
+        <div class="diag-block fade-up">
+          <span class="diag-label">Critical Tension</span>
+          <div class="tension-block">
+            <div class="tension-title">The Central Structural Risk</div>
+            <div class="tension-text">The PPI Business System, which is simultaneously Thermo Fisher's greatest competitive advantage and its most binding constraint on exploration, cannot serve both functions. A system designed to eliminate variance is, by definition, a system designed to suppress the kind of productive failure from which breakthrough innovations emerge. The company has not yet chosen whether to run one system for everything or two systems in parallel. Until it does, the Beyond zone will remain structurally empty regardless of stated intent.</div>
+          </div>
+        </div>
+
+        <div class="diag-block fade-up">
+          <span class="diag-label">Actual vs. Benchmark Allocation</span>
+          <div class="diag-bar-item">
+            <div class="diag-bar-header">
+              <span class="diag-bar-label">Core</span>
+              <span class="diag-bar-val">~78% actual vs 70% target</span>
+            </div>
+            <div class="diag-bar-track">
+              <div class="diag-bar-fill" style="width:78%;background:var(--core-green);"></div>
+              <div class="diag-bar-bench" style="left:70%;"></div>
+            </div>
+          </div>
+          <div class="diag-bar-item">
+            <div class="diag-bar-header">
+              <span class="diag-bar-label">Edge</span>
+              <span class="diag-bar-val">~17% actual vs 20% target</span>
+            </div>
+            <div class="diag-bar-track">
+              <div class="diag-bar-fill" style="width:17%;background:var(--edge-amber);"></div>
+              <div class="diag-bar-bench" style="left:20%;"></div>
+            </div>
+          </div>
+          <div class="diag-bar-item">
+            <div class="diag-bar-header">
+              <span class="diag-bar-label">Beyond</span>
+              <span class="diag-bar-val">&lt;5% actual vs 10% target</span>
+            </div>
+            <div class="diag-bar-track">
+              <div class="diag-bar-fill" style="width:5%;background:var(--beyond-crimson);"></div>
+              <div class="diag-bar-bench" style="left:10%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="diag-block fade-up">
+          <span class="diag-label">Relativity Assessment</span>
+          <div>
+            <div class="relativity-row">
+              <span class="rel-ref">vs. Direct competitors (Danaher, Agilent)</span>
+              <span class="rel-badge rel-above">Above</span>
+            </div>
+            <div class="relativity-row">
+              <span class="rel-ref">vs. Tech-sector innovation standard</span>
+              <span class="rel-badge rel-behind">Trailing</span>
+            </div>
+            <div class="relativity-row">
+              <span class="rel-ref">vs. Stated mission ambition</span>
+              <span class="rel-badge rel-on">On Track</span>
+            </div>
+            <div class="relativity-row">
+              <span class="rel-ref">vs. Thermo Fisher 10 years ago</span>
+              <span class="rel-badge rel-above">Improving</span>
+            </div>
+            <div class="relativity-row">
+              <span class="rel-ref">vs. Frontier of what is possible</span>
+              <span class="rel-badge rel-catching">Catching Up</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VERDICT -->
+      <div class="verdict-block fade-up">
+        <span class="verdict-archetype-label">Strategic Archetype</span>
+        <div class="verdict-archetype">The Harvesting Giant</div>
+        <div class="verdict-symbols">
+          <span class="v-sym" title="Core">✅</span>
+          <span class="v-sym" title="Edge">🔶</span>
+          <span class="v-sym" title="Beyond">❌</span>
+        </div>
+        <p class="verdict-text">Thermo Fisher Scientific is the most operationally excellent company in its industry. It has built an empire through disciplined acquisition, relentless process improvement, and an unmatched ability to scale proven market positions. The Theta Framework places it squarely in the Harvesting Giant archetype: Core dominant, Edge active through acquisition, Beyond structurally absent. The company does not lack resources, talent, or ambition. What it has not yet built is the parallel architecture, separate systems, separate rules, separate metrics, that would allow it to plant seeds for markets that do not yet exist while continuing to harvest the ones that do. That gap is not a critique of the past. It is the most important question about the next fifteen years.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <strong>The Theta Innovation Framework</strong> &nbsp;|&nbsp; Strategic Case Study &nbsp;|&nbsp; 2025
+  </div>
+  <div class="footer-right">Thermo Fisher Scientific — Innovation Portfolio Analysis</div>
+</footer>
+
+<script>
+// ── INTERSECTION OBSERVER ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// ── CHART DEFAULTS ──
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+const TOOLTIP = {
+  backgroundColor: 'rgba(14,26,24,0.92)',
+  titleColor: '#F7F5F0',
+  bodyColor: 'rgba(247,245,240,0.7)',
+  borderColor: 'rgba(10,110,158,0.3)',
+  borderWidth: 1,
+  padding: 12,
+  titleFont: { size: 12, weight: '500' },
+  bodyFont: { size: 11 },
+};
+
+// ── SCATTER CHART ──
+const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+new Chart(scatterCtx, {
+  type: 'scatter',
+  data: {
+    datasets: [
+      {
+        label: 'Core Zone',
+        data: [
+          { x: 0.8, y: 0.5, label: 'Orbitrap upgrades' },
+          { x: 1.0, y: 0.8, label: 'Bioprocessing consumables' },
+          { x: 0.6, y: 0.4, label: 'Distribution optimization' },
+          { x: 1.2, y: 1.5, label: 'Patheon CDMO expansion' },
+          { x: 1.3, y: 1.4, label: 'PPD Clinical integration' },
+        ],
+        backgroundColor: 'rgba(45,106,79,0.72)',
+        borderColor: 'rgba(45,106,79,0.9)',
+        pointRadius: [6, 9, 6, 8, 9],
+        pointHoverRadius: 10,
+      },
+      {
+        label: 'Edge Zone',
+        data: [
+          { x: 1.8, y: 2.4, label: 'Accelerator™ Platform' },
+          { x: 2.2, y: 3.0, label: 'AI Clinical Tools (OpenAI)' },
+          { x: 2.1, y: 3.2, label: 'Cryo-EM Discovery Center' },
+          { x: 2.3, y: 3.1, label: 'Orbitrap Astral Zoom' },
+          { x: 2.0, y: 2.2, label: 'DigitalSME Platform' },
+          { x: 1.7, y: 2.0, label: 'Olink Proteomics' },
+          { x: 2.0, y: 2.3, label: 'Clario Digital Endpoints' },
+        ],
+        backgroundColor: 'rgba(181,132,26,0.72)',
+        borderColor: 'rgba(181,132,26,0.9)',
+        pointRadius: [8, 7, 7, 8, 6, 8, 8],
+        pointHoverRadius: 10,
+      },
+      {
+        label: 'Beyond Zone',
+        data: [
+          { x: 2.8, y: 3.8, label: 'Spatial Biology Platforms' },
+          { x: 3.2, y: 4.2, label: 'AI-Native Instruments (NVIDIA)' },
+          { x: 3.7, y: 4.7, label: 'Quantum Sensing (nascent)' },
+        ],
+        backgroundColor: 'rgba(139,26,26,0.72)',
+        borderColor: 'rgba(139,26,26,0.9)',
+        pointRadius: [6, 7, 3],
+        pointHoverRadius: 10,
+      },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { color: '#5a6d6a', font: { size: 11 }, boxWidth: 10, padding: 20 }
+      },
+      tooltip: {
+        ...TOOLTIP,
+        callbacks: {
+          label: ctx => ctx.raw.label || ctx.dataset.label
+        }
+      },
+    },
+    scales: {
+      x: {
+        min: 0, max: 4,
+        title: {
+          display: true,
+          text: 'Market Reach   →   Existing    New    Emerging    Speculative',
+          color: '#8A9490', font: { size: 10 }
+        },
+        ticks: { display: false },
+        grid: { color: 'rgba(10,110,158,0.06)' },
+        border: { color: 'rgba(10,110,158,0.15)' },
+      },
+      y: {
+        min: 0, max: 5.5,
+        title: {
+          display: true,
+          text: 'Technology Change   →   Incremental    Moderate    High    Radical    Extreme',
+          color: '#8A9490', font: { size: 10 }
+        },
+        ticks: { display: false },
+        grid: { color: 'rgba(10,110,158,0.06)' },
+        border: { color: 'rgba(10,110,158,0.15)' },
+      }
+    }
+  },
+  plugins: [{
+    id: 'pointLabels',
+    afterDatasetsDraw(chart) {
+      const ctx = chart.ctx;
+      chart.data.datasets.forEach((dataset, di) => {
+        const meta = chart.getDatasetMeta(di);
+        if (!meta.hidden) {
+          meta.data.forEach((point, index) => {
+            const label = dataset.data[index].label;
+            if (!label) return;
+            ctx.save();
+            ctx.font = '10px DM Sans, sans-serif';
+            ctx.fillStyle = 'rgba(90,109,106,0.85)';
+            ctx.fillText(label, point.x + 8, point.y + 3);
+            ctx.restore();
+          });
+        }
+      });
+    }
+  }]
+});
+
+// ── DOUGHNUT CHART ──
+const dCtx = document.getElementById('doughnutChart').getContext('2d');
+new Chart(dCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Core Zone', 'Edge Zone', 'Beyond Zone'],
+    datasets: [{
+      data: [78, 17, 5],
+      backgroundColor: ['rgba(45,106,79,0.75)', 'rgba(181,132,26,0.75)', 'rgba(139,26,26,0.75)'],
+      borderWidth: 0,
+      hoverOffset: 6,
+    }]
+  },
+  options: {
+    cutout: '68%',
+    responsive: true, maintainAspectRatio: true,
+    plugins: {
+      legend: { position: 'bottom', labels: { color: '#5a6d6a', font: { size: 10 }, boxWidth: 8, padding: 12 } },
+      tooltip: TOOLTIP,
+    }
+  }
+});
+
+// ── RADAR CHART ──
+const rCtx = document.getElementById('radarChart').getContext('2d');
+new Chart(rCtx, {
+  type: 'radar',
+  data: {
+    labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'AI Readiness', 'Manufacturing', 'Platform Depth'],
+    datasets: [
+      {
+        label: 'Thermo Fisher',
+        data: [95, 62, 28, 65, 90, 88],
+        borderColor: 'rgba(10,110,158,0.85)',
+        backgroundColor: 'rgba(10,110,158,0.08)',
+        pointBackgroundColor: 'rgba(10,110,158,0.9)',
+        borderWidth: 2, pointRadius: 4,
+      },
+      {
+        label: 'Danaher',
+        data: [88, 78, 58, 72, 80, 75],
+        borderColor: 'rgba(201,151,58,0.85)',
+        backgroundColor: 'rgba(201,151,58,0.06)',
+        pointBackgroundColor: 'rgba(201,151,58,0.9)',
+        borderWidth: 2, pointRadius: 4,
+      },
+      {
+        label: 'Sartorius',
+        data: [72, 80, 68, 60, 82, 58],
+        borderColor: 'rgba(45,106,79,0.8)',
+        backgroundColor: 'rgba(45,106,79,0.05)',
+        pointBackgroundColor: 'rgba(45,106,79,0.9)',
+        borderWidth: 2, pointRadius: 4,
+      },
+      {
+        label: 'MilliporeSigma',
+        data: [78, 75, 60, 58, 75, 68],
+        borderColor: 'rgba(139,26,26,0.7)',
+        backgroundColor: 'rgba(139,26,26,0.05)',
+        pointBackgroundColor: 'rgba(139,26,26,0.8)',
+        borderWidth: 2, pointRadius: 4,
+      },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { color: '#5a6d6a', font: { size: 11 }, boxWidth: 10, padding: 16 }
+      },
+      tooltip: TOOLTIP,
+    },
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { display: false },
+        grid: { color: 'rgba(10,110,158,0.1)' },
+        angleLines: { color: 'rgba(10,110,158,0.1)' },
+        pointLabels: {
+          color: '#5a6d6a',
+          font: { size: 11 }
+        }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
