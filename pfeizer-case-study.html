@@ -1,1 +1,3047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pfizer's Innovation Strategy: Build, Buy, or Both?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --pfizer-blue: #003087;
+    --pfizer-light-blue: #0070C0;
+    --accent-gold: #B8962E;
+    --accent-gold-light: #D4AF55;
+    --ink: #0B1420;
+    --ink-soft: #1A2535;
+    --paper: #F8F6F1;
+    --paper-warm: #F0EBE0;
+    --muted: #8A9298;
+    --muted-light: #B5BDC2;
+    --core-green: #1A5C3A;
+    --core-green-light: #2D8A58;
+    --edge-amber: #A07018;
+    --edge-amber-light: #C8921E;
+    --beyond-crimson: #7B1A2A;
+    --beyond-crimson-light: #A82438;
+    --border: rgba(0,48,135,0.12);
+    --border-warm: rgba(184,150,46,0.2);
+    --white: #FFFFFF;
+    --nav-height: 64px;
+  }
 
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--nav-height);
+    background: rgba(11,20,32,0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent-gold-light); }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    height: 100vh;
+    min-height: 700px;
+    background: var(--ink);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-grid-overlay {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,48,135,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,48,135,0.08) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridDrift 40s linear infinite;
+  }
+
+  @keyframes gridDrift {
+    0% { transform: translate(0,0); }
+    100% { transform: translate(60px, 60px); }
+  }
+
+  .hero-noise {
+    position: absolute;
+    inset: 0;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px 200px;
+  }
+
+  .hero-radial {
+    position: absolute;
+    top: -200px;
+    right: -100px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(0,112,192,0.18) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero-radial-2 {
+    position: absolute;
+    bottom: -150px;
+    left: -150px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(184,150,46,0.1) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 80px;
+    max-width: 1000px;
+  }
+
+  .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.3s;
+  }
+
+  .hero-kicker::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: var(--accent-gold);
+  }
+
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--white);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.5s;
+  }
+
+  .hero-headline em {
+    font-style: italic;
+    color: var(--accent-gold-light);
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.55);
+    max-width: 580px;
+    margin-bottom: 60px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.7s;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 48px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 28px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.9s;
+  }
+
+  .hero-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .hero-meta-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .hero-meta-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--white);
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    right: 48px;
+    bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards 1.4s;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, var(--accent-gold));
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.1); }
+  }
+
+  .scroll-label {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    writing-mode: vertical-rl;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* SECTIONS */
+  section { padding: 100px 0; }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 64px;
+  }
+
+  .section-white { background: var(--white); }
+  .section-paper { background: var(--paper-warm); }
+  .section-ink { background: var(--ink); color: var(--white); }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 20px;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 1px;
+    background: var(--accent-gold);
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 4vw, 52px);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--pfizer-blue);
+  }
+
+  .section-title-light {
+    color: var(--white);
+  }
+
+  .section-title-light em {
+    color: var(--accent-gold-light);
+  }
+
+  .section-intro {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.75;
+    color: var(--muted);
+    max-width: 680px;
+    margin-bottom: 60px;
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .about-prose p {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.85;
+    color: #3A4550;
+    margin-bottom: 20px;
+  }
+
+  .hidden-fact-card {
+    background: var(--ink);
+    border-radius: 2px;
+    padding: 28px 32px;
+    margin-top: 36px;
+    border-left: 3px solid var(--accent-gold);
+  }
+
+  .hidden-fact-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 10px;
+  }
+
+  .hidden-fact-text {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.88);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+  }
+
+  .stat-cell {
+    background: var(--white);
+    padding: 36px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--pfizer-blue);
+  }
+
+  .stat-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  .stat-note {
+    font-size: 11px;
+    color: var(--muted-light);
+    margin-top: 4px;
+  }
+
+  /* BELIEF STRIP */
+  .belief-strip {
+    background: var(--pfizer-blue);
+    padding: 72px 64px;
+    margin-top: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .belief-strip::before {
+    content: '\201C';
+    position: absolute;
+    left: 48px;
+    top: -20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 200px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.05);
+    line-height: 1;
+  }
+
+  .belief-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.55;
+    color: var(--white);
+    max-width: 780px;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 20px;
+  }
+
+  .belief-attribution {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* TIMELINE */
+  .timeline {
+    position: relative;
+    padding-left: 140px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 120px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--border-warm) 5%, var(--border-warm) 95%, transparent);
+  }
+
+  .timeline-item {
+    position: relative;
+    padding: 0 0 52px 48px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .timeline-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -8px;
+    top: 6px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-gold);
+    background: var(--paper-warm);
+    z-index: 1;
+  }
+
+  .timeline-dot.major {
+    background: var(--accent-gold);
+    width: 18px;
+    height: 18px;
+    left: -9px;
+    box-shadow: 0 0 0 4px rgba(184,150,46,0.2);
+  }
+
+  .timeline-year {
+    position: absolute;
+    left: -136px;
+    top: 2px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--accent-gold);
+    text-align: right;
+    width: 88px;
+  }
+
+  .timeline-phase {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--pfizer-light-blue);
+    margin-bottom: 4px;
+  }
+
+  .timeline-event {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+
+  .timeline-desc {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--muted);
+    max-width: 560px;
+  }
+
+  .timeline-inflection {
+    background: rgba(0,48,135,0.04);
+    border-left: 3px solid var(--pfizer-blue);
+    padding: 16px 20px;
+    margin-top: 12px;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .timeline-inflection p {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--pfizer-blue);
+    line-height: 1.6;
+  }
+
+  /* THETA MAP */
+  .theta-map-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .zone-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .zone-pill {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 20px;
+    border-radius: 2px;
+    border-left: 4px solid;
+  }
+
+  .zone-pill.core { border-color: var(--core-green); background: rgba(45,138,88,0.05); }
+  .zone-pill.edge { border-color: var(--edge-amber); background: rgba(200,146,30,0.05); }
+  .zone-pill.beyond { border-color: var(--beyond-crimson); background: rgba(168,36,56,0.05); }
+
+  .zone-pill-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .zone-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .zone-dot.core { background: var(--core-green-light); }
+  .zone-dot.edge { background: var(--edge-amber-light); }
+  .zone-dot.beyond { background: var(--beyond-crimson-light); }
+
+  .zone-name {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .zone-name.core { color: var(--core-green); }
+  .zone-name.edge { color: var(--edge-amber); }
+  .zone-name.beyond { color: var(--beyond-crimson); }
+
+  .zone-desc {
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .reading-card {
+    background: var(--paper-warm);
+    border-radius: 2px;
+    padding: 20px 24px;
+    border: 1px solid var(--border-warm);
+  }
+
+  .reading-card-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 10px;
+  }
+
+  .reading-card-text {
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+
+  .chart-wrapper {
+    position: relative;
+    height: 460px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 24px;
+  }
+
+  .chart-axis-label-x {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted-light);
+    margin-top: 10px;
+  }
+
+  .chart-axis-label-y {
+    position: absolute;
+    left: -48px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted-light);
+    white-space: nowrap;
+  }
+
+  /* ALLOCATION */
+  .allocation-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .doughnut-wrapper {
+    position: relative;
+    width: 280px;
+    height: 280px;
+  }
+
+  .doughnut-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .doughnut-center-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .doughnut-center-zones {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  .allocation-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  .alloc-bar-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .alloc-bar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .alloc-bar-name {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .alloc-bar-name.core { color: var(--core-green); }
+  .alloc-bar-name.edge { color: var(--edge-amber); }
+  .alloc-bar-name.beyond { color: var(--beyond-crimson); }
+
+  .alloc-bar-values {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .alloc-bar-track {
+    position: relative;
+    height: 8px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 4px;
+    overflow: visible;
+  }
+
+  .alloc-bar-actual {
+    height: 100%;
+    border-radius: 4px;
+    position: relative;
+  }
+
+  .alloc-bar-actual.core { background: var(--core-green-light); }
+  .alloc-bar-actual.edge { background: var(--edge-amber-light); }
+  .alloc-bar-actual.beyond { background: var(--beyond-crimson-light); }
+
+  .alloc-bar-benchmark {
+    position: absolute;
+    top: -3px;
+    width: 2px;
+    height: 14px;
+    background: var(--ink);
+    border-radius: 1px;
+  }
+
+  .alloc-bar-benchmark-label {
+    position: absolute;
+    top: -20px;
+    font-size: 9px;
+    color: var(--muted);
+    white-space: nowrap;
+    transform: translateX(-50%);
+  }
+
+  .alloc-commentary {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* COMPETITORS */
+  .competitor-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 60px;
+  }
+
+  .competitor-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: box-shadow 0.2s;
+  }
+
+  .competitor-card:hover {
+    box-shadow: 0 8px 32px rgba(0,48,135,0.08);
+  }
+
+  .competitor-card.featured {
+    border-color: rgba(0,48,135,0.35);
+    background: rgba(0,48,135,0.03);
+  }
+
+  .competitor-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .competitor-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .competitor-zones {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+
+  .competitor-zone-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .competitor-verdict {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: rgba(0,48,135,0.08);
+    color: var(--pfizer-blue);
+    margin-top: 4px;
+  }
+
+  .competitor-verdict.strong {
+    background: rgba(26,92,58,0.1);
+    color: var(--core-green);
+  }
+
+  .competitor-verdict.pivot {
+    background: rgba(160,112,24,0.1);
+    color: var(--edge-amber);
+  }
+
+  .competitor-verdict.leader {
+    background: rgba(123,26,42,0.1);
+    color: var(--beyond-crimson);
+  }
+
+  .radar-wrapper {
+    max-width: 560px;
+    margin: 0 auto;
+    height: 400px;
+  }
+
+  /* STRENGTHS & WEAKNESSES */
+  .sw-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .sw-panel {
+    border-radius: 2px;
+    padding: 36px;
+  }
+
+  .sw-panel.strengths {
+    background: rgba(45,106,79,0.05);
+    border: 1px solid rgba(45,106,79,0.2);
+  }
+
+  .sw-panel.weaknesses {
+    background: rgba(123,26,42,0.05);
+    border: 1px solid rgba(123,26,42,0.2);
+  }
+
+  .sw-panel-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid;
+  }
+
+  .sw-panel.strengths .sw-panel-title {
+    color: var(--core-green);
+    border-color: rgba(45,106,79,0.2);
+  }
+
+  .sw-panel.weaknesses .sw-panel-title {
+    color: var(--beyond-crimson);
+    border-color: rgba(123,26,42,0.2);
+  }
+
+  .sw-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 22px;
+    align-items: flex-start;
+  }
+
+  .sw-marker {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .sw-panel.strengths .sw-marker {
+    background: rgba(45,106,79,0.12);
+    color: var(--core-green);
+  }
+
+  .sw-panel.weaknesses .sw-marker {
+    background: rgba(123,26,42,0.12);
+    color: var(--beyond-crimson);
+  }
+
+  .sw-content strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .sw-content p {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+
+  /* THETA DIAGNOSTIC */
+  .diagnostic-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+  }
+
+  .diag-section {
+    margin-bottom: 40px;
+  }
+
+  .diag-section-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .archetype-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 2px;
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .archetype-label {
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .archetype-status {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .archetype-status.ok {
+    background: rgba(45,138,88,0.2);
+    color: #5CB87A;
+  }
+
+  .archetype-status.mid {
+    background: rgba(200,146,30,0.2);
+    color: #D4AF55;
+  }
+
+  .archetype-status.low {
+    background: rgba(168,36,56,0.2);
+    color: #E06070;
+  }
+
+  .culture-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 13px;
+  }
+
+  .culture-label { color: rgba(255,255,255,0.6); }
+
+  .culture-score {
+    display: flex;
+    gap: 4px;
+  }
+
+  .score-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+  }
+
+  .score-dot.filled { background: var(--accent-gold); }
+
+  .tension-box {
+    background: rgba(123,26,42,0.2);
+    border: 1px solid rgba(168,36,56,0.3);
+    border-radius: 2px;
+    padding: 20px 24px;
+    margin-top: 8px;
+  }
+
+  .tension-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #E06070;
+    margin-bottom: 10px;
+  }
+
+  .tension-text {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.65);
+  }
+
+  .diag-bar-item {
+    margin-bottom: 16px;
+  }
+
+  .diag-bar-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .diag-bar-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .diag-bar-nums {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+  }
+
+  .diag-bar-track {
+    height: 5px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    position: relative;
+  }
+
+  .diag-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+
+  .diag-bar-fill.core { background: var(--core-green-light); }
+  .diag-bar-fill.edge { background: var(--edge-amber-light); }
+  .diag-bar-fill.beyond { background: var(--beyond-crimson-light); }
+
+  .diag-bar-bench {
+    position: absolute;
+    top: -3px;
+    width: 2px;
+    height: 11px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 1px;
+  }
+
+  .relativity-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 12px;
+  }
+
+  .rel-label { color: rgba(255,255,255,0.55); }
+
+  .rel-badge {
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .rel-badge.at { background: rgba(200,146,30,0.25); color: #D4AF55; }
+  .rel-badge.below { background: rgba(168,36,56,0.2); color: #E06070; }
+  .rel-badge.improving { background: rgba(45,138,88,0.2); color: #5CB87A; }
+  .rel-badge.tracking { background: rgba(0,112,192,0.2); color: #6BBBF5; }
+  .rel-badge.behind { background: rgba(168,36,56,0.25); color: #E06070; }
+
+  .verdict-strip {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 2px;
+    padding: 28px 32px;
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  .verdict-archetype {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .verdict-symbols {
+    font-size: 20px;
+    margin-bottom: 12px;
+    letter-spacing: 4px;
+  }
+
+  .verdict-desc {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.5);
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* ONE QUESTION */
+  .one-question-section {
+    background: var(--ink);
+    padding: 80px 64px;
+    text-align: center;
+  }
+
+  .oq-kicker {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 24px;
+  }
+
+  .oq-question {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--white);
+    line-height: 1.35;
+    max-width: 760px;
+    margin: 0 auto 24px;
+  }
+
+  .oq-question em {
+    color: var(--accent-gold-light);
+    font-style: normal;
+  }
+
+  .oq-sub {
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.38);
+    font-style: italic;
+  }
+
+  /* CONTROVERSY SECTION */
+  .controversy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+  }
+
+  .controversy-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 28px 24px;
+    border-top: 3px solid var(--beyond-crimson-light);
+  }
+
+  .controversy-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .controversy-text {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .controversy-status {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--beyond-crimson);
+    border-bottom: 1px solid rgba(123,26,42,0.3);
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink-soft);
+    padding: 32px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .footer-left {
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 0.06em;
+  }
+
+  .footer-left span {
+    color: var(--accent-gold);
+    font-weight: 500;
+  }
+
+  .footer-right {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+  }
+
+  /* FADE IN ON SCROLL */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .container { padding: 0 28px; }
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    .hero-content { padding: 0 28px; }
+    .hero-meta { flex-wrap: wrap; gap: 24px; }
+    .about-grid, .theta-map-grid, .allocation-grid,
+    .sw-grid, .diagnostic-grid { grid-template-columns: 1fr; gap: 40px; }
+    .competitor-grid { grid-template-columns: 1fr 1fr; }
+    .controversy-grid { grid-template-columns: 1fr; }
+    .belief-strip { padding: 48px 28px; }
+    .timeline { padding-left: 80px; }
+    .timeline::before { left: 60px; }
+    .timeline-year { left: -72px; font-size: 16px; width: 56px; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .scroll-indicator { display: none; }
+    .doughnut-wrapper { margin: 0 auto; }
+    .radar-wrapper { height: 320px; }
+  }
+  /* ACQUISITION MODEL */
+  .acq-geo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 60px;
+  }
+
+  .geo-card {
+    border-radius: 2px;
+    padding: 32px 28px;
+    border-top: 4px solid;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .geo-card.usa { border-color: var(--pfizer-blue); background: rgba(0,48,135,0.04); }
+  .geo-card.china { border-color: var(--beyond-crimson-light); background: rgba(168,36,56,0.04); }
+  .geo-card.europe { border-color: var(--core-green-light); background: rgba(45,138,88,0.04); }
+
+  .geo-flag {
+    font-size: 28px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .geo-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .geo-model {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .geo-card.usa .geo-model { color: var(--pfizer-blue); }
+  .geo-card.china .geo-model { color: var(--beyond-crimson-light); }
+  .geo-card.europe .geo-model { color: var(--core-green-light); }
+
+  .geo-body {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.75;
+    color: #4A555E;
+    margin-bottom: 16px;
+  }
+
+  .geo-stat {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0,0,0,0.07);
+  }
+
+  .geo-stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .geo-stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .acq-pfizer-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px;
+    background: var(--border);
+    margin-top: 48px;
+  }
+
+  .acq-deal {
+    background: var(--white);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .acq-deal-year {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+  }
+
+  .acq-deal-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+
+  .acq-deal-value {
+    font-size: 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    color: var(--pfizer-blue);
+  }
+
+  .acq-deal-note {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .acq-total-bar {
+    background: var(--pfizer-blue);
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2px;
+  }
+
+  .acq-total-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .acq-total-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--white);
+  }
+
+  /* CEO SECTION */
+  .ceo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .ceo-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .ceo-header {
+    padding: 24px 24px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ceo-tenure {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 6px;
+  }
+
+  .ceo-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .ceo-archetype {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .ceo-alloc {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ceo-alloc-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ceo-alloc-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    width: 52px;
+    flex-shrink: 0;
+  }
+
+  .ceo-alloc-label.core { color: var(--core-green); }
+  .ceo-alloc-label.edge { color: var(--edge-amber); }
+  .ceo-alloc-label.beyond { color: var(--beyond-crimson); }
+
+  .ceo-alloc-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .ceo-alloc-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+
+  .ceo-alloc-fill.core { background: var(--core-green-light); }
+  .ceo-alloc-fill.edge { background: var(--edge-amber-light); }
+  .ceo-alloc-fill.beyond { background: var(--beyond-crimson-light); }
+
+  .ceo-alloc-pct {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    width: 32px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .ceo-body {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ceo-rating-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ceo-rating-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .ceo-rating-stars {
+    display: flex;
+    gap: 3px;
+  }
+
+  .star {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.1);
+  }
+
+  .star.lit { background: var(--accent-gold); }
+
+  .ceo-verdict {
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--muted);
+    font-style: italic;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+  }
+
+  /* AI SECTION */
+  .ai-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .ai-metric-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .ai-metric {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+  }
+
+  .ai-metric:last-child { border-bottom: none; }
+  .ai-metric:nth-child(even) { background: rgba(0,48,135,0.02); }
+
+  .ai-metric-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+
+  .ai-metric-sub {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--muted);
+  }
+
+  .ai-metric-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--pfizer-blue);
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  .ai-prose p {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.85;
+    color: #3A4550;
+    margin-bottom: 20px;
+  }
+
+  .ai-tension-card {
+    background: var(--ink);
+    border-radius: 2px;
+    padding: 28px 32px;
+    margin-top: 28px;
+    border-left: 3px solid var(--accent-gold);
+  }
+
+  .ai-tension-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 10px;
+  }
+
+  .ai-tension-text {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.88);
+  }
+
+  @media (max-width: 900px) {
+    .acq-geo-grid, .ceo-grid { grid-template-columns: 1fr; }
+    .acq-pfizer-row { grid-template-columns: 1fr 1fr; }
+    .ai-grid { grid-template-columns: 1fr; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Pfizer — Build, Buy, or Both?</div>
+  <ul class="nav-links">
+    <li><a href="#about">Profile</a></li>
+    <li><a href="#timeline">History</a></li>
+    <li><a href="#theta-map">Innovation Map</a></li>
+    <li><a href="#competitors">Competitors</a></li>
+    <li><a href="#acquisition">Acquisition Model</a></li>
+    <li><a href="#ceo">CEO Legacy</a></li>
+    <li><a href="#ai">AI &amp; R&amp;D</a></li>
+    <li><a href="#diagnostic">Diagnostic</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-radial"></div>
+  <div class="hero-radial-2"></div>
+
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Framework — Strategic Case Study</div>
+    <h1 class="hero-headline">
+      The World's Most Powerful<br>Drug Company is <em>Buying</em><br>Its Way to Relevance
+    </h1>
+    <p class="hero-subtitle">
+      Pfizer controls more capital than most governments allocate to health. Yet its most consequential bets of the last decade did not emerge from within. This is the story of a company that builds brilliantly at scale, but has quietly stopped imagining at the frontier.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Founded</span>
+        <span class="hero-meta-value">1849</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">2025 Revenue</span>
+        <span class="hero-meta-value">$62.6B</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Employees</span>
+        <span class="hero-meta-value">~75,000</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Theta Archetype</span>
+        <span class="hero-meta-value">Disciplined Explorer</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <span class="scroll-label">Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section-white">
+  <div class="container">
+    <div class="section-label">Company Profile</div>
+    <h2 class="section-title">More than a drug company.<br><em>A capital allocation machine.</em></h2>
+
+    <div class="about-grid fade-in">
+      <div class="about-prose">
+        <p>
+          Pfizer began in a Brooklyn laboratory in 1849, making citric acid. It became the world's largest penicillin producer during World War II, not through brilliant science alone, but through an industrial insight: deep-tank fermentation at scale. That same instinct, to take something others discovered and commercialize it at a magnitude no one else could, has defined every chapter since.
+        </p>
+        <p>
+          Today Pfizer is a pure-play innovative biopharmaceutical company, organized around oncology, vaccines, and immunology. With $10.4 billion invested in R&D in 2025 and a pipeline of 102 programs, it presents the portrait of a science-led enterprise. But beneath that framing is a harder truth: Pfizer's greatest recent innovations were not invented here. The COVID vaccine came from BioNTech. Its new oncology engine came from Seagen. Its obesity re-entry came from Metsera. What Pfizer adds is not the idea. It is the infrastructure, the regulatory muscle, and the commercial reach to turn ideas into global medicine.
+        </p>
+
+        <div class="hidden-fact-card">
+          <div class="hidden-fact-label">Little-Known Fact</div>
+          <p class="hidden-fact-text">
+            During World War II, Pfizer supplied 90% of the penicillin given to Allied forces on D-Day, producing it in a converted ice cream factory in Brooklyn. The technology they pioneered, deep-tank fermentation, was not invented by Pfizer but was scaled by them. It is the oldest and most persistent expression of what Pfizer truly is: a company that wins not by inventing the breakthrough, but by owning what happens after it.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <div class="stats-grid">
+          <div class="stat-cell">
+            <span class="stat-number">$219B+</span>
+            <span class="stat-label">Spent on acquisitions since 1994</span>
+            <span class="stat-note">More than any other pharma company globally</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-number">102</span>
+            <span class="stat-label">Active pipeline programs (2026)</span>
+            <span class="stat-note">8 potential blockbusters targeted by 2030</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-number">1.2%</span>
+            <span class="stat-label">Industry R&D ROI — 2022 nadir</span>
+            <span class="stat-note">Down from 10.1% in 2010 across big pharma</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-number">$43B</span>
+            <span class="stat-label">Seagen acquisition — 2023</span>
+            <span class="stat-note">The largest oncology bet in pharma history</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="belief-strip fade-in">
+      <p class="belief-quote">
+        "If the whole thing fails, then we overpaid. If the whole thing succeeds, it's a&nbsp;damn good deal."
+      </p>
+      <span class="belief-attribution">Albert Bourla, CEO — on the $43B Seagen acquisition</span>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline" class="section-paper">
+  <div class="container">
+    <div class="section-label">Historical Arc</div>
+    <h2 class="section-title">From Brooklyn to <em>Blockbuster</em></h2>
+    <p class="section-intro">
+      Pfizer's history is not one of linear growth. It is a sequence of reinventions, each triggered by the approaching obsolescence of the last era's dominant idea.
+    </p>
+
+    <div class="timeline fade-in">
+      <div class="timeline-item visible">
+        <div class="timeline-year">1849</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">Origin</div>
+        <div class="timeline-event">Charles Pfizer &amp; Charles Erhart found a fine chemicals company in Brooklyn</div>
+        <p class="timeline-desc">Their first product: a palatable form of santonin, an anti-parasitic drug. The ambition was not grand science but practical chemistry that people would actually use.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1944</div>
+        <div class="timeline-dot major"></div>
+        <div class="timeline-phase">First Inflection</div>
+        <div class="timeline-event">Deep-tank fermentation and the mass production of penicillin</div>
+        <p class="timeline-desc">Pfizer supplied 90% of the penicillin used by Allied forces on D-Day. They did not invent it. They scaled it. The pattern was set.</p>
+        <div class="timeline-inflection"><p>This is the original Pfizer DNA: not frontier discovery, but industrial amplification of others' breakthroughs at a scale that changes the world.</p></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1980s</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">Core Expansion</div>
+        <div class="timeline-event">Diflucan, Norvasc, Zoloft — building the blockbuster model</div>
+        <p class="timeline-desc">Pfizer mastered the art of finding molecules, running large trials, and commercializing through an aggressive global salesforce. The blockbuster model was born here, and with it, the culture of defending existing revenue.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2000</div>
+        <div class="timeline-dot major"></div>
+        <div class="timeline-phase">Second Inflection</div>
+        <div class="timeline-event">Warner-Lambert acquisition brings Lipitor — the world's best-selling drug</div>
+        <p class="timeline-desc">Lipitor would generate over $125 billion in lifetime revenue. The acquisition cost roughly $90 billion. It was the defining moment of what pharma M&amp;A could deliver, and it made every future CEO's instinct to acquire rather than build seem rational.</p>
+        <div class="timeline-inflection"><p>The Lipitor halo shaped Pfizer's strategy for two decades. When the patent expired in 2011, the revenue cliff was brutal, but the memory of what one acquisition could achieve remained.</p></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2009</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">Strategic Pivot</div>
+        <div class="timeline-event">Wyeth acquisition adds vaccines and biologics ($68B)</div>
+        <p class="timeline-desc">Prevnar, the pneumococcal vaccine, became one of the most commercially successful vaccines in history. Pfizer had entered a new therapeutic paradigm — one that would later underpin its pandemic response.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2009</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">Accountability Moment</div>
+        <div class="timeline-event">$2.3 billion DOJ settlement — the largest healthcare fraud settlement in US history at the time</div>
+        <p class="timeline-desc">Off-label promotion of Bextra and other drugs. The settlement included a criminal guilty plea from a Pfizer subsidiary. It did not interrupt the company's growth trajectory, but it established a pattern of regulatory confrontation that would recur.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2019</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">The Pruning</div>
+        <div class="timeline-event">Upjohn spinoff; merger with Mylan to form Viatris. Consumer health merged with GSK.</div>
+        <p class="timeline-desc">CEO Albert Bourla inherited Ian Read's portfolio cleanup and accelerated it. Off-patent generics and consumer health were discarded. The logic: strip everything that does not compound at pharmaceutical margins, and focus capital on innovative drugs.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2021</div>
+        <div class="timeline-dot major"></div>
+        <div class="timeline-phase">Third Inflection</div>
+        <div class="timeline-event">Comirnaty and Paxlovid generate $56.7B in a single year — peak COVID revenue</div>
+        <p class="timeline-desc">Pfizer did not create the mRNA vaccine technology; BioNTech did. Pfizer provided the manufacturing, the cold chain, the regulatory navigation, and the commercial infrastructure to deliver billions of doses. The financial windfall was extraordinary — and temporary.</p>
+        <div class="timeline-inflection"><p>The COVID era revealed both Pfizer's greatest strength (scale) and its most persistent vulnerability (dependency on others' discovery). The question was what they would do with the windfall.</p></div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2023</div>
+        <div class="timeline-dot major"></div>
+        <div class="timeline-phase">Post-COVID Reckoning</div>
+        <div class="timeline-event">Seagen acquired for $43B — the oncology pivot</div>
+        <p class="timeline-desc">Antibody-drug conjugates: precision molecules that deliver chemotherapy payloads directly to cancer cells. Bourla called them "GPS-guided missiles." Pfizer bet its COVID windfall on this technology, acquiring not a drug but a platform. The question of whether the culture that built Seagen will survive the integration remains open.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2025</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">Forced Re-Entry</div>
+        <div class="timeline-event">Metsera acquired for up to $10B after internal obesity programs fail</div>
+        <p class="timeline-desc">Three consecutive GLP-1 candidates — lotiglipron, danuglipron twice-daily, danuglipron once-daily — were all discontinued due to liver safety signals. Pfizer's response was not to rebuild internal capability. It was to acquire Metsera's monthly GLP-1 assets. The pattern is now impossible to miss.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2026</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-phase">Current Chapter</div>
+        <div class="timeline-event">Revenue guidance $59.5B-$62.5B as patent cliffs arrive and COVID revenue declines to ~$5B</div>
+        <p class="timeline-desc">Eliquis, contributing approximately 13.7% of revenue, faces generic competition. Ibrance and Xtandi face similar pressure. The window is measured in years. Whether Seagen and Metsera scale fast enough to bridge the gap is the central question of the current era.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section id="theta-map" class="section-white">
+  <div class="container">
+    <div class="section-label">Theta Innovation Map</div>
+    <h2 class="section-title">Where the bets <em>actually</em> live</h2>
+    <p class="section-intro">
+      Pfizer's innovation portfolio is more concentrated than its pipeline count suggests. The Core is crowded and contested. The Edge is almost entirely acquired. The Beyond is sparse.
+    </p>
+
+    <div class="theta-map-grid fade-in">
+      <div>
+        <div class="zone-legend">
+          <div class="zone-pill core">
+            <div class="zone-pill-header">
+              <div class="zone-dot core"></div>
+              <span class="zone-name core">Core Zone</span>
+            </div>
+            <p class="zone-desc">Existing markets, low tech change. Defend and optimize. Revenue today.</p>
+          </div>
+          <div class="zone-pill edge">
+            <div class="zone-pill-header">
+              <div class="zone-dot edge"></div>
+              <span class="zone-name edge">Edge Zone</span>
+            </div>
+            <p class="zone-desc">New markets, moderate to high tech change. Build the next S-curve. Revenue tomorrow.</p>
+          </div>
+          <div class="zone-pill beyond">
+            <div class="zone-pill-header">
+              <div class="zone-dot beyond"></div>
+              <span class="zone-name beyond">Beyond Zone</span>
+            </div>
+            <p class="zone-desc">Emerging and speculative. Radical bets. Shape the future of the industry.</p>
+          </div>
+        </div>
+
+        <div class="reading-card">
+          <div class="reading-card-title">How to Read This Map</div>
+          <p class="reading-card-text">
+            X-axis moves from Existing markets (left) to Speculative markets (right). Y-axis moves from Incremental technology (bottom) to Extreme technology change (top). The size of each point reflects relative investment weight. Pfizer's Core is heavily weighted. The Edge is dominated by recent acquisitions, not organically developed programs. The Beyond is conspicuously thin for a company of this scale.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <div class="chart-wrapper" style="position:relative;">
+          <canvas id="thetaScatter"></canvas>
+          <p class="chart-axis-label-x" style="margin-top:8px;">Market Reach: Existing &rarr; New &rarr; Emerging &rarr; Speculative</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALLOCATION -->
+<section class="section-paper">
+  <div class="container">
+    <div class="section-label">Portfolio Allocation</div>
+    <h2 class="section-title">The 70-20-10 <em>reality check</em></h2>
+    <p class="section-intro">
+      The Theta benchmark suggests a healthy innovation portfolio allocates 70% to Core, 20% to Edge, and 10% to Beyond. Pfizer's actual distribution reveals where the strategic attention truly flows.
+    </p>
+
+    <div class="allocation-grid fade-in">
+      <div>
+        <div class="doughnut-wrapper">
+          <canvas id="allocationDoughnut"></canvas>
+          <div class="doughnut-center">
+            <span class="doughnut-center-label">Zones Active</span>
+            <div class="doughnut-center-zones">Core<br>Edge<br>Beyond</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="allocation-bars">
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-name core">Core Zone</span>
+            <span class="alloc-bar-values">Actual: ~78% — Benchmark: 70%</span>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-actual core" style="width:78%;">
+              <span class="alloc-bar-benchmark" style="left:calc(70% / 78% * 100%)">
+                <span class="alloc-bar-benchmark-label">70% target</span>
+              </span>
+            </div>
+          </div>
+          <p class="alloc-commentary">Overweight. The bulk of Pfizer's operational energy defends its current commercial portfolio. The patent cliff makes this rational in the short term, but it leaves less bandwidth for building the next curve.</p>
+        </div>
+
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-name edge">Edge Zone</span>
+            <span class="alloc-bar-values">Actual: ~16% — Benchmark: 20%</span>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-actual edge" style="width:16%;">
+              <span class="alloc-bar-benchmark" style="left:calc(20% / 16% * 100 - 0%)">
+                <span class="alloc-bar-benchmark-label">20% target</span>
+              </span>
+            </div>
+          </div>
+          <p class="alloc-commentary">Underweight by design. Seagen and Metsera represent genuine Edge investment, but they were acquired, not incubated. The internal Edge generation pipeline remains structurally thin.</p>
+        </div>
+
+        <div class="alloc-bar-item">
+          <div class="alloc-bar-header">
+            <span class="alloc-bar-name beyond">Beyond Zone</span>
+            <span class="alloc-bar-values">Actual: ~6% — Benchmark: 10%</span>
+          </div>
+          <div class="alloc-bar-track">
+            <div class="alloc-bar-actual beyond" style="width:6%;">
+              <span class="alloc-bar-benchmark" style="left:167%">
+                <span class="alloc-bar-benchmark-label" style="left:0">10% target</span>
+              </span>
+            </div>
+          </div>
+          <p class="alloc-commentary">The most significant gap. For a company spending $10.4 billion on R&D annually, the frontier is underserved. Gene editing, AI-native discovery, and longevity biology receive token attention relative to Pfizer's capacity.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section id="competitors" class="section-white">
+  <div class="container">
+    <div class="section-label">Competitive Landscape</div>
+    <h2 class="section-title">Who is building <em>the next thing</em></h2>
+    <p class="section-intro">
+      Pfizer's competitive position varies dramatically by zone. In Core, it is deeply entrenched. In Edge, it is catching up. In Beyond, it is largely absent from the conversation.
+    </p>
+
+    <div class="competitor-grid fade-in">
+      <div class="competitor-card featured">
+        <div class="competitor-name">Pfizer</div>
+        <div class="competitor-tag">M&amp;A-Driven Disciplined Explorer</div>
+        <div class="competitor-zones">
+          <div class="competitor-zone-row"><div class="zone-dot core"></div> Strong Core, patent cliff exposed</div>
+          <div class="competitor-zone-row"><div class="zone-dot edge"></div> Edge via acquisition (Seagen, Metsera)</div>
+          <div class="competitor-zone-row"><div class="zone-dot beyond"></div> Beyond underweight vs. scale</div>
+        </div>
+        <div class="competitor-verdict">Subject</div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="competitor-name">Merck (MSD)</div>
+        <div class="competitor-tag">Keytruda-Anchored, Late M&amp;A Pivot</div>
+        <div class="competitor-zones">
+          <div class="competitor-zone-row"><div class="zone-dot core"></div> Core anchored by Keytruda ($25B+/yr)</div>
+          <div class="competitor-zone-row"><div class="zone-dot edge"></div> Aggressive late-stage M&amp;A in 2024-25</div>
+          <div class="competitor-zone-row"><div class="zone-dot beyond"></div> mRNA cancer vaccines (BioNTech deal)</div>
+        </div>
+        <div class="competitor-verdict strong">Dominant Core</div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="competitor-name">Eli Lilly</div>
+        <div class="competitor-tag">Category Creator in Metabolic Disease</div>
+        <div class="competitor-zones">
+          <div class="competitor-zone-row"><div class="zone-dot core"></div> Obesity (Zepbound) becoming new Core</div>
+          <div class="competitor-zone-row"><div class="zone-dot edge"></div> Alzheimer's with Kisunla; diabetes pipeline</div>
+          <div class="competitor-zone-row"><div class="zone-dot beyond"></div> Longevity biology investments</div>
+        </div>
+        <div class="competitor-verdict leader">Category Leader</div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="competitor-name">Merck KGaA</div>
+        <div class="competitor-tag">European "Bolt-On" Builder</div>
+        <div class="competitor-zones">
+          <div class="competitor-zone-row"><div class="zone-dot core"></div> Life science tools, specialty pharma</div>
+          <div class="competitor-zone-row"><div class="zone-dot edge"></div> AI partnerships (Exscientia), not acquisitions</div>
+          <div class="competitor-zone-row"><div class="zone-dot beyond"></div> Internal R&D investment above US peers</div>
+        </div>
+        <div class="competitor-verdict pivot">Organic Builder</div>
+      </div>
+
+      <div class="competitor-card">
+        <div class="competitor-name">Roche</div>
+        <div class="competitor-tag">Diagnostics-Pharma Integration Pioneer</div>
+        <div class="competitor-zones">
+          <div class="competitor-zone-row"><div class="zone-dot core"></div> Deep oncology Core (Genentech legacy)</div>
+          <div class="competitor-zone-row"><div class="zone-dot edge"></div> Personalised medicine integration</div>
+          <div class="competitor-zone-row"><div class="zone-dot beyond"></div> Neurological and rare disease platforms</div>
+        </div>
+        <div class="competitor-verdict strong">Integrated Pioneer</div>
+      </div>
+    </div>
+
+    <div class="radar-wrapper fade-in">
+      <canvas id="competitorRadar"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- STRENGTHS & WEAKNESSES -->
+<section class="section-paper">
+  <div class="container">
+    <div class="section-label">Strategic Profile</div>
+    <h2 class="section-title">What is genuinely <em>true</em></h2>
+    <p class="section-intro">
+      Every strength in Pfizer's profile has a corresponding shadow. The task for portfolio governance is not to celebrate the wins or condemn the gaps, but to hold both simultaneously.
+    </p>
+
+    <div class="sw-grid fade-in">
+      <div class="sw-panel strengths">
+        <div class="sw-panel-title">Structural Strengths</div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <strong>Unmatched commercialization infrastructure</strong>
+            <p>Pfizer's ability to navigate regulatory approval across 180+ markets, build global cold chains, and deploy sales forces of tens of thousands is genuinely rare. It is the reason BioNTech chose Pfizer over anyone else for the COVID vaccine.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <strong>ADC platform leadership via Seagen</strong>
+            <p>Antibody-drug conjugates are arguably the most clinically validated precision oncology technology available today. Pfizer now controls the deepest commercial ADC portfolio in the industry, a position that took Seagen two decades to build.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <strong>Balance sheet firepower that enables boldness</strong>
+            <p>Even after deploying $53B in two acquisitions, Pfizer maintains a 6.2% dividend yield and financial flexibility that most pharmaceutical peers cannot match. Capital is not the constraint.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <strong>AI integration with measurable early results</strong>
+            <p>The partnership with AWS has already saved scientists 16,000 hours annually through natural language research search. An AI-driven manufacturing anomaly system improved product yield by 10%. The infrastructure for AI-accelerated R&D is being built, not merely discussed.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <strong>Leadership courage in capital allocation</strong>
+            <p>Bourla's willingness to make $43 billion bets when others hesitated on ADC technology reflects a genuine tolerance for strategic risk. Not all CEOs of companies with $62 billion in revenue exercise that kind of conviction.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sw-panel weaknesses">
+        <div class="sw-panel-title">Structural Weaknesses</div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <strong>M&amp;A dependency masks internal innovation atrophy</strong>
+            <p>Three consecutive internal GLP-1 candidates failed due to liver safety signals. The response was not a rebuilding of internal capability but a $10 billion acquisition. The pattern of buying rather than building the next S-curve is now structurally embedded in the strategy.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <strong>Maverick culture is acquired, not cultivated</strong>
+            <p>The scientists who generated Seagen's ADC breakthroughs emerged from a small, protected biotech environment. Post-acquisition integration historically homogenizes exactly the culture that was purchased. There is no formal system at Pfizer to identify, protect, or grow mavericks from within.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <strong>Patent cliff exposure is structurally severe</strong>
+            <p>Eliquis alone contributes approximately 13.7% of revenue and faces generic entry from 2026. Combined with Ibrance and Xtandi, the company faces an estimated $17-18 billion in annual revenue at risk between 2026 and 2028. Seagen and Metsera cannot fill this gap on the same timeline.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <strong>Beyond zone is underfunded relative to company scale</strong>
+            <p>At 5-7% of innovation investment, Pfizer's frontier allocation is below the 10% Theta benchmark. For a $62 billion revenue company spending $10.4 billion on R&D, the investment in gene editing, novel platforms, and AI-native discovery is modest, leaving the 2035 pipeline question largely unanswered.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <strong>Psychological safety insufficient for breakthrough culture</strong>
+            <p>Pfizer's hierarchical culture scores poorly on the conditions that enable radical innovation: the freedom to fail publicly, to challenge assumptions across levels, to pursue unpopular ideas without executive sponsorship. The culture excels at building what is known, but struggles to imagine what is not.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACQUISITION MODEL & GLOBAL COMPARISON -->
+<section id="acquisition" class="section-white">
+  <div class="container">
+    <div class="section-label">Acquisition Model &amp; Global Context</div>
+    <h2 class="section-title">Build, Buy, or Both? <em>What geography reveals</em></h2>
+    <p class="section-intro">
+      The heavy acquisition model is not a Pfizer quirk. It is a structural feature of US pharma. But the global picture is more complex, and the contrast with Germany and China exposes a question Pfizer has not yet fully answered.
+    </p>
+
+    <div class="acq-geo-grid fade-in">
+      <div class="geo-card usa">
+        <span class="geo-flag">🇺🇸</span>
+        <div class="geo-title">United States</div>
+        <div class="geo-model">The Acquirer</div>
+        <p class="geo-body">US pharma giants have become, in the words of one industry analyst, "increasingly investment bank-like." They have largely abandoned early-stage discovery in favour of buying de-risked, late-stage assets from smaller biotechs. The Americas accounted for 73% of global life sciences M&amp;A deal value in 2025. The logic is rational: internal R&amp;D ROI fell from 10.1% in 2010 to just 1.2% in 2022. When your own lab is less productive than a chequebook, the chequebook wins.</p>
+        <div class="geo-stat">
+          <span class="geo-stat-num">73%</span>
+          <span class="geo-stat-label">of global life sciences M&amp;A deal value in 2025</span>
+        </div>
+      </div>
+
+      <div class="geo-card china">
+        <span class="geo-flag">🇨🇳</span>
+        <div class="geo-title">China</div>
+        <div class="geo-model">The Supplier</div>
+        <p class="geo-body">China has quietly become the world's most prolific source of early-stage drug innovation by volume, not by acquisition. In 2025, China surpassed the US as the leading source of global licensing deal value, accounting for nearly 50% of deal value. Chinese biotechs discover and de-risk; US and European companies pay to commercialise. It is a supplier-manufacturer relationship dressed in pharmaceutical language. The question for Pfizer: how long before the supplier decides to become the brand?</p>
+        <div class="geo-stat">
+          <span class="geo-stat-num">~50%</span>
+          <span class="geo-stat-label">of global licensing deal value from Chinese companies, 2025</span>
+        </div>
+      </div>
+
+      <div class="geo-card europe">
+        <span class="geo-flag">🇩🇪</span>
+        <div class="geo-title">Europe (Germany)</div>
+        <div class="geo-model">The Builder</div>
+        <p class="geo-body">Merck KGaA's approach is the sharpest contrast to Pfizer's. Rather than acquiring AI companies, they form deep non-ownership partnerships, preserving the innovative culture of their collaborators. Their stated goal: double R&amp;D productivity by launching a new product every 18 months. The "bolt-on" model keeps the balance sheet lighter and the external ecosystem alive. Bayer, despite its own controversies, similarly maintains stronger internal discovery programs. The European model prioritises the machinery of innovation, not just its output.</p>
+        <div class="geo-stat">
+          <span class="geo-stat-num">18mo</span>
+          <span class="geo-stat-label">Merck KGaA's target product launch cadence via bolt-on partnerships</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:20px;">Pfizer's Acquisition Record — $219B+ Since 1994</div>
+    <div class="acq-pfizer-row fade-in">
+      <div class="acq-deal">
+        <div class="acq-deal-year">2000</div>
+        <div class="acq-deal-name">Warner-Lambert</div>
+        <div class="acq-deal-value">~$90B</div>
+        <div class="acq-deal-note">Brought Lipitor — which would generate over $125B in lifetime revenue. Set the template for M&amp;A-as-strategy.</div>
+      </div>
+      <div class="acq-deal">
+        <div class="acq-deal-year">2009</div>
+        <div class="acq-deal-name">Wyeth</div>
+        <div class="acq-deal-value">$68B</div>
+        <div class="acq-deal-note">Added Prevnar and biologics capability. The pivot to vaccines that made the COVID response possible a decade later.</div>
+      </div>
+      <div class="acq-deal">
+        <div class="acq-deal-year">2016</div>
+        <div class="acq-deal-name">Medivation</div>
+        <div class="acq-deal-value">$14B</div>
+        <div class="acq-deal-note">Xtandi for prostate cancer. A mid-tier oncology bet that validated the category before the Seagen leap.</div>
+      </div>
+      <div class="acq-deal">
+        <div class="acq-deal-year">2023</div>
+        <div class="acq-deal-name">Seagen</div>
+        <div class="acq-deal-value">$43B</div>
+        <div class="acq-deal-note">The defining bet. ADC platform built over two decades by a focused biotech. The largest oncology acquisition in history.</div>
+      </div>
+      <div class="acq-deal">
+        <div class="acq-deal-year">2025</div>
+        <div class="acq-deal-name">Metsera</div>
+        <div class="acq-deal-value">up to $10B</div>
+        <div class="acq-deal-note">Re-entry into obesity after three consecutive internal failures. The clearest signal yet that internal Edge generation is structurally broken.</div>
+      </div>
+    </div>
+    <div class="acq-total-bar fade-in">
+      <span class="acq-total-label">Total M&amp;A capital deployed since 1994</span>
+      <span class="acq-total-value">$219 billion+</span>
+    </div>
+  </div>
+</section>
+
+<!-- CEO COMPARISON -->
+<section id="ceo" class="section-paper">
+  <div class="container">
+    <div class="section-label">Leadership Through the Theta Lens</div>
+    <h2 class="section-title">Three CEOs. <em>One recurring pattern.</em></h2>
+    <p class="section-intro">
+      Pfizer's innovation strategy has never been fixed. Each CEO reshaped it, weighted it differently, and left a cultural imprint that the next leader inherited. The arc, viewed together, reveals something that no individual tenure could.
+    </p>
+
+    <div class="ceo-grid fade-in">
+      <div class="ceo-card">
+        <div class="ceo-header">
+          <div class="ceo-tenure">2006 — 2010</div>
+          <div class="ceo-name">Jeff Kindler</div>
+          <div class="ceo-archetype">The Overextended Consolidator</div>
+        </div>
+        <div class="ceo-alloc">
+          <div class="ceo-alloc-row">
+            <span class="ceo-alloc-label core">Core</span>
+            <div class="ceo-alloc-bar"><div class="ceo-alloc-fill core" style="width:85%"></div></div>
+            <span class="ceo-alloc-pct">85%</span>
+          </div>
+          <div class="ceo-alloc-row">
+            <span class="ceo-alloc-label edge">Edge</span>
+            <div class="ceo-alloc-bar"><div class="ceo-alloc-fill edge" style="width:10%"></div></div>
+            <span class="ceo-alloc-pct">10%</span>
+          </div>
+          <div class="ceo-alloc-row">
+            <span class="ceo-alloc-label beyond">Beyond</span>
+            <div class="ceo-alloc-bar"><div class="ceo-alloc-fill beyond" style="width:5%"></div></div>
+            <span class="ceo-alloc-pct">5%</span>
+          </div>
+        </div>
+        <div class="ceo-body">
+          <div class="ceo-rating-row">
+            <span class="ceo-rating-label">Innovation Agility</span>
+            <div class="ceo-rating-stars">
+              <div class="star lit"></div><div class="star lit"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+            </div>
+          </div>
+          <div class="ceo-rating-row">
+            <span class="ceo-rating-label">Cultural Courage</span>
+            <div class="ceo-rating-stars">
+              <div class="star lit"></div><div class="star lit"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+            </div>
+          </div>
+          <div class="ceo-rating-row">
+            <span class="ceo-rating-label">Capital Boldness</span>
+            <div class="ceo-rating-stars">
+              <div class="star lit"></div><div class="star lit"></div><div class="star lit"></div><div class="star"></div><div class="star"></div>
+            </div>
+          </div>
+          <p class="ceo-verdict">Inherited the Warner-Lambert integration and the looming Lipitor patent cliff. The $68B Wyeth acquisition was the right structural call but left Pfizer with R&amp;D spread across 14 therapeutic areas and no coherent culture for any of them. His departure was sudden. The company was in strategic disarray. Theta rating: 4/10.</p>
+        </div>
+      </div>
+
+      <div class="ceo-card">
+        <div class="ceo-header">
+          <div class="ceo-tenure">2010 — 2019</div>
+          <div class="ceo-name">Ian Read</div>
+          <div class="ceo-archetype">The Disciplined Pruner</div>
+        </div>
+        <div class="ceo-alloc">
+          <div class="ceo-alloc-row">
+            <span class="ceo-alloc-label core">Core</span>
+            <div class="ceo-alloc-bar"><div class="ceo-alloc-fill core" style="width:80%"></div></div>
+            <span class="ceo-alloc-pct">80%</span>
+          </div>
+          <div class="ceo-alloc-row">
+            <span class="ceo-alloc-label edge">Edge</span>
+            <div class="ceo-alloc-bar"><div class="ceo-alloc-fill edge" style="width:15%"></div></div>
+            <span class="ceo-alloc-pct">15%</span>
+          </div>
+          <div class="ceo-alloc-row">
+            <span class="ceo-alloc-label beyond">Beyond</span>
+            <div class="ceo-alloc-bar"><div class="ceo-alloc-fill beyond" style="width:5%"></div></div>
+            <span class="ceo-alloc-pct">5%</span>
+          </div>
+        </div>
+        <div class="ceo-body">
+          <div class="ceo-rating-row">
+            <span class="ceo-rating-label">Innovation Agility</span>
+            <div class="ceo-rating-stars">
+              <div class="star lit"></div><div class="star lit"></div><div class="star lit"></div><div class="star"></div><div class="star"></div>
+            </div>
+          </div>
+          <div class="ceo-rating-row">
+            <span class="ceo-rating-label">Cultural Courage</span>
+            <div class="ceo-rating-stars">
+              <div class="star lit"></div><div class="star lit"></div><div class="star lit"></div><div class="star"></div><div class="star"></div>
+            </div>
+          </div>
+          <div class="ceo-rating-row">
+            <span class="ceo-rating-label">Capital Boldness</span>
+            <div class="ceo-rating-stars">
+              <div class="star lit"></div><div class="star lit"></div><div class="star lit"></div><div class="star lit"></div><div class="star"></div>
+            </div>
+          </div>
+          <p class="ceo-verdict">Masterfully pruned the conglomerate: Zoetis, Capsugel, infant nutrition, consumer health all divested. Delivered 30 FDA approvals and 250% shareholder returns over nine years. But his R&amp;D consolidation from 14 therapeutic areas to 5 was necessary without being visionary. He sharpened the pencil without writing anything new. Beyond received no intentional funding. The seeds for the next cycle were not planted. Theta rating: 6/10.</p>
+        </div>
+      </div>
+
+      <div class="ceo-card">
+        <div class="ceo-header">
+          <div class="ceo-tenure">2019 — Present</div>
+          <div class="ceo-name">Albert Bourla</div>
+          <div class="ceo-archetype">The Acquisition Architect</div>
+        </div>
+        <div class="ceo-alloc">
+          <div class="ceo-alloc-row">
+            <span class="ceo-alloc-label core">Core</span>
+            <div class="ceo-alloc-bar"><div class="ceo-alloc-fill core" style="width:73%"></div></div>
+            <span class="ceo-alloc-pct">73%</span>
+          </div>
+          <div class="ceo-alloc-row">
+            <span class="ceo-alloc-label edge">Edge</span>
+            <div class="ceo-alloc-bar"><div class="ceo-alloc-fill edge" style="width:21%"></div></div>
+            <span class="ceo-alloc-pct">21%</span>
+          </div>
+          <div class="ceo-alloc-row">
+            <span class="ceo-alloc-label beyond">Beyond</span>
+            <div class="ceo-alloc-bar"><div class="ceo-alloc-fill beyond" style="width:6%"></div></div>
+            <span class="ceo-alloc-pct">6%</span>
+          </div>
+        </div>
+        <div class="ceo-body">
+          <div class="ceo-rating-row">
+            <span class="ceo-rating-label">Innovation Agility</span>
+            <div class="ceo-rating-stars">
+              <div class="star lit"></div><div class="star lit"></div><div class="star lit"></div><div class="star lit"></div><div class="star"></div>
+            </div>
+          </div>
+          <div class="ceo-rating-row">
+            <span class="ceo-rating-label">Cultural Courage</span>
+            <div class="ceo-rating-stars">
+              <div class="star lit"></div><div class="star lit"></div><div class="star lit"></div><div class="star"></div><div class="star"></div>
+            </div>
+          </div>
+          <div class="ceo-rating-row">
+            <span class="ceo-rating-label">Capital Boldness</span>
+            <div class="ceo-rating-stars">
+              <div class="star lit"></div><div class="star lit"></div><div class="star lit"></div><div class="star lit"></div><div class="star lit"></div>
+            </div>
+          </div>
+          <p class="ceo-verdict">The COVID vaccine partnership with BioNTech, committed to in 8 months at a $2B at-risk investment, was an act of genuine institutional courage. The Seagen and Metsera acquisitions are strategically bold. But Edge allocation has risen almost entirely through M&amp;A, not internal cultivation, and Beyond remains at 6%. The cultural machinery for organic innovation has not materially improved. His legacy will be determined by whether Seagen's mavericks are still at Pfizer in 2030. Theta rating: 7.5/10.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="belief-strip fade-in" style="margin-top:0;">
+      <p class="belief-quote">
+        "Each CEO left Pfizer better at defending what it had. None left it better at imagining what it had not yet built."
+      </p>
+      <span class="belief-attribution">Theta Framework Analysis — Pfizer CEO Continuity Assessment, 2026</span>
+    </div>
+  </div>
+</section>
+
+<!-- AI AND R&D -->
+<section id="ai" class="section-white">
+  <div class="container">
+    <div class="section-label">AI &amp; the Changing R&amp;D Equation</div>
+    <h2 class="section-title">The tool that could <em>change the calculus</em></h2>
+    <p class="section-intro">
+      AI does not solve Pfizer's cultural deficit. But it is compressing timelines, reducing failure rates, and creating the conditions in which internal innovation could, in theory, become viable again. Whether Pfizer uses that window is the open question.
+    </p>
+
+    <div class="ai-grid fade-in">
+      <div>
+        <div class="ai-metric-list">
+          <div class="ai-metric">
+            <div>
+              <div class="ai-metric-label">Paxlovid molecule identification — AI-assisted</div>
+              <div class="ai-metric-sub">XtalPi physics-based modelling platform, 2020</div>
+            </div>
+            <div class="ai-metric-value">30 days</div>
+          </div>
+          <div class="ai-metric">
+            <div>
+              <div class="ai-metric-label">Traditional timeline for same process</div>
+              <div class="ai-metric-sub">Pre-AI industry benchmark</div>
+            </div>
+            <div class="ai-metric-value">Months–Years</div>
+          </div>
+          <div class="ai-metric">
+            <div>
+              <div class="ai-metric-label">Scientist hours saved annually — AWS partnership</div>
+              <div class="ai-metric-sub">Natural language search across research datasets</div>
+            </div>
+            <div class="ai-metric-value">16,000 hrs</div>
+          </div>
+          <div class="ai-metric">
+            <div>
+              <div class="ai-metric-label">Manufacturing yield improvement — AI anomaly detection</div>
+              <div class="ai-metric-sub">Production line monitoring system</div>
+            </div>
+            <div class="ai-metric-value">+10%</div>
+          </div>
+          <div class="ai-metric">
+            <div>
+              <div class="ai-metric-label">Clinical trial cycle time reduction (industry average, AI-assisted)</div>
+              <div class="ai-metric-sub">Patient monitoring, data analysis, regulatory documentation</div>
+            </div>
+            <div class="ai-metric-value">−18%</div>
+          </div>
+          <div class="ai-metric">
+            <div>
+              <div class="ai-metric-label">Projected annual industry R&amp;D cost savings from AI</div>
+              <div class="ai-metric-sub">Analyst projections across top 20 pharma companies</div>
+            </div>
+            <div class="ai-metric-value">$54B</div>
+          </div>
+          <div class="ai-metric">
+            <div>
+              <div class="ai-metric-label">Phase I success rate — AI-discovered molecules (early data)</div>
+              <div class="ai-metric-sub">vs. historical average of 40–65%</div>
+            </div>
+            <div class="ai-metric-value">80–90%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-prose">
+        <p>
+          The collapse of pharma R&amp;D ROI from 10.1% in 2010 to 1.2% in 2022 was not a failure of science. It was a failure of efficiency: too many dollars chasing too many targets through processes that were designed for a pre-computational world. AI changes that equation not by replacing scientists but by dramatically accelerating the stages where time and money are burned without clinical insight.
+        </p>
+        <p>
+          Pfizer's AI integration is real and measurable. The Paxlovid discovery process compressed years of work into 30 days. Manufacturing anomaly detection improved yields in facilities where a 1% improvement translates to hundreds of millions of dollars. An AI-driven search tool deployed through AWS saved scientists the equivalent of 8 working years in a single year.
+        </p>
+        <p>
+          The more important question is structural. AI-native drug discovery companies like Recursion and Insitro are building from first principles: AI is not a tool layered onto their process, it is the process. They do not compress a traditional discovery funnel. They operate a different funnel entirely. Pfizer's AI adoption, while substantial, remains primarily an efficiency layer on a traditional architecture. The frontier is not AI-assisted pharma. It is AI-native pharma.
+        </p>
+        <p>
+          What AI could uniquely enable for Pfizer is the rehabilitation of internal Edge generation. If the cost and time of early-stage discovery fall dramatically, the calculus that made M&amp;A more rational than building shifts. The question is whether Pfizer's culture will allow AI to be used that way, or whether it will remain a productivity tool for the Core while the Beyond continues to be purchased.
+        </p>
+
+        <div class="ai-tension-card">
+          <div class="ai-tension-label">The Theta Signal</div>
+          <p class="ai-tension-text">
+            AI is the first external force in a generation that could make internal Beyond investment economically rational for a company of Pfizer's scale. The cost to test a hypothesis is falling. The time from idea to signal is shrinking. If Pfizer does not use this window to rebuild internal discovery capability, it will not be because the tool was unavailable. It will be because the culture chose not to.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section id="accountability" class="section-paper">
+  <div class="container">
+    <div class="section-label">Accountability Record</div>
+    <h2 class="section-title">The costs that <em>never disappear</em> from the ledger</h2>
+    <p class="section-intro">
+      Innovation without accountability is not a story portfolio governance leaders should find comfortable. Pfizer's record includes genuine scientific courage alongside conduct that demands scrutiny. Both belong in the analysis.
+    </p>
+
+    <div class="controversy-grid fade-in">
+      <div class="controversy-card">
+        <div class="controversy-title">DOJ Settlement — $2.3B (2009)</div>
+        <p class="controversy-text">The largest healthcare fraud settlement in US history at the time. Pfizer's subsidiary pleaded guilty to criminal charges of off-label promotion of Bextra and other drugs, alongside kickback allegations across multiple products. The settlement did not change the trajectory of the company, which raises its own questions about deterrence at scale.</p>
+        <div class="controversy-status">Legacy Issue</div>
+      </div>
+
+      <div class="controversy-card">
+        <div class="controversy-title">COVID Vaccine Safety Debate</div>
+        <p class="controversy-text">The mRNA vaccine received Emergency Use Authorization after trials involving approximately 44,000 participants, compressed into months rather than the typical years. The FDA updated its labeling in June 2025 to formally include myocarditis and pericarditis warnings, risks first identified in 2021. Pfizer's position that reported adverse events do not imply causation is scientifically defensible but has not satisfied the scale of public concern globally.</p>
+        <div class="controversy-status">Ongoing Scientific Debate</div>
+      </div>
+
+      <div class="controversy-card">
+        <div class="controversy-title">Drug Pricing and Government Overcharging</div>
+        <p class="controversy-text">In March 2026, Pfizer agreed to pay $785 million to settle allegations that its Wyeth unit overcharged the US government for Protonix from 2001 to 2006. In 2018, President Trump publicly criticized Pfizer for raising prices on 100 drugs, prompting a temporary reversal. The pattern of pricing maximization in captive markets continues to invite political and regulatory backlash.</p>
+        <div class="controversy-status">Recurring Pattern</div>
+      </div>
+
+      <div class="controversy-card">
+        <div class="controversy-title">Lobbying at Industrial Scale</div>
+        <p class="controversy-text">Pfizer spent $4.24 million on in-house lobbying in Q1 2025 alone, a 165% increase from the prior quarter, with over $200 million spent since 2008. The pharmaceutical industry spends more on lobbying than any other sector in the United States. Critics note that 9 out of 10 past FDA commissioners have subsequently worked for industry. The line between legitimate policy advocacy and the distortion of regulatory independence is a question that has no clean answer.</p>
+        <div class="controversy-status">Active and Escalating</div>
+      </div>
+
+      <div class="controversy-card">
+        <div class="controversy-title">Failed Internal Obesity Programs</div>
+        <p class="controversy-text">Lotiglipron, danuglipron twice-daily, and danuglipron once-daily were all discontinued due to liver safety signals in clinical testing. These failures were not concealed; they emerged through the testing process. But the pattern raises a question no press release addresses: did Pfizer's internal scientific culture have the freedom and intellectual safety to surface concerns earlier, or did the pressure to compete with Novo Nordisk and Eli Lilly suppress signals that should have ended programs sooner?</p>
+        <div class="controversy-status">Transparency Question</div>
+      </div>
+
+      <div class="controversy-card">
+        <div class="controversy-title">Insider Stock Sale Timing</div>
+        <p class="controversy-text">CEO Albert Bourla sold $5.6 million of Pfizer shares on the same day the company announced positive Phase 3 COVID vaccine trial results in November 2020. Pfizer stated the sale was pre-scheduled under a 10b5-1 trading plan. The timing was legal. Whether it was appropriate for the leader of a company receiving public subsidy during a global health emergency is a question that reasonable people answer differently.</p>
+        <div class="controversy-status">Reputational Record</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THETA DIAGNOSTIC -->
+<section id="diagnostic" class="section-ink">
+  <div class="container">
+    <div class="section-label" style="color:var(--accent-gold)">Theta Diagnostic</div>
+    <h2 class="section-title section-title-light">The full picture, <em>without the spin</em></h2>
+    <p class="section-intro" style="color:rgba(255,255,255,0.45)">
+      The Theta Framework does not ask whether a company is good or bad. It asks whether the conditions for sustained innovation are present, absent, or being actively eroded.
+    </p>
+
+    <div class="diagnostic-grid fade-in">
+      <div>
+        <div class="diag-section">
+          <div class="diag-section-title">Portfolio Mapping — Archetype Fit</div>
+          <div class="archetype-box">
+            <span class="archetype-label">The Balanced Builder (Core + Edge + Beyond)</span>
+            <span class="archetype-status low">Not Pfizer</span>
+          </div>
+          <div class="archetype-box">
+            <span class="archetype-label">The Disciplined Explorer (Strong Core, active Edge, funded Beyond)</span>
+            <span class="archetype-status mid">Partial Fit</span>
+          </div>
+          <div class="archetype-box">
+            <span class="archetype-label">The Legacy-Rich, Vision-Poor (Core strong, Edge weak, Beyond absent)</span>
+            <span class="archetype-status mid">Risk Zone</span>
+          </div>
+          <div class="archetype-box">
+            <span class="archetype-label">M&amp;A-Dependent Explorer (Edge via acquisition, not generation)</span>
+            <span class="archetype-status ok">Closest Match</span>
+          </div>
+        </div>
+
+        <div class="diag-section">
+          <div class="diag-section-title">Leadership &amp; Culture — Trifecta Assessment</div>
+          <div class="culture-row">
+            <span class="culture-label">Leadership Agility</span>
+            <div class="culture-score">
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot"></div>
+            </div>
+          </div>
+          <div class="culture-row">
+            <span class="culture-label">Leadership Consciousness</span>
+            <div class="culture-score">
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot"></div>
+              <div class="score-dot"></div>
+            </div>
+          </div>
+          <div class="culture-row">
+            <span class="culture-label">Leadership Courage (Capital)</span>
+            <div class="culture-score">
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+            </div>
+          </div>
+          <div class="culture-row">
+            <span class="culture-label">Maverick Protection</span>
+            <div class="culture-score">
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot"></div>
+              <div class="score-dot"></div>
+              <div class="score-dot"></div>
+            </div>
+          </div>
+          <div class="culture-row">
+            <span class="culture-label">Psychological Safety</span>
+            <div class="culture-score">
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot"></div>
+              <div class="score-dot"></div>
+            </div>
+          </div>
+          <div class="culture-row">
+            <span class="culture-label">Failure Intelligence</span>
+            <div class="culture-score">
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot"></div>
+              <div class="score-dot"></div>
+              <div class="score-dot"></div>
+            </div>
+          </div>
+          <div class="culture-row">
+            <span class="culture-label">Open Source Ethos</span>
+            <div class="culture-score">
+              <div class="score-dot filled"></div>
+              <div class="score-dot filled"></div>
+              <div class="score-dot"></div>
+              <div class="score-dot"></div>
+              <div class="score-dot"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="diag-section">
+          <div class="diag-section-title">Zone Allocation vs. Theta Benchmark</div>
+          <div class="diag-bar-item">
+            <div class="diag-bar-header">
+              <span class="diag-bar-label">Core Zone</span>
+              <span class="diag-bar-nums">~78% actual vs 70% benchmark</span>
+            </div>
+            <div class="diag-bar-track">
+              <div class="diag-bar-fill core" style="width:78%;"></div>
+              <div class="diag-bar-bench" style="left:70%;"></div>
+            </div>
+          </div>
+          <div class="diag-bar-item" style="margin-top:20px;">
+            <div class="diag-bar-header">
+              <span class="diag-bar-label">Edge Zone</span>
+              <span class="diag-bar-nums">~16% actual vs 20% benchmark</span>
+            </div>
+            <div class="diag-bar-track">
+              <div class="diag-bar-fill edge" style="width:16%;"></div>
+              <div class="diag-bar-bench" style="left:20%;"></div>
+            </div>
+          </div>
+          <div class="diag-bar-item" style="margin-top:20px;">
+            <div class="diag-bar-header">
+              <span class="diag-bar-label">Beyond Zone</span>
+              <span class="diag-bar-nums">~6% actual vs 10% benchmark</span>
+            </div>
+            <div class="diag-bar-track">
+              <div class="diag-bar-fill beyond" style="width:6%;"></div>
+              <div class="diag-bar-bench" style="left:10%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="diag-section">
+          <div class="diag-section-title">Relativity Assessment</div>
+          <div class="relativity-row">
+            <span class="rel-label">vs. Pharma industry baseline</span>
+            <span class="rel-badge at">At Baseline</span>
+          </div>
+          <div class="relativity-row">
+            <span class="rel-label">vs. Tech-native biotech (Recursion, Insitro)</span>
+            <span class="rel-badge below">Below Frontier</span>
+          </div>
+          <div class="relativity-row">
+            <span class="rel-label">vs. Stated ambition (oncology + obesity leader)</span>
+            <span class="rel-badge tracking">On Track</span>
+          </div>
+          <div class="relativity-row">
+            <span class="rel-label">vs. Pfizer 5 years ago</span>
+            <span class="rel-badge improving">Improving</span>
+          </div>
+          <div class="relativity-row">
+            <span class="rel-label">vs. What the frontier makes possible</span>
+            <span class="rel-badge behind">Catching Up</span>
+          </div>
+        </div>
+
+        <div class="tension-box">
+          <div class="tension-title">Critical Tension</div>
+          <p class="tension-text">
+            Pfizer's most important structural risk is not the patent cliff, the obesity competition, or the Seagen integration. It is that the company has optimized its culture, its metrics, and its incentive systems entirely around a model that produces excellent Core performance and reliable Edge acquisition, but has no machinery for generating the Beyond. When the Seagen ADCs mature into Core and Metsera faces its own competitive window, Pfizer will face the same reckoning it faces today, and the same answer will be expensive.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict-strip fade-in">
+      <div class="verdict-archetype">The M&amp;A-Dependent Disciplined Explorer</div>
+      <div class="verdict-symbols">✓ △ ×</div>
+      <p class="verdict-desc">
+        Core is strong and defended. Edge is actively being built through acquisition. Beyond is absent as a strategic priority. Pfizer is a company that wins the battles it chooses to fight, but the choice of battles is constrained by a culture that has forgotten how to imagine what it has not yet been paid to build.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ONE QUESTION -->
+<div class="one-question-section">
+  <div class="oq-kicker">The Theta Question — For Portfolio Governance Leaders</div>
+  <p class="oq-question">
+    If Pfizer could not acquire another company for <em>five years</em>, would its internal innovation engine be strong enough to sustain growth?
+  </p>
+  <p class="oq-sub">"Perhaps the question is not whether your company can afford to innovate. It is whether it can afford not to." — The Theta Framework</p>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <span>Theta Framework</span> — Strategic Case Study Series &nbsp;|&nbsp; 2026
+  </div>
+  <div class="footer-right">Portfolio Governance — Strategic Intelligence</div>
+</footer>
+
+<script>
+  // SCROLL ANIMATIONS
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.fade-in, .timeline-item').forEach(el => observer.observe(el));
+
+  // CHART DEFAULTS
+  Chart.defaults.font.family = 'DM Sans';
+  Chart.defaults.color = '#8A9298';
+
+  const tooltipDefaults = {
+    backgroundColor: 'rgba(11,20,32,0.94)',
+    titleColor: '#F8F6F1',
+    bodyColor: 'rgba(248,246,241,0.7)',
+    borderColor: 'rgba(184,150,46,0.3)',
+    borderWidth: 1,
+    padding: 12,
+    cornerRadius: 2,
+  };
+
+  // SCATTER PLOT — THETA MAP
+  const scatterCtx = document.getElementById('thetaScatter').getContext('2d');
+
+  const pointLabelPlugin = {
+    id: 'pointLabels',
+    afterDatasetsDraw(chart) {
+      const ctx = chart.ctx;
+      chart.data.datasets.forEach((dataset, i) => {
+        const meta = chart.getDatasetMeta(i);
+        meta.data.forEach((point, j) => {
+          const data = dataset.data[j];
+          if (data.label) {
+            ctx.save();
+            ctx.fillStyle = 'rgba(58,69,80,0.85)';
+            ctx.font = '500 11px DM Sans';
+            ctx.textAlign = 'left';
+            ctx.fillText(data.label, point.x + 10, point.y + 4);
+            ctx.restore();
+          }
+        });
+      });
+    }
+  };
+
+  new Chart(scatterCtx, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Core Zone',
+          data: [
+            { x: 1.2, y: 1.1, label: 'Eliquis', r: 22 },
+            { x: 1.4, y: 0.9, label: 'Prevnar', r: 18 },
+            { x: 1.1, y: 1.3, label: 'Ibrance', r: 16 },
+            { x: 1.6, y: 1.0, label: 'Paxlovid', r: 14 },
+            { x: 1.3, y: 1.5, label: 'Vyndaqel', r: 14 },
+            { x: 1.0, y: 0.8, label: 'Comirnaty', r: 12 },
+          ],
+          backgroundColor: 'rgba(45,138,88,0.22)',
+          borderColor: 'rgba(45,138,88,0.65)',
+          borderWidth: 2,
+          pointRadius: 9,
+          pointHoverRadius: 12,
+        },
+        {
+          label: 'Edge Zone',
+          data: [
+            { x: 2.8, y: 2.5, label: 'Seagen ADC Platform', r: 28 },
+            { x: 3.1, y: 2.2, label: 'Metsera GLP-1', r: 20 },
+            { x: 2.5, y: 2.8, label: 'mRNA Expansion', r: 14 },
+            { x: 2.9, y: 1.9, label: 'Abrysvo RSV', r: 12 },
+            { x: 2.6, y: 2.0, label: 'GIPR Antagonist', r: 10 },
+          ],
+          backgroundColor: 'rgba(200,146,30,0.22)',
+          borderColor: 'rgba(200,146,30,0.65)',
+          borderWidth: 2,
+          pointRadius: 9,
+          pointHoverRadius: 12,
+        },
+        {
+          label: 'Beyond Zone',
+          data: [
+            { x: 3.8, y: 3.6, label: 'Gene Editing', r: 8 },
+            { x: 4.0, y: 3.2, label: 'AI-Native Discovery', r: 7 },
+            { x: 3.5, y: 3.9, label: 'Novel Modalities', r: 6 },
+          ],
+          backgroundColor: 'rgba(168,36,56,0.22)',
+          borderColor: 'rgba(168,36,56,0.65)',
+          borderWidth: 2,
+          pointRadius: 7,
+          pointHoverRadius: 10,
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            boxWidth: 10,
+            boxHeight: 10,
+            padding: 20,
+            font: { size: 12 },
+          }
+        },
+        tooltip: {
+          ...tooltipDefaults,
+          callbacks: {
+            label: (ctx) => {
+              const d = ctx.raw;
+              return ` ${d.label || ctx.dataset.label}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          min: 0.5,
+          max: 4.8,
+          grid: { color: 'rgba(0,48,135,0.06)', drawTicks: false },
+          border: { display: false },
+          ticks: { display: false }
+        },
+        y: {
+          min: 0.3,
+          max: 4.5,
+          grid: { color: 'rgba(0,48,135,0.06)', drawTicks: false },
+          border: { display: false },
+          ticks: { display: false }
+        }
+      }
+    },
+    plugins: [pointLabelPlugin]
+  });
+
+  // DOUGHNUT
+  const doughCtx = document.getElementById('allocationDoughnut').getContext('2d');
+  new Chart(doughCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Core (~78%)', 'Edge (~16%)', 'Beyond (~6%)'],
+      datasets: [{
+        data: [78, 16, 6],
+        backgroundColor: [
+          'rgba(45,138,88,0.75)',
+          'rgba(200,146,30,0.75)',
+          'rgba(168,36,56,0.75)',
+        ],
+        borderWidth: 0,
+        hoverOffset: 6,
+      }]
+    },
+    options: {
+      cutout: '68%',
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { boxWidth: 10, boxHeight: 10, padding: 16, font: { size: 11 } }
+        },
+        tooltip: tooltipDefaults,
+      }
+    }
+  });
+
+  // RADAR
+  const radarCtx = document.getElementById('competitorRadar').getContext('2d');
+  new Chart(radarCtx, {
+    type: 'radar',
+    data: {
+      labels: ['Core Strength', 'Edge Momentum', 'Beyond Vision', 'AI Readiness', 'Manufacturing', 'Pipeline Depth'],
+      datasets: [
+        {
+          label: 'Pfizer',
+          data: [75, 68, 40, 62, 85, 72],
+          backgroundColor: 'rgba(0,48,135,0.12)',
+          borderColor: 'rgba(0,112,192,0.7)',
+          pointBackgroundColor: 'rgba(0,112,192,0.8)',
+          borderWidth: 2,
+          pointRadius: 4,
+        },
+        {
+          label: 'Merck (MSD)',
+          data: [88, 70, 60, 70, 70, 75],
+          backgroundColor: 'rgba(45,138,88,0.08)',
+          borderColor: 'rgba(45,138,88,0.6)',
+          pointBackgroundColor: 'rgba(45,138,88,0.7)',
+          borderWidth: 2,
+          pointRadius: 4,
+        },
+        {
+          label: 'Eli Lilly',
+          data: [80, 90, 70, 75, 65, 68],
+          backgroundColor: 'rgba(200,146,30,0.08)',
+          borderColor: 'rgba(200,146,30,0.6)',
+          pointBackgroundColor: 'rgba(200,146,30,0.7)',
+          borderWidth: 2,
+          pointRadius: 4,
+        },
+        {
+          label: 'Roche',
+          data: [85, 72, 78, 74, 80, 80],
+          backgroundColor: 'rgba(168,36,56,0.08)',
+          borderColor: 'rgba(168,36,56,0.6)',
+          pointBackgroundColor: 'rgba(168,36,56,0.7)',
+          borderWidth: 2,
+          pointRadius: 4,
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          min: 0, max: 100,
+          ticks: { display: false },
+          grid: { color: 'rgba(0,0,0,0.07)' },
+          angleLines: { color: 'rgba(0,0,0,0.07)' },
+          pointLabels: { font: { size: 12 }, color: '#3A4550' }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { boxWidth: 10, boxHeight: 10, padding: 20, font: { size: 12 } }
+        },
+        tooltip: tooltipDefaults,
+      }
+    }
+  });
+</script>
+</body>
+</html>
