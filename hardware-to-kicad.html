@@ -716,108 +716,106 @@ async function runConversion() {
     ? fileContents.map((c, i) => `--- ${files[i].name} ---\n${c}`).join('\n\n')
     : TIGA_CODE;
 
-  const prompt = `You are a hardware engineer expert in KiCad, ESP32, and Arduino wearable PCB design.
-
-USER PROTOTYPE:
-${description || 'TIGA Health Tracker — LilyGO T-Display-S3 (ESP32-S3) wearable'}
-
-CODE / FILES:
-${codeContext}
-
-BOARD CONFIGURATION:
-- Layout: ${config.boardType === 'mother' ? 'Motherboard + daughterboard' : 'Single board'}
-- Layers: ${config.layers}
-- Via drill: ${config.viaDrill}mm | Via pad: ${config.viaPad}mm
-- Signal trace: ${config.traceSig}mm | Power trace: ${config.tracePwr}mm
-- GND vias per power pin: ${config.gndVias}
-- Copper clearance: ${config.clearance}mm
-- SMD size: ${config.smdSize}
-- Ground plane: ${config.gndPlane}
-- I2C pull-up: ${config.pullup}kΩ
-- Decoupling caps: ${config.decap}µF per IC
-- Special: ${config.special || 'none'}
-
-TASK:
-Produce two sections separated by exactly the string: ===GUIDE===
-
-SECTION 1 — Complete KiCad netlist in standard legacy Orcad .net format that KiCad can import via File > Import Netlist.
-
-Rules for the netlist:
-- Start with: (net-list
-- Include (design ...) block with title TIGA_Health_Tracker
-- List every component with (comp (ref ...) (value ...) (footprint ...) (description "..."))
-- Use real KiCad footprint library paths, e.g.:
-  * Resistor_SMD:R_${config.smdSize}
-  * Capacitor_SMD:C_${config.smdSize}
-  * Sensor_IMU:MPU-6050
-  * Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical
-  * Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal (for LiPo)
-- If motherboard+daughterboard: prefix motherboard refs MB_ and daughterboard DB_
-- Include: all sensor ICs, MCU headers, decoupling caps (C_DECAP_xx), I2C pull-up resistors (R_PU_xx), ground test points (TP_GND_xx), power net labels
-- List all nets including: VCC_3V3, VCC_5V, GND, I2C_SDA, I2C_SCL, SPI_MOSI, SPI_MISO, SPI_SCK, TFT_CS, TFT_DC, TFT_RST, TFT_BL, BTN1, BTN2, BATT_ADC, BATT_PLUS, BATT_MINUS
-- End netlist with closing )
-
-===GUIDE===
-
-SECTION 2 — PCB layout guide as plain text. Include:
-1. Component list with values, quantities, and KiCad footprints
-2. Placement strategy (group by function: power, MCU, sensors, I/O, buttons)
-3. Trace routing rules specific to THIS design
-4. Ground plane and via stitching notes
-5. Wearable-specific tips (flex PCB consideration, component height limits, antenna keepout)
-6. If motherboard+daughterboard: suggested connector (e.g. 2x5 pin header), board size suggestions, which components go on which board
-7. KiCad import steps: exactly how to import this .net file
-8. Design warnings and things to double-check
-9. Recommended fab vendors (JLCPCB, PCBWay) with approximate cost for 5 boards
-
-Be specific to the TIGA health tracker. Mention actual component names from the code.`;
-
   // ── get API key from localStorage ─────────────────────
   const apiKey = localStorage.getItem('kicad_api_key');
   if (!apiKey) {
     clearInterval(stepInterval);
     spinner.classList.remove('visible');
-    statusText.textContent = 'No API key found. Click ⚙ Settings to add your Anthropic key.';
+    statusText.textContent = 'No API key. Click \u2699 Settings to add your Anthropic key.';
     btn.disabled = false;
     return;
   }
 
-  try {
+  const smdFP = config.smdSize === '0805' ? '0805_2012Metric' : config.smdSize === '0603' ? '0603_1608Metric' : '0402_1005Metric';
+  const boardDesc = `PROTOTYPE: ${description || 'TIGA Health Tracker - LilyGO T-Display-S3 ESP32-S3 wearable'}
+LAYOUT: ${config.boardType === 'mother' ? 'Motherboard + daughterboard' : 'Single board'} | LAYERS: ${config.layers}
+VIA: drill ${config.viaDrill}mm pad ${config.viaPad}mm | TRACES: signal ${config.traceSig}mm power ${config.tracePwr}mm
+GND VIAS: ${config.gndVias}/pin | CLEARANCE: ${config.clearance}mm | SMD: ${config.smdSize} | GND PLANE: ${config.gndPlane}
+I2C PULLUP: ${config.pullup}k | DECAP: ${config.decap}uF | SPECIAL: ${config.special || 'none'}
+CODE SUMMARY: ${codeContext.substring(0, 500)}`;
+
+  const hdrs = {
+    'Content-Type': 'application/json',
+    'x-api-key': apiKey,
+    'anthropic-version': '2023-06-01',
+    'anthropic-dangerous-direct-browser-access': 'true'
+  };
+
+  async function callAPI(userPrompt, maxTok) {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
+      headers: hdrs,
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 4000,
-        messages: [{ role: 'user', content: prompt }]
+        max_tokens: maxTok,
+        messages: [{ role: 'user', content: userPrompt }]
       })
     });
-
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      if (res.status === 401) throw new Error('API key invalid or expired. Click ⚙ Settings to update it.');
-      if (res.status === 429) throw new Error('Rate limited — wait a moment and try again.');
+      if (res.status === 401) throw new Error('API key invalid. Click \u2699 Settings to update it.');
+      if (res.status === 429) throw new Error('Rate limited - wait a moment and try again.');
       throw new Error(err.error?.message || `HTTP ${res.status}`);
     }
-
     const data = await res.json();
-    const fullText = (data.content || []).map(c => c.text || '').join('');
-    const parts = fullText.split('===GUIDE===');
+    return (data.content || []).map(c => c.text || '').join('');
+  }
 
-    lastNetlist = parts[0] ? parts[0].trim() : fullText.trim();
-    lastGuide = parts[1] ? parts[1].trim() : 'Guide not generated. See netlist output above.';
+  try {
+    // ── Call 1: Netlist only ───────────────────────────────
+    statusText.textContent = 'Generating netlist (1 of 2)...';
+    const netlistPrompt = `Output ONLY a complete valid KiCad legacy Orcad .net netlist file. No explanation. No markdown. No prose. Just the netlist.
 
+${boardDesc}
+
+RULES:
+- First line must be exactly: (net-list
+- Include: (design (source "TIGA_Health_Tracker") (date "2025-01-01") (tool "KiCad"))
+- Every component: (comp (ref "REF") (value "VALUE") (footprint "LIB:FOOTPRINT") (description "DESC"))
+- Use ONLY these real KiCad footprint paths:
+  ESP32: RF_Module:ESP32-S3-WROOM-1
+  MPU6050: Sensor_IMU:MPU-6050
+  Resistors: Resistor_SMD:R_${smdFP}
+  Capacitors: Capacitor_SMD:C_${smdFP}
+  LiPo connector: Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal
+  Board connector: Connector_PinHeader_2.54mm:PinHeader_2x05_P2.54mm_Vertical
+  Buttons: Button_Switch_SMD:SW_SPST_B3U-1000P
+  Test points: TestPoint:TestPoint_Pad_D1.5mm
+  LED: LED_SMD:LED_0805_2012Metric
+  Regulator: Package_TO_SOT_SMD:SOT-223-3_TabPin2
+- MB_ prefix = motherboard, DB_ prefix = daughterboard
+- COMPONENTS TO INCLUDE: MB_U1 ESP32-S3-WROOM-1, MB_U2 AMS1117-3.3 regulator, DB_U3 MPU-6050, MB_J1 JST LiPo, MB_J2 board-to-board connector, DB_J3 TFT display header (1x8), MB_SW1 Button1, MB_SW2 Button2, MB_R1+R2 10k button pullups, DB_R3+R4 4.7k I2C pullups, MB_C1 10uF power, MB_C2+C3 100nF decoupling ESP32, DB_C4 100nF decoupling MPU6050, MB_LED1 power LED, MB_R5 330R LED resistor, MB_TP1 GND testpoint, MB_TP2 3V3 testpoint
+- (nets) section with all connections for: VCC_3V3 GND I2C_SDA I2C_SCL SPI_MOSI SPI_MISO SPI_SCK TFT_CS TFT_DC TFT_RST TFT_BL BTN1 BTN2 BATT_ADC BATT_PLUS
+- Last line must be exactly: )
+- DO NOT STOP EARLY. Output the complete file.`;
+
+    lastNetlist = await callAPI(netlistPrompt, 3000);
     document.getElementById('out-netlist').textContent = lastNetlist;
+    statusText.textContent = 'Netlist done. Generating PCB guide (2 of 2)...';
+
+    // ── Call 2: PCB guide only ─────────────────────────────
+    const guidePrompt = `Write a practical PCB layout guide for the TIGA Health Tracker ESP32-S3 wearable. Plain text only, no markdown.
+
+${boardDesc}
+
+Include these sections:
+1. COMPONENT LIST - every part: ref, value, footprint, qty
+2. PLACEMENT - where each group lives: power section, ESP32 module, MPU6050 sensor, TFT connector, buttons. Keep antenna end of ESP32 near board edge.
+3. TRACE ROUTING - SPI bus (MOSI/MISO/SCK/CS) keep under 50mm, I2C (SDA/SCL) 4.7k pullups to 3V3, power traces 0.5mm min, signal 0.25mm
+4. GROUND PLANE - fill both layers, stitch vias every 5mm near high-current paths
+5. WEARABLE TIPS - max component height 2mm on wrist-facing side, ESP32 antenna keepout 10mm from any copper, board size suggestion (motherboard 40x30mm, daughterboard 25x20mm)
+6. BOARD SPLIT - what goes on motherboard vs daughterboard, 2x5 connector pinout (pin 1=GND, 2=3V3, 3=SDA, 4=SCL, 5=MOSI, 6=MISO, 7=SCK, 8=GPIO, 9=GPIO, 10=GND)
+7. KICAD 9 IMPORT - exact steps: open schematic editor > Tools > Update Schematic from Netlist > browse to .net file > Update. Then open PCB editor > Tools > Update PCB from Schematic.
+8. DRC WARNINGS - common ones and fixes: missing courtyard (add courtyard to footprint), unconnected pads (check net names match), antenna clearance violation
+9. JLCPCB ORDER - 2-layer, 1.6mm FR4, HASL lead-free, min trace 0.1mm/0.1mm, approx $2 for 5 boards + shipping`;
+
+    lastGuide = await callAPI(guidePrompt, 2000);
     document.getElementById('out-guide').textContent = lastGuide;
+
     outputSection.style.display = 'block';
     outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     clearInterval(stepInterval);
-    statusText.textContent = 'Done — download your files below.';
+    statusText.textContent = 'Done - both files ready to download.';
     spinner.classList.remove('visible');
 
   } catch(e) {
