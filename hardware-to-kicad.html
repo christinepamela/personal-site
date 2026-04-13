@@ -555,10 +555,12 @@
       <div class="tab-pane" id="tab-guide"><pre id="out-guide"></pre></div>
     </div>
     <div class="dl-row">
-      <button class="dl-btn" onclick="download('sch')">↓ Download TIGA.kicad_sch</button>
-      <button class="dl-btn" onclick="download('pcb')">↓ Download TIGA.kicad_pcb</button>
-      <button class="dl-btn" onclick="download('guide')">↓ Download pcb_guide.txt</button>
+      <button class="dl-btn" onclick="download('sch')">↓ TIGA.kicad_sch</button>
+      <button class="dl-btn" onclick="download('pcb')">↓ TIGA.kicad_pcb</button>
+      <button class="dl-btn" onclick="download('pro')">↓ TIGA.kicad_pro</button>
+      <button class="dl-btn" onclick="download('guide')">↓ pcb_guide.txt</button>
     </div>
+    <p style="font-size:12px;color:var(--text2);margin-top:10px">Put all 3 KiCad files in the same folder. Double-click <strong>TIGA.kicad_pro</strong> to open the full project in KiCad 9.</p>
   </div>
 
 </div>
@@ -571,6 +573,7 @@ let boardType = 'mother';
 let lastSch = '';
 let lastPcb = '';
 let lastGuide = '';
+let lastPro = '';
 
 // ── preloaded TIGA code ────────────────────────────────
 const TIGA_CODE = `// tiga.ino — TIGA Health Tracker
@@ -780,31 +783,53 @@ CODE SUMMARY: ${codeContext.substring(0, 500)}`;
 
     const smdFP = config.smdSize === '0805' ? '0805_2012Metric' : config.smdSize === '0603' ? '0603_1608Metric' : '0402_1005Metric';
 
-    const schPrompt = `Output ONLY a valid KiCad 6+ schematic file (.kicad_sch format). No explanation. No markdown. Just the file content.
+    const schPrompt = `Output ONLY a complete valid KiCad 6+ schematic (.kicad_sch). No explanation. No markdown. Just the file.
 
 ${boardDesc}
 
-RULES:
-- First line: (kicad_sch (version 20230121) (generator eeschema)
-- Include (paper "A4")
-- Use real KiCad symbol library references:
-  ESP32: (lib_id "RF_Module:ESP32-S3-WROOM-1")
-  MPU6050: (lib_id "Sensor_IMU:MPU-6050")
-  Resistors: (lib_id "Device:R")
-  Capacitors: (lib_id "Device:C")
-  Buttons: (lib_id "Switch:SW_Push")
-  Power flags: (lib_id "power:+3.3V") (lib_id "power:GND")
-  LED: (lib_id "Device:LED")
-  Regulator: (lib_id "Regulator_Linear:AMS1117-3.3")
-  Connector 2pin: (lib_id "Connector:Conn_01x02_Pin")
-  Connector 10pin: (lib_id "Connector:Conn_02x05_Odd_Even")
-- Place symbols at spaced (at X Y) coordinates, no overlaps. Use grid of 50 units spacing.
-- Every symbol needs: uuid, (at X Y 0), (unit 1), (in_bom yes), (on_board yes), (property "Reference" "REF" ...), (property "Value" "VAL" ...), (property "Footprint" "LIB:FP" ...)
-- Wire all connections with (wire (pts (xy X1 Y1) (xy X2 Y2)))
-- Add power symbols (+3.3V, GND) connected to appropriate pins
-- Include these components: U1 ESP32-S3-WROOM-1, U2 AMS1117-3.3, U3 MPU-6050, J1 JST LiPo connector, J2 10-pin board connector, SW1+SW2 push buttons, R1+R2 10k pullups, R3+R4 4.7k I2C pullups, C1 10uF, C2+C3+C4 100nF decoupling, LED1 power LED, R5 330R LED resistor
+The schematic must include these symbols placed and wired:
+- U1: ESP32-S3-WROOM-1 at (150 100)
+- U2: AMS1117-3.3 regulator at (50 60)
+- U3: MPU-6050 sensor at (250 100)
+- J1: LiPo JST connector at (50 160)
+- J2: 10-pin board connector at (350 100)
+- SW1, SW2: Push buttons at (300 160) and (330 160)
+- R1,R2: 10k button pullups near buttons
+- R3,R4: 4.7k I2C pullups near MPU6050
+- C1: 10uF bulk cap near U2
+- C2,C3,C4: 100nF decoupling near each IC
+- D1: Power LED near U2
+- R5: 330R LED resistor
+
+Wire connections using net labels (not drawn wires) for clarity:
+- Net labels: +3V3, GND, I2C_SDA, I2C_SCL, SPI_MOSI, SPI_MISO, SPI_SCK, TFT_CS, TFT_DC, TFT_RST, TFT_BL, BTN1, BTN2, BATT+
+
+Format rules:
+- Start: (kicad_sch (version 20230121) (generator eeschema)
+- Each symbol needs real uuid (use format like "a1b2c3d4-e5f6-7890-abcd-ef1234567890"), valid (at X Y 0), (unit 1), (in_bom yes), (on_board yes)
+- Use (net_name "NETNAME") labels placed with (label (at X Y 0) (text "NETNAME"))
+- Include power symbols: (power "+3V3") and (power "GND") connected to all relevant pins  
+- lib_symbols section must define pin shapes for each symbol used
 - End with closing )
-- Be complete. Output the full valid file.`;
+- Output a file that KiCad 9 can open without errors`;
+
+    lastSch = await callAPI(schPrompt, 3500);
+
+    // Also generate the .kicad_pro project file (small, fast)
+    const proContent = JSON.stringify({
+      "board": { "design_settings": {}, "layer_presets": [] },
+      "boards": [],
+      "cvpcb": { "equivalence_files": [] },
+      "erc": { "erc_exclusions": [], "meta": { "version": 0 } },
+      "libraries": { "pinned_footprint_libs": [], "pinned_symbol_libs": [] },
+      "meta": { "filename": "TIGA.kicad_pro", "version": 7 },
+      "net_settings": { "classes": [{ "bus_width": 12, "clearance": 0.2, "diff_pair_gap": 0.25, "diff_pair_via_gap": 0.25, "diff_pair_width": 0.2, "line_style": 0, "microvia_diameter": 0.3, "microvia_drill": 0.1, "name": "Default", "pcb_color": "rgba(0, 0, 0, 0.000)", "schematic_color": "rgba(0, 0, 0, 0.000)", "track_width": 0.25, "via_diameter": 0.6, "via_drill": 0.3, "wire_width": 6, "bus_width": 12 }], "meta": { "version": 3 }, "net_colors": null, "netclass_assignments": null, "netclass_patterns": [] },
+      "pcbnew": { "last_paths": {}, "page_layout_descr_file": "" },
+      "schematic": { "annotate_start_num": 0, "drawing": { "dashed_lines_dash_length_ratio": 12.0, "dashed_lines_gap_length_ratio": 3.0, "default_line_thickness": 6.0, "default_text_size": 50.0, "field_names": [], "intersheets_ref_own_page": false, "intersheets_ref_prefix": "", "intersheets_ref_short": false, "intersheets_ref_show": false, "intersheets_ref_suffix": "", "junction_size_choice": 3, "label_size_ratio": 0.375, "pin_symbol_size": 25.0, "text_offset_ratio": 0.15 }, "legacy_lib_dir": "", "legacy_lib_list": [], "meta": { "version": 1 }, "net_format_name": "", "ngspice_settings": null, "operating_point_overlay_i_precision": 3, "operating_point_overlay_i_range": "~A", "operating_point_overlay_v_precision": 3, "operating_point_overlay_v_range": "~V", "page_layout_descr_file": "", "plot_directory": "", "spice_adjust_passive_values": false, "spice_current_sheet_as_root": false, "subpart_first_id": 65, "subpart_id_separator": 0 },
+      "sheets": [["a1b2c3d4-0000-0000-0000-000000000001", "Root"]],
+      "text_variables": {}
+    }, null, 2);
+    lastPro = proContent;`;
 
     lastSch = await callAPI(schPrompt, 3500);
     document.getElementById('out-sch').textContent = lastSch;
@@ -867,7 +892,7 @@ Cover:
     outputSection.style.display = 'block';
     outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     clearInterval(stepInterval);
-    statusText.textContent = 'Done — 3 files ready. Open .kicad_sch and .kicad_pcb directly in KiCad 9.';
+    statusText.textContent = 'Done — 4 files ready. Put them all in one folder and open TIGA.kicad_pro in KiCad 9.';
     spinner.classList.remove('visible');
 
   } catch(e) {
@@ -884,7 +909,8 @@ function download(type) {
   const map = {
     sch:   { data: lastSch,   name: 'TIGA.kicad_sch' },
     pcb:   { data: lastPcb,   name: 'TIGA.kicad_pcb' },
-    guide: { data: lastGuide, name: 'pcb_guide.txt'   }
+    guide: { data: lastGuide, name: 'pcb_guide.txt'   },
+    pro:   { data: lastPro,   name: 'TIGA.kicad_pro'  }
   };
   const item = map[type];
   if (!item || !item.data) return;
