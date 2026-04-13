@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<!--
+  TOOLS PAGE METADATA
+  ───────────────────
+  Category:    Hardware & Electronics Tools
+  Title:       Hardware → KiCad Converter
+  Description: Upload your Arduino or ESP32 code and wiring diagram
+               to generate a KiCad-ready netlist and PCB layout guide.
+               Built by Claude
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hardware → KiCad Converter</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f9f9f7;
+    --surface: #ffffff;
+    --surface2: #f4f4f2;
+    --border: #e4e4e0;
+    --border2: #d0d0cc;
+    --accent: #2a6b4f;
+    --accent2: #3d5a80;
+    --text: #1a1a18;
+    --text2: #6b6b66;
+    --text3: #9b9b96;
+    --warn: #92600a;
+    --danger: #c0392b;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+  }
+
+  header {
+    margin-bottom: 2.5rem;
+  }
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    border: 1px solid #b8d4c6;
+    background: #edf5f1;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  h1 span { color: var(--accent); }
+  .subtitle {
+    color: var(--text2);
+    font-size: 15px;
+    font-weight: 300;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .card-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* file upload */
+  .drop-zone {
+    border: 1px dashed var(--border2);
+    border-radius: 6px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--accent);
+    background: #edf5f1;
+  }
+  .drop-zone input { display: none; }
+  .drop-icon {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    color: var(--text2);
+    font-size: 18px;
+  }
+  .drop-label { font-size: 14px; color: var(--text2); }
+  .drop-label strong { color: var(--text); font-weight: 500; }
+  .drop-sub { font-size: 12px; color: var(--text2); margin-top: 4px; font-family: var(--mono); }
+
+  .file-list { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .file-item .fname { color: var(--accent); }
+  .file-item .fsize { color: var(--text2); margin-left: 8px; }
+  .file-item button {
+    background: none;
+    border: none;
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+    transition: color 0.15s;
+  }
+  .file-item button:hover { color: var(--danger); }
+
+  textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    resize: vertical;
+    transition: border-color 0.2s;
+    line-height: 1.5;
+  }
+  textarea:focus { outline: none; border-color: var(--accent2); }
+  textarea::placeholder { color: var(--text2); }
+
+  /* layer selector */
+  .layer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .layer-opt {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .layer-opt:hover { border-color: var(--border2); }
+  .layer-opt.active {
+    border-color: var(--accent);
+    background: #edf5f1;
+  }
+  .layer-opt h4 { font-size: 13px; font-weight: 500; color: var(--text); }
+  .layer-opt.active h4 { color: var(--accent); }
+  .layer-opt p { font-size: 11px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-left: 6px;
+    text-transform: uppercase;
+  }
+  .badge-green { background: #edf5f1; color: var(--accent); }
+  .badge-purple { background: #eaeff5; color: var(--accent2); }
+
+  /* board type */
+  .board-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .board-opt {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .board-opt:hover { border-color: var(--border2); }
+  .board-opt.active {
+    border-color: var(--accent2);
+    background: #eaeff5;
+  }
+  .board-opt h4 { font-size: 13px; font-weight: 500; color: var(--text); }
+  .board-opt.active h4 { color: var(--accent2); }
+  .board-opt p { font-size: 11px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+
+  /* advanced toggle */
+  .adv-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    padding: 8px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+  }
+  .adv-toggle span { font-size: 13px; color: var(--text2); }
+  .adv-toggle .arr { font-family: var(--mono); font-size: 12px; color: var(--text2); transition: transform 0.2s; }
+  .adv-toggle.open .arr { transform: rotate(180deg); }
+  .adv-body { display: none; margin-top: 16px; }
+  .adv-body.open { display: block; }
+
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-family: var(--mono); font-size: 11px; color: var(--text2); letter-spacing: 0.05em; }
+  .field input, .field select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 7px 10px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    width: 100%;
+    transition: border-color 0.15s;
+  }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--accent2); }
+  .field select option { background: var(--surface2); }
+  .field .hint { font-size: 11px; color: var(--text2); line-height: 1.4; }
+
+  /* run button */
+  .run-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--text);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    transition: opacity 0.15s, transform 0.1s;
+    margin-top: 1rem;
+  }
+  .run-btn:hover { opacity: 0.9; }
+  .run-btn:active { transform: scale(0.99); }
+  .run-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* status */
+  .status-bar {
+    margin-top: 12px;
+    min-height: 22px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .spinner {
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid var(--border2);
+    border-top-color: var(--accent2);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+    flex-shrink: 0;
+  }
+  .spinner.visible { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* output */
+  .output-section { display: none; margin-top: 1.5rem; }
+  .output-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: -1px;
+  }
+  .tab {
+    padding: 8px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    color: var(--text2);
+    background: transparent;
+    transition: color 0.15s;
+  }
+  .tab.active {
+    border-color: var(--border);
+    background: var(--surface);
+    color: var(--accent2);
+  }
+  .tab-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0 8px 8px 8px;
+    padding: 1.25rem;
+  }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+  pre {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 420px;
+    overflow-y: auto;
+    line-height: 1.7;
+  }
+  pre::-webkit-scrollbar { width: 6px; }
+  pre::-webkit-scrollbar-track { background: var(--surface2); }
+  pre::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  .dl-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .dl-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .dl-btn:hover { border-color: var(--accent); background: #edf5f1; color: var(--accent); }
+
+  .preloaded-notice {
+    background: rgba(79,255,176,0.07);
+    border: 1px solid rgba(79,255,176,0.25);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 26px; }
+    .layer-grid, .board-grid, .field-grid { grid-template-columns: 1fr; }
+    .container { padding: 1.5rem 1rem 3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+      <div class="tag">Hardware → KiCad</div>
+      <button id="settings-btn" onclick="openSettings()" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #f5c0c0;border-radius:6px;background:#fff;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;color:#1a1a18">
+        ⚙ <span id="settings-label" style="color:#c0392b">Add API key</span>
+      </button>
+    </div>
+    <h1>Prototype to <span>PCB</span></h1>
+    <p class="subtitle">Upload your Arduino/ESP32 code + wiring diagram → get a KiCad netlist + PCB layout guide</p>
+  </header>
+
+  <!-- STEP 1: FILES -->
+  <div class="card">
+    <div class="card-title">01 / Upload files</div>
+    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+      <input type="file" id="file-input" multiple accept=".ino,.cpp,.h,.txt,.md,.png,.jpg,.jpeg,.pdf" onchange="handleFiles(this.files)">
+      <div class="drop-icon">↑</div>
+      <div class="drop-label"><strong>Click to upload</strong> or drag and drop</div>
+      <div class="drop-sub">.ino · .cpp · .h · .png · .jpg · .pdf · .txt</div>
+    </div>
+    <div class="file-list" id="file-list"></div>
+  </div>
+
+  <!-- STEP 2: DESCRIPTION -->
+  <div class="card">
+    <div class="card-title">02 / Describe your prototype</div>
+    <textarea id="description" rows="3" placeholder="e.g. LilyGO T-Display-S3 (ESP32-S3) with MPU6050 accelerometer/gyro, 2 push buttons, 3.7V LiPo battery. Health tracker wearable. Motherboard + daughterboard."></textarea>
+  </div>
+
+  <!-- STEP 3: BOARD CONFIG -->
+  <div class="card">
+    <div class="card-title">03 / Board configuration</div>
+
+    <div style="margin-bottom:16px">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:6px;font-family:var(--mono)">Board layout</div>
+      <div class="board-grid">
+        <div class="board-opt active" id="bt-mother" onclick="selectBoard('mother',this)">
+          <h4>Motherboard + daughterboard</h4>
+          <p>Main PCB + breakout board. Ideal for wearables — easier to iterate and test.</p>
+        </div>
+        <div class="board-opt" id="bt-single" onclick="selectBoard('single',this)">
+          <h4>Single board</h4>
+          <p>Everything on one PCB. Smaller footprint, fewer connectors.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:6px;font-family:var(--mono)">Layers <span class="badge badge-green">recommended: 2</span></div>
+      <div class="layer-grid">
+        <div class="layer-opt" onclick="selectLayer(1,this)">
+          <h4>1 layer</h4>
+          <p>Cheapest to fab. Routing is tight. Good for very simple circuits only.</p>
+        </div>
+        <div class="layer-opt active" onclick="selectLayer(2,this)">
+          <h4>2 layers</h4>
+          <p>Best for ESP32/Arduino wearables. Power on one side, signals on the other. JLC/JLCPCB-ready.</p>
+        </div>
+        <div class="layer-opt" onclick="selectLayer(4,this)">
+          <h4>4 layers</h4>
+          <p>Better signal integrity. Worth it if you need dedicated power/ground planes.</p>
+        </div>
+        <div class="layer-opt" onclick="selectLayer(6,this)">
+          <h4>6 layers</h4>
+          <p>RF + high-speed. Overkill unless you're doing antenna design work.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED -->
+    <div class="adv-toggle" id="adv-toggle" onclick="toggleAdv()">
+      <span>Advanced options <span class="badge badge-purple">for experienced designers</span></span>
+      <span class="arr" id="adv-arr">▼</span>
+    </div>
+    <div class="adv-body" id="adv-body">
+      <div class="field-grid">
+        <div class="field">
+          <label>Via drill (mm) <span class="badge badge-green">default 0.3</span></label>
+          <input type="number" id="via-drill" value="0.3" step="0.05" min="0.1" max="1.0">
+          <span class="hint">Min 0.2mm for most fabs. 0.3mm is safe and cost-effective.</span>
+        </div>
+        <div class="field">
+          <label>Via pad (mm) <span class="badge badge-green">default 0.6</span></label>
+          <input type="number" id="via-pad" value="0.6" step="0.05" min="0.3" max="2.0">
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Signal trace (mm) <span class="badge badge-green">default 0.25</span></label>
+          <input type="number" id="trace-sig" value="0.25" step="0.05" min="0.1" max="1.0">
+        </div>
+        <div class="field">
+          <label>Power trace (mm) <span class="badge badge-green">default 0.5</span></label>
+          <input type="number" id="trace-pwr" value="0.5" step="0.05" min="0.2" max="3.0">
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>GND vias per power pin <span class="badge badge-green">default 2</span></label>
+          <input type="number" id="gnd-vias" value="2" step="1" min="1" max="6">
+          <span class="hint">More = lower impedance + better thermal dissipation in wearables.</span>
+        </div>
+        <div class="field">
+          <label>Copper clearance (mm) <span class="badge badge-green">default 0.2</span></label>
+          <input type="number" id="clearance" value="0.2" step="0.05" min="0.1" max="0.5">
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>SMD component size</label>
+          <select id="smd-size">
+            <option value="0805" selected>0805 — easiest hand-soldering (recommended)</option>
+            <option value="0603">0603 — compact, harder by hand</option>
+            <option value="0402">0402 — tiny, needs reflow oven</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Ground plane</label>
+          <select id="gnd-plane">
+            <option value="both" selected>Both layers (recommended)</option>
+            <option value="bottom">Bottom layer only</option>
+            <option value="none">None</option>
+          </select>
+          <span class="hint">Ground plane on bottom reduces EMI from ESP32 WiFi/BLE.</span>
+        </div>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>I²C pull-up (kΩ) <span class="badge badge-green">default 4.7</span></label>
+          <input type="number" id="pullup" value="4.7" step="0.1" min="1" max="10">
+          <span class="hint">4.7kΩ works for MPU6050 + ESP32 at 3.3V.</span>
+        </div>
+        <div class="field">
+          <label>Decoupling cap (µF) per IC <span class="badge badge-green">default 0.1</span></label>
+          <input type="number" id="decap" value="0.1" step="0.01" min="0.01" max="10">
+          <span class="hint">100nF placed close to each IC power pin.</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Special requirements</label>
+        <textarea id="special" rows="2" style="margin-top:4px" placeholder="e.g. add TP4056 LiPo charging circuit, 3.3V LDO regulator, antenna keepout zone, JST-PH 2-pin battery connector..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <button class="run-btn" id="run-btn" onclick="runConversion()">Generate KiCad netlist + PCB guide →</button>
+
+  <div class="status-bar">
+    <div class="spinner" id="spinner"></div>
+    <span id="status-text"></span>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="output-section" id="output-section">
+    <div class="output-tabs">
+      <button class="tab active" onclick="switchTab('netlist',this)">netlist.net</button>
+      <button class="tab" onclick="switchTab('guide',this)">pcb_guide.txt</button>
+    </div>
+    <div class="tab-content">
+      <div class="tab-pane active" id="tab-netlist"><pre id="out-netlist"></pre></div>
+      <div class="tab-pane" id="tab-guide"><pre id="out-guide"></pre></div>
+    </div>
+    <div class="dl-row">
+      <button class="dl-btn" onclick="download('netlist')">↓ Download prototype_netlist.net</button>
+      <button class="dl-btn" onclick="download('guide')">↓ Download pcb_layout_guide.txt</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── state ──────────────────────────────────────────────
+let files = [];
+let layers = 2;
+let boardType = 'mother';
+let lastNetlist = '';
+let lastGuide = '';
+
+// ── preloaded TIGA code ────────────────────────────────
+const TIGA_CODE = `// tiga.ino — TIGA Health Tracker
+// MCU: LilyGO T-Display-S3 (ESP32-S3 + 1.9" LCD)
+// Libraries: TFT_eSPI, Wire, SPI, MPU6050
+// Sensors: MPU6050 (I2C: SDA=43, SCL=44 on T-Display-S3)
+// Display: TFT via SPI (TFT_BL = GPIO38 backlight)
+// Buttons: Button1 (readButton1), Button2 (readButton2)
+// Battery: 3.7V LiPo via JST connector, monitored via ADC
+// Features: Heart rate, step counter, temperature, fall detection,
+//           balance/stability, dexterity test, SOS screen, Bitchat QR
+// States: STATE_SPLASH, STATE_MAIN, STATE_TEST_MENU, STATE_TEST_LIST,
+//         STATE_TEST_RUNNING, STATE_TEST_RESULT, STATE_BITCHAT, STATE_SOS
+// I2C used for MPU6050. SPI used for TFT display.
+// GPIO38 = backlight PWM
+// Approx power consumption: ~80-120mA active, 6-8hr on 1000mAh LiPo`;
+
+// ── drag & drop ────────────────────────────────────────
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  handleFiles(e.dataTransfer.files);
+});
+
+function handleFiles(fileList) {
+  for (const f of fileList) {
+    if (!files.find(x => x.name === f.name)) files.push(f);
+  }
+  renderFiles();
+}
+
+function renderFiles() {
+  const el = document.getElementById('file-list');
+  el.innerHTML = '';
+  files.forEach((f, i) => {
+    const d = document.createElement('div');
+    d.className = 'file-item';
+    d.innerHTML = `<span><span class="fname">${f.name}</span><span class="fsize">${(f.size/1024).toFixed(1)} KB</span></span><button onclick="removeFile(${i})">✕</button>`;
+    el.appendChild(d);
+  });
+}
+
+function removeFile(i) { files.splice(i, 1); renderFiles(); }
+
+// ── selectors ──────────────────────────────────────────
+function selectLayer(n, el) {
+  layers = n;
+  document.querySelectorAll('.layer-opt').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function selectBoard(type, el) {
+  boardType = type;
+  document.querySelectorAll('.board-opt').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function toggleAdv() {
+  const body = document.getElementById('adv-body');
+  const toggle = document.getElementById('adv-toggle');
+  const arr = document.getElementById('adv-arr');
+  body.classList.toggle('open');
+  toggle.classList.toggle('open');
+  arr.style.transform = body.classList.contains('open') ? 'rotate(180deg)' : '';
+}
+
+// ── tab switching ──────────────────────────────────────
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ── read file as text ──────────────────────────────────
+function readFileText(f) {
+  return new Promise(res => {
+    if (f.type.startsWith('image/')) {
+      res(`[Image: ${f.name} — wiring diagram / pin layout, ${(f.size/1024).toFixed(0)}KB]`);
+    } else {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.onerror = () => res(`[Could not read ${f.name}]`);
+      r.readAsText(f);
+    }
+  });
+}
+
+// ── main conversion ────────────────────────────────────
+async function runConversion() {
+  const btn = document.getElementById('run-btn');
+  const spinner = document.getElementById('spinner');
+  const statusText = document.getElementById('status-text');
+  const outputSection = document.getElementById('output-section');
+  const description = document.getElementById('description').value.trim();
+
+  const hasFiles = files.length > 0;
+  const hasDesc = description.length > 0;
+
+  if (!hasFiles && !hasDesc) {
+    statusText.textContent = 'Please upload a file or add a description first.';
+    return;
+  }
+
+  btn.disabled = true;
+  spinner.classList.add('visible');
+  outputSection.style.display = 'none';
+
+  const steps = [
+    'Reading uploaded files…',
+    'Parsing component list from code…',
+    'Identifying pin assignments…',
+    'Generating KiCad netlist…',
+    'Building PCB layout guide…'
+  ];
+  let si = 0;
+  statusText.textContent = steps[si];
+  const stepInterval = setInterval(() => {
+    si = (si + 1) % steps.length;
+    statusText.textContent = steps[si];
+  }, 2200);
+
+  // read files
+  const fileContents = await Promise.all(files.map(readFileText));
+
+  const config = {
+    layers,
+    boardType,
+    viaDrill: document.getElementById('via-drill').value,
+    viaPad: document.getElementById('via-pad').value,
+    traceSig: document.getElementById('trace-sig').value,
+    tracePwr: document.getElementById('trace-pwr').value,
+    gndVias: document.getElementById('gnd-vias').value,
+    clearance: document.getElementById('clearance').value,
+    smdSize: document.getElementById('smd-size').value,
+    gndPlane: document.getElementById('gnd-plane').value,
+    pullup: document.getElementById('pullup').value,
+    decap: document.getElementById('decap').value,
+    special: document.getElementById('special').value.trim()
+  };
+
+  // build context — always include TIGA base code
+  const codeContext = hasFiles
+    ? fileContents.map((c, i) => `--- ${files[i].name} ---\n${c}`).join('\n\n')
+    : TIGA_CODE;
+
+  const prompt = `You are a hardware engineer expert in KiCad, ESP32, and Arduino wearable PCB design.
+
+USER PROTOTYPE:
+${description || 'TIGA Health Tracker — LilyGO T-Display-S3 (ESP32-S3) wearable'}
+
+CODE / FILES:
+${codeContext}
+
+BOARD CONFIGURATION:
+- Layout: ${config.boardType === 'mother' ? 'Motherboard + daughterboard' : 'Single board'}
+- Layers: ${config.layers}
+- Via drill: ${config.viaDrill}mm | Via pad: ${config.viaPad}mm
+- Signal trace: ${config.traceSig}mm | Power trace: ${config.tracePwr}mm
+- GND vias per power pin: ${config.gndVias}
+- Copper clearance: ${config.clearance}mm
+- SMD size: ${config.smdSize}
+- Ground plane: ${config.gndPlane}
+- I2C pull-up: ${config.pullup}kΩ
+- Decoupling caps: ${config.decap}µF per IC
+- Special: ${config.special || 'none'}
+
+TASK:
+Produce two sections separated by exactly the string: ===GUIDE===
+
+SECTION 1 — Complete KiCad netlist in standard legacy Orcad .net format that KiCad can import via File > Import Netlist.
+
+Rules for the netlist:
+- Start with: (net-list
+- Include (design ...) block with title TIGA_Health_Tracker
+- List every component with (comp (ref ...) (value ...) (footprint ...) (description "..."))
+- Use real KiCad footprint library paths, e.g.:
+  * Resistor_SMD:R_${config.smdSize}
+  * Capacitor_SMD:C_${config.smdSize}
+  * Sensor_IMU:MPU-6050
+  * Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical
+  * Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal (for LiPo)
+- If motherboard+daughterboard: prefix motherboard refs MB_ and daughterboard DB_
+- Include: all sensor ICs, MCU headers, decoupling caps (C_DECAP_xx), I2C pull-up resistors (R_PU_xx), ground test points (TP_GND_xx), power net labels
+- List all nets including: VCC_3V3, VCC_5V, GND, I2C_SDA, I2C_SCL, SPI_MOSI, SPI_MISO, SPI_SCK, TFT_CS, TFT_DC, TFT_RST, TFT_BL, BTN1, BTN2, BATT_ADC, BATT_PLUS, BATT_MINUS
+- End netlist with closing )
+
+===GUIDE===
+
+SECTION 2 — PCB layout guide as plain text. Include:
+1. Component list with values, quantities, and KiCad footprints
+2. Placement strategy (group by function: power, MCU, sensors, I/O, buttons)
+3. Trace routing rules specific to THIS design
+4. Ground plane and via stitching notes
+5. Wearable-specific tips (flex PCB consideration, component height limits, antenna keepout)
+6. If motherboard+daughterboard: suggested connector (e.g. 2x5 pin header), board size suggestions, which components go on which board
+7. KiCad import steps: exactly how to import this .net file
+8. Design warnings and things to double-check
+9. Recommended fab vendors (JLCPCB, PCBWay) with approximate cost for 5 boards
+
+Be specific to the TIGA health tracker. Mention actual component names from the code.`;
+
+  // ── get API key from localStorage ─────────────────────
+  const apiKey = localStorage.getItem('kicad_api_key');
+  if (!apiKey) {
+    clearInterval(stepInterval);
+    spinner.classList.remove('visible');
+    statusText.textContent = 'No API key found. Click ⚙ Settings to add your Anthropic key.';
+    btn.disabled = false;
+    return;
+  }
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      if (res.status === 401) throw new Error('API key invalid or expired. Click ⚙ Settings to update it.');
+      if (res.status === 429) throw new Error('Rate limited — wait a moment and try again.');
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    const fullText = (data.content || []).map(c => c.text || '').join('');
+    const parts = fullText.split('===GUIDE===');
+
+    lastNetlist = parts[0] ? parts[0].trim() : fullText.trim();
+    lastGuide = parts[1] ? parts[1].trim() : 'Guide not generated. See netlist output above.';
+
+    document.getElementById('out-netlist').textContent = lastNetlist;
+    document.getElementById('out-guide').textContent = lastGuide;
+    outputSection.style.display = 'block';
+    outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    clearInterval(stepInterval);
+    statusText.textContent = 'Done — download your files below.';
+    spinner.classList.remove('visible');
+
+  } catch(e) {
+    clearInterval(stepInterval);
+    spinner.classList.remove('visible');
+    statusText.textContent = 'Error: ' + e.message;
+  }
+
+  btn.disabled = false;
+}
+
+// ── download ───────────────────────────────────────────
+function download(type) {
+  const content = type === 'netlist' ? lastNetlist : lastGuide;
+  const filename = type === 'netlist' ? 'prototype_netlist.net' : 'pcb_layout_guide.txt';
+  if (!content) return;
+  const blob = new Blob([content], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+}
+
+// ── settings / API key ─────────────────────────────────
+function openSettings() {
+  const stored = localStorage.getItem('kicad_api_key') || '';
+  document.getElementById('settings-key-input').value = stored;
+  document.getElementById('settings-banner').style.display = 'none';
+  document.getElementById('settings-modal').style.display = 'flex';
+}
+
+function closeSettings() {
+  document.getElementById('settings-modal').style.display = 'none';
+}
+
+function saveKey() {
+  const key = document.getElementById('settings-key-input').value.trim();
+  const banner = document.getElementById('settings-banner');
+  if (!key) { showBanner(banner, 'danger', 'Please paste your API key.'); return; }
+  if (!key.startsWith('sk-ant-')) { showBanner(banner, 'danger', "That doesn't look like an Anthropic key — it should start with sk-ant-"); return; }
+  localStorage.setItem('kicad_api_key', key);
+  showBanner(banner, 'success', '✓ Key saved. AI features are active.');
+  updateKeyStatus();
+  setTimeout(closeSettings, 1200);
+}
+
+function clearKey() {
+  if (!confirm('Remove saved API key? The tool will stop working until you add one again.')) return;
+  localStorage.removeItem('kicad_api_key');
+  document.getElementById('settings-key-input').value = '';
+  showBanner(document.getElementById('settings-banner'), 'warn', 'Key removed.');
+  updateKeyStatus();
+}
+
+function toggleKeyVis() {
+  const inp = document.getElementById('settings-key-input');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function showBanner(el, type, msg) {
+  const colors = {
+    success: { bg: '#edf5f1', color: '#2a6b4f', border: '#b8d4c6' },
+    danger:  { bg: '#fdf0f0', color: '#c0392b', border: '#f5c0c0' },
+    warn:    { bg: '#fdf6ec', color: '#92600a', border: '#f5dfa0' }
+  };
+  const c = colors[type];
+  el.style.cssText = `display:block;padding:10px 14px;border-radius:6px;font-size:13px;background:${c.bg};color:${c.color};border:1px solid ${c.border};margin-top:10px`;
+  el.textContent = msg;
+}
+
+function updateKeyStatus() {
+  const hasKey = !!localStorage.getItem('kicad_api_key');
+  const btn = document.getElementById('settings-btn');
+  const label = document.getElementById('settings-label');
+  if (btn) btn.style.borderColor = hasKey ? '#b8d4c6' : '#f5c0c0';
+  if (label) { label.textContent = hasKey ? 'AI active' : 'Add API key'; label.style.color = hasKey ? '#2a6b4f' : '#c0392b'; }
+}
+
+document.addEventListener('DOMContentLoaded', updateKeyStatus);
+</script>
+
+<!-- ── Settings modal ──────────────────────────────── -->
+<div id="settings-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;align-items:center;justify-content:center;" onclick="if(event.target===this)closeSettings()">
+  <div style="background:#fff;border-radius:12px;max-width:480px;width:92%;padding:2rem;box-shadow:0 8px 32px rgba(0,0,0,0.12);">
+    <h2 style="font-size:18px;font-weight:500;color:#1a1a18;margin-bottom:4px">API key</h2>
+    <p style="font-size:13px;color:#6b6b66;margin-bottom:1.25rem">Saved to your browser only — never sent anywhere except directly to Anthropic.</p>
+    <label style="font-size:12px;font-family:'IBM Plex Mono',monospace;color:#6b6b66;display:block;margin-bottom:6px">ANTHROPIC API KEY</label>
+    <div style="display:flex;gap:8px;margin-bottom:4px">
+      <input type="password" id="settings-key-input" placeholder="sk-ant-…" style="flex:1;padding:8px 10px;border:1px solid #e4e4e0;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#1a1a18;background:#f9f9f7">
+      <button onclick="toggleKeyVis()" style="padding:8px 10px;border:1px solid #e4e4e0;border-radius:6px;background:#f4f4f2;cursor:pointer;font-size:13px">👁</button>
+    </div>
+    <p style="font-size:12px;color:#6b6b66;margin-bottom:4px">Get your key at <a href="https://console.anthropic.com" target="_blank" style="color:#2a6b4f">console.anthropic.com</a> → API Keys</p>
+    <div id="settings-banner" style="display:none"></div>
+    <div style="display:flex;gap:8px;margin-top:1.25rem;justify-content:flex-end">
+      <button onclick="clearKey()" style="padding:8px 14px;border:1px solid #e4e4e0;border-radius:6px;background:#fff;font-size:13px;cursor:pointer;color:#6b6b66">Remove key</button>
+      <button onclick="closeSettings()" style="padding:8px 14px;border:1px solid #e4e4e0;border-radius:6px;background:#fff;font-size:13px;cursor:pointer">Cancel</button>
+      <button onclick="saveKey()" style="padding:8px 16px;border:none;border-radius:6px;background:#1a1a18;color:#fff;font-size:13px;font-weight:500;cursor:pointer">Save key</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
