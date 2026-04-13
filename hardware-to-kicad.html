@@ -545,16 +545,19 @@
   <!-- OUTPUT -->
   <div class="output-section" id="output-section">
     <div class="output-tabs">
-      <button class="tab active" onclick="switchTab('netlist',this)">netlist.net</button>
+      <button class="tab active" onclick="switchTab('sch',this)">schematic.kicad_sch</button>
+      <button class="tab" onclick="switchTab('pcb',this)">layout.kicad_pcb</button>
       <button class="tab" onclick="switchTab('guide',this)">pcb_guide.txt</button>
     </div>
     <div class="tab-content">
-      <div class="tab-pane active" id="tab-netlist"><pre id="out-netlist"></pre></div>
+      <div class="tab-pane active" id="tab-sch"><pre id="out-sch"></pre></div>
+      <div class="tab-pane" id="tab-pcb"><pre id="out-pcb"></pre></div>
       <div class="tab-pane" id="tab-guide"><pre id="out-guide"></pre></div>
     </div>
     <div class="dl-row">
-      <button class="dl-btn" onclick="download('netlist')">↓ Download prototype_netlist.net</button>
-      <button class="dl-btn" onclick="download('guide')">↓ Download pcb_layout_guide.txt</button>
+      <button class="dl-btn" onclick="download('sch')">↓ Download TIGA.kicad_sch</button>
+      <button class="dl-btn" onclick="download('pcb')">↓ Download TIGA.kicad_pcb</button>
+      <button class="dl-btn" onclick="download('guide')">↓ Download pcb_guide.txt</button>
     </div>
   </div>
 
@@ -565,7 +568,8 @@
 let files = [];
 let layers = 2;
 let boardType = 'mother';
-let lastNetlist = '';
+let lastSch = '';
+let lastPcb = '';
 let lastGuide = '';
 
 // ── preloaded TIGA code ────────────────────────────────
@@ -741,7 +745,8 @@ CODE SUMMARY: ${codeContext.substring(0, 500)}`;
     'anthropic-dangerous-direct-browser-access': 'true'
   };
 
-  async function callAPI(userPrompt, maxTok) {
+  async function callAPI(userPrompt, maxTok, attempt) {
+    attempt = attempt || 1;
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: hdrs,
@@ -751,71 +756,118 @@ CODE SUMMARY: ${codeContext.substring(0, 500)}`;
         messages: [{ role: 'user', content: userPrompt }]
       })
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      if (res.status === 401) throw new Error('API key invalid. Click \u2699 Settings to update it.');
-      if (res.status === 429) throw new Error('Rate limited - wait a moment and try again.');
-      throw new Error(err.error?.message || `HTTP ${res.status}`);
+    let body = {};
+    try { body = await res.json(); } catch(e) {}
+    if (!res.ok || body.error) {
+      const msg = (body.error && body.error.message) ? body.error.message : (body.type || '');
+      const isOverload = res.status === 529 || res.status === 429 || msg.toLowerCase().includes('overload');
+      if (isOverload && attempt < 4) {
+        const wait = attempt * 8000;
+        statusText.textContent = 'Anthropic busy — retrying in ' + (wait/1000) + 's (attempt ' + attempt + '/3)...';
+        await new Promise(r => setTimeout(r, wait));
+        return callAPI(userPrompt, maxTok, attempt + 1);
+      }
+      if (res.status === 401) throw new Error('API key invalid. Click ⚙ Settings to update it.');
+      if (isOverload) throw new Error('Anthropic servers busy. Wait 1-2 minutes and try again.');
+      throw new Error(msg || ('HTTP ' + res.status));
     }
-    const data = await res.json();
-    return (data.content || []).map(c => c.text || '').join('');
+    return (body.content || []).map(function(c) { return c.text || ''; }).join('');
   }
 
   try {
-    // ── Call 1: Netlist only ───────────────────────────────
-    statusText.textContent = 'Generating netlist (1 of 2)...';
-    const netlistPrompt = `Output ONLY a complete valid KiCad legacy Orcad .net netlist file. No explanation. No markdown. No prose. Just the netlist.
+    // ── Call 1: KiCad Schematic (.kicad_sch) ─────────────
+    statusText.textContent = 'Generating schematic file (1 of 3)...';
+
+    const smdFP = config.smdSize === '0805' ? '0805_2012Metric' : config.smdSize === '0603' ? '0603_1608Metric' : '0402_1005Metric';
+
+    const schPrompt = `Output ONLY a valid KiCad 6+ schematic file (.kicad_sch format). No explanation. No markdown. Just the file content.
 
 ${boardDesc}
 
 RULES:
-- First line must be exactly: (net-list
-- Include: (design (source "TIGA_Health_Tracker") (date "2025-01-01") (tool "KiCad"))
-- Every component: (comp (ref "REF") (value "VALUE") (footprint "LIB:FOOTPRINT") (description "DESC"))
-- Use ONLY these real KiCad footprint paths:
-  ESP32: RF_Module:ESP32-S3-WROOM-1
-  MPU6050: Sensor_IMU:MPU-6050
-  Resistors: Resistor_SMD:R_${smdFP}
-  Capacitors: Capacitor_SMD:C_${smdFP}
-  LiPo connector: Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal
-  Board connector: Connector_PinHeader_2.54mm:PinHeader_2x05_P2.54mm_Vertical
-  Buttons: Button_Switch_SMD:SW_SPST_B3U-1000P
-  Test points: TestPoint:TestPoint_Pad_D1.5mm
-  LED: LED_SMD:LED_0805_2012Metric
-  Regulator: Package_TO_SOT_SMD:SOT-223-3_TabPin2
-- MB_ prefix = motherboard, DB_ prefix = daughterboard
-- COMPONENTS TO INCLUDE: MB_U1 ESP32-S3-WROOM-1, MB_U2 AMS1117-3.3 regulator, DB_U3 MPU-6050, MB_J1 JST LiPo, MB_J2 board-to-board connector, DB_J3 TFT display header (1x8), MB_SW1 Button1, MB_SW2 Button2, MB_R1+R2 10k button pullups, DB_R3+R4 4.7k I2C pullups, MB_C1 10uF power, MB_C2+C3 100nF decoupling ESP32, DB_C4 100nF decoupling MPU6050, MB_LED1 power LED, MB_R5 330R LED resistor, MB_TP1 GND testpoint, MB_TP2 3V3 testpoint
-- (nets) section with all connections for: VCC_3V3 GND I2C_SDA I2C_SCL SPI_MOSI SPI_MISO SPI_SCK TFT_CS TFT_DC TFT_RST TFT_BL BTN1 BTN2 BATT_ADC BATT_PLUS
-- Last line must be exactly: )
-- DO NOT STOP EARLY. Output the complete file.`;
+- First line: (kicad_sch (version 20230121) (generator eeschema)
+- Include (paper "A4")
+- Use real KiCad symbol library references:
+  ESP32: (lib_id "RF_Module:ESP32-S3-WROOM-1")
+  MPU6050: (lib_id "Sensor_IMU:MPU-6050")
+  Resistors: (lib_id "Device:R")
+  Capacitors: (lib_id "Device:C")
+  Buttons: (lib_id "Switch:SW_Push")
+  Power flags: (lib_id "power:+3.3V") (lib_id "power:GND")
+  LED: (lib_id "Device:LED")
+  Regulator: (lib_id "Regulator_Linear:AMS1117-3.3")
+  Connector 2pin: (lib_id "Connector:Conn_01x02_Pin")
+  Connector 10pin: (lib_id "Connector:Conn_02x05_Odd_Even")
+- Place symbols at spaced (at X Y) coordinates, no overlaps. Use grid of 50 units spacing.
+- Every symbol needs: uuid, (at X Y 0), (unit 1), (in_bom yes), (on_board yes), (property "Reference" "REF" ...), (property "Value" "VAL" ...), (property "Footprint" "LIB:FP" ...)
+- Wire all connections with (wire (pts (xy X1 Y1) (xy X2 Y2)))
+- Add power symbols (+3.3V, GND) connected to appropriate pins
+- Include these components: U1 ESP32-S3-WROOM-1, U2 AMS1117-3.3, U3 MPU-6050, J1 JST LiPo connector, J2 10-pin board connector, SW1+SW2 push buttons, R1+R2 10k pullups, R3+R4 4.7k I2C pullups, C1 10uF, C2+C3+C4 100nF decoupling, LED1 power LED, R5 330R LED resistor
+- End with closing )
+- Be complete. Output the full valid file.`;
 
-    lastNetlist = await callAPI(netlistPrompt, 3000);
-    document.getElementById('out-netlist').textContent = lastNetlist;
-    statusText.textContent = 'Netlist done. Generating PCB guide (2 of 2)...';
+    lastSch = await callAPI(schPrompt, 3500);
+    document.getElementById('out-sch').textContent = lastSch;
+    statusText.textContent = 'Schematic done. Generating PCB layout file (2 of 3)...';
 
-    // ── Call 2: PCB guide only ─────────────────────────────
-    const guidePrompt = `Write a practical PCB layout guide for the TIGA Health Tracker ESP32-S3 wearable. Plain text only, no markdown.
+    // ── Call 2: KiCad PCB (.kicad_pcb) ────────────────────
+    const pcbPrompt = `Output ONLY a valid KiCad 6+ PCB layout file (.kicad_pcb format). No explanation. No markdown. Just the file content.
 
 ${boardDesc}
 
-Include these sections:
-1. COMPONENT LIST - every part: ref, value, footprint, qty
-2. PLACEMENT - where each group lives: power section, ESP32 module, MPU6050 sensor, TFT connector, buttons. Keep antenna end of ESP32 near board edge.
-3. TRACE ROUTING - SPI bus (MOSI/MISO/SCK/CS) keep under 50mm, I2C (SDA/SCL) 4.7k pullups to 3V3, power traces 0.5mm min, signal 0.25mm
-4. GROUND PLANE - fill both layers, stitch vias every 5mm near high-current paths
-5. WEARABLE TIPS - max component height 2mm on wrist-facing side, ESP32 antenna keepout 10mm from any copper, board size suggestion (motherboard 40x30mm, daughterboard 25x20mm)
-6. BOARD SPLIT - what goes on motherboard vs daughterboard, 2x5 connector pinout (pin 1=GND, 2=3V3, 3=SDA, 4=SCL, 5=MOSI, 6=MISO, 7=SCK, 8=GPIO, 9=GPIO, 10=GND)
-7. KICAD 9 IMPORT - exact steps: open schematic editor > Tools > Update Schematic from Netlist > browse to .net file > Update. Then open PCB editor > Tools > Update PCB from Schematic.
-8. DRC WARNINGS - common ones and fixes: missing courtyard (add courtyard to footprint), unconnected pads (check net names match), antenna clearance violation
-9. JLCPCB ORDER - 2-layer, 1.6mm FR4, HASL lead-free, min trace 0.1mm/0.1mm, approx $2 for 5 boards + shipping`;
+RULES:
+- First line: (kicad_pcb (version 20230121) (generator pcbnew)
+- Include (general (thickness 1.6))
+- Include (stackup with 2 copper layers: F.Cu and B.Cu)
+- Board outline on Edge.Cuts layer: rectangle 40mm x 30mm for motherboard
+- Place footprints at realistic positions, no overlaps:
+  ESP32 module center: (at 20 15) - largest component, center of board
+  MPU6050: (at 32 8) - top right, away from ESP32 antenna end
+  JST connector: (at 5 25) - bottom left edge
+  Buttons: (at 35 25) and (at 35 20) - right edge
+  Regulator: (at 8 8) - top left near power input
+  Capacitors/Resistors: near their associated ICs
+- Use real KiCad footprint paths:
+  ESP32: (layer "F.Cu") RF_Module:ESP32-S3-WROOM-1
+  MPU6050: Sensor_IMU:MPU-6050
+  Resistors: Resistor_SMD:R_${smdFP}
+  Capacitors: Capacitor_SMD:C_${smdFP}
+  JST: Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal
+  Connector: Connector_PinHeader_2.54mm:PinHeader_2x05_P2.54mm_Vertical
+  Buttons: Button_Switch_SMD:SW_SPST_B3U-1000P
+  LED: LED_SMD:LED_0805_2012Metric
+  Regulator: Package_TO_SOT_SMD:SOT-223-3_TabPin2
+- Add copper fill zones for GND on both F.Cu and B.Cu
+- Include ratsnest (unrouted) lines showing connections
+- Set design rules: clearance 0.2mm, track width 0.25mm, via drill 0.3mm via size 0.6mm
+- End with closing )
+- Be complete. Output the full valid file.`;
 
-    lastGuide = await callAPI(guidePrompt, 2000);
+    lastPcb = await callAPI(pcbPrompt, 3500);
+    document.getElementById('out-pcb').textContent = lastPcb;
+    statusText.textContent = 'PCB layout done. Generating guide (3 of 3)...';
+
+    // ── Call 3: PCB Guide ──────────────────────────────────
+    const guidePrompt = `Write a concise PCB layout guide for the TIGA Health Tracker ESP32-S3 wearable. Plain text.
+
+${boardDesc}
+
+Cover:
+1. What each generated file is and how to open it in KiCad 9
+2. What to verify in the schematic before moving to PCB
+3. Key routing rules: SPI traces under 50mm, I2C pullups, power trace widths
+4. Wearable tips: 10mm antenna keepout around ESP32 WiFi end, max 2mm component height
+5. Motherboard vs daughterboard split recommendation
+6. DRC checks to run and common warnings to expect
+7. JLCPCB order settings for 5 boards (approx cost $2-5)`;
+
+    lastGuide = await callAPI(guidePrompt, 1500);
     document.getElementById('out-guide').textContent = lastGuide;
 
     outputSection.style.display = 'block';
     outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     clearInterval(stepInterval);
-    statusText.textContent = 'Done - both files ready to download.';
+    statusText.textContent = 'Done — 3 files ready. Open .kicad_sch and .kicad_pcb directly in KiCad 9.';
     spinner.classList.remove('visible');
 
   } catch(e) {
@@ -829,13 +881,17 @@ Include these sections:
 
 // ── download ───────────────────────────────────────────
 function download(type) {
-  const content = type === 'netlist' ? lastNetlist : lastGuide;
-  const filename = type === 'netlist' ? 'prototype_netlist.net' : 'pcb_layout_guide.txt';
-  if (!content) return;
-  const blob = new Blob([content], { type: 'text/plain' });
+  const map = {
+    sch:   { data: lastSch,   name: 'TIGA.kicad_sch' },
+    pcb:   { data: lastPcb,   name: 'TIGA.kicad_pcb' },
+    guide: { data: lastGuide, name: 'pcb_guide.txt'   }
+  };
+  const item = map[type];
+  if (!item || !item.data) return;
+  const blob = new Blob([item.data], { type: 'text/plain' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = filename;
+  a.download = item.name;
   a.click();
 }
 
