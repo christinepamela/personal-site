@@ -3,1587 +3,1460 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spider-Man: Miles Morales – Leap of Faith</title>
+<title>Spider-Man: Miles Morales</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Rajdhani:wght@600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Rajdhani:wght@500;600;700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#000; overflow:hidden; font-family:'Rajdhani',sans-serif; }
+  #c { display:block; width:100vw; height:100vh; }
 
-  :root {
-    --red: #e8000a;
-    --blue: #0b1a6b;
-    --black: #0a0a0f;
-    --white: #f0f0f0;
-    --gold: #FFD700;
-    --spider-blue: #1a3aff;
-    --ink: #111;
-    --panel-border: 4px solid #111;
+  /* TITLE */
+  #title {
+    position:fixed; inset:0; z-index:100;
+    background: radial-gradient(ellipse at 50% 80%, #1a0004 0%, #04040e 65%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    overflow:hidden;
   }
+  #title canvas { position:absolute; inset:0; opacity:.18; }
+  .title-content { position:relative; z-index:2; text-align:center; }
+  .t-sub { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:11px; letter-spacing:8px; color:rgba(255,255,255,.3); text-transform:uppercase; margin-bottom:8px; }
+  .t-marvel { font-family:'Oswald',sans-serif; font-size:16px; font-weight:700; color:#cc0000; letter-spacing:12px; text-transform:uppercase; }
+  .t-main { font-family:'Oswald',sans-serif; font-size:clamp(56px,10vw,108px); font-weight:700; color:#fff; line-height:.85;
+    text-shadow: 0 0 80px rgba(200,0,0,.5), 0 6px 40px rgba(0,0,0,1); text-transform:uppercase; }
+  .t-name { font-family:'Oswald',sans-serif; font-size:clamp(26px,4.5vw,48px); font-weight:400; color:rgba(255,255,255,.5); letter-spacing:5px; text-transform:uppercase; margin-top:4px; }
+  .t-tag { font-size:10px; color:rgba(106,0,212,.85); letter-spacing:6px; font-family:'Rajdhani',sans-serif; font-weight:600;
+    border:1px solid rgba(106,0,212,.35); display:inline-block; padding:4px 16px; margin-top:14px; text-transform:uppercase; }
+  .start-btn { margin-top:32px; padding:14px 56px; font-family:'Oswald',sans-serif; font-size:18px; font-weight:600;
+    letter-spacing:5px; text-transform:uppercase; color:#fff; background:transparent;
+    border:2px solid rgba(200,0,0,.7); cursor:pointer; transition:all .2s; display:block; margin-left:auto; margin-right:auto; }
+  .start-btn:hover { background:rgba(200,0,0,.2); border-color:#cc0000; }
+  .start-btn:active { transform:scale(.97); }
+  .controls-hint { margin-top:20px; font-size:12px; color:rgba(255,255,255,.25); letter-spacing:2px; line-height:2; font-family:'Rajdhani',sans-serif; }
+  .controls-hint span { color:rgba(255,255,255,.5); font-weight:600; }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--black);
-    font-family: 'Bangers', cursive;
-    overflow: hidden;
-    user-select: none;
-  }
-
-  /* COMIC HALFTONE BACKGROUND */
-  #gameCanvas {
-    display: none;
-  }
-
-  #gameContainer {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    background: #111;
-  }
-
-  /* ===== COMIC PANEL GAME AREA ===== */
-  #world {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  }
-
-  /* HALFTONE OVERLAY */
-  #world::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
-    background-size: 8px 8px;
-    pointer-events: none;
-    z-index: 100;
-  }
-
-  /* SKY */
-  #sky {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 55%;
-    background: linear-gradient(180deg, #050a2e 0%, #0d1b5e 40%, #1a0a3a 100%);
-    overflow: hidden;
-  }
-
-  /* COMIC SPEED LINES on sky */
-  #sky::after {
-    content:'';
-    position:absolute;
-    inset:0;
-    background: repeating-conic-gradient(from 90deg at 50% 110%, transparent 0deg, transparent 3deg, rgba(255,255,255,0.02) 3deg, rgba(255,255,255,0.02) 4deg);
-    pointer-events:none;
-  }
-
-  /* CITY BUILDINGS */
-  #buildings {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 65%;
-    pointer-events: none;
-  }
-
-  .building {
-    position: absolute;
-    bottom: 0;
-    background: #0a0f2e;
-    border: 2px solid #1a2a8a;
-    overflow: hidden;
-  }
-
-  .building::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent, transparent 12px,
-      rgba(255,200,0,0.05) 12px, rgba(255,200,0,0.05) 14px
-    ), repeating-linear-gradient(
-      180deg,
-      transparent, transparent 18px,
-      rgba(255,200,0,0.05) 18px, rgba(255,200,0,0.05) 20px
-    );
-  }
-
-  .window-lit {
-    position: absolute;
-    width: 8px;
-    height: 10px;
-    background: #FFE87C;
-    box-shadow: 0 0 6px #FFD700;
-  }
-
-  /* GROUND */
-  #ground {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 90px;
-    background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%);
-    border-top: 4px solid #333;
-    overflow: hidden;
-  }
-
-  #ground::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(255,255,255,0.03) 60px, rgba(255,255,255,0.03) 62px);
-  }
-
-  /* PLATFORMS */
-  .platform {
-    position: absolute;
-    background: #1a1a3e;
-    border: 3px solid #3a3a8a;
-    border-radius: 4px;
-    box-shadow: 0 4px 0 #0a0a2a, inset 0 1px 0 rgba(255,255,255,0.1);
-  }
-
-  .platform::after {
-    content: '';
-    position: absolute;
-    top: 2px; left: 4px; right: 4px;
-    height: 2px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 2px;
-  }
-
-  /* ENEMIES */
-  .enemy {
-    position: absolute;
-    width: 42px;
-    height: 52px;
-    cursor: pointer;
-  }
-
-  /* WEB LINE */
-  #webLine {
-    position: absolute;
-    top: 0; left: 0;
-    pointer-events: none;
-    z-index: 90;
-  }
-
-  /* ===== MILES MORALES SPRITE (Leap of Faith Hoodie Suit) ===== */
-  #player {
-    position: absolute;
-    width: 52px;
-    height: 68px;
-    z-index: 50;
-    image-rendering: pixelated;
-    filter: drop-shadow(0 0 8px rgba(255, 40, 40, 0.6));
-    transition: transform 0.05s;
-  }
-
-  /* VENOM STRIKE FLASH */
-  #player.venom-flash {
-    filter: drop-shadow(0 0 20px #7b00ff) drop-shadow(0 0 40px #3d00ff) brightness(1.5);
-  }
-
-  /* VENOM ELECTRICITY */
-  .venom-spark {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    pointer-events: none;
-    z-index: 200;
-    animation: sparkAnim 0.3s ease-out forwards;
-  }
-
-  @keyframes sparkAnim {
-    0% { opacity: 1; transform: scale(0.5); }
-    100% { opacity: 0; transform: scale(2); }
-  }
-
-  /* DAMAGE NUMBERS */
-  .dmg-number {
-    position: absolute;
-    font-size: 28px;
-    color: var(--red);
-    text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
-    pointer-events: none;
-    z-index: 300;
-    animation: floatUp 0.8s ease-out forwards;
-    font-family: 'Bangers', cursive;
-    -webkit-text-stroke: 1px black;
-  }
-
-  .dmg-number.crit {
-    color: var(--gold);
-    font-size: 38px;
-  }
-
-  @keyframes floatUp {
-    0% { transform: translateY(0) scale(1); opacity: 1; }
-    60% { transform: translateY(-50px) scale(1.2); opacity: 1; }
-    100% { transform: translateY(-80px) scale(0.8); opacity: 0; }
-  }
-
-  /* COMIC ACTION WORDS */
-  .action-word {
-    position: absolute;
-    font-family: 'Bangers', cursive;
-    font-size: 64px;
-    color: var(--gold);
-    text-shadow: 4px 4px 0 var(--red), 6px 6px 0 #000;
-    pointer-events: none;
-    z-index: 400;
-    animation: actionPop 0.6s ease-out forwards;
-    letter-spacing: 3px;
-    -webkit-text-stroke: 2px black;
-  }
-
-  @keyframes actionPop {
-    0% { transform: scale(0) rotate(-15deg); opacity: 1; }
-    40% { transform: scale(1.4) rotate(5deg); opacity: 1; }
-    70% { transform: scale(1) rotate(-2deg); opacity: 1; }
-    100% { transform: scale(0.8) rotate(0deg); opacity: 0; }
-  }
-
-  /* HIT FLASH */
-  .hit-flash {
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 200;
-    animation: hitFlash 0.25s ease-out forwards;
-  }
-
-  @keyframes hitFlash {
-    0% { transform: scale(0); opacity: 1; }
-    100% { transform: scale(3); opacity: 0; }
-  }
-
-  /* ===== UI ===== */
+  /* HUD */
   #hud {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    z-index: 500;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    pointer-events: none;
+    position:fixed; inset:0; pointer-events:none; z-index:50; display:none;
+  }
+  #hud-top {
+    position:absolute; top:0; left:0; right:0; padding:16px 20px;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    background:linear-gradient(180deg, rgba(0,0,0,.75) 0%, transparent 100%);
+  }
+  .panel { background:rgba(4,4,14,.86); border:1px solid rgba(255,255,255,.09); border-radius:3px; padding:10px 14px; backdrop-filter:blur(10px); }
+  .lbl { font-size:9px; letter-spacing:3px; color:rgba(255,255,255,.3); text-transform:uppercase; font-weight:600; }
+  .val { font-family:'Oswald',sans-serif; font-size:28px; font-weight:700; color:#fff; line-height:1; }
+  .name-big { font-family:'Oswald',sans-serif; font-size:15px; font-weight:600; color:#fff; letter-spacing:2px; text-transform:uppercase; margin:2px 0 4px; line-height:1; }
+  .suit-lbl { font-size:9px; color:rgba(106,0,212,.8); letter-spacing:2px; font-weight:600; text-transform:uppercase; margin-bottom:6px; }
+  .bar-bg { height:4px; background:rgba(255,255,255,.07); border-radius:2px; overflow:hidden; margin-top:2px; width:170px; }
+  .bar-fill { height:100%; border-radius:2px; transition:width .15s; }
+  #hp-bar { background:linear-gradient(90deg,#c00,#f44); box-shadow:0 0 5px rgba(200,0,0,.6); }
+  #vp-bar { background:linear-gradient(90deg,#4a00a8,#6a00d4,#00b4d8); box-shadow:0 0 8px rgba(106,0,212,.7); }
+  .venom-ready { font-size:9px; letter-spacing:3px; color:#6a00d4; font-weight:700; margin-top:4px; opacity:0; transition:opacity .3s; }
+
+  #combo-display { position:absolute; top:50%; right:20px; transform:translateY(-50%); text-align:right; opacity:0; transition:opacity .3s; }
+  #combo-num { font-family:'Oswald',sans-serif; font-size:72px; font-weight:700; color:#fff; line-height:1; text-shadow:0 0 30px rgba(106,0,212,.9); }
+  #combo-lbl { font-size:11px; letter-spacing:5px; color:rgba(255,255,255,.4); text-transform:uppercase; }
+
+  #bottom-bar {
+    position:absolute; bottom:0; left:0; right:0; padding:16px 20px;
+    background:linear-gradient(0deg, rgba(0,0,0,.7) 0%, transparent 100%);
+    display:flex; justify-content:space-between; align-items:flex-end;
+  }
+  .key-hint { font-size:11px; color:rgba(255,255,255,.22); letter-spacing:1px; line-height:1.9; }
+  .key-hint kbd { display:inline-block; border:1px solid rgba(255,255,255,.18); border-radius:3px; padding:1px 5px; font-size:10px; color:rgba(255,255,255,.42); font-family:'Rajdhani',sans-serif; font-weight:600; margin-right:2px; }
+
+  #wave-announce {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-family:'Oswald',sans-serif; font-size:64px; font-weight:700; color:#fff;
+    text-shadow:0 0 40px rgba(200,0,0,.6); letter-spacing:6px; text-transform:uppercase;
+    opacity:0; pointer-events:none; transition:opacity .4s; text-align:center;
   }
 
-  /* Comic panel border for HUD */
-  #hud-left, #hud-right, #hud-center {
-    background: rgba(0,0,0,0.85);
-    border: 3px solid #fff;
-    border-radius: 4px;
-    padding: 8px 12px;
-    box-shadow: 4px 4px 0 rgba(0,0,0,0.8);
+  /* GAME OVER */
+  #gameover {
+    position:fixed; inset:0; z-index:200; display:none;
+    flex-direction:column; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.92); backdrop-filter:blur(16px);
   }
-
-  #hud-left {
-    min-width: 180px;
-  }
-
-  .hud-label {
-    font-size: 12px;
-    color: #aaa;
-    letter-spacing: 2px;
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600;
-  }
-
-  .hud-name {
-    font-size: 22px;
-    color: var(--red);
-    line-height: 1;
-    text-shadow: 1px 1px 0 #000;
-    letter-spacing: 1px;
-  }
-
-  /* HEALTH BAR */
-  .bar-wrap {
-    margin-top: 4px;
-    height: 10px;
-    background: #333;
-    border: 2px solid #555;
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  #healthBar {
-    height: 100%;
-    background: linear-gradient(90deg, var(--red), #ff6b6b);
-    transition: width 0.15s;
-    border-radius: 1px;
-  }
-
-  /* VENOM GAUGE */
-  #hud-center {
-    text-align: center;
-  }
-
-  .venom-label {
-    font-size: 14px;
-    color: #9b59ff;
-    letter-spacing: 2px;
-  }
-
-  #venomBar {
-    height: 100%;
-    background: linear-gradient(90deg, #4b0082, #9b59ff, #00d4ff);
-    transition: width 0.1s;
-    border-radius: 1px;
-    box-shadow: 0 0 8px #7b00ff;
-  }
-
-  /* SCORE */
-  #hud-right {
-    text-align: right;
-  }
-
-  #scoreDisplay {
-    font-size: 32px;
-    color: var(--gold);
-    text-shadow: 2px 2px 0 #000;
-    line-height: 1;
-  }
-
-  #waveDisplay {
-    font-size: 16px;
-    color: #fff;
-  }
-
-  /* COMBO COUNTER */
-  #comboBox {
-    position: absolute;
-    top: 120px;
-    right: 16px;
-    z-index: 500;
-    text-align: right;
-    pointer-events: none;
-    transition: opacity 0.3s;
-  }
-
-  #comboNum {
-    font-size: 72px;
-    color: var(--gold);
-    text-shadow: 4px 4px 0 var(--red), 6px 6px 0 #000;
-    line-height: 1;
-    -webkit-text-stroke: 2px #000;
-  }
-
-  #comboLabel {
-    font-size: 18px;
-    color: #fff;
-    letter-spacing: 3px;
-    text-shadow: 2px 2px 0 #000;
-  }
-
-  /* CONTROLS PANEL */
-  #controls {
-    position: absolute;
-    bottom: 100px;
-    left: 12px;
-    z-index: 500;
-    pointer-events: none;
-    background: rgba(0,0,0,0.7);
-    border: 2px solid rgba(255,255,255,0.2);
-    border-radius: 4px;
-    padding: 8px 12px;
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600;
-    font-size: 12px;
-    color: rgba(255,255,255,0.6);
-    line-height: 1.8;
-  }
-
-  .ctrl-key {
-    display: inline-block;
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 3px;
-    padding: 0 4px;
-    font-size: 11px;
-    color: #fff;
-  }
-
-  /* SCREEN FLASH */
-  #screenFlash {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 800;
-    opacity: 0;
-    mix-blend-mode: screen;
-  }
-
-  /* TITLE SCREEN */
-  #titleScreen {
-    position: absolute;
-    inset: 0;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(ellipse at center, #0d1b6e 0%, #050a2e 60%, #000 100%);
-    overflow: hidden;
-  }
-
-  /* TITLE HALFTONE */
-  #titleScreen::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
-    background-size: 10px 10px;
-    pointer-events: none;
-  }
-
-  .title-spider-bg {
-    position: absolute;
-    font-size: 40vw;
-    color: rgba(255,255,255,0.03);
-    font-family: 'Bangers', cursive;
-    pointer-events: none;
-    line-height: 1;
-    user-select: none;
-  }
-
-  .title-logo {
-    position: relative;
-    text-align: center;
-    animation: titleDrop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
-  }
-
-  @keyframes titleDrop {
-    from { transform: translateY(-100px) scale(0.5); opacity: 0; }
-    to { transform: translateY(0) scale(1); opacity: 1; }
-  }
-
-  .title-top {
-    font-size: 28px;
-    color: var(--white);
-    letter-spacing: 8px;
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    text-shadow: 0 0 20px rgba(255,255,255,0.5);
-  }
-
-  .title-main {
-    font-size: clamp(60px, 10vw, 110px);
-    color: var(--red);
-    text-shadow: 6px 6px 0 #000, 8px 8px 0 #000, 0 0 40px rgba(255,0,10,0.5);
-    line-height: 0.85;
-    -webkit-text-stroke: 2px #000;
-    letter-spacing: 2px;
-  }
-
-  .title-sub {
-    font-size: clamp(30px, 5vw, 52px);
-    color: var(--gold);
-    text-shadow: 3px 3px 0 #000, 0 0 20px rgba(255,215,0,0.5);
-    letter-spacing: 4px;
-    -webkit-text-stroke: 1px #000;
-  }
-
-  .title-suit {
-    font-size: 16px;
-    color: rgba(255,255,255,0.7);
-    letter-spacing: 6px;
-    font-family: 'Rajdhani', sans-serif;
-    margin-top: 8px;
-    text-transform: uppercase;
-  }
-
-  /* ANIMATED SPIDER ON TITLE */
-  .title-spider-svg {
-    width: 120px;
-    height: auto;
-    margin: 20px auto;
-    display: block;
-    animation: spiderSway 3s ease-in-out infinite;
-    filter: drop-shadow(0 0 20px rgba(255,40,40,0.8));
-  }
-
-  @keyframes spiderSway {
-    0%, 100% { transform: rotate(-5deg) translateY(0); }
-    50% { transform: rotate(5deg) translateY(-10px); }
-  }
-
-  .start-btn {
-    margin-top: 24px;
-    padding: 14px 48px;
-    font-family: 'Bangers', cursive;
-    font-size: 32px;
-    letter-spacing: 4px;
-    color: var(--black);
-    background: var(--red);
-    border: 4px solid #fff;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 6px 6px 0 #000;
-    transition: all 0.1s;
-    animation: pulse 1.5s ease-in-out infinite;
-    pointer-events: all;
-  }
-
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); box-shadow: 6px 6px 0 #000; }
-    50% { transform: scale(1.05); box-shadow: 8px 8px 0 #000; }
-  }
-
-  .start-btn:hover { background: var(--gold); transform: scale(1.05) translate(-2px,-2px); box-shadow: 8px 8px 0 #000; }
-  .start-btn:active { transform: translate(4px,4px); box-shadow: 2px 2px 0 #000; }
-
-  /* GAME OVER / WAVE CLEAR */
-  #overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 900;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(4px);
-  }
-
-  .overlay-title {
-    font-size: 80px;
-    color: var(--red);
-    text-shadow: 6px 6px 0 #000;
-    -webkit-text-stroke: 2px #000;
-    animation: titleDrop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
-  }
-
-  .overlay-sub {
-    font-size: 28px;
-    color: var(--gold);
-    text-shadow: 2px 2px 0 #000;
-    margin-top: 8px;
-  }
-
-  .overlay-btn {
-    margin-top: 24px;
-    padding: 12px 40px;
-    font-family: 'Bangers', cursive;
-    font-size: 28px;
-    letter-spacing: 3px;
-    color: #000;
-    background: var(--gold);
-    border: 4px solid #000;
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 5px 5px 0 #000;
-    pointer-events: all;
-  }
-
-  .overlay-btn:hover { background: #fff; }
-  .overlay-btn:active { transform: translate(3px,3px); box-shadow: 2px 2px 0 #000; }
-
-  /* STARS */
-  .star {
-    position: absolute;
-    border-radius: 50%;
-    background: #fff;
-    animation: twinkle 2s ease-in-out infinite;
-  }
-
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.2; }
-    50% { opacity: 1; }
-  }
-
-  /* WEB PICKUP */
-  .pickup {
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    z-index: 40;
-    animation: bobPickup 1s ease-in-out infinite;
-  }
-
-  @keyframes bobPickup { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-
-  /* MOBILE BUTTONS */
-  #mobileControls {
-    position: absolute;
-    bottom: 100px;
-    left: 0; right: 0;
-    z-index: 600;
-    display: none;
-    justify-content: space-between;
-    padding: 0 20px;
-    pointer-events: none;
-  }
-
-  .mob-group { display: flex; gap: 10px; pointer-events: all; }
-
-  .mob-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    border: 3px solid rgba(255,255,255,0.4);
-    background: rgba(0,0,0,0.5);
-    color: #fff;
-    font-family: 'Bangers', cursive;
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    backdrop-filter: blur(4px);
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-  }
-
-  .mob-btn:active { background: rgba(255,255,255,0.2); transform: scale(0.92); }
-
-  .mob-btn.web-btn { border-color: rgba(200,200,255,0.6); background: rgba(30,30,120,0.6); font-size: 14px; text-align: center; line-height: 1.1; }
-  .mob-btn.venom-btn { border-color: rgba(160,0,255,0.6); background: rgba(60,0,100,0.6); font-size: 13px; line-height: 1.1; }
-
-  @media (max-width: 768px) {
-    #mobileControls { display: flex; }
-    #controls { display: none; }
-  }
+  .go-title { font-family:'Oswald',sans-serif; font-size:80px; font-weight:700; color:#fff; text-transform:uppercase; letter-spacing:4px; text-shadow:0 0 40px rgba(200,0,0,.6); }
+  .go-stats { font-family:'Rajdhani',sans-serif; font-size:16px; color:rgba(255,255,255,.4); letter-spacing:4px; margin-top:8px; text-transform:uppercase; }
+  .go-btn { margin-top:30px; padding:13px 48px; font-family:'Oswald',sans-serif; font-size:17px; font-weight:600; letter-spacing:4px; text-transform:uppercase; color:#fff; background:rgba(200,0,0,.15); border:1px solid rgba(200,0,0,.6); cursor:pointer; transition:background .2s; }
+  .go-btn:hover { background:rgba(200,0,0,.32); }
 </style>
 </head>
 <body>
 
-<!-- ======= TITLE SCREEN ======= -->
-<div id="titleScreen">
-  <div class="title-spider-bg">🕷</div>
-
-  <!-- Stars -->
-  <div id="titleStars"></div>
-
-  <div class="title-logo">
-    <div class="title-top">MARVEL'S</div>
-    <div class="title-main">SPIDER-MAN</div>
-    <div class="title-sub">MILES MORALES</div>
-    <div class="title-suit">⚡ LEAP OF FAITH SUIT ⚡</div>
-
-    <!-- ANIMATED SPIDER LOGO SVG -->
-    <svg class="title-spider-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Body -->
-      <ellipse cx="50" cy="55" rx="18" ry="22" fill="#c00010"/>
-      <!-- Head -->
-      <circle cx="50" cy="30" r="16" fill="#c00010"/>
-      <!-- Eyes -->
-      <ellipse cx="44" cy="28" rx="7" ry="5" fill="white" transform="rotate(-15 44 28)"/>
-      <ellipse cx="56" cy="28" rx="7" ry="5" fill="white" transform="rotate(15 56 28)"/>
-      <!-- Eye shine -->
-      <ellipse cx="44" cy="28" rx="5" ry="3.5" fill="#ddd" transform="rotate(-15 44 28)"/>
-      <ellipse cx="56" cy="28" rx="5" ry="3.5" fill="#ddd" transform="rotate(15 56 28)"/>
-      <!-- Chest spider -->
-      <path d="M50 42 L44 52 L50 48 L56 52 Z" fill="black"/>
-      <path d="M50 42 L56 55 L50 60 L44 55 Z" fill="black"/>
-      <!-- Legs -->
-      <line x1="32" y1="48" x2="10" y2="38" stroke="#c00010" stroke-width="4" stroke-linecap="round"/>
-      <line x1="32" y1="56" x2="8" y2="52" stroke="#c00010" stroke-width="4" stroke-linecap="round"/>
-      <line x1="32" y1="64" x2="12" y2="70" stroke="#c00010" stroke-width="4" stroke-linecap="round"/>
-      <line x1="68" y1="48" x2="90" y2="38" stroke="#c00010" stroke-width="4" stroke-linecap="round"/>
-      <line x1="68" y1="56" x2="92" y2="52" stroke="#c00010" stroke-width="4" stroke-linecap="round"/>
-      <line x1="68" y1="64" x2="88" y2="70" stroke="#c00010" stroke-width="4" stroke-linecap="round"/>
-      <!-- Hoodie outline detail -->
-      <path d="M35 35 Q50 20 65 35" stroke="#900008" stroke-width="2" fill="none"/>
-      <!-- Venom glow accent -->
-      <circle cx="50" cy="50" r="5" fill="#7b00ff" opacity="0.6"/>
-    </svg>
-
-    <button class="start-btn" onclick="startGame()">▶  START GAME</button>
-    <div style="margin-top:12px; font-family:'Rajdhani',sans-serif; font-size:13px; color:rgba(255,255,255,0.4); letter-spacing:2px;">
-      FOR ASHTON & AUSTIN · 2025
+<!-- TITLE SCREEN -->
+<div id="title">
+  <canvas id="title-bg"></canvas>
+  <div class="title-content">
+    <div class="t-sub">Insomniac Games · Marvel</div>
+    <div class="t-marvel">Marvel's</div>
+    <div class="t-main">Spider-Man</div>
+    <div class="t-name">Miles Morales</div>
+    <div class="t-tag">⚡ Leap of Faith Suit</div>
+    <button class="start-btn" onclick="startGame()">Play Now</button>
+    <div class="controls-hint">
+      <span>A / D or ← →</span> Move &nbsp;&nbsp; <span>W / Space</span> Jump<br>
+      <span>Hold F near wall</span> Wall Crawl &nbsp;&nbsp; <span>Click</span> Shoot Web / Swing<br>
+      <span>Z</span> Punch combo &nbsp;&nbsp; <span>V</span> Venom Strike ⚡ &nbsp;&nbsp; <span>E</span> Web Zip
     </div>
   </div>
 </div>
 
-<!-- ======= GAME WORLD ======= -->
-<div id="gameContainer" style="display:none;">
-  <div id="world">
-    <div id="sky"></div>
-    <div id="buildings"></div>
-    <div id="ground"></div>
+<!-- GAME CANVAS -->
+<canvas id="c"></canvas>
 
-    <!-- WEB CANVAS -->
-    <svg id="webLine" width="100%" height="100%">
-      <line id="webLineEl" x1="0" y1="0" x2="0" y2="0" stroke="rgba(200,220,255,0.7)" stroke-width="2" stroke-dasharray="4,3"/>
-    </svg>
-
-    <!-- PLAYER -->
-    <div id="player">
-      <svg id="milesSVG" viewBox="0 0 52 68" xmlns="http://www.w3.org/2000/svg" width="52" height="68">
-        <!-- Miles Morales - Leap of Faith Hoodie Suit -->
-        <!-- LEGS -->
-        <rect id="leg-l" x="16" y="52" width="9" height="16" rx="3" fill="#c00010"/>
-        <rect id="leg-r" x="27" y="52" width="9" height="16" rx="3" fill="#c00010"/>
-        <!-- Sneaker L -->
-        <rect x="13" y="64" width="14" height="5" rx="2" fill="#111"/>
-        <rect x="13" y="64" width="14" height="2" rx="1" fill="#e00010"/>
-        <!-- Sneaker R -->
-        <rect x="25" y="64" width="14" height="5" rx="2" fill="#111"/>
-        <rect x="25" y="64" width="14" height="2" rx="1" fill="#e00010"/>
-        <!-- BODY / HOODIE -->
-        <rect x="12" y="28" width="28" height="26" rx="5" fill="#c00010"/>
-        <!-- Hoodie pocket -->
-        <rect x="18" y="44" width="16" height="8" rx="2" fill="#900008"/>
-        <!-- Web pattern on chest -->
-        <line x1="26" y1="28" x2="26" y2="52" stroke="rgba(0,0,0,0.3)" stroke-width="0.8"/>
-        <line x1="12" y1="38" x2="40" y2="38" stroke="rgba(0,0,0,0.3)" stroke-width="0.8"/>
-        <ellipse cx="26" cy="38" rx="8" ry="5" stroke="rgba(0,0,0,0.3)" stroke-width="0.8" fill="none"/>
-        <!-- CHEST SPIDER (Into the Spider-Verse style) -->
-        <path d="M26 33 L22 37 L26 35 L30 37 Z" fill="#000"/>
-        <path d="M22 37 L18 42 M26 35 L26 43 M30 37 L34 42" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
-        <!-- HOODIE hood up detail -->
-        <path d="M12 30 Q8 20 18 16 Q26 12 34 16 Q44 20 40 30" fill="#900008" stroke="#700006" stroke-width="1"/>
-        <!-- ARMS -->
-        <rect id="arm-l" x="4" y="30" width="10" height="20" rx="4" fill="#c00010"/>
-        <rect id="arm-r" x="38" y="30" width="10" height="20" rx="4" fill="#c00010"/>
-        <!-- Gloves -->
-        <rect x="2" y="47" width="12" height="7" rx="3" fill="#111"/>
-        <rect x="38" y="47" width="12" height="7" rx="3" fill="#111"/>
-        <!-- HEAD -->
-        <ellipse cx="26" cy="18" rx="14" ry="15" fill="#c00010"/>
-        <!-- MASK EYES (Into the Spider-Verse white large eyes) -->
-        <ellipse id="eye-l" cx="20" cy="16" rx="8" ry="6" fill="white" transform="rotate(-12 20 16)"/>
-        <ellipse id="eye-r" cx="32" cy="16" rx="8" ry="6" fill="white" transform="rotate(12 32 16)"/>
-        <!-- Eye inner -->
-        <ellipse cx="20" cy="16" rx="6" ry="4.5" fill="#e0e0e0" transform="rotate(-12 20 16)"/>
-        <ellipse cx="32" cy="16" rx="6" ry="4.5" fill="#e0e0e0" transform="rotate(12 32 16)"/>
-        <!-- VENOM highlight on eyes (electric purple tinge) -->
-        <ellipse cx="20" cy="16" rx="2" ry="1.5" fill="rgba(155,89,255,0.3)" transform="rotate(-12 20 16)"/>
-        <ellipse cx="32" cy="16" rx="2" ry="1.5" fill="rgba(155,89,255,0.3)" transform="rotate(12 32 16)"/>
-        <!-- Hoodie strings -->
-        <line x1="22" y1="30" x2="20" y2="40" stroke="#700006" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="30" y1="30" x2="32" y2="40" stroke="#700006" stroke-width="1.5" stroke-linecap="round"/>
-        <!-- VENOM BIOELECTRIC EFFECT (animated) -->
-        <g id="venomGlow" opacity="0">
-          <ellipse cx="26" cy="38" rx="14" ry="14" fill="none" stroke="#7b00ff" stroke-width="3" opacity="0.8"/>
-          <path d="M20 30 L23 35 L19 38 L24 42" stroke="#00d4ff" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <path d="M32 30 L29 35 L33 38 L28 42" stroke="#00d4ff" stroke-width="2" fill="none" stroke-linecap="round"/>
-        </g>
-      </svg>
+<!-- HUD -->
+<div id="hud">
+  <div id="hud-top">
+    <!-- Left -->
+    <div class="panel">
+      <div class="lbl">Spider-Man</div>
+      <div class="name-big">Miles Morales</div>
+      <div class="suit-lbl">⚡ Leap of Faith</div>
+      <div class="lbl">Health</div>
+      <div class="bar-bg"><div class="bar-fill" id="hp-bar" style="width:100%"></div></div>
+      <div class="lbl" style="margin-top:6px">Venom Power</div>
+      <div class="bar-bg"><div class="bar-fill" id="vp-bar" style="width:0%"></div></div>
+      <div class="venom-ready" id="venom-ready">Press V — Venom Strike</div>
     </div>
-
-    <!-- WEB CANVASES (for web attach point) -->
-    <canvas id="webCanvas" style="position:absolute;top:0;left:0;pointer-events:none;z-index:45;" width="0" height="0"></canvas>
-
-    <!-- HUD -->
-    <div id="hud">
-      <div id="hud-left">
-        <div class="hud-label">SPIDER-MAN</div>
-        <div class="hud-name">MILES MORALES</div>
-        <div class="hud-label" style="margin-top:4px;">HEALTH</div>
-        <div class="bar-wrap"><div id="healthBar" style="width:100%"></div></div>
-      </div>
-
-      <div id="hud-center">
-        <div class="venom-label">⚡ VENOM POWER ⚡</div>
-        <div class="bar-wrap" style="width:140px;margin-top:4px;"><div id="venomBar" style="width:0%"></div></div>
-        <div id="venomReady" style="font-size:11px;color:#7b00ff;margin-top:2px;font-family:Rajdhani,sans-serif;font-weight:700;letter-spacing:2px;opacity:0;">PRESS V – VENOM STRIKE!</div>
-      </div>
-
-      <div id="hud-right">
-        <div class="hud-label">SCORE</div>
-        <div id="scoreDisplay">0</div>
-        <div id="waveDisplay">WAVE 1</div>
-      </div>
+    <!-- Center -->
+    <div class="panel" style="text-align:center">
+      <div class="lbl">Wave</div>
+      <div class="val" id="wave-val">01</div>
+      <div class="lbl" id="enemy-lbl" style="margin-top:2px">— —</div>
     </div>
-
-    <!-- COMBO -->
-    <div id="comboBox" style="opacity:0;">
-      <div id="comboNum">0</div>
-      <div id="comboLabel">HIT COMBO!</div>
-    </div>
-
-    <!-- SCREEN FLASH -->
-    <div id="screenFlash"></div>
-
-    <!-- CONTROLS -->
-    <div id="controls">
-      <span class="ctrl-key">←→</span> Move &nbsp;
-      <span class="ctrl-key">↑/W/Space</span> Jump<br>
-      <span class="ctrl-key">Z</span> Punch &nbsp;
-      <span class="ctrl-key">X</span> Web Shoot<br>
-      <span class="ctrl-key">V</span> Venom Strike ⚡<br>
-      <span class="ctrl-key">E</span> Web Swing
-    </div>
-
-    <!-- MOBILE CONTROLS -->
-    <div id="mobileControls">
-      <div class="mob-group">
-        <div class="mob-btn" id="mob-left" ontouchstart="mKeys.left=true" ontouchend="mKeys.left=false">◀</div>
-        <div class="mob-btn" id="mob-right" ontouchstart="mKeys.right=true" ontouchend="mKeys.right=false">▶</div>
-        <div class="mob-btn" id="mob-jump" ontouchstart="mKeys.jump=true" ontouchend="mKeys.jump=false">↑</div>
-      </div>
-      <div class="mob-group">
-        <div class="mob-btn web-btn" ontouchstart="shootWeb()">WEB</div>
-        <div class="mob-btn" ontouchstart="punch()">POW</div>
-        <div class="mob-btn venom-btn" ontouchstart="venomStrike()">⚡<br>VENOM</div>
-      </div>
+    <!-- Right -->
+    <div class="panel" style="text-align:right">
+      <div class="lbl">Score</div>
+      <div class="val" id="score-val">000000</div>
     </div>
   </div>
 
-  <!-- OVERLAY -->
-  <div id="overlay">
-    <div class="overlay-title" id="overlayTitle">GAME OVER</div>
-    <div class="overlay-sub" id="overlaySub">Score: 0</div>
-    <button class="overlay-btn" onclick="restartGame()">PLAY AGAIN</button>
+  <div id="combo-display">
+    <div id="combo-num">0×</div>
+    <div id="combo-lbl">Combo</div>
   </div>
+
+  <div id="bottom-bar">
+    <div class="key-hint">
+      <kbd>A</kbd><kbd>D</kbd> Move &nbsp; <kbd>W/Space</kbd> Jump &nbsp; <kbd>F</kbd> Wall-crawl<br>
+      <kbd>Click</kbd> Web Shoot/Swing &nbsp; <kbd>Z</kbd> Punch &nbsp; <kbd>V</kbd> Venom ⚡ &nbsp; <kbd>E</kbd> Web Zip
+    </div>
+    <div class="key-hint" style="text-align:right">
+      <kbd>Shift+Click</kbd> Web zip to point<br>
+      Web swing: <kbd>Click</kbd> above Miles to anchor
+    </div>
+  </div>
+
+  <div id="wave-announce"></div>
+</div>
+
+<!-- GAME OVER -->
+<div id="gameover">
+  <div class="go-title" id="go-title">Game Over</div>
+  <div class="go-stats" id="go-stats"></div>
+  <button class="go-btn" onclick="restartGame()">Play Again</button>
 </div>
 
 <script>
-// =============================================
-//  SPIDER-MAN: MILES MORALES – LEAP OF FAITH
-//  HTML5 Canvas-free Game Engine
-//  For Ashton & Austin
-// =============================================
+// ══════════════════════════════════════════════════════
+//  SPIDER-MAN: MILES MORALES — Canvas Edition
+//  Full human-figure pixel art, web physics, mature game
+// ══════════════════════════════════════════════════════
 
-const FRAME_MS = 1000 / 12; // 12 FPS animation
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+let W, H, GROUND;
 
-// ─── STATE ───────────────────────────────────
-let score = 0, wave = 1, combo = 0, comboTimer = 0;
-let health = 100, maxHealth = 100;
-let venomPower = 0, maxVenom = 100;
+// ── TITLE BG RAIN ─────────────────────────────────
+const tbg = document.getElementById('title-bg');
+const tctx = tbg.getContext('2d');
+let rainDrops = [];
+function initTitleRain() {
+  tbg.width = window.innerWidth; tbg.height = window.innerHeight;
+  rainDrops = Array.from({length:120}, () => ({
+    x: Math.random()*tbg.width, y: Math.random()*tbg.height,
+    len: 20+Math.random()*60, spd: 8+Math.random()*12,
+    op: .1+Math.random()*.3
+  }));
+}
+function animTitleRain() {
+  if (!document.getElementById('title').style.display || document.getElementById('title').style.display !== 'none') {
+    tctx.clearRect(0,0,tbg.width,tbg.height);
+    rainDrops.forEach(r => {
+      tctx.strokeStyle = `rgba(140,180,255,${r.op})`;
+      tctx.lineWidth = .8;
+      tctx.beginPath(); tctx.moveTo(r.x, r.y); tctx.lineTo(r.x-r.len*.1, r.y+r.len); tctx.stroke();
+      r.y += r.spd;
+      if (r.y > tbg.height) { r.y = -r.len; r.x = Math.random()*tbg.width; }
+    });
+    requestAnimationFrame(animTitleRain);
+  }
+}
+initTitleRain(); animTitleRain();
+
+// ── STATE ──────────────────────────────────────────
+let score=0, wave=1, combo=0, comboTimer=0;
 let gameRunning = false;
-let frameCount = 0;
-let lastFrameTime = 0;
-let animFrame = 0;
-let animTimer = 0;
+let mouseX=0, mouseY=0, mouseDown=false, shiftDown=false;
 
-// PLAYER
-const player = {
-  x: 200, y: 300,
-  vx: 0, vy: 0,
-  w: 52, h: 68,
-  onGround: false,
-  facingRight: true,
-  isSwinging: false,
-  swingTarget: null,
-  swingAngle: 0,
-  swingLength: 0,
-  attacking: false,
-  attackTimer: 0,
-  iFrames: 0,      // invincibility frames
-  punchAnim: 0,
-  jumpAnim: 0,
-  runAnim: 0,
-};
-
-// WORLD
-let GROUND_Y;
-let platforms = [];
-let enemies = [];
-let pickups = [];
-let particles = [];
-let webParticles = [];
-
-// INPUT
 const keys = {};
-const mKeys = { left: false, right: false, jump: false };
 let justPressed = {};
 
-// DOM REFS
-const playerEl = document.getElementById('player');
-const milesSVG = document.getElementById('milesSVG');
-const worldEl = document.getElementById('world');
-const groundEl = document.getElementById('ground');
-const healthBar = document.getElementById('healthBar');
-const venomBar = document.getElementById('venomBar');
-const venomReady = document.getElementById('venomReady');
-const scoreDisplay = document.getElementById('scoreDisplay');
-const waveDisplay = document.getElementById('waveDisplay');
-const comboBox = document.getElementById('comboBox');
-const comboNum = document.getElementById('comboNum');
-const comboLabel = document.getElementById('comboLabel');
-const screenFlash = document.getElementById('screenFlash');
-const overlay = document.getElementById('overlay');
-const webLineEl = document.getElementById('webLineEl');
-const webCanvas = document.getElementById('webCanvas');
-const venomGlow = document.getElementById('venomGlow');
-const armL = document.getElementById('arm-l');
-const armR = document.getElementById('arm-r');
-const legL = document.getElementById('leg-l');
-const legR = document.getElementById('leg-r');
-const eyeL = document.getElementById('eye-l');
-const eyeR = document.getElementById('eye-r');
+// ── PLAYER ─────────────────────────────────────────
+const PW=26, PH=52; // player pixel size
+const P = {
+  x:400, y:300,
+  vx:0, vy:0,
+  w:PW, h:PH,
+  onGround:false,
+  onWall:false, wallDir:0,
+  facingR:true,
+  hp:100, maxHp:100,
+  venom:0, maxVenom:100,
+  iFrames:0,
+  // Animation
+  animState:'idle', // idle|run|jump|fall|swing|crawl|punch|venom
+  animFrame:0, animTimer:0,
+  // Web
+  webAnchor:null,   // {x,y} – swing anchor point
+  webLen:0,
+  webAngle:0,
+  isSwinging:false,
+  webLine:null,     // single shot web
+  webShots:[],      // active web shots in flight
+  // Combat
+  attacking:false, atkTimer:0, atkCombo:0,
+  venomActive:false, venomTimer:0,
+  // Wall
+  wallCrawling:false,
+  // Zip
+  zipping:false, zipTarget:null, zipSpeed:0,
+};
 
-// ─── INIT ─────────────────────────────────────
-function init() {
-  GROUND_Y = window.innerHeight - 90;
-  player.x = 200;
-  player.y = GROUND_Y - player.h;
-  player.vx = 0; player.vy = 0;
-  player.onGround = false;
-  player.isSwinging = false;
-  player.attacking = false;
-  player.iFrames = 0;
-  score = 0; wave = 1; combo = 0; comboTimer = 0;
-  health = 100; venomPower = 0;
-  enemies = []; pickups = []; particles = [];
+let enemies = [];
+let particles = [];
+let floatTexts = [];
+let platforms = [];
+let buildings = [];
+let webLines = [];  // rendered webs {x1,y1,x2,y2,life,maxLife}
+let spiderWebs = []; // environmental web decorations
+let eidCounter = 0;
 
-  buildCity();
-  buildPlatforms();
-  generateStars();
-  spawnWave();
-  updateHUD();
+// ── RESIZE ─────────────────────────────────────────
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  GROUND = H - 70;
 }
 
-function buildCity() {
-  const bContainer = document.getElementById('buildings');
-  bContainer.innerHTML = '';
-  const W = window.innerWidth;
-  const bData = [
-    {x:0,   w:90,  h:320, wins:[[10,20],[30,20],[55,20],[10,60],[30,60],[55,60],[10,100],[30,100],[55,100]]},
-    {x:80,  w:70,  h:250, wins:[[8,15],[35,15],[8,55],[35,55],[8,95],[35,95]]},
-    {x:140, w:110, h:380, wins:[[10,20],[45,20],[80,20],[10,60],[45,60],[80,60],[10,100],[45,100],[80,100],[10,140],[45,140],[80,140]]},
-    {x:240, w:60,  h:200, wins:[[8,15],[30,15],[8,55],[30,55]]},
-    {x:290, w:130, h:420, wins:[[10,20],[50,20],[90,20],[10,70],[50,70],[90,70],[10,120],[50,120],[90,120],[10,170],[50,170],[90,170]]},
-    {x:W-200, w:100, h:350, wins:[[10,20],[50,20],[10,70],[50,70],[10,120],[50,120],[10,170],[50,170]]},
-    {x:W-280, w:80,  h:280, wins:[[10,20],[40,20],[10,70],[40,70],[10,120],[40,120]]},
-    {x:W-370, w:120, h:400, wins:[[10,20],[55,20],[100,20],[10,70],[55,70],[100,70],[10,120],[55,120],[100,120]]},
+// ── CITY GENERATION ─────────────────────────────────
+function generateCity() {
+  buildings = [];
+  let x = -100;
+  while (x < W + 300) {
+    const bw = 70 + Math.random()*160;
+    const bh = 180 + Math.random()*Math.min(H*0.72, 500);
+    const floors = Math.floor(bh/28);
+    const winCols = Math.floor(bw/22);
+    const wins = [];
+    for (let f=0;f<floors;f++) {
+      for (let c=0;c<winCols;c++) {
+        if (Math.random()>.28) {
+          wins.push({
+            col: c, row: f,
+            lit: Math.random()>.38,
+            color: Math.random()>.6 ? '#f5c842' : Math.random()>.5 ? '#a8ccff' : '#ffe4a0',
+            blink: Math.random()>.85, blinkPhase: Math.random()*Math.PI*2
+          });
+        }
+      }
+    }
+    buildings.push({ x, w:bw, h:bh, y:GROUND-bh, tier:Math.floor(Math.random()*3), wins, winCols, floors });
+    x += bw + 3 + Math.random()*15;
+  }
+}
+
+function generatePlatforms() {
+  platforms = [];
+  const configs = [
+    {x:60,  y:H-185, w:140},
+    {x:270, y:H-255, w:120},
+    {x:450, y:H-200, w:150},
+    {x:650, y:H-285, w:130},
+    {x:850, y:H-230, w:160},
+    {x:W-300, y:H-195, w:140},
+    {x:W-480, y:H-305, w:120},
+    {x:380, y:H-385, w:110},
+    {x:190, y:H-355, w:115},
+    {x:560, y:H-370, w:100},
   ];
-  bData.forEach(b => {
-    const el = document.createElement('div');
-    el.className = 'building';
-    el.style.cssText = `left:${b.x}px;width:${b.w}px;height:${b.h}px;bottom:0;position:absolute;`;
-    b.wins.forEach(([wx,wy]) => {
-      if (Math.random() > 0.3) {
-        const w = document.createElement('div');
-        w.className = 'window-lit';
-        w.style.cssText = `left:${wx}px;top:${wy}px;`;
-        if (Math.random() > 0.7) w.style.opacity = '0.3';
-        el.appendChild(w);
+  configs.forEach(c => { if (c.x+c.w < W+80) platforms.push({...c, h:14}); });
+}
+
+// ── DRAW CITY ──────────────────────────────────────
+function drawCity() {
+  // Sky gradient — rainy night NYC
+  const sky = ctx.createLinearGradient(0,0,0,GROUND);
+  sky.addColorStop(0,  '#020510');
+  sky.addColorStop(.35,'#06091e');
+  sky.addColorStop(.7, '#0e0520');
+  sky.addColorStop(1,  '#1a0830');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0,0,W,GROUND);
+
+  // Atmospheric city glow
+  const cg = ctx.createRadialGradient(W*.5,H*.8,0, W*.5,H*.8,W*.9);
+  cg.addColorStop(0,'rgba(150,20,0,.06)');
+  cg.addColorStop(.4,'rgba(80,0,100,.04)');
+  cg.addColorStop(1,'transparent');
+  ctx.fillStyle=cg; ctx.fillRect(0,0,W,H);
+
+  // ── Buildings ──
+  // Sort by tier so far ones draw first
+  const sorted = [...buildings].sort((a,b)=>a.tier-b.tier);
+  sorted.forEach(b => {
+    const depth = [.55,.72,1][b.tier];
+    const baseL = Math.round(8*depth), baseH = Math.round(20*depth);
+
+    // Building body
+    ctx.fillStyle = `rgb(${baseL},${baseL+4},${baseH+8})`;
+    ctx.fillRect(b.x, b.y, b.w, b.h);
+
+    // Building edge highlights
+    ctx.fillStyle = `rgba(255,255,255,${.025*depth})`;
+    ctx.fillRect(b.x, b.y, 2, b.h);
+    ctx.fillStyle = `rgba(0,0,0,.2)`;
+    ctx.fillRect(b.x+b.w-2, b.y, 2, b.h);
+
+    // Horizontal floor lines
+    ctx.strokeStyle = `rgba(0,0,0,${.15*depth})`;
+    ctx.lineWidth = .8;
+    for (let f=0; f<b.floors; f++) {
+      ctx.beginPath();
+      ctx.moveTo(b.x, b.y+f*28);
+      ctx.lineTo(b.x+b.w, b.y+f*28);
+      ctx.stroke();
+    }
+
+    // Windows
+    const ww=10, wh=12, gapX=(b.w - b.winCols*ww)/(b.winCols+1);
+    b.wins.forEach(w => {
+      const blink = w.blink ? Math.sin(Date.now()/1200+w.blinkPhase)>.6 : false;
+      const lit = w.lit && !blink;
+      const wx = b.x + gapX*(w.col+1) + w.col*ww;
+      const wy = b.y + 6 + w.row*28 + 8;
+      if (lit) {
+        ctx.shadowColor = w.color;
+        ctx.shadowBlur = 6*depth;
+        ctx.fillStyle = w.color;
+        ctx.fillRect(wx, wy, ww, wh);
+        ctx.shadowBlur = 0;
+        // window glare
+        ctx.fillStyle = 'rgba(255,255,255,.12)';
+        ctx.fillRect(wx, wy, ww*.4, wh*.4);
+      } else {
+        ctx.fillStyle = `rgba(20,25,45,${.6*depth})`;
+        ctx.fillRect(wx, wy, ww, wh);
       }
     });
-    bContainer.appendChild(el);
-  });
-}
 
-function buildPlatforms() {
-  platforms = [];
-  worldEl.querySelectorAll('.platform').forEach(e=>e.remove());
-  const W = window.innerWidth, H = window.innerHeight;
-  const platData = [
-    {x: 100, y: H-200, w: 140},
-    {x: 300, y: H-280, w: 120},
-    {x: 500, y: H-220, w: 150},
-    {x: 700, y: H-300, w: 130},
-    {x: 900, y: H-240, w: 160},
-    {x: W-300, y: H-200, w: 140},
-    {x: W-500, y: H-320, w: 120},
-    {x: 400, y: H-400, w: 100},
-    {x: 200, y: H-370, w: 110},
-  ];
-  platData.forEach(p => {
-    if (p.x + p.w < W + 50) {
-      const el = document.createElement('div');
-      el.className = 'platform';
-      el.style.cssText = `left:${p.x}px;top:${p.y}px;width:${p.w}px;height:16px;`;
-      worldEl.appendChild(el);
-      platforms.push({x:p.x, y:p.y, w:p.w, h:16, el});
+    // Rooftop details
+    if (b.tier===2) {
+      ctx.fillStyle = '#0d0f1e';
+      ctx.fillRect(b.x+b.w*.1, b.y-6, b.w*.8, 8);
+      // AC units
+      ctx.fillStyle = '#141824';
+      for (let ac=0; ac<Math.floor(b.w/35); ac++) {
+        ctx.fillRect(b.x+15+ac*35, b.y-14, 18, 10);
+      }
+      // antenna
+      ctx.strokeStyle = 'rgba(200,200,200,.3)';
+      ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(b.x+b.w*.7, b.y-6); ctx.lineTo(b.x+b.w*.7, b.y-24); ctx.stroke();
+      // Red beacon
+      ctx.fillStyle = `rgba(255,0,0,${.4+Math.sin(Date.now()/800)*.4})`;
+      ctx.shadowColor='#ff0000'; ctx.shadowBlur=8;
+      ctx.beginPath(); ctx.arc(b.x+b.w*.7, b.y-24, 2, 0, Math.PI*2); ctx.fill();
+      ctx.shadowBlur=0;
     }
   });
+
+  // Wet ground
+  const gnd = ctx.createLinearGradient(0,GROUND,0,H);
+  gnd.addColorStop(0,'#0e0e22');
+  gnd.addColorStop(1,'#070710');
+  ctx.fillStyle=gnd;
+  ctx.fillRect(0,GROUND,W,H-GROUND);
+
+  // Ground line
+  ctx.strokeStyle='#1e1e40';
+  ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(0,GROUND); ctx.lineTo(W,GROUND); ctx.stroke();
+
+  // Road markings
+  ctx.strokeStyle='rgba(255,255,255,.04)';
+  ctx.lineWidth=2;
+  ctx.setLineDash([30,25]);
+  ctx.beginPath(); ctx.moveTo(0,GROUND+35); ctx.lineTo(W,GROUND+35); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Wet reflections on ground (mirror buildings)
+  ctx.save();
+  ctx.globalAlpha=.07;
+  sorted.forEach(b => {
+    if (b.tier<2) return;
+    b.wins.forEach(w => {
+      if (!w.lit) return;
+      const gapX=(b.w-b.winCols*10)/(b.winCols+1);
+      const wx=b.x+gapX*(w.col+1)+w.col*10;
+      const wy=b.y+6+w.row*28+8;
+      const ry=GROUND+(GROUND-wy);
+      if(ry<H) { ctx.fillStyle=w.color; ctx.fillRect(wx,ry,10,4); }
+    });
+  });
+  ctx.globalAlpha=1;
+  ctx.restore();
+
+  // Rain streaks over scene
+  drawRain();
+
+  // Platforms
+  platforms.forEach(p => {
+    const pg=ctx.createLinearGradient(p.x,p.y,p.x,p.y+p.h);
+    pg.addColorStop(0,'#1e2040'); pg.addColorStop(1,'#0e0e20');
+    ctx.fillStyle=pg;
+    ctx.fillRect(p.x,p.y,p.w,p.h);
+    ctx.strokeStyle='#303060'; ctx.lineWidth=1;
+    ctx.strokeRect(p.x,p.y,p.w,p.h);
+    // highlight top
+    ctx.fillStyle='rgba(255,255,255,.04)';
+    ctx.fillRect(p.x+2,p.y+1,p.w-4,2);
+    // wet sheen
+    ctx.fillStyle='rgba(100,130,200,.04)';
+    ctx.fillRect(p.x+4,p.y+4,p.w-8,8);
+  });
 }
 
-function generateStars() {
-  const sky = document.getElementById('sky');
-  sky.querySelectorAll('.star').forEach(s=>s.remove());
-  for (let i = 0; i < 60; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    const size = Math.random() * 2.5 + 0.5;
-    s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*2}s;animation-duration:${1+Math.random()*2}s;`;
-    sky.appendChild(s);
+// ── RAIN ──────────────────────────────────────────
+const RAIN = Array.from({length:140}, () => ({
+  x:Math.random()*2000, y:Math.random()*1000,
+  len:18+Math.random()*40, spd:14+Math.random()*10,
+  op:.08+Math.random()*.18
+}));
+function drawRain() {
+  RAIN.forEach(r => {
+    ctx.strokeStyle=`rgba(150,180,255,${r.op})`;
+    ctx.lineWidth=.7;
+    ctx.beginPath();
+    ctx.moveTo(r.x, r.y);
+    ctx.lineTo(r.x-r.len*.08, r.y+r.len);
+    ctx.stroke();
+    r.y+=r.spd;
+    r.x-=r.len*.08;
+    if(r.y>H) { r.y=-r.len; r.x=Math.random()*W; }
+  });
+}
+
+// ── DRAW PICKUPS ─────────────────────────────────
+function drawPickups() {
+  pickups.forEach(pk => {
+    const bob=Math.sin(Date.now()/400)*4;
+    const col = pk.type==='health'?'#cc2020':'#6a00d4';
+    ctx.save();
+    ctx.shadowColor=col; ctx.shadowBlur=20;
+    // Outer ring
+    ctx.strokeStyle=col; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(pk.x, pk.y+bob, 13, 0, Math.PI*2); ctx.stroke();
+    // Inner fill
+    ctx.fillStyle=col+'55';
+    ctx.beginPath(); ctx.arc(pk.x, pk.y+bob, 10, 0, Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+    // Icon
+    ctx.fillStyle='rgba(255,255,255,.9)';
+    ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(pk.type==='health'?'❤':'⚡', pk.x, pk.y+bob+5);
+    ctx.restore();
+  });
+}
+
+let pickups = [];
+
+// ── MILES MORALES HUMAN FIGURE (canvas-drawn) ──────
+// Draws a realistic human-proportioned spider-man figure
+// viewpoint: top-left corner at (x,y), facing right if fR
+function drawMiles(x, y, fR, state, frame, venomCharged, iFrameFlash) {
+  ctx.save();
+  if (iFrameFlash) ctx.globalAlpha=.35;
+  // Flip for direction
+  ctx.translate(x + PW/2, y + PH/2);
+  if (!fR) ctx.scale(-1, 1);
+  ctx.translate(-PW/2, -PH/2);
+
+  const S = 1; // scale multiplier
+  // Colors
+  const RED    = '#c41a1a';
+  const DKRED  = '#8a0000';
+  const DKRED2 = '#5a0000';
+  const BLACK  = '#0a0a0a';
+  const GLOVE  = '#111';
+  const SHOE   = '#111';
+  const EYE    = '#e8f0ff';
+  const EYEHL  = 'rgba(255,255,255,.7)';
+  const WEBCOL = 'rgba(0,0,0,.3)';
+  const VP_COL = venomCharged ? 'rgba(106,0,212,.8)' : 'rgba(0,0,0,0)';
+  const VB_COL = venomCharged ? 'rgba(0,180,216,.7)' : 'rgba(0,0,0,0)';
+
+  // Animation offsets
+  let legL=0, legR=0, armL=0, armR=0, bodyBob=0, crouch=0;
+  const t = frame;
+  if (state==='run') {
+    legL = Math.sin(t*1.6)*14;
+    legR = Math.sin(t*1.6+Math.PI)*14;
+    armL = Math.sin(t*1.6+Math.PI)*10;
+    armR = Math.sin(t*1.6)*10;
+  } else if (state==='idle') {
+    bodyBob = Math.sin(Date.now()/600)*1.2;
+    armL = Math.sin(Date.now()/700)*3;
+    armR = -armL;
+  } else if (state==='jump') {
+    legL = -15; legR = 15;
+    armL = -20; armR = 20;
+    crouch = -2;
+  } else if (state==='fall') {
+    legL = 10; legR = -10;
+    armL = 25; armR = 25;
+  } else if (state==='swing') {
+    legL = 20; legR = -5;
+    armL = -30; armR = -30;
+  } else if (state==='punch') {
+    const pf = Math.min(frame/8,1);
+    armR = pf*28 - 8;
+    legL = -6;
+  } else if (state==='venom') {
+    armL = Math.sin(Date.now()/80)*25;
+    armR = Math.cos(Date.now()/80)*25;
+  }
+
+  const by = bodyBob + crouch;
+
+  // Helper: draw rounded rect
+  function rr(rx,ry,rw,rh,radius,color) {
+    ctx.fillStyle=color;
+    ctx.beginPath();
+    ctx.roundRect(rx,ry,rw,rh,radius);
+    ctx.fill();
+  }
+
+  // ── FIGURE: origin at top-left of 26×52 box ──
+
+  // HEAD (at top, ~9px wide, 10px tall)
+  // Head base — mask
+  ctx.fillStyle = RED;
+  ctx.beginPath();
+  // Draw head as oval
+  ctx.ellipse(13, 7+by, 8, 9, 0, 0, Math.PI*2);
+  ctx.fill();
+  // Web pattern on head
+  ctx.strokeStyle = WEBCOL; ctx.lineWidth=.6;
+  // Radial web lines from face center
+  for (let i=0;i<6;i++) {
+    const a = (i/6)*Math.PI*2;
+    ctx.beginPath();
+    ctx.moveTo(13, 7+by);
+    ctx.lineTo(13+Math.cos(a)*9, 7+by+Math.sin(a)*10);
+    ctx.stroke();
+  }
+  // Concentric web rings
+  for (let r=3;r<=8;r+=2.5) {
+    ctx.beginPath(); ctx.ellipse(13,7+by,r,r*.9,0,0,Math.PI*2); ctx.stroke();
+  }
+  // Head shadow (left side)
+  const hsh = ctx.createLinearGradient(5,7+by,13,7+by);
+  hsh.addColorStop(0,'rgba(0,0,0,.35)');
+  hsh.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=hsh;
+  ctx.beginPath(); ctx.ellipse(13,7+by,8,9,0,0,Math.PI*2); ctx.fill();
+
+  // ── EYES ── (the most important part)
+  // Left eye — larger, asymmetric lens
+  ctx.save();
+  ctx.translate(9, 6+by);
+  ctx.rotate(-.2);
+  // Eye white shape (wide polygon)
+  ctx.fillStyle = EYE;
+  ctx.beginPath();
+  ctx.moveTo(-1, 0); ctx.quadraticCurveTo(-1,-3,2,-3); ctx.quadraticCurveTo(5,-3,5.5,0); ctx.quadraticCurveTo(5,3,2,3); ctx.quadraticCurveTo(-1,3,-1,0);
+  ctx.fill();
+  // Eye lens reflection
+  ctx.fillStyle=EYEHL;
+  ctx.beginPath(); ctx.ellipse(1,-1,1.2,.8,-.3,0,Math.PI*2); ctx.fill();
+  // Eye rim
+  ctx.strokeStyle='rgba(0,0,0,.5)'; ctx.lineWidth=.8;
+  ctx.beginPath();
+  ctx.moveTo(-1,0); ctx.quadraticCurveTo(-1,-3,2,-3); ctx.quadraticCurveTo(5,-3,5.5,0); ctx.quadraticCurveTo(5,3,2,3); ctx.quadraticCurveTo(-1,3,-1,0);
+  ctx.stroke();
+  // Venom glow around eye
+  if (venomCharged) {
+    ctx.strokeStyle=VP_COL; ctx.lineWidth=1.5;
+    ctx.shadowColor='#6a00d4'; ctx.shadowBlur=6;
+    ctx.beginPath();
+    ctx.moveTo(-1,0); ctx.quadraticCurveTo(-1,-3,2,-3); ctx.quadraticCurveTo(5,-3,5.5,0); ctx.quadraticCurveTo(5,3,2,3); ctx.quadraticCurveTo(-1,3,-1,0);
+    ctx.stroke(); ctx.shadowBlur=0;
+  }
+  ctx.restore();
+
+  // Right eye
+  ctx.save();
+  ctx.translate(16, 5.5+by);
+  ctx.rotate(.18);
+  ctx.fillStyle = EYE;
+  ctx.beginPath();
+  ctx.moveTo(-1,0); ctx.quadraticCurveTo(-1,-3,2.5,-3.5); ctx.quadraticCurveTo(6,-3,6,0); ctx.quadraticCurveTo(6,2.5,2.5,3); ctx.quadraticCurveTo(-1,2.5,-1,0);
+  ctx.fill();
+  ctx.fillStyle=EYEHL;
+  ctx.beginPath(); ctx.ellipse(1.5,-1,1.3,.8,-.25,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,.5)'; ctx.lineWidth=.8;
+  ctx.beginPath();
+  ctx.moveTo(-1,0); ctx.quadraticCurveTo(-1,-3,2.5,-3.5); ctx.quadraticCurveTo(6,-3,6,0); ctx.quadraticCurveTo(6,2.5,2.5,3); ctx.quadraticCurveTo(-1,2.5,-1,0);
+  ctx.stroke();
+  if (venomCharged) {
+    ctx.strokeStyle=VP_COL; ctx.lineWidth=1.5;
+    ctx.shadowColor='#6a00d4'; ctx.shadowBlur=6;
+    ctx.beginPath();
+    ctx.moveTo(-1,0); ctx.quadraticCurveTo(-1,-3,2.5,-3.5); ctx.quadraticCurveTo(6,-3,6,0); ctx.quadraticCurveTo(6,2.5,2.5,3); ctx.quadraticCurveTo(-1,2.5,-1,0);
+    ctx.stroke(); ctx.shadowBlur=0;
+  }
+  ctx.restore();
+
+  // ── NECK ──
+  ctx.fillStyle=DKRED;
+  ctx.fillRect(10, 14+by, 6, 4);
+
+  // ── TORSO — wider at shoulders, hoodie ──
+  // Main torso
+  const tg=ctx.createLinearGradient(3,16+by,23,16+by);
+  tg.addColorStop(0,DKRED2); tg.addColorStop(.3,RED); tg.addColorStop(.7,RED); tg.addColorStop(1,DKRED2);
+  ctx.fillStyle=tg;
+  ctx.beginPath();
+  ctx.moveTo(3,16+by);
+  ctx.lineTo(23,16+by);
+  ctx.lineTo(24,34+by);
+  ctx.lineTo(2,34+by);
+  ctx.closePath();
+  ctx.fill();
+  // Torso web pattern
+  ctx.strokeStyle=WEBCOL; ctx.lineWidth=.5;
+  // vertical center
+  ctx.beginPath(); ctx.moveTo(13,16+by); ctx.lineTo(13,34+by); ctx.stroke();
+  // horizontal lines
+  for (let ly=19;ly<34;ly+=4) {
+    ctx.beginPath(); ctx.moveTo(3,ly+by); ctx.lineTo(23,ly+by); ctx.stroke();
+    // radial curves
+    ctx.beginPath(); ctx.arc(13,16+by, ly-16, -.4, Math.PI+.4); ctx.stroke();
+  }
+  // Torso shading
+  const tsh=ctx.createLinearGradient(3,16+by,8,16+by);
+  tsh.addColorStop(0,'rgba(0,0,0,.28)'); tsh.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=tsh;
+  ctx.beginPath();
+  ctx.moveTo(3,16+by); ctx.lineTo(12,16+by); ctx.lineTo(11,34+by); ctx.lineTo(2,34+by); ctx.closePath();
+  ctx.fill();
+  // Right shadow
+  const tsh2=ctx.createLinearGradient(23,16+by,18,16+by);
+  tsh2.addColorStop(0,'rgba(0,0,0,.25)'); tsh2.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=tsh2;
+  ctx.beginPath();
+  ctx.moveTo(23,16+by); ctx.lineTo(14,16+by); ctx.lineTo(15,34+by); ctx.lineTo(24,34+by); ctx.closePath();
+  ctx.fill();
+
+  // Spider chest emblem
+  ctx.fillStyle=BLACK;
+  // Spider body
+  ctx.beginPath(); ctx.ellipse(13,24+by,2.5,3.5,0,0,Math.PI*2); ctx.fill();
+  // Spider head
+  ctx.beginPath(); ctx.ellipse(13,20+by,2,2,0,0,Math.PI*2); ctx.fill();
+  // Spider legs
+  const spLegs = [[-2.5,22,-5.5,19],[-2.5,24,-6,23],[-2.5,26,-5,29],[2.5,22,5.5,19],[2.5,24,6,23],[2.5,26,5,29]];
+  ctx.strokeStyle=BLACK; ctx.lineWidth=1;
+  spLegs.forEach(([x1,y1,x2,y2]) => {
+    ctx.beginPath(); ctx.moveTo(13+x1,by+y1); ctx.lineTo(13+x2,by+y2); ctx.stroke();
+  });
+  // Venom glow on emblem
+  if(venomCharged){
+    ctx.strokeStyle=VP_COL; ctx.lineWidth=1.2;
+    ctx.shadowColor='#6a00d4'; ctx.shadowBlur=8;
+    ctx.beginPath(); ctx.ellipse(13,24+by,3.5,4.5,0,0,Math.PI*2); ctx.stroke();
+    ctx.shadowBlur=0;
+  }
+
+  // Hoodie pocket
+  rr(6,30+by,14,5,2,DKRED2);
+  ctx.beginPath(); ctx.moveTo(6,30+by); ctx.lineTo(20,30+by); ctx.strokeStyle='rgba(0,0,0,.3)'; ctx.lineWidth=.7; ctx.stroke();
+
+  // ── LEFT ARM ──
+  ctx.save();
+  ctx.translate(3, 18+by);
+  ctx.rotate((armL-8)*Math.PI/180);
+  // Upper arm
+  const alg=ctx.createLinearGradient(-2,0,4,0);
+  alg.addColorStop(0,DKRED2); alg.addColorStop(.5,RED); alg.addColorStop(1,DKRED2);
+  ctx.fillStyle=alg;
+  ctx.beginPath(); ctx.roundRect(-2,0,5,10,2); ctx.fill();
+  ctx.strokeStyle=WEBCOL; ctx.lineWidth=.5;
+  ctx.beginPath(); ctx.moveTo(1,0); ctx.lineTo(1,10); ctx.stroke();
+  // Forearm (slightly rotated)
+  ctx.save(); ctx.translate(1,10); ctx.rotate(-5*Math.PI/180);
+  ctx.fillStyle=alg;
+  ctx.beginPath(); ctx.roundRect(-2,0,4,9,2); ctx.fill();
+  // Glove
+  ctx.fillStyle=GLOVE;
+  ctx.beginPath(); ctx.roundRect(-2.5,9,5,5,2); ctx.fill();
+  // Knuckle lines
+  ctx.strokeStyle='#222'; ctx.lineWidth=.5;
+  for(let k=0;k<3;k++){ctx.beginPath();ctx.moveTo(-1.5+k*1.2,9.5);ctx.lineTo(-1.5+k*1.2,13);ctx.stroke();}
+  // Web shooter
+  ctx.fillStyle='#181828'; ctx.strokeStyle=venomCharged?'rgba(106,0,212,.6)':'rgba(100,150,200,.25)'; ctx.lineWidth=.7;
+  ctx.beginPath(); ctx.roundRect(-2,8,4,2.5,1); ctx.fill(); ctx.stroke();
+  if(venomCharged){ctx.fillStyle='rgba(0,180,216,.8)';ctx.shadowColor='#00b4d8';ctx.shadowBlur=5;ctx.beginPath();ctx.arc(0,9.2,.9,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;}
+  ctx.restore();
+  ctx.restore();
+
+  // ── RIGHT ARM ──
+  ctx.save();
+  ctx.translate(23, 18+by);
+  ctx.rotate((armR+8)*Math.PI/180);
+  const arg=ctx.createLinearGradient(-2,0,4,0);
+  arg.addColorStop(0,DKRED2); arg.addColorStop(.5,RED); arg.addColorStop(1,DKRED2);
+  ctx.fillStyle=arg;
+  ctx.beginPath(); ctx.roundRect(-3,0,5,10,2); ctx.fill();
+  ctx.strokeStyle=WEBCOL; ctx.lineWidth=.5;
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,10); ctx.stroke();
+  ctx.save(); ctx.translate(-1,10); ctx.rotate(5*Math.PI/180);
+  ctx.fillStyle=arg;
+  ctx.beginPath(); ctx.roundRect(-2,0,4,9,2); ctx.fill();
+  ctx.fillStyle=GLOVE;
+  ctx.beginPath(); ctx.roundRect(-2.5,9,5,5,2); ctx.fill();
+  ctx.strokeStyle='#222'; ctx.lineWidth=.5;
+  for(let k=0;k<3;k++){ctx.beginPath();ctx.moveTo(-1.5+k*1.2,9.5);ctx.lineTo(-1.5+k*1.2,13);ctx.stroke();}
+  ctx.fillStyle='#181828'; ctx.strokeStyle=venomCharged?'rgba(106,0,212,.6)':'rgba(100,150,200,.25)'; ctx.lineWidth=.7;
+  ctx.beginPath(); ctx.roundRect(-2,8,4,2.5,1); ctx.fill(); ctx.stroke();
+  if(venomCharged){ctx.fillStyle='rgba(0,180,216,.8)';ctx.shadowColor='#00b4d8';ctx.shadowBlur=5;ctx.beginPath();ctx.arc(0,9.2,.9,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;}
+  ctx.restore();
+  ctx.restore();
+
+  // ── WAIST / HIP ──
+  const wg=ctx.createLinearGradient(4,34+by,22,34+by);
+  wg.addColorStop(0,DKRED2); wg.addColorStop(.5,DKRED); wg.addColorStop(1,DKRED2);
+  ctx.fillStyle=wg;
+  ctx.beginPath(); ctx.roundRect(4,34+by,18,4,1); ctx.fill();
+
+  // ── LEFT LEG ──
+  ctx.save();
+  ctx.translate(7, 38+by);
+  ctx.rotate(legL*Math.PI/180);
+  // Thigh
+  const llg=ctx.createLinearGradient(-1,0,7,0);
+  llg.addColorStop(0,DKRED2); llg.addColorStop(.5,RED); llg.addColorStop(1,DKRED2);
+  ctx.fillStyle=llg;
+  ctx.beginPath(); ctx.roundRect(-1,0,7,12,2); ctx.fill();
+  // Web on thigh
+  ctx.strokeStyle=WEBCOL; ctx.lineWidth=.5;
+  ctx.beginPath(); ctx.moveTo(2.5,0); ctx.lineTo(2.5,12); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-1,4); ctx.lineTo(6,4); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-1,8); ctx.lineTo(6,8); ctx.stroke();
+  // Knee
+  ctx.fillStyle=DKRED2;
+  ctx.beginPath(); ctx.ellipse(2.5,12,4,3,0,0,Math.PI*2); ctx.fill();
+  // Shin
+  ctx.save(); ctx.translate(0,12); ctx.rotate(legL*-.3*Math.PI/180);
+  ctx.fillStyle=llg;
+  ctx.beginPath(); ctx.roundRect(-1,2,6,11,2); ctx.fill();
+  ctx.strokeStyle=WEBCOL; ctx.lineWidth=.5;
+  ctx.beginPath(); ctx.moveTo(2,2); ctx.lineTo(2,13); ctx.stroke();
+  // Shoe
+  ctx.fillStyle=SHOE;
+  ctx.beginPath(); ctx.roundRect(-2,12,10,5,2); ctx.fill();
+  // Shoe sole
+  ctx.fillStyle='#1a1a1a';
+  ctx.beginPath(); ctx.roundRect(-2,15,10,2.5,1); ctx.fill();
+  // Red stripe
+  ctx.fillStyle='#cc2020';
+  ctx.fillRect(-1,12,8,1.5);
+  ctx.restore();
+  ctx.restore();
+
+  // ── RIGHT LEG ──
+  ctx.save();
+  ctx.translate(14, 38+by);
+  ctx.rotate(legR*Math.PI/180);
+  const rlg=ctx.createLinearGradient(-1,0,7,0);
+  rlg.addColorStop(0,DKRED2); rlg.addColorStop(.5,RED); rlg.addColorStop(1,DKRED2);
+  ctx.fillStyle=rlg;
+  ctx.beginPath(); ctx.roundRect(-1,0,7,12,2); ctx.fill();
+  ctx.strokeStyle=WEBCOL; ctx.lineWidth=.5;
+  ctx.beginPath(); ctx.moveTo(2.5,0); ctx.lineTo(2.5,12); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-1,4); ctx.lineTo(6,4); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-1,8); ctx.lineTo(6,8); ctx.stroke();
+  ctx.fillStyle=DKRED2;
+  ctx.beginPath(); ctx.ellipse(2.5,12,4,3,0,0,Math.PI*2); ctx.fill();
+  ctx.save(); ctx.translate(0,12); ctx.rotate(legR*-.3*Math.PI/180);
+  ctx.fillStyle=rlg;
+  ctx.beginPath(); ctx.roundRect(-1,2,6,11,2); ctx.fill();
+  ctx.strokeStyle=WEBCOL; ctx.lineWidth=.5;
+  ctx.beginPath(); ctx.moveTo(2,2); ctx.lineTo(2,13); ctx.stroke();
+  ctx.fillStyle=SHOE;
+  ctx.beginPath(); ctx.roundRect(-2,12,10,5,2); ctx.fill();
+  ctx.fillStyle='#1a1a1a';
+  ctx.beginPath(); ctx.roundRect(-2,15,10,2.5,1); ctx.fill();
+  ctx.fillStyle='#cc2020'; ctx.fillRect(-1,12,8,1.5);
+  ctx.restore();
+  ctx.restore();
+
+  // Venom electricity arcs when charged
+  if (venomCharged) {
+    ctx.save();
+    ctx.strokeStyle=VB_COL; ctx.lineWidth=1.2;
+    ctx.shadowColor='#00b4d8'; ctx.shadowBlur=8;
+    // Left arc
+    ctx.beginPath(); ctx.moveTo(3,25+by); ctx.lineTo(0,29+by); ctx.lineTo(4,27+by); ctx.lineTo(1,33+by); ctx.stroke();
+    // Right arc
+    ctx.beginPath(); ctx.moveTo(23,25+by); ctx.lineTo(26,29+by); ctx.lineTo(22,27+by); ctx.lineTo(25,33+by); ctx.stroke();
+    ctx.shadowBlur=0;
+    ctx.restore();
+  }
+
+  ctx.restore(); // main save
+}
+
+// ── DRAW ENEMIES ─────────────────────────────────
+function drawEnemySVG(e) {
+  ctx.save();
+  ctx.translate(e.x + e.w/2, e.y + e.h/2);
+  if (e.vx > 0) ctx.scale(-1,1);
+  ctx.translate(-e.w/2, -e.h/2);
+
+  const t = e.type;
+  const w = e.w, h = e.h;
+  const CL = t.bodyColor, AC = t.accentColor;
+
+  // HP bar above
+  ctx.fillStyle='rgba(0,0,0,.5)'; ctx.fillRect(0,-8,w,4);
+  ctx.fillStyle=e.hp/e.maxHp>.5?'#33bb33':'#cc3333';
+  ctx.fillRect(0,-8,w*(e.hp/e.maxHp),4);
+
+  // Stun flash
+  if (e.stun>0) { ctx.fillStyle='rgba(255,255,180,.15)'; ctx.fillRect(0,0,w,h); }
+
+  // Head
+  ctx.fillStyle=CL;
+  ctx.beginPath(); ctx.ellipse(w*.5, 9, 9, 9, 0, 0, Math.PI*2); ctx.fill();
+  // Visor / eyes
+  ctx.fillStyle=AC;
+  ctx.beginPath(); ctx.roundRect(w*.5-8, 6, 7, 5, 1); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(w*.5+2, 6, 7, 5, 1); ctx.fill();
+
+  // Torso
+  const tg=ctx.createLinearGradient(3,17,w-3,17);
+  tg.addColorStop(0,shadeColor(CL,-20)); tg.addColorStop(.5,CL); tg.addColorStop(1,shadeColor(CL,-20));
+  ctx.fillStyle=tg;
+  ctx.beginPath(); ctx.roundRect(3,17,w-6,20,3); ctx.fill();
+
+  // Arms
+  ctx.fillStyle=CL;
+  ctx.beginPath(); ctx.roundRect(0,19,5,14,2); ctx.fill(); // left
+  ctx.beginPath(); ctx.roundRect(w-5,19,5,14,2); ctx.fill(); // right
+  // Gloves
+  ctx.fillStyle='#111';
+  ctx.beginPath(); ctx.roundRect(-1,31,6,6,2); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(w-5,31,6,6,2); ctx.fill();
+
+  // Legs
+  ctx.fillStyle=CL;
+  ctx.beginPath(); ctx.roundRect(6,37,8,18,2); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(w-14,37,8,18,2); ctx.fill();
+  // Boots
+  ctx.fillStyle='#111';
+  ctx.beginPath(); ctx.roundRect(4,52,12,6,2); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(w-16,52,12,6,2); ctx.fill();
+
+  ctx.restore();
+}
+
+function shadeColor(c, amt) {
+  const num=parseInt(c.replace('#',''),16);
+  const r=Math.min(255,Math.max(0,(num>>16)+amt));
+  const g=Math.min(255,Math.max(0,((num>>8)&0xff)+amt));
+  const b=Math.min(255,Math.max(0,(num&0xff)+amt));
+  return `#${[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('')}`;
+}
+
+// ── WEB RENDERING ─────────────────────────────────
+function drawWebLines() {
+  webLines.forEach(w => {
+    const a = w.life/w.maxLife;
+    ctx.save();
+    ctx.globalAlpha=a*.8;
+    ctx.strokeStyle='rgba(230,240,255,.7)';
+    ctx.lineWidth=1.2;
+    ctx.shadowColor='rgba(200,220,255,.5)';
+    ctx.shadowBlur=4;
+    ctx.beginPath(); ctx.moveTo(w.x1,w.y1); ctx.lineTo(w.x2,w.y2); ctx.stroke();
+    // second thinner strand
+    ctx.lineWidth=.5; ctx.strokeStyle='rgba(255,255,255,.3)';
+    ctx.beginPath(); ctx.moveTo(w.x1+1,w.y1+1); ctx.lineTo(w.x2+1,w.y2+1); ctx.stroke();
+    ctx.shadowBlur=0;
+    ctx.restore();
+    w.life--;
+  });
+  webLines = webLines.filter(w=>w.life>0);
+
+  // Active swing line
+  if (P.isSwinging && P.webAnchor) {
+    ctx.save();
+    ctx.strokeStyle='rgba(220,235,255,.65)';
+    ctx.lineWidth=1.5;
+    ctx.shadowColor='rgba(200,220,255,.4)'; ctx.shadowBlur=5;
+    ctx.beginPath();
+    ctx.moveTo(P.x+PW/2, P.y+8); // from wrist height
+    ctx.lineTo(P.webAnchor.x, P.webAnchor.y);
+    ctx.stroke();
+    ctx.lineWidth=.6; ctx.strokeStyle='rgba(255,255,255,.2)';
+    ctx.beginPath();
+    ctx.moveTo(P.x+PW/2+1, P.y+8);
+    ctx.lineTo(P.webAnchor.x+1, P.webAnchor.y+1);
+    ctx.stroke();
+    ctx.shadowBlur=0;
+    ctx.restore();
+
+    // Anchor point indicator
+    ctx.save();
+    ctx.fillStyle='rgba(200,220,255,.4)';
+    ctx.shadowColor='rgba(200,220,255,.8)'; ctx.shadowBlur=10;
+    ctx.beginPath(); ctx.arc(P.webAnchor.x, P.webAnchor.y, 3, 0, Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+    ctx.restore();
+  }
+
+  // In-flight web shots
+  P.webShots.forEach(ws => {
+    ctx.save();
+    ctx.strokeStyle='rgba(220,235,255,.8)';
+    ctx.lineWidth=1.2;
+    ctx.shadowColor='rgba(200,220,255,.6)'; ctx.shadowBlur=6;
+    ctx.beginPath(); ctx.moveTo(ws.ox,ws.oy); ctx.lineTo(ws.x,ws.y); ctx.stroke();
+    ctx.shadowBlur=0;
+    // tip dot
+    ctx.fillStyle='rgba(255,255,255,.9)';
+    ctx.beginPath(); ctx.arc(ws.x,ws.y,2.5,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  });
+}
+
+// ── PARTICLES ─────────────────────────────────────
+function drawParticles() {
+  particles.forEach(p => {
+    ctx.save();
+    ctx.globalAlpha=p.life/p.maxLife;
+    ctx.fillStyle=p.color;
+    ctx.shadowColor=p.color; ctx.shadowBlur=10;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r*(p.life/p.maxLife), 0, Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+    ctx.restore();
+  });
+}
+
+function spawnParticles(x,y,color,n=10,speed=8) {
+  for(let i=0;i<n;i++) {
+    const a=Math.random()*Math.PI*2;
+    const s=speed*.5+Math.random()*speed;
+    particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-3,r:2.5+Math.random()*3.5,color,life:22+Math.random()*18,maxLife:40});
   }
 }
 
-// ─── WAVE SPAWNING ────────────────────────────
+// ── FLOAT TEXTS ────────────────────────────────────
+function drawFloatTexts() {
+  floatTexts.forEach(t => {
+    ctx.save();
+    ctx.globalAlpha=t.life/t.maxLife;
+    ctx.font=`700 ${t.size}px Oswald,sans-serif`;
+    ctx.textAlign='center';
+    ctx.fillStyle=t.color;
+    ctx.shadowColor=t.shadow||'rgba(0,0,0,.9)'; ctx.shadowBlur=8;
+    ctx.fillText(t.text, t.x, t.y);
+    ctx.shadowBlur=0;
+    ctx.restore();
+    t.y-=t.vy; t.life--;
+  });
+  floatTexts=floatTexts.filter(t=>t.life>0);
+}
+function addFloat(x,y,text,color,size,shadow,vy=1.2) {
+  floatTexts.push({x,y,text,color,size:size||20,shadow,life:55,maxLife:55,vy});
+}
+
+// ── ENEMY TYPES ────────────────────────────────────
 const ENEMY_TYPES = [
-  { name:'Thug',    color:'#2a4a8f', accent:'#ff4444', hp:2, spd:1.2, size:42, atk:10 },
-  { name:'Roxxon',  color:'#1a3a1a', accent:'#44ff44', hp:3, spd:1.5, size:44, atk:14 },
-  { name:'Prowler', color:'#1a0a3a', accent:'#ff00ff', hp:4, spd:2.0, size:46, atk:18 },
+  { name:'Thug',    bodyColor:'#1c3060', accentColor:'#ff4444', hp:3,  spd:1.4, atk:8,  score:100 },
+  { name:'Roxxon',  bodyColor:'#103018', accentColor:'#44ee44', hp:5,  spd:1.6, atk:12, score:200 },
+  { name:'Prowler', bodyColor:'#1a0830', accentColor:'#cc00ff', hp:8,  spd:2.2, atk:18, score:400 },
+  { name:'Symbiote',bodyColor:'#0a0010', accentColor:'#8800ff', hp:12, spd:1.8, atk:25, score:700 },
 ];
 
-function spawnWave() {
-  const count = 3 + wave;
-  const W = window.innerWidth;
-  for (let i = 0; i < count; i++) {
-    setTimeout(() => spawnEnemy(W), i * 800);
-  }
-  waveDisplay.textContent = `WAVE ${wave}`;
+function spawnEnemy() {
+  const tier=Math.min(Math.floor(Math.random()*Math.min(wave*.7+.3, ENEMY_TYPES.length)), ENEMY_TYPES.length-1);
+  const t=ENEMY_TYPES[tier];
+  const fromRight=Math.random()>.5;
+  const e={
+    id:eidCounter++,
+    x:fromRight?W+10:-65,
+    y:GROUND-58,
+    vx:fromRight?-(t.spd+wave*.08):t.spd+wave*.08,
+    vy:0,
+    w:40, h:58,
+    hp:t.hp+Math.floor(wave/3),
+    maxHp:t.hp+Math.floor(wave/3),
+    type:t, onGround:false,
+    stun:0, stunGravity:false,
+    atkCd:0,
+    jumping:false, jumpTimer:Math.floor(Math.random()*120),
+  };
+  enemies.push(e);
 }
 
-function spawnEnemy(W) {
-  const type = ENEMY_TYPES[Math.min(Math.floor(Math.random()*Math.min(wave, ENEMY_TYPES.length)), ENEMY_TYPES.length-1)];
-  const side = Math.random() > 0.5 ? 1 : 0;
-  const x = side ? W + 20 : -70;
-
-  const el = document.createElement('div');
-  el.className = 'enemy';
-
-  // Enemy SVG
-  el.innerHTML = `
-  <svg viewBox="0 0 42 52" width="42" height="52">
-    <rect x="14" y="30" width="14" height="22" rx="3" fill="${type.color}"/>
-    <rect x="10" y="15" width="22" height="18" rx="4" fill="${type.color}"/>
-    <rect x="6" y="15" width="10" height="14" rx="3" fill="${type.color}"/>
-    <rect x="26" y="15" width="10" height="14" rx="3" fill="${type.color}"/>
-    <circle cx="21" cy="10" r="10" fill="${type.color}"/>
-    <rect x="15" y="7" width="5" height="4" rx="1" fill="${type.accent}" opacity="0.9"/>
-    <rect x="22" y="7" width="5" height="4" rx="1" fill="${type.accent}" opacity="0.9"/>
-    <rect x="11" y="45" width="9" height="6" rx="2" fill="#111"/>
-    <rect x="22" y="45" width="9" height="6" rx="2" fill="#111"/>
-  </svg>`;
-
-  el.style.cssText = `left:${x}px;bottom:90px;`;
-  worldEl.appendChild(el);
-
-  enemies.push({
-    el, x, y: GROUND_Y - 52,
-    vx: side ? -type.spd : type.spd,
-    vy: 0,
-    w: type.size, h: 52,
-    hp: type.hp, maxHp: type.hp,
-    type, onGround: false,
-    stunTimer: 0,
-    attackTimer: 0,
-  });
-}
-
-// ─── COMBAT ───────────────────────────────────
-const PUNCH_WORDS = ['POW!','BAM!','WHAM!','KA-POW!','SMACK!','CRUNCH!','THWACK!','ZAP!'];
-const VENOM_WORDS = ['VENOM STRIKE!','BIOELECTRIC!','WHAM!!','ZZZAP!','⚡ POW ⚡'];
-
-function punch() {
-  if (player.attacking) return;
-  player.attacking = true;
-  player.attackTimer = 20;
-  player.punchAnim = 15;
-
-  // Animate arm
-  const arm = player.facingRight ? armR : armL;
-  arm.setAttribute('transform', player.facingRight ? 'translate(8,-6) rotate(30,43,37)' : 'translate(-8,-6) rotate(-30,9,37)');
-  setTimeout(() => arm.removeAttribute('transform'), 200);
-
-  // Hit enemies in range
-  const px = player.x + (player.facingRight ? player.w : -20);
-  const py = player.y + 20;
-  const range = 70;
-  let hit = false;
-
-  enemies.forEach(e => {
-    const ex = e.x + e.w/2, ey = e.y + e.h/2;
-    if (Math.abs(ex - px) < range && Math.abs(ey - py) < 50) {
-      damageEnemy(e, 1, false);
-      hit = true;
-    }
-  });
-
-  if (hit) {
-    venomPower = Math.min(maxVenom, venomPower + 12);
-    showActionWord(PUNCH_WORDS[Math.floor(Math.random()*PUNCH_WORDS.length)], player.x, player.y - 30);
-    flashScreen('#ff0', 0.2, 60);
-  }
-}
-
-function venomStrike() {
-  if (venomPower < 50) return;
-  venomPower -= 50;
-  player.iFrames = 30;
-
-  // Venom animation
-  venomGlow.setAttribute('opacity','1');
-  playerEl.classList.add('venom-flash');
-  setTimeout(() => {
-    venomGlow.setAttribute('opacity','0');
-    playerEl.classList.remove('venom-flash');
-  }, 600);
-
-  // AoE damage
-  enemies.forEach(e => {
-    const dist = Math.hypot((e.x+e.w/2)-(player.x+player.w/2), (e.y+e.h/2)-(player.y+player.h/2));
-    if (dist < 180) {
-      damageEnemy(e, 3, true);
-      e.stunTimer = 60;
-      e.vx = (e.x - player.x > 0 ? 1 : -1) * 8;
-      e.vy = -6;
-    }
-  });
-
-  showActionWord(VENOM_WORDS[Math.floor(Math.random()*VENOM_WORDS.length)], player.x - 60, player.y - 60);
-  flashScreen('#7b00ff', 0.5, 120);
-  spawnVenomSparks(player.x + player.w/2, player.y + player.h/2);
-}
-
-function shootWeb() {
-  // Create web to nearest enemy and stun them
-  const nearest = enemies.reduce((best, e) => {
-    const d = Math.hypot(e.x - player.x, e.y - player.y);
-    return (!best || d < best.d) ? {e, d} : best;
-  }, null);
-
-  if (!nearest || nearest.d > 400) return;
-  const e = nearest.e;
-  e.stunTimer = 90;
-  e.vx = 0;
-
-  // Draw web
-  drawWebLine(player.x + player.w/2, player.y + 20, e.x + e.w/2, e.y + e.h/2);
-  venomPower = Math.min(maxVenom, venomPower + 6);
-}
-
-function damageEnemy(e, dmg, isCrit) {
-  e.hp -= dmg;
-  combo++;
-  comboTimer = 180;
-
-  // Damage number
-  spawnDmgNumber(e.x + e.w/2, e.y, dmg * (isCrit ? 2 : 1), isCrit);
-
-  // Hit flash
-  const hf = document.createElement('div');
-  hf.className = 'hit-flash';
-  hf.style.cssText = `left:${e.x}px;top:${e.y}px;width:40px;height:40px;background:${isCrit?'rgba(155,89,255,0.8)':'rgba(255,200,0,0.8)'};`;
-  worldEl.appendChild(hf);
-  setTimeout(() => hf.remove(), 250);
-
-  if (e.hp <= 0) {
-    killEnemy(e);
-  } else {
-    e.stunTimer = 20;
-    e.vx *= -1;
-  }
+// ── COMBAT ─────────────────────────────────────────
+function hitEnemy(e, dmg, crit, knockDir) {
+  e.hp-=dmg; combo++; comboTimer=200;
+  addFloat(e.x+e.w/2, e.y-10, crit?`${dmg}!`:`${dmg}`, crit?'#00b4d8':'#ff5555', crit?32:22, crit?'#6a00d4':'#000');
+  spawnParticles(e.x+e.w/2, e.y+e.h*.4, e.type.accentColor, 8, 7);
+  if (knockDir) { e.vx=knockDir*7; e.vy=-4; e.stun=25; e.stunGravity=true; }
+  else { e.stun=16; }
+  P.venom=Math.min(P.maxVenom, P.venom+8);
+  if(e.hp<=0) killEnemy(e);
 }
 
 function killEnemy(e) {
-  score += 100 * wave;
-  venomPower = Math.min(maxVenom, venomPower + 20);
-
-  // Particle burst
-  for (let i = 0; i < 8; i++) {
-    spawnParticle(e.x + e.w/2, e.y + e.h/2, e.type.accent);
-  }
-
-  // Maybe drop pickup
-  if (Math.random() > 0.6) spawnPickup(e.x + e.w/2, e.y + e.h/2);
-
-  e.el.remove();
-  enemies.splice(enemies.indexOf(e), 1);
-
-  if (enemies.length === 0) {
-    setTimeout(nextWave, 1500);
-  }
+  score+=e.type.score*wave;
+  P.venom=Math.min(P.maxVenom,P.venom+20);
+  spawnParticles(e.x+e.w/2,e.y+e.h/2,e.type.accentColor,16,9);
+  addFloat(e.x+e.w/2,e.y-20,'DOWN!','#ffcc00',28,'#000',1.5);
+  if(Math.random()>.55) pickups.push({x:e.x+e.w/2,y:e.y+e.h/2,type:Math.random()>.5?'health':'venom'});
+  enemies=enemies.filter(en=>en!==e);
+  if(enemies.length===0) setTimeout(nextWave,1800);
 }
 
-function nextWave() {
-  wave++;
-  showActionWord(`WAVE ${wave}!`, window.innerWidth/2 - 100, window.innerHeight/2 - 60);
-  flashScreen('#fff', 0.4, 120);
-  spawnWave();
-  if (wave % 3 === 0) health = Math.min(maxHealth, health + 30);
+function punchAttack() {
+  if(P.attacking && P.atkTimer>4) return;
+  P.attacking=true; P.atkTimer=18; P.atkCombo=(P.atkCombo+1)%3;
+  P.animState='punch'; P.animFrame=0;
+  const px=P.x+(P.facingR?P.w+10:-(10));
+  const py=P.y+PH*.4;
+  const range=70;
+  let hit=false;
+  enemies.forEach(e=>{
+    const ex=e.x+e.w/2,ey=e.y+e.h/2;
+    if(Math.abs(ex-px)<range && Math.abs(ey-py)<50){
+      const dmg=P.atkCombo===2?3:1; // 3rd hit is harder
+      hitEnemy(e,dmg,P.atkCombo===2, P.facingR?1:-1);
+      hit=true;
+    }
+  });
+  if(hit) { webLines.push({x1:P.x+(P.facingR?PW:0),y1:P.y+14,x2:P.x+(P.facingR?PW+20:-(20)),y2:P.y+14,life:12,maxLife:12}); }
+  if(hit && P.atkCombo===2) addFloat(P.x,P.y-20,'COMBO!','#ffcc00',26,'#000');
 }
 
-function damagePlayer(dmg) {
-  if (player.iFrames > 0) return;
-  health -= dmg;
-  player.iFrames = 45;
-  flashScreen('#f00', 0.4, 80);
-
-  if (health <= 0) {
-    health = 0;
-    gameOver();
-  }
+function venomStrike() {
+  if(P.venom<50) return;
+  P.venom-=50; P.iFrames=40;
+  P.animState='venom'; P.animFrame=0;
+  // AoE
+  enemies.forEach(e=>{
+    const d=Math.hypot((e.x+e.w/2)-(P.x+PW/2),(e.y+e.h/2)-(P.y+PH/2));
+    if(d<220){ hitEnemy(e,4,true, e.x>P.x?1:-1); e.stun=70; }
+  });
+  addFloat(P.x+PW/2,P.y-30,'VENOM STRIKE!','#6a00d4',30,'#00b4d8',1.8);
+  spawnParticles(P.x+PW/2,P.y+PH/2,'#6a00d4',24,12);
+  spawnParticles(P.x+PW/2,P.y+PH/2,'#00b4d8',16,10);
+  // Screen flash
+  screenFlash='rgba(106,0,212,.28)';
+  flashTimer=20;
 }
 
-function gameOver() {
-  gameRunning = false;
-  overlay.style.display = 'flex';
-  document.getElementById('overlayTitle').textContent = 'GAME OVER';
-  document.getElementById('overlaySub').textContent = `Score: ${score} | Wave: ${wave}`;
+let screenFlash=''; let flashTimer=0;
+
+// ── SHOOT WEB FROM HAND ────────────────────────────
+function shootWebAt(tx,ty) {
+  const ox = P.x+(P.facingR?PW:0);
+  const oy = P.y+14; // wrist height
+  P.webShots.push({x:ox,y:oy,ox,oy,tx,ty,spd:22,done:false});
 }
 
-// ─── PICKUPS ─────────────────────────────────
-function spawnPickup(x, y) {
-  const type = Math.random() > 0.5 ? 'health' : 'venom';
-  const el = document.createElement('div');
-  el.className = 'pickup';
-  el.style.cssText = `left:${x-12}px;top:${y}px;background:${type==='health'?'#e00010':'#7b00ff'};border:2px solid ${type==='health'?'#fff':'#00d4ff'};box-shadow:0 0 10px ${type==='health'?'red':'#7b00ff'};`;
-  el.textContent = type === 'health' ? '❤' : '⚡';
-  el.style.display = 'flex'; el.style.alignItems = 'center'; el.style.justifyContent = 'center';
-  el.style.fontSize = '14px';
-  worldEl.appendChild(el);
-  pickups.push({ el, x: x-12, y, type });
-}
-
-// ─── WEB SWING ────────────────────────────────
-function startSwing() {
-  // Find a good anchor above player
-  const anchorX = player.x + player.w/2 + (Math.random()*200-100);
-  const anchorY = player.y - 150 - Math.random()*100;
-  if (anchorY < 0) return;
-
-  player.isSwinging = true;
-  player.swingTarget = { x: anchorX, y: anchorY };
-  const dx = player.x - anchorX, dy = player.y - anchorY;
-  player.swingLength = Math.hypot(dx, dy);
-  player.swingAngle = Math.atan2(dy, dx);
-  player.vy = -2;
-
-  drawWebLine(player.x + player.w/2, player.y, anchorX, anchorY);
-  venomPower = Math.min(maxVenom, venomPower + 4);
+// ── WEB SWING ─────────────────────────────────────
+function trySwingTo(tx,ty) {
+  // Only allow swinging to points above Miles
+  if(ty > P.y) return;
+  // Check if click is on a building or platform (simplified: just check if above)
+  P.webAnchor = {x:tx, y:Math.min(ty, P.y-60)};
+  P.webLen = Math.hypot(P.x+PW/2-P.webAnchor.x, P.y+PH/2-P.webAnchor.y);
+  P.webAngle = Math.atan2(P.y+PH/2-P.webAnchor.y, P.x+PW/2-P.webAnchor.x);
+  P.isSwinging=true;
+  P.animState='swing';
+  // Shoot visible web line from hand to anchor
+  webLines.push({x1:P.x+(P.facingR?PW:0),y1:P.y+14,x2:tx,y2:ty,life:8,maxLife:8});
 }
 
 function stopSwing() {
-  player.isSwinging = false;
-  player.swingTarget = null;
-  clearWebLine();
+  P.isSwinging=false; P.webAnchor=null;
 }
 
-// ─── DRAWING HELPERS ──────────────────────────
-function drawWebLine(x1, y1, x2, y2) {
-  webLineEl.setAttribute('x1', x1);
-  webLineEl.setAttribute('y1', y1);
-  webLineEl.setAttribute('x2', x2);
-  webLineEl.setAttribute('y2', y2);
-  webLineEl.setAttribute('opacity', '1');
-
-  // Auto-fade
-  clearTimeout(window._webFadeTimer);
-  window._webFadeTimer = setTimeout(clearWebLine, 600);
+// ── WEB ZIP to nearest surface ─────────────────────
+function webZip() {
+  // Find nearest enemy to web zip to
+  const near=enemies.reduce((b,e)=>{const d=Math.hypot(e.x-P.x,e.y-P.y);return(!b||d<b.d)?{e,d}:b;},null);
+  if(!near||near.d>500) return;
+  const e=near.e;
+  e.stun=80; e.vx=0;
+  // Zip Miles toward enemy rapidly
+  P.zipping=true; P.zipTarget={x:e.x+e.w/2,y:e.y+e.h/2}; P.zipSpeed=22;
+  webLines.push({x1:P.x+PW/2,y1:P.y+14,x2:e.x+e.w/2,y2:e.y+e.h/2,life:25,maxLife:25});
+  addFloat(e.x+e.w/2,e.y-10,'WEB ZIP','#a0c4ff',18,'#000');
 }
 
-function clearWebLine() {
-  webLineEl.setAttribute('opacity', '0');
-}
+// ── PHYSICS ────────────────────────────────────────
+const GRAVITY=0.55, JUMP_VEL=-14, MOVE_SPD=5, MAX_VY=18;
 
-function spawnDmgNumber(x, y, val, isCrit) {
-  const el = document.createElement('div');
-  el.className = 'dmg-number' + (isCrit ? ' crit' : '');
-  el.style.cssText = `left:${x}px;top:${y - 20}px;`;
-  el.textContent = val;
-  worldEl.appendChild(el);
-  setTimeout(() => el.remove(), 800);
-}
+function updatePhysics() {
+  const left  = keys['ArrowLeft']||keys['a']||keys['A'];
+  const right = keys['ArrowRight']||keys['d']||keys['D'];
+  const jump  = justPressed['ArrowUp']||justPressed['w']||justPressed['W']||justPressed[' '];
+  const attack= justPressed['z']||justPressed['Z'];
+  const venom = justPressed['v']||justPressed['V'];
+  const webE  = justPressed['e']||justPressed['E'];
+  const wall  = keys['f']||keys['F'];
 
-function showActionWord(text, x, y) {
-  const el = document.createElement('div');
-  el.className = 'action-word';
-  el.style.cssText = `left:${Math.max(10, Math.min(x, window.innerWidth-200))}px;top:${Math.max(10,y)}px;`;
-  el.textContent = text;
-  worldEl.appendChild(el);
-  setTimeout(() => el.remove(), 600);
-}
+  // Web zip
+  if(webE) webZip();
+  if(attack) punchAttack();
+  if(venom) venomStrike();
 
-function flashScreen(color, alpha, duration) {
-  screenFlash.style.background = color;
-  screenFlash.style.opacity = alpha;
-  setTimeout(() => { screenFlash.style.opacity = 0; }, duration);
-}
-
-function spawnParticle(x, y, color) {
-  const el = document.createElement('div');
-  el.style.cssText = `position:absolute;left:${x}px;top:${y}px;width:8px;height:8px;background:${color};border-radius:50%;pointer-events:none;z-index:200;`;
-  worldEl.appendChild(el);
-  const vx = (Math.random()-0.5)*12, vy = -Math.random()*8-4;
-  let px=x, py=y, pvy=vy;
-  let life = 30;
-  const tick = () => {
-    px+=vx; py+=pvy; pvy+=0.5; life--;
-    el.style.left=px+'px'; el.style.top=py+'px';
-    el.style.opacity=life/30;
-    if (life>0) requestAnimationFrame(tick); else el.remove();
-  };
-  requestAnimationFrame(tick);
-}
-
-function spawnVenomSparks(cx, cy) {
-  for (let i = 0; i < 12; i++) {
-    const el = document.createElement('div');
-    const angle = (i/12)*Math.PI*2;
-    const dist = 60 + Math.random()*60;
-    el.style.cssText = `position:absolute;left:${cx+Math.cos(angle)*dist-4}px;top:${cy+Math.sin(angle)*dist-4}px;
-      width:8px;height:8px;background:#7b00ff;border-radius:50%;pointer-events:none;z-index:200;
-      box-shadow:0 0 8px #00d4ff;`;
-    worldEl.appendChild(el);
-    let life = 20, lx=cx+Math.cos(angle)*dist, ly=cy+Math.sin(angle)*dist;
-    const vx=Math.cos(angle)*2, vy=Math.sin(angle)*2;
-    const tick=()=>{lx+=vx;ly+=vy;life--;el.style.left=lx+'px';el.style.top=ly+'px';el.style.opacity=life/20;if(life>0)requestAnimationFrame(tick);else el.remove();};
-    requestAnimationFrame(tick);
+  // Zipping
+  if(P.zipping && P.zipTarget) {
+    const dx=P.zipTarget.x-(P.x+PW/2), dy=P.zipTarget.y-(P.y+PH/2);
+    const d=Math.hypot(dx,dy);
+    if(d<30) { P.zipping=false; P.zipTarget=null; punchAttack(); }
+    else {
+      P.x+=dx/d*P.zipSpeed; P.y+=dy/d*P.zipSpeed;
+      P.vx=0; P.vy=0;
+    }
+    return; // skip normal physics during zip
   }
-}
 
-// ─── PHYSICS & COLLISION ──────────────────────
-const GRAVITY = 0.5, JUMP_FORCE = -13, MOVE_SPD = 4.5;
-
-function physicsUpdate() {
-  const W = window.innerWidth;
-
-  // INPUT
-  const left  = keys['ArrowLeft']  || keys['a'] || keys['A'] || mKeys.left;
-  const right  = keys['ArrowRight'] || keys['d'] || keys['D'] || mKeys.right;
-  const jump   = justPressed['ArrowUp'] || justPressed['w'] || justPressed['W'] || justPressed[' '] || mKeys.jump;
-  const doSwing = justPressed['e'] || justPressed['E'];
-  const doPunch = justPressed['z'] || justPressed['Z'];
-  const doVenom = justPressed['v'] || justPressed['V'];
-  const doWeb   = justPressed['x'] || justPressed['X'];
-
-  // Swing logic
-  if (doSwing) { if (!player.isSwinging) startSwing(); else stopSwing(); }
-
-  if (player.isSwinging && player.swingTarget) {
-    // Pendulum
-    const ax = player.swingTarget.x, ay = player.swingTarget.y;
-    const dx = player.x + player.w/2 - ax, dy = player.y + player.h/2 - ay;
-    player.swingAngle = Math.atan2(dy, dx);
-    if (right) player.swingAngle += 0.04;
-    if (left)  player.swingAngle -= 0.04;
-    player.vx += Math.cos(player.swingAngle + Math.PI) * 0.8;
-    player.vy += Math.sin(player.swingAngle + Math.PI) * 0.8 + GRAVITY * 0.3;
-    // Constrain to rope
-    const targetX = ax + Math.cos(player.swingAngle) * player.swingLength - player.w/2;
-    const targetY = ay + Math.sin(player.swingAngle) * player.swingLength - player.h/2;
-    player.x += (targetX - player.x) * 0.2;
-    player.y += (targetY - player.y) * 0.2;
-    // Update web line
-    drawWebLine(player.x + player.w/2, player.y, player.swingTarget.x, player.swingTarget.y);
-    if (jump || (player.onGround)) stopSwing();
+  // Web swing (pendulum)
+  if(P.isSwinging && P.webAnchor) {
+    if(right) P.webAngle+=0.038;
+    if(left)  P.webAngle-=0.038;
+    // Pendulum force toward equilibrium (downward)
+    P.webAngle -= .04*Math.cos(P.webAngle);
+    P.vx+=Math.cos(P.webAngle+Math.PI)*.6;
+    P.vy+=Math.sin(P.webAngle+Math.PI)*.6 + GRAVITY*.2;
+    const tx=P.webAnchor.x+Math.cos(P.webAngle)*P.webLen - PW/2;
+    const ty=P.webAnchor.y+Math.sin(P.webAngle)*P.webLen - PH/2;
+    P.x+=(tx-P.x)*.25; P.y+=(ty-P.y)*.25;
+    P.facingR = P.vx>0;
+    if(jump||P.onGround) stopSwing();
+    P.animState='swing';
   } else {
-    if (left)  { player.vx = -MOVE_SPD; player.facingRight = false; }
-    else if (right) { player.vx = MOVE_SPD; player.facingRight = true; }
-    else player.vx *= 0.7;
-    if (jump && player.onGround) { player.vy = JUMP_FORCE; player.onGround = false; player.jumpAnim = 15; }
-    player.vy += GRAVITY;
+    // Normal movement
+    if(left)       { P.vx=-MOVE_SPD; P.facingR=false; }
+    else if(right) { P.vx=MOVE_SPD;  P.facingR=true;  }
+    else           { P.vx*=.78; }
+    if(jump && (P.onGround||P.onWall)) {
+      P.vy=JUMP_VEL;
+      if(P.onWall) P.vx=P.wallDir*8;
+      P.onGround=false; P.onWall=false;
+    }
+    P.vy+=GRAVITY;
+    P.vy=Math.min(P.vy,MAX_VY);
   }
 
-  player.x += player.vx;
-  player.y += player.vy;
-
-  // Ground
-  player.onGround = false;
-  if (player.y + player.h >= GROUND_Y) {
-    player.y = GROUND_Y - player.h;
-    player.vy = 0;
-    player.onGround = true;
+  // Wall crawl
+  P.onWall=false;
+  if(wall && !P.onGround && !P.isSwinging) {
+    if(P.x<=4) { P.vx=0; P.vy*=.6; P.onWall=true; P.wallDir=1; P.animState='crawl'; }
+    if(P.x+PW>=W-4) { P.vx=0; P.vy*=.6; P.onWall=true; P.wallDir=-1; P.animState='crawl'; }
   }
+
+  P.x+=P.vx; P.y+=P.vy;
+
+  // Ground collision
+  P.onGround=false;
+  if(P.y+PH>=GROUND) { P.y=GROUND-PH; P.vy=0; P.onGround=true; }
 
   // Platform collision
-  platforms.forEach(p => {
-    if (player.x + player.w > p.x && player.x < p.x + p.w &&
-        player.y + player.h > p.y && player.y + player.h < p.y + p.h + 12 && player.vy >= 0) {
-      player.y = p.y - player.h;
-      player.vy = 0;
-      player.onGround = true;
+  platforms.forEach(pl=>{
+    if(P.x+PW>pl.x&&P.x<pl.x+pl.w&&P.y+PH>pl.y&&P.y+PH<pl.y+pl.h+16&&P.vy>=0){
+      P.y=pl.y-PH; P.vy=0; P.onGround=true;
     }
   });
 
   // Boundaries
-  if (player.x < 0) player.x = 0;
-  if (player.x + player.w > W) player.x = W - player.w;
-  if (player.y < 0) { player.y = 0; player.vy = 2; if (player.isSwinging) stopSwing(); }
+  P.x=Math.max(0,Math.min(W-PW,P.x));
+  if(P.y<0) { P.y=0; P.vy=2; if(P.isSwinging) stopSwing(); }
 
-  // Combat
-  if (doPunch) punch();
-  if (doVenom) venomStrike();
-  if (doWeb) shootWeb();
+  // Animation state
+  if(!P.isSwinging && !P.wallCrawling) {
+    if(!P.onGround) { P.animState=P.vy<0?'jump':'fall'; }
+    else if(P.attacking && P.atkTimer>0) { P.animState='punch'; }
+    else if(Math.abs(P.vx)>0.5) { P.animState='run'; }
+    else { P.animState='idle'; }
+  }
 
-  // Attack timer
-  if (player.attackTimer > 0) player.attackTimer--;
-  else player.attacking = false;
-  if (player.iFrames > 0) player.iFrames--;
+  // Timers
+  if(P.atkTimer>0) P.atkTimer--; else P.attacking=false;
+  if(P.iFrames>0) P.iFrames--;
 
-  // ENEMY UPDATE
-  enemies.forEach(e => {
-    if (e.stunTimer > 0) { e.stunTimer--; return; }
+  // Venom state
+  P.venomActive = P.venom>=50;
 
-    // Move toward player
-    const dx = (player.x + player.w/2) - (e.x + e.w/2);
-    e.vx = dx > 0 ? e.type.spd : -e.type.spd;
-    e.vy += GRAVITY;
-    e.x += e.vx;
-    e.y += e.vy;
+  // Enemy AI
+  enemies.forEach((e,i)=>{
+    if(e.stun>0) {
+      e.stun--;
+      if(e.stunGravity) { e.vy+=GRAVITY; e.x+=e.vx; e.y+=e.vy; }
+      if(e.y+e.h>=GROUND){e.y=GROUND-e.h;e.vy=0;e.stunGravity=false;}
+      platforms.forEach(pl=>{if(e.x+e.w>pl.x&&e.x<pl.x+pl.w&&e.y+e.h>pl.y&&e.y+e.h<pl.y+pl.h+12&&e.vy>=0){e.y=pl.y-e.h;e.vy=0;e.stunGravity=false;}});
+      return;
+    }
+    // Chase player
+    const dx=(P.x+PW/2)-(e.x+e.w/2);
+    const spd=e.type.spd + wave*.07;
+    e.vx = dx>0?spd:-spd;
 
-    // Ground
-    if (e.y + e.h >= GROUND_Y) { e.y = GROUND_Y - e.h; e.vy = 0; e.onGround = true; }
-    else e.onGround = false;
+    // Jump over platforms / to reach player
+    e.jumpTimer--;
+    if(e.jumpTimer<=0 && e.onGround) {
+      const py=P.y, ey=e.y;
+      if(py<ey-30 || Math.random()<.015) { e.vy=-11; e.onGround=false; }
+      e.jumpTimer=80+Math.floor(Math.random()*80);
+    }
 
-    // Platform
-    platforms.forEach(p => {
-      if (e.x+e.w>p.x && e.x<p.x+p.w && e.y+e.h>p.y && e.y+e.h<p.y+p.h+12 && e.vy>=0) {
-        e.y=p.y-e.h; e.vy=0; e.onGround=true;
-      }
-    });
-
-    // Boundary
-    if (e.x < -100 || e.x > window.innerWidth + 100) { e.el.remove(); enemies.splice(enemies.indexOf(e),1); return; }
+    e.vy+=GRAVITY; e.x+=e.vx; e.y+=e.vy;
+    e.onGround=false;
+    if(e.y+e.h>=GROUND){e.y=GROUND-e.h;e.vy=0;e.onGround=true;}
+    platforms.forEach(pl=>{if(e.x+e.w>pl.x&&e.x<pl.x+pl.w&&e.y+e.h>pl.y&&e.y+e.h<pl.y+pl.h+12&&e.vy>=0){e.y=pl.y-e.h;e.vy=0;e.onGround=true;}});
+    if(e.x<-150||e.x>W+150){enemies.splice(i,1);return;}
 
     // Attack player
-    e.attackTimer--;
-    if (e.attackTimer <= 0) {
-      const dist = Math.hypot(dx, (player.y+player.h/2)-(e.y+e.h/2));
-      if (dist < 55) { damagePlayer(e.type.atk); e.attackTimer = 90; }
-      else e.attackTimer = 10;
-    }
-
-    // Update DOM
-    e.el.style.left = e.x + 'px';
-    e.el.style.top  = e.y + 'px';
-    e.el.style.transform = e.vx > 0 ? 'scaleX(-1)' : 'scaleX(1)';
-    e.el.style.opacity = e.stunTimer > 0 ? '0.5' : '1';
-  });
-
-  // PICKUPS
-  pickups.forEach((p, i) => {
-    const dist = Math.hypot((player.x+player.w/2)-(p.x+12), (player.y+player.h/2)-(p.y+12));
-    if (dist < 40) {
-      if (p.type === 'health') health = Math.min(maxHealth, health+25);
-      else venomPower = Math.min(maxVenom, venomPower+30);
-      p.el.remove();
-      pickups.splice(i, 1);
-      flashScreen(p.type==='health'?'#f00':'#7b00ff', 0.3, 80);
+    e.atkCd--;
+    if(e.atkCd<=0){
+      const d=Math.hypot(dx,(P.y+PH/2)-(e.y+e.h/2));
+      if(d<55) {
+        if(P.iFrames<=0) { P.hp-=e.type.atk; P.iFrames=55; screenFlash='rgba(180,0,0,.32)'; flashTimer=16; if(P.hp<=0){P.hp=0;endGame();} }
+        e.atkCd=90;
+      } else e.atkCd=6;
     }
   });
 
-  // COMBO TIMER
-  if (comboTimer > 0) { comboTimer--; }
-  else if (combo > 0) { combo = 0; comboBox.style.opacity='0'; }
+  // Web shots physics
+  P.webShots.forEach((ws,i)=>{
+    const dx=ws.tx-ws.x, dy=ws.ty-ws.y;
+    const d=Math.hypot(dx,dy);
+    if(d<ws.spd||ws.done) {
+      // Hit! check if swing or just web
+      ws.done=true;
+    } else {
+      ws.x+=dx/d*ws.spd; ws.y+=dy/d*ws.spd;
+    }
+  });
+  P.webShots=P.webShots.filter(ws=>!ws.done);
+
+  // Particles
+  particles.forEach((p,i)=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.3;p.life--;if(p.life<=0)particles.splice(i,1);});
+
+  // Pickups
+  pickups.forEach((pk,i)=>{
+    if(Math.hypot((P.x+PW/2)-pk.x,(P.y+PH/2)-pk.y)<30){
+      if(pk.type==='health')P.hp=Math.min(P.maxHp,P.hp+30);
+      else P.venom=Math.min(P.maxVenom,P.venom+40);
+      pickups.splice(i,1);
+    }
+  });
+
+  // Combo decay
+  if(comboTimer>0) comboTimer--;
+  else if(combo>0) { combo=0; document.getElementById('combo-display').style.opacity='0'; }
 }
 
-// ─── RENDERING ────────────────────────────────
-let spriteFrame = 0, spriteTimer = 0;
-const SPRITE_RATE = 3; // frames between animation steps
-
-function renderPlayer() {
-  // Position
-  playerEl.style.left = player.x + 'px';
-  playerEl.style.top  = player.y + 'px';
-
-  // Flip
-  milesSVG.style.transform = player.facingRight ? 'scaleX(1)' : 'scaleX(-1)';
-
-  // Sprite animation at 12fps
-  spriteTimer++;
-  if (spriteTimer >= SPRITE_RATE) {
-    spriteTimer = 0;
-    spriteFrame = (spriteFrame + 1) % 4;
-  }
-
-  // RUN animation
-  if (!player.onGround) {
-    // In-air
-    legL.setAttribute('transform','rotate(20,20,52)');
-    legR.setAttribute('transform','rotate(-20,31,52)');
-    armL.setAttribute('transform','rotate(-30,9,40)');
-    armR.setAttribute('transform','rotate(30,43,40)');
-  } else if (Math.abs(player.vx) > 0.5) {
-    // Running
-    const s = spriteFrame;
-    const lRot = [15,-15,20,-20][s], rRot = [-15,15,-20,20][s];
-    const aRot = [-10,10,-15,15][s];
-    legL.setAttribute('transform',`rotate(${lRot},20,52)`);
-    legR.setAttribute('transform',`rotate(${rRot},31,52)`);
-    armL.setAttribute('transform',`rotate(${aRot},9,40)`);
-    armR.setAttribute('transform',`rotate(${-aRot},43,40)`);
-  } else {
-    // Idle breathe
-    const breathe = Math.sin(Date.now()/400)*2;
-    legL.removeAttribute('transform'); legR.removeAttribute('transform');
-    armL.removeAttribute('transform'); armR.removeAttribute('transform');
-    milesSVG.style.marginTop = breathe + 'px';
-  }
-
-  // Eye flicker (12fps comic style)
-  if (spriteFrame % 2 === 0) {
-    eyeL.setAttribute('ry','6'); eyeR.setAttribute('ry','6');
-  } else {
-    eyeL.setAttribute('ry','5.5'); eyeR.setAttribute('ry','5.5');
-  }
-
-  // iFrame flash
-  playerEl.style.opacity = (player.iFrames > 0 && Math.floor(player.iFrames/4)%2===0) ? '0.4' : '1';
-
-  // Venom glow when powered up
-  venomGlow.setAttribute('opacity', venomPower >= 50 ? (0.3 + Math.sin(Date.now()/200)*0.2).toString() : '0');
+// ── WAVE MANAGEMENT ────────────────────────────────
+function spawnWave() {
+  const count=3+wave*1.5|0;
+  document.getElementById('wave-val').textContent=wave.toString().padStart(2,'0');
+  for(let i=0;i<count;i++) setTimeout(spawnEnemy, i*600);
+  showWaveAnnounce();
 }
 
+function showWaveAnnounce() {
+  const el=document.getElementById('wave-announce');
+  el.textContent=`Wave ${wave}`;
+  el.style.opacity='1';
+  setTimeout(()=>el.style.opacity='0',1800);
+}
+
+function nextWave() {
+  wave++;
+  if(wave%3===0) { P.hp=Math.min(P.maxHp,P.hp+30); addFloat(W/2,H/2,'HEALTH RESTORED','#44ff44',28,'#000'); }
+  spawnWave();
+}
+
+// ── HUD UPDATE ─────────────────────────────────────
 function updateHUD() {
-  healthBar.style.width = (health/maxHealth*100) + '%';
-  venomBar.style.width  = (venomPower/maxVenom*100) + '%';
-  venomReady.style.opacity = venomPower >= 50 ? '1' : '0';
-  scoreDisplay.textContent = score.toString().padStart(6,'0');
-  waveDisplay.textContent  = `WAVE ${wave}`;
-
-  if (combo > 1) {
-    comboBox.style.opacity = '1';
-    comboNum.textContent = combo + 'x';
-    const colors = combo > 20 ? '#7b00ff' : combo > 10 ? '#ff6b00' : '#FFD700';
-    comboNum.style.color = colors;
-    comboNum.style.transform = `scale(${1 + Math.min(combo,30)*0.02})`;
+  document.getElementById('hp-bar').style.width=(P.hp/P.maxHp*100)+'%';
+  document.getElementById('vp-bar').style.width=(P.venom/P.maxVenom*100)+'%';
+  document.getElementById('venom-ready').style.opacity=P.venom>=50?'1':'0';
+  document.getElementById('score-val').textContent=score.toString().padStart(6,'0');
+  document.getElementById('enemy-lbl').textContent=enemies.length?`${enemies.length} left`:'—';
+  const cd=document.getElementById('combo-display');
+  if(combo>1){
+    cd.style.opacity='1';
+    document.getElementById('combo-num').textContent=combo+'×';
+    document.getElementById('combo-num').style.color=combo>25?'#6a00d4':combo>12?'#ff8800':'#fff';
   }
 }
 
-// ─── MAIN GAME LOOP ───────────────────────────
-let lastTime = 0;
-const TARGET_FPS = 60; // physics runs at 60fps, animation at 12fps
+// ── PLAYER ANIMATION ─────────────────────────────
+function stepAnimation() {
+  P.animTimer++;
+  if(P.animTimer>=4) { // 60/4 = ~15fps anim ticks (but overall game 60fps)
+    P.animTimer=0;
+    P.animFrame=(P.animFrame+1)%8;
+  }
+}
 
+// ── MAIN GAME LOOP ─────────────────────────────────
+let lastTime=0;
 function gameLoop(ts) {
-  if (!gameRunning) return;
-  const dt = ts - lastTime;
-  lastTime = ts;
+  if(!gameRunning) return;
 
-  physicsUpdate();
-  renderPlayer();
+  ctx.clearRect(0,0,W,H);
+
+  // Draw city
+  drawCity();
+
+  // Draw webs
+  drawWebLines();
+
+  // Draw pickups
+  drawPickups();
+
+  // Draw enemies
+  enemies.forEach(e=>drawEnemySVG(e));
+
+  // Draw Miles
+  const iFlash = P.iFrames>0 && Math.floor(P.iFrames/4)%2===0;
+  drawMiles(P.x, P.y, P.facingR, P.animState, P.animFrame*.8, P.venomActive, iFlash);
+
+  // Particles over everything
+  drawParticles();
+
+  // Float texts
+  drawFloatTexts();
+
+  // Screen flash
+  if(flashTimer>0) {
+    ctx.fillStyle=screenFlash;
+    ctx.fillRect(0,0,W,H);
+    flashTimer--;
+  }
+
+  // Vignette
+  const vig=ctx.createRadialGradient(W/2,H/2,H*.3,W/2,H/2,H*.8);
+  vig.addColorStop(0,'transparent'); vig.addColorStop(1,'rgba(0,0,0,.6)');
+  ctx.fillStyle=vig; ctx.fillRect(0,0,W,H);
+
+  // Physics
+  updatePhysics();
+  stepAnimation();
   updateHUD();
-  justPressed = {};
 
+  for (const k in justPressed) delete justPressed[k];
   requestAnimationFrame(gameLoop);
 }
 
-// ─── CONTROLS ────────────────────────────────
-document.addEventListener('keydown', e => {
-  if (!keys[e.key]) justPressed[e.key] = true;
-  keys[e.key] = true;
-  e.preventDefault();
+// ── MOUSE / CLICK EVENTS ──────────────────────────
+canvas.addEventListener('mousemove', e=>{ mouseX=e.clientX; mouseY=e.clientY; });
+canvas.addEventListener('mousedown', e=>{
+  mouseDown=true;
+  if(e.shiftKey) {
+    // Shift-click: web zip
+    webZip();
+  } else if(e.clientY < P.y+PH*.3) {
+    // Click above Miles: start swing
+    trySwingTo(e.clientX, e.clientY);
+  } else {
+    // Click toward enemy: shoot web
+    shootWebAt(e.clientX, e.clientY);
+    // Check if hitting an enemy
+    const clickedEnemy = enemies.find(en=>e.clientX>en.x-10&&e.clientX<en.x+en.w+10&&e.clientY>en.y-10&&e.clientY<en.y+en.h+10);
+    if(clickedEnemy) { hitEnemy(clickedEnemy,2,false,e.clientX>P.x?1:-1); }
+  }
 });
-document.addEventListener('keyup', e => { keys[e.key] = false; });
+canvas.addEventListener('mouseup', e=>{
+  mouseDown=false;
+  // Don't auto-stop swing — let player keep swinging until they click again or land
+});
+canvas.addEventListener('dblclick', e=>{
+  // Double click stops swing
+  stopSwing();
+});
 
-// ─── START / RESTART ─────────────────────────
-function startGame() {
-  document.getElementById('titleScreen').style.display = 'none';
-  document.getElementById('gameContainer').style.display = 'block';
-  overlay.style.display = 'none';
-  gameRunning = true;
-  init();
-  lastTime = performance.now();
-  requestAnimationFrame(gameLoop);
+// ── KEYBOARD ──────────────────────────────────────
+document.addEventListener('keydown', e=>{
+  if(!keys[e.key]) justPressed[e.key]=true;
+  keys[e.key]=true;
+  if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key)) e.preventDefault();
+});
+document.addEventListener('keyup', e=>{ keys[e.key]=false; });
+
+// ── GAME OVER ─────────────────────────────────────
+function endGame() {
+  gameRunning=false;
+  const go=document.getElementById('gameover');
+  go.style.display='flex';
+  document.getElementById('go-title').textContent='GAME OVER';
+  document.getElementById('go-stats').textContent=`Score: ${score}  ·  Wave ${wave}  ·  Combo: ${combo}`;
 }
 
 function restartGame() {
-  overlay.style.display = 'none';
-  gameRunning = true;
-  init();
-  lastTime = performance.now();
+  document.getElementById('gameover').style.display='none';
+  initGame();
   requestAnimationFrame(gameLoop);
 }
 
-// ─── TITLE STARS ─────────────────────────────
-(function(){
-  const c = document.getElementById('titleStars');
-  for(let i=0;i<80;i++){
-    const s=document.createElement('div');
-    s.className='star';
-    s.style.cssText=`position:absolute;left:${Math.random()*100}%;top:${Math.random()*100}%;
-      width:${Math.random()*2+0.5}px;height:${Math.random()*2+0.5}px;background:#fff;border-radius:50%;
-      animation-delay:${Math.random()*2}s;animation-duration:${1+Math.random()*2}s;animation-name:twinkle;animation-iteration-count:infinite;`;
-    c.appendChild(s);
-  }
-})();
+// ── INIT ──────────────────────────────────────────
+function initGame() {
+  score=0; wave=1; combo=0; comboTimer=0;
+  P.x=250; P.y=GROUND-PH; P.vx=0; P.vy=0;
+  P.hp=100; P.venom=0; P.iFrames=0; P.onGround=false;
+  P.isSwinging=false; P.webAnchor=null; P.animState='idle'; P.animFrame=0;
+  P.attacking=false; P.zipping=false;
+  enemies=[]; pickups=[]; particles=[]; floatTexts=[]; webLines=[];
+  generateCity(); generatePlatforms();
+  gameRunning=true;
+  document.getElementById('hud').style.display='block';
+  spawnWave();
+}
 
-// Handle resize
-window.addEventListener('resize', () => { if(gameRunning){ GROUND_Y=window.innerHeight-90; buildPlatforms(); }});
+function startGame() {
+  document.getElementById('title').style.display='none';
+  resize();
+  initGame();
+  requestAnimationFrame(gameLoop);
+}
+
+window.addEventListener('resize',()=>{ if(gameRunning){ resize(); generateCity(); generatePlatforms(); } });
+resize();
 </script>
 </body>
 </html>
