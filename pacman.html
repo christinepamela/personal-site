@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎸 Guitar-Man - Rock the Maze!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Boogaloo&family=Orbitron:wght@700;900&display=swap');
+
+  :root {
+    --neon-yellow: #FFE600;
+    --neon-pink: #FF2D78;
+    --neon-blue: #00F5FF;
+    --neon-purple: #BF00FF;
+    --neon-green: #39FF14;
+    --dark-bg: #0a0010;
+    --grid-color: #1a0040;
+    --wall-color: #5500CC;
+    --wall-glow: #8833FF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark-bg);
+    font-family: 'Orbitron', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, #1a0040 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, #0d0030 0%, transparent 60%);
+  }
+
+  #title {
+    font-family: 'Boogaloo', cursive;
+    font-size: 2.8rem;
+    color: var(--neon-yellow);
+    text-shadow:
+      0 0 10px var(--neon-yellow),
+      0 0 30px #FF8C00,
+      0 0 60px #FF4500;
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+    animation: titlePulse 2s ease-in-out infinite;
+  }
+
+  @keyframes titlePulse {
+    0%, 100% { text-shadow: 0 0 10px var(--neon-yellow), 0 0 30px #FF8C00, 0 0 60px #FF4500; }
+    50% { text-shadow: 0 0 20px var(--neon-yellow), 0 0 50px #FF8C00, 0 0 90px #FF4500; }
+  }
+
+  #subtitle {
+    font-family: 'Boogaloo', cursive;
+    color: var(--neon-pink);
+    font-size: 0.9rem;
+    letter-spacing: 6px;
+    margin-bottom: 10px;
+    text-shadow: 0 0 8px var(--neon-pink);
+  }
+
+  #hud {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 10px;
+    align-items: center;
+  }
+
+  .hud-item {
+    text-align: center;
+  }
+
+  .hud-label {
+    color: var(--neon-blue);
+    font-size: 0.55rem;
+    letter-spacing: 3px;
+    text-shadow: 0 0 6px var(--neon-blue);
+  }
+
+  .hud-value {
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-shadow: 0 0 10px var(--neon-yellow);
+  }
+
+  #lives-display {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .life-icon {
+    font-size: 1.2rem;
+    filter: drop-shadow(0 0 4px var(--neon-yellow));
+  }
+
+  #game-wrapper {
+    position: relative;
+    border: 2px solid var(--wall-glow);
+    box-shadow:
+      0 0 20px var(--wall-glow),
+      0 0 60px #4400AA,
+      inset 0 0 20px #1a0040;
+    border-radius: 4px;
+  }
+
+  canvas {
+    display: block;
+    image-rendering: pixelated;
+  }
+
+  #overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.82);
+    border-radius: 4px;
+    z-index: 10;
+  }
+
+  #overlay h2 {
+    font-family: 'Boogaloo', cursive;
+    font-size: 2.5rem;
+    color: var(--neon-yellow);
+    text-shadow: 0 0 20px var(--neon-yellow), 0 0 50px #FF8C00;
+    margin-bottom: 12px;
+    animation: titlePulse 1.5s ease-in-out infinite;
+  }
+
+  #overlay p {
+    font-family: 'Boogaloo', cursive;
+    color: var(--neon-blue);
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px var(--neon-blue);
+    margin-bottom: 8px;
+  }
+
+  #overlay .controls-info {
+    color: #aaa;
+    font-family: 'Boogaloo', cursive;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    margin-top: 8px;
+  }
+
+  #start-btn {
+    margin-top: 16px;
+    padding: 12px 40px;
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--dark-bg);
+    background: var(--neon-yellow);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    box-shadow: 0 0 20px var(--neon-yellow), 0 0 40px #FF8C00;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  #start-btn:hover {
+    background: #fff;
+    box-shadow: 0 0 30px #fff, 0 0 60px var(--neon-yellow);
+    transform: scale(1.05);
+  }
+
+  #controls-bar {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+    align-items: center;
+  }
+
+  .ctrl-hint {
+    color: #664488;
+    font-family: 'Boogaloo', cursive;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+  }
+
+  .key-badge {
+    display: inline-block;
+    background: #1a0040;
+    border: 1px solid #5500CC;
+    color: var(--neon-purple);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    box-shadow: 0 0 4px var(--neon-purple);
+  }
+
+  /* Mobile D-pad */
+  #dpad {
+    display: none;
+    grid-template-columns: repeat(3, 44px);
+    grid-template-rows: repeat(3, 44px);
+    gap: 4px;
+    margin-top: 10px;
+  }
+
+  .dpad-btn {
+    background: rgba(85,0,204,0.4);
+    border: 1px solid var(--wall-glow);
+    color: var(--neon-yellow);
+    font-size: 1.3rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    box-shadow: 0 0 8px var(--wall-glow);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .dpad-btn:active { background: rgba(85,0,204,0.8); }
+  .dpad-center { background: transparent; border: none; box-shadow: none; }
+
+  @media (max-width: 600px) {
+    #dpad { display: grid; }
+    #controls-bar { display: none; }
+    #title { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="title">🎸 GUITAR-MAN</div>
+<div id="subtitle">EAT THE PICKS · ROCK THE MAZE</div>
+
+<div id="hud">
+  <div class="hud-item">
+    <div class="hud-label">SCORE</div>
+    <div class="hud-value" id="score-val">0</div>
+  </div>
+  <div class="hud-item">
+    <div class="hud-label">LIVES</div>
+    <div id="lives-display">
+      <span class="life-icon">🎸</span>
+      <span class="life-icon">🎸</span>
+      <span class="life-icon">🎸</span>
+    </div>
+  </div>
+  <div class="hud-item">
+    <div class="hud-label">LEVEL</div>
+    <div class="hud-value" id="level-val">1</div>
+  </div>
+</div>
+
+<div id="game-wrapper">
+  <canvas id="gameCanvas"></canvas>
+  <div id="overlay">
+    <h2>🎸 GUITAR-MAN</h2>
+    <p>EAT ALL THE PICKS TO ROCK!</p>
+    <p style="color:var(--neon-green); font-size:0.8rem;">BIG PICKS = GHOST SHRED MODE!</p>
+    <button id="start-btn" onclick="startGame()">START ROCKING!</button>
+    <div class="controls-info">ARROW KEYS or WASD to move</div>
+  </div>
+</div>
+
+<div id="controls-bar">
+  <span class="ctrl-hint">MOVE:</span>
+  <span class="key-badge">W</span>
+  <span class="key-badge">A</span>
+  <span class="key-badge">S</span>
+  <span class="key-badge">D</span>
+  <span class="ctrl-hint">or</span>
+  <span class="key-badge">↑</span>
+  <span class="key-badge">←</span>
+  <span class="key-badge">↓</span>
+  <span class="key-badge">→</span>
+</div>
+
+<div id="dpad">
+  <div></div>
+  <div class="dpad-btn" id="btn-up">▲</div>
+  <div></div>
+  <div class="dpad-btn" id="btn-left">◀</div>
+  <div class="dpad-center"></div>
+  <div class="dpad-btn" id="btn-right">▶</div>
+  <div></div>
+  <div class="dpad-btn" id="btn-down">▼</div>
+  <div></div>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// Tile size
+const T = 20;
+// Maze: 21 cols x 21 rows
+const COLS = 21, ROWS = 21;
+canvas.width = COLS * T;
+canvas.height = ROWS * T;
+
+// Maze layout: 1=wall, 0=dot, 2=power pellet, 3=empty(ghost house), 4=tunnel
+const BASE_MAP = [
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1],
+  [1,2,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,2,1],
+  [1,0,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,0,1],
+  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [1,0,1,1,0,1,0,1,1,1,1,1,1,1,0,1,0,1,1,0,1],
+  [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+  [1,1,1,1,0,1,1,1,3,3,1,3,3,1,1,1,0,1,1,1,1],
+  [4,4,4,1,0,1,3,3,3,3,3,3,3,3,3,1,0,1,4,4,4],
+  [1,1,1,1,0,1,3,1,1,3,3,3,1,1,3,1,0,1,1,1,1],
+  [4,4,4,4,0,3,3,1,3,3,3,3,3,1,3,3,0,4,4,4,4],
+  [1,1,1,1,0,1,3,1,1,1,1,1,1,1,3,1,0,1,1,1,1],
+  [4,4,4,1,0,1,3,3,3,3,3,3,3,3,3,1,0,1,4,4,4],
+  [1,1,1,1,0,1,3,1,1,1,1,1,1,1,3,1,0,1,1,1,1],
+  [1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1],
+  [1,0,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,0,1],
+  [1,2,0,1,0,0,0,0,0,0,3,0,0,0,0,0,0,1,0,2,1],
+  [1,1,0,1,0,1,0,1,1,1,1,1,1,1,0,1,0,1,0,1,1],
+  [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+  [1,0,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,0,1],
+  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+];
+
+let map, score, lives, level, gameState, animTick;
+let guitarX, guitarY, guitarDX, guitarDY, nextDX, nextDY;
+let mouthAngle, mouthOpen, mouthDir;
+let ghosts, powerTimer, powerActive;
+let totalDots, dotsEaten;
+let flashTimer = 0;
+let particles = [];
+let guitarAnimFrame = 0;
+
+const GHOST_COLORS = ['#FF2D78','#00F5FF','#FF9900','#FF66CC'];
+const GHOST_NAMES = ['Axe','Riff','Solo','Bass'];
+
+function initMap() {
+  map = BASE_MAP.map(row => [...row]);
+  totalDots = 0;
+  dotsEaten = 0;
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      if (map[r][c] === 0 || map[r][c] === 2) totalDots++;
+}
+
+function initGhosts() {
+  ghosts = [
+    { x: 9, y: 9, dx: 1, dy: 0, color: GHOST_COLORS[0], name: GHOST_NAMES[0], scatter: 0, frightened: false, eaten: false, respawn: 0 },
+    { x: 10, y: 9, dx: -1, dy: 0, color: GHOST_COLORS[1], name: GHOST_NAMES[1], scatter: 0, frightened: false, eaten: false, respawn: 0 },
+    { x: 9, y: 10, dx: 0, dy: 1, color: GHOST_COLORS[2], name: GHOST_NAMES[2], scatter: 0, frightened: false, eaten: false, respawn: 0 },
+    { x: 10, y: 10, dx: 1, dy: 0, color: GHOST_COLORS[3], name: GHOST_NAMES[3], scatter: 0, frightened: false, eaten: false, respawn: 0 },
+  ];
+}
+
+function startGame() {
+  document.getElementById('overlay').style.display = 'none';
+  score = 0; lives = 3; level = 1;
+  updateHUD();
+  initMap();
+  initGhosts();
+  guitarX = 10; guitarY = 16;
+  guitarDX = 0; guitarDY = 0;
+  nextDX = 1; nextDY = 0;
+  mouthAngle = 0.25; mouthOpen = true; mouthDir = 1;
+  powerTimer = 0; powerActive = false;
+  gameState = 'playing';
+  particles = [];
+  animTick = 0;
+  if (window._gameLoop) cancelAnimationFrame(window._gameLoop);
+  gameLoop();
+}
+
+function updateHUD() {
+  document.getElementById('score-val').textContent = score;
+  document.getElementById('level-val').textContent = level;
+  const livesDiv = document.getElementById('lives-display');
+  livesDiv.innerHTML = '';
+  for (let i = 0; i < lives; i++) {
+    const s = document.createElement('span');
+    s.className = 'life-icon';
+    s.textContent = '🎸';
+    livesDiv.appendChild(s);
+  }
+}
+
+function isWalkable(r, c) {
+  if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return false;
+  const v = map[r][c];
+  return v !== 1;
+}
+
+function canMove(x, y, dx, dy) {
+  const nx = x + dx, ny = y + dy;
+  return isWalkable(ny, nx);
+}
+
+function wrapX(x) {
+  if (x < 0) return COLS - 1;
+  if (x >= COLS) return 0;
+  return x;
+}
+
+function moveGhost(g) {
+  if (g.respawn > 0) { g.respawn--; return; }
+  if (g.eaten) {
+    // Return to ghost house
+    if (g.x === 10 && g.y === 10) { g.eaten = false; g.frightened = false; return; }
+    const tx = 10, ty = 10;
+    const dirs = [{dx:1,dy:0},{dx:-1,dy:0},{dx:0,dy:1},{dx:0,dy:-1}];
+    let best = null, bestDist = Infinity;
+    for (const d of dirs) {
+      const nx = g.x + d.dx, ny = g.y + d.dy;
+      if (!isWalkable(ny, nx) && !(nx === tx && ny === ty)) continue;
+      if (nx < 0 || nx >= COLS || ny < 0 || ny >= ROWS) continue;
+      const dist = Math.abs(nx - tx) + Math.abs(ny - ty);
+      if (dist < bestDist) { bestDist = dist; best = d; }
+    }
+    if (best) { g.x += best.dx; g.y += best.dy; g.dx = best.dx; g.dy = best.dy; }
+    return;
+  }
+
+  const dirs = [{dx:1,dy:0},{dx:-1,dy:0},{dx:0,dy:1},{dx:0,dy:-1}];
+  let choices = dirs.filter(d => {
+    if (d.dx === -g.dx && d.dy === -g.dy) return false; // no reverse unless forced
+    const nx = g.x + d.dx, ny = g.y + d.dy;
+    if (nx < 0 || nx >= COLS || ny < 0 || ny >= ROWS) return false;
+    return isWalkable(ny, nx);
+  });
+  if (choices.length === 0) choices = dirs.filter(d => {
+    const nx = g.x + d.dx, ny = g.y + d.dy;
+    if (nx < 0 || nx >= COLS || ny < 0 || ny >= ROWS) return false;
+    return isWalkable(ny, nx);
+  });
+  if (choices.length === 0) return;
+
+  let chosen;
+  if (g.frightened) {
+    chosen = choices[Math.floor(Math.random() * choices.length)];
+  } else {
+    const tx = guitarX, ty = guitarY;
+    // scatter every 200 ticks
+    if (g.scatter > 0) { g.scatter--; chosen = choices[Math.floor(Math.random() * choices.length)]; }
+    else {
+      let best = null, bestDist = Infinity;
+      for (const d of choices) {
+        const nx = g.x + d.dx, ny = g.y + d.dy;
+        const dist = Math.abs(nx - tx) + Math.abs(ny - ty);
+        if (dist < bestDist) { bestDist = dist; best = d; }
+      }
+      chosen = best || choices[0];
+    }
+  }
+  g.x += chosen.dx;
+  g.y += chosen.dy;
+  g.x = wrapX(g.x);
+  g.dx = chosen.dx; g.dy = chosen.dy;
+}
+
+function spawnParticles(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1 + Math.random() * 3;
+    particles.push({
+      x: x * T + T / 2, y: y * T + T / 2,
+      vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+      color, life: 1, decay: 0.04 + Math.random() * 0.04,
+      size: 2 + Math.random() * 3
+    });
+  }
+}
+
+function updateParticles() {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx; p.y += p.vy;
+    p.vx *= 0.92; p.vy *= 0.92;
+    p.life -= p.decay;
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+}
+
+function drawParticles() {
+  for (const p of particles) {
+    ctx.save();
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+// Draw animated electric guitar as Pac-Man
+function drawGuitar(cx, cy, dx, dy, mAngle) {
+  ctx.save();
+  ctx.translate(cx * T + T / 2, cy * T + T / 2);
+
+  // Rotate based on direction
+  let rot = 0;
+  if (dx === 1) rot = 0;
+  else if (dx === -1) rot = Math.PI;
+  else if (dy === -1) rot = -Math.PI / 2;
+  else if (dy === 1) rot = Math.PI / 2;
+  ctx.rotate(rot);
+
+  const s = T * 0.48; // scale
+
+  guitarAnimFrame += 0.15;
+
+  // Body glow
+  const bodyGrad = ctx.createRadialGradient(0, 0, 1, 0, 0, s * 1.3);
+  bodyGrad.addColorStop(0, '#FFE600');
+  bodyGrad.addColorStop(0.5, '#FF8C00');
+  bodyGrad.addColorStop(1, '#FF4500');
+  ctx.shadowColor = '#FFE600';
+  ctx.shadowBlur = 14;
+
+  // Guitar body (two humps of a guitar silhouette)
+  // We'll draw it facing right (mouth = output jack opening)
+  const openAngle = mAngle * Math.PI;
+  const closeAngle = 2 * Math.PI - openAngle;
+
+  // Main body shape as a path (guitar body blob)
+  ctx.beginPath();
+  // Outer body - guitar body shape using the Pac-Man mouth arc as the "pick guard opening"
+  ctx.moveTo(0, 0);
+  ctx.arc(0, 0, s, openAngle, closeAngle);
+  ctx.closePath();
+
+  ctx.fillStyle = bodyGrad;
+  ctx.fill();
+
+  // Guitar details on the body (frets effect, pick guard)
+  // Pick guard (dark teardrop shape)
+  if (mAngle < 0.45) { // only when mouth mostly closed
+    ctx.save();
+    ctx.clip(); // clip to body
+    ctx.beginPath();
+    ctx.ellipse(-s * 0.15, s * 0.25, s * 0.22, s * 0.35, -0.4, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Sound hole (f-hole style) - two small ovals
+  ctx.save();
+  const holePad = openAngle;
+  if (holePad < 0.4) {
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.beginPath();
+    ctx.ellipse(-s * 0.1, -s * 0.2, s * 0.07, s * 0.18, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(-s * 0.1, s * 0.2, s * 0.07, s * 0.18, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+
+  // Neck (extends to the right / front = mouth direction)
+  const neckLen = s * 1.1;
+  ctx.save();
+  ctx.shadowBlur = 8;
+  ctx.shadowColor = '#FFE600';
+  // Neck rectangle
+  ctx.fillStyle = '#CC7700';
+  const neckW = s * 0.22;
+  // Fretboard
+  ctx.beginPath();
+  ctx.rect(s * 0.7, -neckW / 2, neckLen, neckW);
+  ctx.fill();
+  // Frets
+  ctx.strokeStyle = '#FFE600';
+  ctx.lineWidth = 1;
+  for (let f = 0; f < 5; f++) {
+    const fx = s * 0.85 + f * (neckLen * 0.18);
+    ctx.beginPath();
+    ctx.moveTo(fx, -neckW / 2);
+    ctx.lineTo(fx, neckW / 2);
+    ctx.stroke();
+  }
+  // Headstock
+  ctx.fillStyle = '#FF8C00';
+  ctx.beginPath();
+  ctx.roundRect(s * 0.7 + neckLen, -neckW * 0.7, neckW * 0.9, neckW * 1.4, 2);
+  ctx.fill();
+  // Tuning pegs (animated rotation)
+  ctx.fillStyle = '#FFE600';
+  const pegPositions = [-neckW * 0.4, neckW * 0.4];
+  for (const py of pegPositions) {
+    ctx.save();
+    ctx.translate(s * 0.7 + neckLen + neckW * 0.45, py);
+    ctx.rotate(guitarAnimFrame);
+    ctx.beginPath();
+    ctx.arc(0, 0, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(-1, -4, 2, 4);
+    ctx.restore();
+  }
+  ctx.restore();
+
+  // Strings (3 visible strings animated)
+  ctx.save();
+  for (let i = 0; i < 3; i++) {
+    const sy = -neckW * 0.3 + i * (neckW * 0.3);
+    const wave = Math.sin(guitarAnimFrame * 3 + i * 2) * 1.5;
+    ctx.strokeStyle = `rgba(255,255,200,${0.6 - i * 0.1})`;
+    ctx.lineWidth = 0.5 + i * 0.3;
+    ctx.shadowColor = '#FFFFAA';
+    ctx.shadowBlur = 3;
+    ctx.beginPath();
+    ctx.moveTo(s * 0.7, sy);
+    ctx.quadraticCurveTo(s * 1.2, sy + wave, s * 0.7 + neckLen + neckW * 0.4, sy);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // Mouth "lightning bolt" teeth effect
+  if (openAngle > 0.15) {
+    ctx.save();
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = '#FFFFFF';
+    ctx.shadowBlur = 6;
+    ctx.globalAlpha = 0.7;
+    // top jaw edge
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    const ax = Math.cos(openAngle) * s, ay = Math.sin(openAngle) * s;
+    ctx.lineTo(ax, ay);
+    // bottom jaw
+    ctx.moveTo(0, 0);
+    const bx = Math.cos(-openAngle) * s, by = Math.sin(-openAngle) * s;
+    ctx.lineTo(bx, by);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Neon outline glow
+  ctx.shadowColor = '#FFE600';
+  ctx.shadowBlur = 20;
+  ctx.strokeStyle = '#FFE600';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(0, 0, s, openAngle, closeAngle);
+  ctx.stroke();
+
+  // Eye (quarter note symbol ♩)
+  if (mAngle < 0.45) {
+    ctx.save();
+    ctx.fillStyle = '#000';
+    ctx.shadowBlur = 0;
+    ctx.beginPath();
+    ctx.arc(-s * 0.2, -s * 0.25, s * 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    // pupil glow
+    ctx.fillStyle = '#FFE600';
+    ctx.beginPath();
+    ctx.arc(-s * 0.2 + 1, -s * 0.25 - 1, s * 0.04, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  ctx.restore();
+}
+
+function drawGhost(g) {
+  if (g.respawn > 0) return;
+  const cx = g.x * T + T / 2, cy = g.y * T + T / 2;
+  const s = T * 0.44;
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  let color = g.color;
+  if (g.eaten) {
+    // Just draw eyes
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(-s * 0.25, -s * 0.1, s * 0.2, 0, Math.PI * 2);
+    ctx.arc(s * 0.25, -s * 0.1, s * 0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#00AAFF';
+    ctx.beginPath();
+    ctx.arc(-s * 0.25 + g.dx * 3, -s * 0.1 + g.dy * 3, s * 0.1, 0, Math.PI * 2);
+    ctx.arc(s * 0.25 + g.dx * 3, -s * 0.1 + g.dy * 3, s * 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    return;
+  }
+
+  if (g.frightened) {
+    const t = powerTimer / 300;
+    color = t < 0.3 && Math.sin(animTick * 0.5) > 0 ? '#fff' : '#0000CC';
+  }
+
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 10;
+
+  // Ghost body
+  ctx.beginPath();
+  ctx.arc(0, -s * 0.15, s, Math.PI, 0);
+  // Wavy bottom
+  const waves = 3;
+  for (let i = 0; i < waves; i++) {
+    const wx = s - (i * 2 * s / waves);
+    const nx = s - ((i + 1) * 2 * s / waves);
+    const wy = s * 0.85 + Math.sin(animTick * 0.15 + i) * 2;
+    ctx.quadraticCurveTo(wx - s / waves * 0.5, wy, wx - s / waves, s * 0.65);
+  }
+  ctx.lineTo(-s, -s * 0.15);
+  ctx.fillStyle = color;
+  ctx.fill();
+
+  // Eyes
+  if (!g.frightened) {
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.ellipse(-s * 0.3, -s * 0.25, s * 0.2, s * 0.25, 0, 0, Math.PI * 2);
+    ctx.ellipse(s * 0.3, -s * 0.25, s * 0.2, s * 0.25, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#0044FF';
+    ctx.beginPath();
+    ctx.arc(-s * 0.3 + g.dx * 3, -s * 0.25 + g.dy * 3, s * 0.1, 0, Math.PI * 2);
+    ctx.arc(s * 0.3 + g.dx * 3, -s * 0.25 + g.dy * 3, s * 0.1, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    // Frightened face
+    ctx.fillStyle = '#FFE600';
+    ctx.beginPath();
+    ctx.arc(-s * 0.3, -s * 0.15, s * 0.1, 0, Math.PI * 2);
+    ctx.arc(s * 0.3, -s * 0.15, s * 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    // Wavy mouth
+    ctx.strokeStyle = '#FFE600';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(-s * 0.4, s * 0.2);
+    for (let i = 0; i <= 4; i++) {
+      ctx.lineTo(-s * 0.4 + i * s * 0.2, s * 0.2 + (i % 2 === 0 ? 4 : -4));
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawTile(r, c) {
+  const x = c * T, y = r * T;
+  const v = map[r][c];
+
+  if (v === 1) {
+    // Wall
+    ctx.fillStyle = '#2200AA';
+    ctx.fillRect(x, y, T, T);
+    // Neon border effect
+    ctx.strokeStyle = '#6633FF';
+    ctx.lineWidth = 1;
+    ctx.shadowColor = '#8844FF';
+    ctx.shadowBlur = 4;
+    ctx.strokeRect(x + 1, y + 1, T - 2, T - 2);
+    ctx.shadowBlur = 0;
+  } else if (v === 0) {
+    // Dot (guitar pick shaped)
+    drawPick(x + T / 2, y + T / 2, 3);
+  } else if (v === 2) {
+    // Power pellet (big glowing pick)
+    const pulse = 0.7 + 0.3 * Math.sin(animTick * 0.12);
+    drawPick(x + T / 2, y + T / 2, 6 * pulse, true);
+  }
+}
+
+function drawPick(cx, cy, r, big = false) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(animTick * 0.05);
+  // Triangle pick shape
+  if (big) {
+    ctx.shadowColor = '#39FF14';
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = '#39FF14';
+  } else {
+    ctx.fillStyle = '#FFE600';
+    ctx.shadowColor = '#FFE600';
+    ctx.shadowBlur = 4;
+  }
+  ctx.beginPath();
+  ctx.moveTo(0, -r);
+  ctx.lineTo(r * 0.866, r * 0.5);
+  ctx.lineTo(-r * 0.866, r * 0.5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawBackground() {
+  ctx.fillStyle = '#0a0010';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // Subtle grid lines
+  ctx.strokeStyle = 'rgba(50,0,100,0.3)';
+  ctx.lineWidth = 0.5;
+  for (let r = 0; r <= ROWS; r++) {
+    ctx.beginPath();
+    ctx.moveTo(0, r * T);
+    ctx.lineTo(canvas.width, r * T);
+    ctx.stroke();
+  }
+  for (let c = 0; c <= COLS; c++) {
+    ctx.beginPath();
+    ctx.moveTo(c * T, 0);
+    ctx.lineTo(c * T, canvas.height);
+    ctx.stroke();
+  }
+}
+
+let ghostMoveCounter = 0;
+
+function gameLoop() {
+  if (gameState !== 'playing') return;
+  animTick++;
+  ghostMoveCounter++;
+
+  // Mouth animation
+  if (mouthOpen) {
+    mouthAngle += 0.06;
+    if (mouthAngle >= 0.35) mouthOpen = false;
+  } else {
+    mouthAngle -= 0.06;
+    if (mouthAngle <= 0.02) mouthOpen = true;
+  }
+
+  // Move guitar
+  if (guitarDX !== 0 || guitarDY !== 0) {
+    const nx = guitarX + guitarDX, ny = guitarY + guitarDY;
+    if (isWalkable(ny, nx)) {
+      guitarX = wrapX(nx);
+      guitarY = ny;
+    }
+  }
+
+  // Try next direction
+  if (canMove(guitarX, guitarY, nextDX, nextDY)) {
+    guitarDX = nextDX; guitarDY = nextDY;
+  }
+
+  // Eat dots
+  const tile = map[guitarY][guitarX];
+  if (tile === 0) {
+    map[guitarY][guitarX] = 3;
+    score += 10; dotsEaten++;
+    spawnParticles(guitarX, guitarY, '#FFE600', 4);
+    updateHUD();
+  } else if (tile === 2) {
+    map[guitarY][guitarX] = 3;
+    score += 50; dotsEaten++;
+    powerActive = true;
+    powerTimer = 300;
+    ghosts.forEach(g => { if (!g.eaten) g.frightened = true; g.scatter = 0; });
+    spawnParticles(guitarX, guitarY, '#39FF14', 12);
+    updateHUD();
+  }
+
+  // Power timer
+  if (powerActive) {
+    powerTimer--;
+    if (powerTimer <= 0) {
+      powerActive = false;
+      ghosts.forEach(g => { g.frightened = false; });
+    }
+  }
+
+  // Move ghosts (every 4 ticks, slower = easier)
+  const speed = Math.max(2, 4 - Math.floor(level / 3));
+  if (ghostMoveCounter % speed === 0) {
+    ghosts.forEach(g => moveGhost(g));
+  }
+  // Scatter timer
+  if (ghostMoveCounter % 200 === 0) {
+    ghosts.forEach(g => { if (!g.frightened && !g.eaten) g.scatter = 20; });
+  }
+
+  // Collision
+  for (const g of ghosts) {
+    if (g.x === guitarX && g.y === guitarY && g.respawn <= 0) {
+      if (g.frightened && !g.eaten) {
+        // Eat ghost
+        g.eaten = true; g.frightened = false;
+        score += 200;
+        spawnParticles(g.x, g.y, g.color, 16);
+        g.respawn = 60;
+        updateHUD();
+      } else if (!g.eaten) {
+        // Lose life
+        lives--;
+        updateHUD();
+        spawnParticles(guitarX, guitarY, '#FF2D78', 20);
+        if (lives <= 0) {
+          gameState = 'gameover';
+          setTimeout(showGameOver, 800);
+          break;
+        } else {
+          // Reset positions
+          guitarX = 10; guitarY = 16;
+          guitarDX = 0; guitarDY = 0;
+          nextDX = 1; nextDY = 0;
+          initGhosts();
+          break;
+        }
+      }
+    }
+  }
+
+  // Win condition
+  if (dotsEaten >= totalDots) {
+    level++;
+    initMap();
+    initGhosts();
+    dotsEaten = 0;
+    guitarX = 10; guitarY = 16;
+    guitarDX = 0; guitarDY = 0;
+    nextDX = 1; nextDY = 0;
+    powerActive = false;
+    updateHUD();
+  }
+
+  updateParticles();
+  render();
+
+  window._gameLoop = requestAnimationFrame(gameLoop);
+}
+
+function render() {
+  drawBackground();
+
+  // Draw maze tiles
+  ctx.shadowBlur = 0;
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      drawTile(r, c);
+
+  drawParticles();
+
+  // Draw ghosts
+  ghosts.forEach(drawGhost);
+
+  // Draw guitar-man
+  drawGuitar(guitarX, guitarY, guitarDX || nextDX, guitarDY || nextDY, mouthAngle);
+
+  // Power mode flash overlay
+  if (powerActive && powerTimer < 60 && Math.sin(animTick * 0.4) > 0) {
+    ctx.fillStyle = 'rgba(57,255,20,0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
+function showGameOver() {
+  const ov = document.getElementById('overlay');
+  ov.innerHTML = `
+    <h2>GAME OVER</h2>
+    <p style="color:var(--neon-pink)">FINAL SCORE: ${score}</p>
+    <p style="color:var(--neon-green); font-size:0.8rem;">LEVEL REACHED: ${level}</p>
+    <button id="start-btn" onclick="startGame()">PLAY AGAIN!</button>
+  `;
+  ov.style.display = 'flex';
+}
+
+// Keyboard controls
+const keys = {};
+document.addEventListener('keydown', e => {
+  keys[e.key] = true;
+  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d'].includes(e.key)) e.preventDefault();
+  if (e.key === 'ArrowLeft' || e.key === 'a') { nextDX = -1; nextDY = 0; }
+  if (e.key === 'ArrowRight' || e.key === 'd') { nextDX = 1; nextDY = 0; }
+  if (e.key === 'ArrowUp' || e.key === 'w') { nextDX = 0; nextDY = -1; }
+  if (e.key === 'ArrowDown' || e.key === 's') { nextDX = 0; nextDY = 1; }
+});
+
+// D-pad
+document.getElementById('btn-up').addEventListener('touchstart', e => { e.preventDefault(); nextDX=0; nextDY=-1; });
+document.getElementById('btn-down').addEventListener('touchstart', e => { e.preventDefault(); nextDX=0; nextDY=1; });
+document.getElementById('btn-left').addEventListener('touchstart', e => { e.preventDefault(); nextDX=-1; nextDY=0; });
+document.getElementById('btn-right').addEventListener('touchstart', e => { e.preventDefault(); nextDX=1; nextDY=0; });
+document.getElementById('btn-up').addEventListener('mousedown', () => { nextDX=0; nextDY=-1; });
+document.getElementById('btn-down').addEventListener('mousedown', () => { nextDX=0; nextDY=1; });
+document.getElementById('btn-left').addEventListener('mousedown', () => { nextDX=-1; nextDY=0; });
+document.getElementById('btn-right').addEventListener('mousedown', () => { nextDX=1; nextDY=0; });
+
+// Draw initial screen
+drawBackground();
+for (let r = 0; r < ROWS; r++)
+  for (let c = 0; c < COLS; c++) {
+    map = BASE_MAP.map(row=>[...row]);
+    drawTile(r, c);
+  }
+</script>
+</body>
+</html>
