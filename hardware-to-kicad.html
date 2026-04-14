@@ -545,7 +545,7 @@
   <!-- OUTPUT -->
   <div class="output-section" id="output-section">
     <div class="output-tabs">
-      <button class="tab active" onclick="switchTab('sch',this)">schematic.kicad_sch</button>
+      <button class="tab active" onclick="switchTab('sch',this)">build_script.py</button>
       <button class="tab" onclick="switchTab('pcb',this)">layout.kicad_pcb</button>
       <button class="tab" onclick="switchTab('guide',this)">pcb_guide.txt</button>
     </div>
@@ -555,7 +555,7 @@
       <div class="tab-pane" id="tab-guide"><pre id="out-guide"></pre></div>
     </div>
     <div class="dl-row">
-      <button class="dl-btn" onclick="download('sch')">↓ TIGA.kicad_sch</button>
+      <button class="dl-btn" onclick="download('sch')">↓ build_TIGA.py (run in KiCad console)</button>
       <button class="dl-btn" onclick="download('pcb')">↓ TIGA.kicad_pcb</button>
       <button class="dl-btn" onclick="download('pro')">↓ TIGA.kicad_pro</button>
       <button class="dl-btn" onclick="download('guide')">↓ pcb_guide.txt</button>
@@ -783,90 +783,73 @@ CODE SUMMARY: ${codeContext.substring(0, 500)}`;
 
     const smdFP = config.smdSize === '0805' ? '0805_2012Metric' : config.smdSize === '0603' ? '0603_1608Metric' : '0402_1005Metric';
 
-    const schPrompt = `Output ONLY a complete valid KiCad 6+ schematic (.kicad_sch). No explanation. No markdown. Just the file.
+    // ── Call 1: Python script for KiCad scripting console ─
+    statusText.textContent = 'Generating KiCad Python script (1 of 2)...';
+
+    const scriptPrompt = `Write a Python script to run in KiCad 9's scripting console (pcbnew module).
+The script must create a complete schematic AND PCB for the TIGA Health Tracker.
 
 ${boardDesc}
 
-The schematic must include these symbols placed and wired:
-- U1: ESP32-S3-WROOM-1 at (150 100)
-- U2: AMS1117-3.3 regulator at (50 60)
-- U3: MPU-6050 sensor at (250 100)
-- J1: LiPo JST connector at (50 160)
-- J2: 10-pin board connector at (350 100)
-- SW1, SW2: Push buttons at (300 160) and (330 160)
-- R1,R2: 10k button pullups near buttons
-- R3,R4: 4.7k I2C pullups near MPU6050
-- C1: 10uF bulk cap near U2
-- C2,C3,C4: 100nF decoupling near each IC
-- D1: Power LED near U2
-- R5: 330R LED resistor
+The script should use pcbnew Python API to:
+1. Create a new PCB board object
+2. Add all footprints with correct positions (mm coordinates):
+   - ESP32-S3-WROOM-1 at (20, 15) - center
+   - MPU-6050 at (32, 8) - top right  
+   - JST LiPo connector at (5, 25) - bottom left
+   - AMS1117-3.3 at (8, 8) - top left
+   - Push buttons SW1 at (35, 20), SW2 at (35, 25)
+   - Resistors R1-R5 clustered near their ICs
+   - Capacitors C1-C4 near their ICs
+   - Power LED D1 near regulator
+3. Add board outline (Edge.Cuts): 40mm x 30mm rectangle
+4. Add copper fills for GND on F.Cu and B.Cu
+5. Save as 'TIGA_generated.kicad_pcb' to the desktop
+6. Print confirmation message
 
-Wire connections using net labels (not drawn wires) for clarity:
-- Net labels: +3V3, GND, I2C_SDA, I2C_SCL, SPI_MOSI, SPI_MISO, SPI_SCK, TFT_CS, TFT_DC, TFT_RST, TFT_BL, BTN1, BTN2, BATT+
+Use this structure:
+import pcbnew, os
+board = pcbnew.CreateEmptyBoard()
+# add footprints...
+board.Save(os.path.expanduser('~/Desktop/TIGA_generated.kicad_pcb'))
+print('Saved!')
 
-Format rules:
-- Start: (kicad_sch (version 20230121) (generator eeschema)
-- Each symbol needs real uuid (use format like "a1b2c3d4-e5f6-7890-abcd-ef1234567890"), valid (at X Y 0), (unit 1), (in_bom yes), (on_board yes)
-- Use (net_name "NETNAME") labels placed with (label (at X Y 0) (text "NETNAME"))
-- Include power symbols: (power "+3V3") and (power "GND") connected to all relevant pins  
-- lib_symbols section must define pin shapes for each symbol used
-- End with closing )
-- Output a file that KiCad 9 can open without errors`;
+Also write a separate simpler script for the schematic using the schematic API if available, or note that the PCB file contains all component and net information needed.
 
-    lastSch = await callAPI(schPrompt, 3500);
+Make the script clean, well-commented, copy-paste ready. Under 80 lines.`;
 
-    // Also generate the .kicad_pro project file (small, fast)
-    const proContent = JSON.stringify({
-      "board": { "design_settings": {}, "layer_presets": [] },
-      "boards": [],
-      "cvpcb": { "equivalence_files": [] },
-      "erc": { "erc_exclusions": [], "meta": { "version": 0 } },
-      "libraries": { "pinned_footprint_libs": [], "pinned_symbol_libs": [] },
-      "meta": { "filename": "TIGA.kicad_pro", "version": 7 },
-      "net_settings": { "classes": [{ "bus_width": 12, "clearance": 0.2, "diff_pair_gap": 0.25, "diff_pair_via_gap": 0.25, "diff_pair_width": 0.2, "line_style": 0, "microvia_diameter": 0.3, "microvia_drill": 0.1, "name": "Default", "pcb_color": "rgba(0, 0, 0, 0.000)", "schematic_color": "rgba(0, 0, 0, 0.000)", "track_width": 0.25, "via_diameter": 0.6, "via_drill": 0.3, "wire_width": 6, "bus_width": 12 }], "meta": { "version": 3 }, "net_colors": null, "netclass_assignments": null, "netclass_patterns": [] },
-      "pcbnew": { "last_paths": {}, "page_layout_descr_file": "" },
-      "schematic": { "annotate_start_num": 0, "drawing": { "dashed_lines_dash_length_ratio": 12.0, "dashed_lines_gap_length_ratio": 3.0, "default_line_thickness": 6.0, "default_text_size": 50.0, "field_names": [], "intersheets_ref_own_page": false, "intersheets_ref_prefix": "", "intersheets_ref_short": false, "intersheets_ref_show": false, "intersheets_ref_suffix": "", "junction_size_choice": 3, "label_size_ratio": 0.375, "pin_symbol_size": 25.0, "text_offset_ratio": 0.15 }, "legacy_lib_dir": "", "legacy_lib_list": [], "meta": { "version": 1 }, "net_format_name": "", "ngspice_settings": null, "operating_point_overlay_i_precision": 3, "operating_point_overlay_i_range": "~A", "operating_point_overlay_v_precision": 3, "operating_point_overlay_v_range": "~V", "page_layout_descr_file": "", "plot_directory": "", "spice_adjust_passive_values": false, "spice_current_sheet_as_root": false, "subpart_first_id": 65, "subpart_id_separator": 0 },
-      "sheets": [["a1b2c3d4-0000-0000-0000-000000000001", "Root"]],
-      "text_variables": {}
-    }, null, 2);
-    lastPro = proContent;`;
-
-    lastSch = await callAPI(schPrompt, 3500);
+    lastSch = await callAPI(scriptPrompt, 2000);
     document.getElementById('out-sch').textContent = lastSch;
-    statusText.textContent = 'Schematic done. Generating PCB layout file (2 of 3)...';
+    statusText.textContent = 'Script done. Generating PCB guide (2 of 2)...';
 
-    // ── Call 2: KiCad PCB (.kicad_pcb) ────────────────────
-    const pcbPrompt = `Output ONLY a valid KiCad 6+ PCB layout file (.kicad_pcb format). No explanation. No markdown. Just the file content.
+    // ── Also generate a minimal valid .kicad_pcb directly ──
+    // We generate a small but syntactically correct file with just
+    // the board outline and footprint stubs — enough for KiCad to open
+    const pcbPrompt = `Output a minimal but syntactically COMPLETE and valid KiCad 9 .kicad_pcb file.
+It must open in KiCad 9 without any errors.
 
 ${boardDesc}
 
-RULES:
-- First line: (kicad_pcb (version 20230121) (generator pcbnew)
-- Include (general (thickness 1.6))
-- Include (stackup with 2 copper layers: F.Cu and B.Cu)
-- Board outline on Edge.Cuts layer: rectangle 40mm x 30mm for motherboard
-- Place footprints at realistic positions, no overlaps:
-  ESP32 module center: (at 20 15) - largest component, center of board
-  MPU6050: (at 32 8) - top right, away from ESP32 antenna end
-  JST connector: (at 5 25) - bottom left edge
-  Buttons: (at 35 25) and (at 35 20) - right edge
-  Regulator: (at 8 8) - top left near power input
-  Capacitors/Resistors: near their associated ICs
-- Use real KiCad footprint paths:
-  ESP32: (layer "F.Cu") RF_Module:ESP32-S3-WROOM-1
-  MPU6050: Sensor_IMU:MPU-6050
-  Resistors: Resistor_SMD:R_${smdFP}
-  Capacitors: Capacitor_SMD:C_${smdFP}
-  JST: Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal
-  Connector: Connector_PinHeader_2.54mm:PinHeader_2x05_P2.54mm_Vertical
-  Buttons: Button_Switch_SMD:SW_SPST_B3U-1000P
-  LED: LED_SMD:LED_0805_2012Metric
-  Regulator: Package_TO_SOT_SMD:SOT-223-3_TabPin2
-- Add copper fill zones for GND on both F.Cu and B.Cu
-- Include ratsnest (unrouted) lines showing connections
-- Set design rules: clearance 0.2mm, track width 0.25mm, via drill 0.3mm via size 0.6mm
-- End with closing )
-- Be complete. Output the full valid file.`;
+Requirements:
+- Keep it SHORT — only essential sections, no routing yet
+- Board outline: 40x30mm rectangle on Edge.Cuts layer
+- Include these footprints with positions (use simple pad definitions):
+  U1 ESP32-S3-WROOM-1 at (20 15), U2 AMS1117-3.3 at (8 8),
+  U3 MPU-6050 at (32 8), J1 JST connector at (5 25),
+  SW1 at (35 20), SW2 at (35 25),
+  R1 at (12 8), R2 at (14 8), R3 at (32 14), R4 at (32 17),
+  C1 at (8 12), C2 at (20 8), C3 at (22 8), C4 at (32 20)
+- Design rules section with clearance 0.2mm, track 0.25mm
+- Net list section with: GND, +3V3, I2C_SDA, I2C_SCL, SPI_MOSI, SPI_MISO, SPI_SCK, TFT_CS, TFT_DC, TFT_RST, TFT_BL, BTN1, BTN2
+
+CRITICAL SYNTAX RULES for KiCad 9 .kicad_pcb:
+- Start: (kicad_pcb (version 20230121) (generator pcbnew)
+- Each footprint: (footprint "LIB:NAME" (layer "F.Cu") (at X Y) (uuid "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx") (property "Reference" "REF" (at 0 0 0) (layer "F.SilkS") (effects (font (size 1 1)))) (property "Value" "VAL" (at 0 1.5 0) (layer "F.SilkS") (effects (font (size 1 1)))) (pad "1" smd rect (at 0 0) (size 1.5 1.5) (layers "F.Cu" "F.Paste" "F.Mask") (net 1 "GND")))
+- Board outline: (gr_rect (start 0 0) (end 40 30) (layer "Edge.Cuts") (width 0.05))
+- End the file with exactly ONE closing ) on its own line
+- Every opening ( must have a matching closing )
+- Use real uuid strings like "a1b2c3d4-1234-5678-abcd-ef0123456789"
+- DO NOT truncate. The file must be complete and balanced.`;
 
     lastPcb = await callAPI(pcbPrompt, 3500);
     document.getElementById('out-pcb').textContent = lastPcb;
@@ -907,7 +890,7 @@ Cover:
 // ── download ───────────────────────────────────────────
 function download(type) {
   const map = {
-    sch:   { data: lastSch,   name: 'TIGA.kicad_sch' },
+    sch:   { data: lastSch,   name: 'build_TIGA.py' },
     pcb:   { data: lastPcb,   name: 'TIGA.kicad_pcb' },
     guide: { data: lastGuide, name: 'pcb_guide.txt'   },
     pro:   { data: lastPro,   name: 'TIGA.kicad_pro'  }
