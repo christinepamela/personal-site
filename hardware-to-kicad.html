@@ -1,985 +1,502 @@
 <!DOCTYPE html>
-<!--
-  TOOLS PAGE METADATA
-  ───────────────────
-  Category:    Hardware & Electronics Tools
-  Title:       Hardware → KiCad Converter
-  Description: Upload your Arduino or ESP32 code and wiring diagram
-               to generate a KiCad-ready netlist and PCB layout guide.
-               Built by Claude
--->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hardware → KiCad Converter</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!--
+  TOOLS PAGE METADATA
+  Category:    Hardware & Electronics Tools
+  Title:       Hardware to KiCad Converter
+  Description: Upload your Arduino or ESP32 code and wiring notes to generate
+               a Python script that builds your KiCad schematic automatically.
+               Run two terminal commands and open the result directly in KiCad 9.
+  Built by:    Claude
+-->
+<title>Hardware to KiCad Converter</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f9f9f7;
-    --surface: #ffffff;
-    --surface2: #f4f4f2;
-    --border: #e4e4e0;
-    --border2: #d0d0cc;
-    --accent: #2a6b4f;
-    --accent2: #3d5a80;
-    --text: #1a1a18;
-    --text2: #6b6b66;
-    --text3: #9b9b96;
-    --warn: #92600a;
-    --danger: #c0392b;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'Inter', sans-serif;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 15px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-
-  .container {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 3rem 1.5rem 4rem;
-  }
-
-  header {
-    margin-bottom: 2.5rem;
-  }
-  .tag {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--accent);
-    border: 1px solid #b8d4c6;
-    background: #edf5f1;
-    padding: 3px 10px;
-    border-radius: 4px;
-    letter-spacing: 0.08em;
-    margin-bottom: 14px;
-    text-transform: uppercase;
-  }
-  h1 {
-    font-size: 32px;
-    font-weight: 600;
-    color: var(--text);
-    line-height: 1.1;
-    margin-bottom: 8px;
-  }
-  h1 span { color: var(--accent); }
-  .subtitle {
-    color: var(--text2);
-    font-size: 15px;
-    font-weight: 300;
-  }
-
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  .card-title {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--accent2);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .card-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* file upload */
-  .drop-zone {
-    border: 1px dashed var(--border2);
-    border-radius: 6px;
-    padding: 2rem;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .drop-zone:hover, .drop-zone.drag-over {
-    border-color: var(--accent);
-    background: #edf5f1;
-  }
-  .drop-zone input { display: none; }
-  .drop-icon {
-    width: 36px;
-    height: 36px;
-    border: 1px solid var(--border2);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 12px;
-    color: var(--text2);
-    font-size: 18px;
-  }
-  .drop-label { font-size: 14px; color: var(--text2); }
-  .drop-label strong { color: var(--text); font-weight: 500; }
-  .drop-sub { font-size: 12px; color: var(--text2); margin-top: 4px; font-family: var(--mono); }
-
-  .file-list { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
-  .file-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 8px 12px;
-    font-family: var(--mono);
-    font-size: 12px;
-  }
-  .file-item .fname { color: var(--accent); }
-  .file-item .fsize { color: var(--text2); margin-left: 8px; }
-  .file-item button {
-    background: none;
-    border: none;
-    color: var(--text2);
-    cursor: pointer;
-    font-size: 14px;
-    padding: 0 4px;
-    transition: color 0.15s;
-  }
-  .file-item button:hover { color: var(--danger); }
-
-  textarea {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 10px 12px;
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 14px;
-    resize: vertical;
-    transition: border-color 0.2s;
-    line-height: 1.5;
-  }
-  textarea:focus { outline: none; border-color: var(--accent2); }
-  textarea::placeholder { color: var(--text2); }
-
-  /* layer selector */
-  .layer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-  .layer-opt {
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 12px;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .layer-opt:hover { border-color: var(--border2); }
-  .layer-opt.active {
-    border-color: var(--accent);
-    background: #edf5f1;
-  }
-  .layer-opt h4 { font-size: 13px; font-weight: 500; color: var(--text); }
-  .layer-opt.active h4 { color: var(--accent); }
-  .layer-opt p { font-size: 11px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
-  .badge {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.05em;
-    padding: 2px 6px;
-    border-radius: 2px;
-    margin-left: 6px;
-    text-transform: uppercase;
-  }
-  .badge-green { background: #edf5f1; color: var(--accent); }
-  .badge-purple { background: #eaeff5; color: var(--accent2); }
-
-  /* board type */
-  .board-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-  .board-opt {
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 12px;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .board-opt:hover { border-color: var(--border2); }
-  .board-opt.active {
-    border-color: var(--accent2);
-    background: #eaeff5;
-  }
-  .board-opt h4 { font-size: 13px; font-weight: 500; color: var(--text); }
-  .board-opt.active h4 { color: var(--accent2); }
-  .board-opt p { font-size: 11px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
-
-  /* advanced toggle */
-  .adv-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    user-select: none;
-    padding: 8px 0;
-    border-top: 1px solid var(--border);
-    margin-top: 4px;
-  }
-  .adv-toggle span { font-size: 13px; color: var(--text2); }
-  .adv-toggle .arr { font-family: var(--mono); font-size: 12px; color: var(--text2); transition: transform 0.2s; }
-  .adv-toggle.open .arr { transform: rotate(180deg); }
-  .adv-body { display: none; margin-top: 16px; }
-  .adv-body.open { display: block; }
-
-  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-  .field { display: flex; flex-direction: column; gap: 5px; }
-  .field label { font-family: var(--mono); font-size: 11px; color: var(--text2); letter-spacing: 0.05em; }
-  .field input, .field select {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 7px 10px;
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 13px;
-    width: 100%;
-    transition: border-color 0.15s;
-  }
-  .field input:focus, .field select:focus { outline: none; border-color: var(--accent2); }
-  .field select option { background: var(--surface2); }
-  .field .hint { font-size: 11px; color: var(--text2); line-height: 1.4; }
-
-  /* run button */
-  .run-btn {
-    width: 100%;
-    padding: 13px;
-    background: var(--text);
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-family: var(--sans);
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    letter-spacing: 0.01em;
-    transition: opacity 0.15s, transform 0.1s;
-    margin-top: 1rem;
-  }
-  .run-btn:hover { opacity: 0.9; }
-  .run-btn:active { transform: scale(0.99); }
-  .run-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
-  /* status */
-  .status-bar {
-    margin-top: 12px;
-    min-height: 22px;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text2);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .spinner {
-    width: 12px;
-    height: 12px;
-    border: 1.5px solid var(--border2);
-    border-top-color: var(--accent2);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: none;
-    flex-shrink: 0;
-  }
-  .spinner.visible { display: block; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* output */
-  .output-section { display: none; margin-top: 1.5rem; }
-  .output-tabs {
-    display: flex;
-    gap: 4px;
-    margin-bottom: -1px;
-  }
-  .tab {
-    padding: 8px 16px;
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-bottom: none;
-    border-radius: 6px 6px 0 0;
-    color: var(--text2);
-    background: transparent;
-    transition: color 0.15s;
-  }
-  .tab.active {
-    border-color: var(--border);
-    background: var(--surface);
-    color: var(--accent2);
-  }
-  .tab-content {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 0 8px 8px 8px;
-    padding: 1.25rem;
-  }
-  .tab-pane { display: none; }
-  .tab-pane.active { display: block; }
-  pre {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text);
-    white-space: pre-wrap;
-    word-break: break-word;
-    max-height: 420px;
-    overflow-y: auto;
-    line-height: 1.7;
-  }
-  pre::-webkit-scrollbar { width: 6px; }
-  pre::-webkit-scrollbar-track { background: var(--surface2); }
-  pre::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
-
-  .dl-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 14px;
-    flex-wrap: wrap;
-  }
-  .dl-btn {
-    padding: 8px 16px;
-    background: transparent;
-    border: 1px solid var(--border2);
-    border-radius: 4px;
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 12px;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .dl-btn:hover { border-color: var(--accent); background: #edf5f1; color: var(--accent); }
-
-  .preloaded-notice {
-    background: rgba(79,255,176,0.07);
-    border: 1px solid rgba(79,255,176,0.25);
-    border-radius: 6px;
-    padding: 10px 14px;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--accent);
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  @media (max-width: 600px) {
-    h1 { font-size: 26px; }
-    .layer-grid, .board-grid, .field-grid { grid-template-columns: 1fr; }
-    .container { padding: 1.5rem 1rem 3rem; }
-  }
+:root{--bg:#f8f8f6;--surface:#ffffff;--s2:#f2f2ef;--border:#e2e2dc;--b2:#cecec8;--text:#1c1c1a;--t2:#6b6b65;--t3:#9b9b94;--green:#2d5a3d;--blue:#1a3a5c;--mono:"IBM Plex Mono",monospace;--sans:"DM Sans",sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;min-height:100vh}
+.wrap{max-width:820px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+.hrow{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.tag{font-family:var(--mono);font-size:11px;color:var(--green);background:#edf5f0;border:1px solid #b8d4c4;padding:3px 10px;border-radius:4px;letter-spacing:.08em;text-transform:uppercase}
+.sbtn{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--b2);border-radius:6px;background:var(--surface);cursor:pointer;font-family:var(--sans);font-size:13px;color:var(--text);transition:border-color .15s}
+.sbtn:hover{border-color:var(--green)}
+h1{font-size:30px;font-weight:500;margin-bottom:6px}
+h1 span{color:var(--green)}
+.sub{font-size:14px;color:var(--t2);font-weight:300}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin-bottom:.75rem}
+.ctitle{font-family:var(--mono);font-size:11px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.875rem;display:flex;align-items:center;gap:8px}
+.ctitle::after{content:"";flex:1;height:1px;background:var(--border)}
+.dz{border:1px dashed var(--b2);border-radius:6px;padding:1.75rem;text-align:center;cursor:pointer;transition:all .15s}
+.dz:hover,.dz.over{border-color:var(--green);background:#edf5f0}
+.dz input{display:none}
+.dl{font-size:14px;color:var(--t2);margin-top:8px}
+.dl strong{color:var(--text)}
+.ds{font-size:12px;color:var(--t3);margin-top:4px;font-family:var(--mono)}
+.flist{margin-top:10px;display:flex;flex-direction:column;gap:5px}
+.fp{display:flex;align-items:center;justify-content:space-between;background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:7px 12px;font-family:var(--mono);font-size:12px}
+.fp .fn{color:var(--green)}
+.fp .fsz{color:var(--t3);margin-left:6px}
+.fp button{background:none;border:none;cursor:pointer;font-size:14px;color:var(--t3);transition:color .15s}
+.fp button:hover{color:#c0392b}
+textarea{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:10px 12px;color:var(--text);font-family:var(--sans);font-size:14px;resize:vertical;line-height:1.5;transition:border-color .2s}
+textarea:focus{outline:none;border-color:var(--blue)}
+textarea::placeholder{color:var(--t3)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.opt{border:1px solid var(--border);border-radius:6px;padding:11px;cursor:pointer;transition:all .15s}
+.opt:hover{border-color:var(--b2)}
+.opt.sg{border-color:var(--green);background:#edf5f0}
+.opt.sb{border-color:var(--blue);background:#edf0f5}
+.opt h4{font-size:13px;font-weight:500;color:var(--text)}
+.opt.sg h4{color:var(--green)}
+.opt.sb h4{color:var(--blue)}
+.opt p{font-size:11px;color:var(--t2);margin-top:3px;line-height:1.4}
+.badge{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:3px;margin-left:6px;letter-spacing:.04em;text-transform:uppercase}
+.bg{background:#edf5f0;color:var(--green)}
+.bb{background:#edf0f5;color:var(--blue)}
+.advtog{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:8px 0;border-top:1px solid var(--border);margin-top:6px;font-size:13px;color:var(--t2);user-select:none}
+.advb{display:none;margin-top:14px}
+.advb.open{display:block}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-family:var(--mono);font-size:11px;color:var(--t2);letter-spacing:.04em}
+.field input,.field select{background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;color:var(--text);font-family:var(--mono);font-size:13px;width:100%;transition:border-color .15s}
+.field input:focus,.field select:focus{outline:none;border-color:var(--blue)}
+.field .hint{font-size:11px;color:var(--t3);line-height:1.4}
+.runbtn{width:100%;padding:13px;background:var(--text);color:#fff;border:none;border-radius:6px;font-family:var(--sans);font-size:15px;font-weight:500;cursor:pointer;transition:opacity .15s;margin-top:.875rem}
+.runbtn:hover{opacity:.88}
+.runbtn:disabled{opacity:.35;cursor:not-allowed}
+.sbar{margin-top:10px;min-height:20px;font-family:var(--mono);font-size:12px;color:var(--t2);display:flex;align-items:center;gap:8px}
+.spin{width:12px;height:12px;border:1.5px solid var(--b2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;display:none;flex-shrink:0}
+.spin.on{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.out{display:none;margin-top:1.5rem}
+.tabs{display:flex;gap:3px;margin-bottom:-1px}
+.tab{padding:7px 15px;font-family:var(--mono);font-size:12px;cursor:pointer;border:1px solid transparent;border-bottom:none;border-radius:5px 5px 0 0;color:var(--t2);background:transparent;transition:color .15s}
+.tab.active{border-color:var(--border);background:var(--surface);color:var(--blue)}
+.tabwrap{background:var(--surface);border:1px solid var(--border);border-radius:0 8px 8px 8px;padding:1.25rem}
+.tp{display:none}
+.tp.active{display:block}
+pre{font-family:var(--mono);font-size:12px;color:var(--text);white-space:pre-wrap;word-break:break-word;max-height:420px;overflow-y:auto;line-height:1.7}
+pre::-webkit-scrollbar{width:5px}
+pre::-webkit-scrollbar-track{background:var(--s2)}
+pre::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
+.dlrow{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.dlbtn{padding:8px 14px;border:1px solid var(--b2);border-radius:4px;color:var(--text);font-family:var(--mono);font-size:12px;cursor:pointer;background:transparent;transition:all .15s}
+.dlbtn:hover{border-color:var(--green);color:var(--green);background:#edf5f0}
+.steps{margin-top:12px;background:var(--s2);border-radius:6px;padding:12px 16px;border-left:3px solid var(--green)}
+.steps p{font-size:13px;color:var(--t2);margin-bottom:6px;font-weight:500}
+.steps ol{font-size:13px;color:var(--t2);padding-left:18px;line-height:2}
+.steps code{background:var(--surface);border:1px solid var(--border);padding:1px 6px;border-radius:3px;font-family:var(--mono);font-size:12px;color:var(--text)}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:100;align-items:center;justify-content:center}
+.modal.open{display:flex}
+.mbox{background:var(--surface);border-radius:10px;max-width:460px;width:92%;padding:1.75rem;box-shadow:0 8px 32px rgba(0,0,0,.1)}
+.mbox h2{font-size:17px;font-weight:500;margin-bottom:4px}
+.mbox p{font-size:13px;color:var(--t2);margin-bottom:1.25rem}
+.mlbl{font-family:var(--mono);font-size:11px;color:var(--t2);letter-spacing:.06em;display:block;margin-bottom:5px}
+.krow{display:flex;gap:7px}
+.krow input{flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);font-size:13px;color:var(--text);background:var(--s2)}
+.krow button{padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--s2);cursor:pointer;font-size:13px}
+.mnote{font-size:12px;color:var(--t3);margin-top:6px}
+.mfooter{display:flex;gap:7px;justify-content:flex-end;margin-top:1.25rem}
+.ghost{padding:8px 14px;border:1px solid var(--border);border-radius:5px;background:transparent;cursor:pointer;font-family:var(--sans);font-size:13px;color:var(--t2)}
+.dark{padding:8px 16px;border:none;border-radius:5px;background:var(--text);color:#fff;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:500}
+.banner{display:none;padding:9px 13px;border-radius:5px;font-size:13px;margin-top:10px}
+@media(max-width:580px){.grid2,.fg{grid-template-columns:1fr}.wrap{padding:1.5rem 1rem 3rem}h1{font-size:22px}}
 </style>
 </head>
 <body>
-<div class="container">
-
+<div class="wrap">
   <header>
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
-      <div class="tag">Hardware → KiCad</div>
-      <button id="settings-btn" onclick="openSettings()" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #f5c0c0;border-radius:6px;background:#fff;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;color:#1a1a18">
-        ⚙ <span id="settings-label" style="color:#c0392b">Add API key</span>
-      </button>
+    <div class="hrow">
+      <div class="tag">Hardware &rarr; KiCad</div>
+      <button class="sbtn" id="sbtn" onclick="openS()">&#9881; <span id="klbl" style="color:#c0392b">Add API key</span></button>
     </div>
-    <h1>Prototype to <span>PCB</span></h1>
-    <p class="subtitle">Upload your Arduino/ESP32 code + wiring diagram → get a KiCad netlist + PCB layout guide</p>
+    <h1>Prototype to <span>Schematic</span></h1>
+    <p class="sub">Upload your Arduino/ESP32 code &rarr; get a Python script that builds your KiCad schematic automatically</p>
   </header>
 
-  <!-- STEP 1: FILES -->
   <div class="card">
-    <div class="card-title">01 / Upload files</div>
-    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
-      <input type="file" id="file-input" multiple accept=".ino,.cpp,.h,.txt,.md,.png,.jpg,.jpeg,.pdf" onchange="handleFiles(this.files)">
-      <div class="drop-icon">↑</div>
-      <div class="drop-label"><strong>Click to upload</strong> or drag and drop</div>
-      <div class="drop-sub">.ino · .cpp · .h · .png · .jpg · .pdf · .txt</div>
+    <div class="ctitle">01 / Upload files</div>
+    <div class="dz" id="dz" onclick="document.getElementById('fi').click()">
+      <input type="file" id="fi" multiple accept=".ino,.cpp,.h,.txt,.md,.png,.jpg" onchange="handleFiles(this.files)">
+      <div style="font-size:22px;color:var(--t3)">&#8593;</div>
+      <div class="dl"><strong>Click to upload</strong> or drag and drop</div>
+      <div class="ds">.ino &middot; .cpp &middot; .h &middot; .txt &middot; .png</div>
     </div>
-    <div class="file-list" id="file-list"></div>
+    <div class="flist" id="flist"></div>
   </div>
 
-  <!-- STEP 2: DESCRIPTION -->
   <div class="card">
-    <div class="card-title">02 / Describe your prototype</div>
-    <textarea id="description" rows="3" placeholder="e.g. LilyGO T-Display-S3 (ESP32-S3) with MPU6050 accelerometer/gyro, 2 push buttons, 3.7V LiPo battery. Health tracker wearable. Motherboard + daughterboard."></textarea>
+    <div class="ctitle">02 / Describe your prototype</div>
+    <textarea id="desc" rows="3" placeholder="e.g. LilyGO T-Display-S3 (ESP32-S3) with MPU6050 accelerometer on I2C, 2 push buttons, 3.7V LiPo battery via JST. Wearable health tracker. Motherboard + daughterboard split."></textarea>
   </div>
 
-  <!-- STEP 3: BOARD CONFIG -->
   <div class="card">
-    <div class="card-title">03 / Board configuration</div>
-
-    <div style="margin-bottom:16px">
-      <div style="font-size:12px;color:var(--text2);margin-bottom:6px;font-family:var(--mono)">Board layout</div>
-      <div class="board-grid">
-        <div class="board-opt active" id="bt-mother" onclick="selectBoard('mother',this)">
-          <h4>Motherboard + daughterboard</h4>
-          <p>Main PCB + breakout board. Ideal for wearables — easier to iterate and test.</p>
-        </div>
-        <div class="board-opt" id="bt-single" onclick="selectBoard('single',this)">
-          <h4>Single board</h4>
-          <p>Everything on one PCB. Smaller footprint, fewer connectors.</p>
-        </div>
+    <div class="ctitle">03 / Board configuration</div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;color:var(--t2);font-family:var(--mono);margin-bottom:4px">Board layout</div>
+      <div class="grid2">
+        <div class="opt sb" id="bt-m" onclick="selB('m',this)"><h4>Motherboard + daughterboard</h4><p>Two-board split. Ideal for wearables &mdash; easier to iterate.</p></div>
+        <div class="opt" id="bt-s" onclick="selB('s',this)"><h4>Single board</h4><p>Everything on one PCB. Smaller, fewer connectors.</p></div>
       </div>
     </div>
-
     <div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:6px;font-family:var(--mono)">Layers <span class="badge badge-green">recommended: 2</span></div>
-      <div class="layer-grid">
-        <div class="layer-opt" onclick="selectLayer(1,this)">
-          <h4>1 layer</h4>
-          <p>Cheapest to fab. Routing is tight. Good for very simple circuits only.</p>
-        </div>
-        <div class="layer-opt active" onclick="selectLayer(2,this)">
-          <h4>2 layers</h4>
-          <p>Best for ESP32/Arduino wearables. Power on one side, signals on the other. JLC/JLCPCB-ready.</p>
-        </div>
-        <div class="layer-opt" onclick="selectLayer(4,this)">
-          <h4>4 layers</h4>
-          <p>Better signal integrity. Worth it if you need dedicated power/ground planes.</p>
-        </div>
-        <div class="layer-opt" onclick="selectLayer(6,this)">
-          <h4>6 layers</h4>
-          <p>RF + high-speed. Overkill unless you're doing antenna design work.</p>
-        </div>
+      <div style="font-size:12px;color:var(--t2);font-family:var(--mono);margin-bottom:4px">Layers <span class="badge bg">recommended: 2</span></div>
+      <div class="grid2">
+        <div class="opt" onclick="selL(1,this)"><h4>1 layer</h4><p>Cheapest. Simple circuits only.</p></div>
+        <div class="opt sg" onclick="selL(2,this)"><h4>2 layers</h4><p>Best for ESP32 wearables.</p></div>
+        <div class="opt" onclick="selL(4,this)"><h4>4 layers</h4><p>Better signal integrity.</p></div>
+        <div class="opt" onclick="selL(6,this)"><h4>6 layers</h4><p>RF/high-speed only.</p></div>
       </div>
     </div>
-
-    <!-- ADVANCED -->
-    <div class="adv-toggle" id="adv-toggle" onclick="toggleAdv()">
-      <span>Advanced options <span class="badge badge-purple">for experienced designers</span></span>
-      <span class="arr" id="adv-arr">▼</span>
+    <div class="advtog" onclick="togAdv()">
+      <span>Advanced options <span class="badge bb">for experienced designers</span></span>
+      <span id="arr">&#9660;</span>
     </div>
-    <div class="adv-body" id="adv-body">
-      <div class="field-grid">
-        <div class="field">
-          <label>Via drill (mm) <span class="badge badge-green">default 0.3</span></label>
-          <input type="number" id="via-drill" value="0.3" step="0.05" min="0.1" max="1.0">
-          <span class="hint">Min 0.2mm for most fabs. 0.3mm is safe and cost-effective.</span>
-        </div>
-        <div class="field">
-          <label>Via pad (mm) <span class="badge badge-green">default 0.6</span></label>
-          <input type="number" id="via-pad" value="0.6" step="0.05" min="0.3" max="2.0">
-        </div>
+    <div class="advb" id="advb">
+      <div class="fg" style="margin-top:12px">
+        <div class="field"><label>Signal trace (mm) <span class="badge bg">0.25</span></label><input type="number" id="sig" value="0.25" step="0.05" min="0.1" max="1"></div>
+        <div class="field"><label>Power trace (mm) <span class="badge bg">0.5</span></label><input type="number" id="pwr" value="0.5" step="0.05" min="0.2" max="3"></div>
       </div>
-      <div class="field-grid">
-        <div class="field">
-          <label>Signal trace (mm) <span class="badge badge-green">default 0.25</span></label>
-          <input type="number" id="trace-sig" value="0.25" step="0.05" min="0.1" max="1.0">
-        </div>
-        <div class="field">
-          <label>Power trace (mm) <span class="badge badge-green">default 0.5</span></label>
-          <input type="number" id="trace-pwr" value="0.5" step="0.05" min="0.2" max="3.0">
-        </div>
+      <div class="fg">
+        <div class="field"><label>Via drill (mm) <span class="badge bg">0.3</span></label><input type="number" id="vd" value="0.3" step="0.05" min="0.1" max="1"></div>
+        <div class="field"><label>Via pad (mm) <span class="badge bg">0.6</span></label><input type="number" id="vp" value="0.6" step="0.05" min="0.3" max="2"></div>
       </div>
-      <div class="field-grid">
-        <div class="field">
-          <label>GND vias per power pin <span class="badge badge-green">default 2</span></label>
-          <input type="number" id="gnd-vias" value="2" step="1" min="1" max="6">
-          <span class="hint">More = lower impedance + better thermal dissipation in wearables.</span>
-        </div>
-        <div class="field">
-          <label>Copper clearance (mm) <span class="badge badge-green">default 0.2</span></label>
-          <input type="number" id="clearance" value="0.2" step="0.05" min="0.1" max="0.5">
-        </div>
+      <div class="fg">
+        <div class="field"><label>Clearance (mm) <span class="badge bg">0.2</span></label><input type="number" id="clr" value="0.2" step="0.05" min="0.1" max="0.5"></div>
+        <div class="field"><label>SMD size</label><select id="smd"><option value="0805" selected>0805 &mdash; easiest hand-soldering</option><option value="0603">0603 &mdash; compact</option><option value="0402">0402 &mdash; needs reflow</option></select></div>
       </div>
-      <div class="field-grid">
-        <div class="field">
-          <label>SMD component size</label>
-          <select id="smd-size">
-            <option value="0805" selected>0805 — easiest hand-soldering (recommended)</option>
-            <option value="0603">0603 — compact, harder by hand</option>
-            <option value="0402">0402 — tiny, needs reflow oven</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Ground plane</label>
-          <select id="gnd-plane">
-            <option value="both" selected>Both layers (recommended)</option>
-            <option value="bottom">Bottom layer only</option>
-            <option value="none">None</option>
-          </select>
-          <span class="hint">Ground plane on bottom reduces EMI from ESP32 WiFi/BLE.</span>
-        </div>
+      <div class="fg">
+        <div class="field"><label>I&sup2;C pull-up (k&Omega;) <span class="badge bg">4.7</span></label><input type="number" id="pu" value="4.7" step="0.1" min="1" max="10"><span class="hint">4.7k&Omega; for ESP32 + MPU6050 at 3.3V</span></div>
+        <div class="field"><label>Decoupling cap (&micro;F) <span class="badge bg">0.1</span></label><input type="number" id="dc" value="0.1" step="0.01" min="0.01" max="10"><span class="hint">100nF per IC power pin</span></div>
       </div>
-      <div class="field-grid">
-        <div class="field">
-          <label>I²C pull-up (kΩ) <span class="badge badge-green">default 4.7</span></label>
-          <input type="number" id="pullup" value="4.7" step="0.1" min="1" max="10">
-          <span class="hint">4.7kΩ works for MPU6050 + ESP32 at 3.3V.</span>
-        </div>
-        <div class="field">
-          <label>Decoupling cap (µF) per IC <span class="badge badge-green">default 0.1</span></label>
-          <input type="number" id="decap" value="0.1" step="0.01" min="0.01" max="10">
-          <span class="hint">100nF placed close to each IC power pin.</span>
-        </div>
-      </div>
-      <div class="field">
-        <label>Special requirements</label>
-        <textarea id="special" rows="2" style="margin-top:4px" placeholder="e.g. add TP4056 LiPo charging circuit, 3.3V LDO regulator, antenna keepout zone, JST-PH 2-pin battery connector..."></textarea>
-      </div>
+      <div class="field"><label>Special requirements</label><textarea id="sp" rows="2" placeholder="e.g. TP4056 LiPo charging, antenna keepout, USB-C charging port..."></textarea></div>
     </div>
   </div>
 
-  <button class="run-btn" id="run-btn" onclick="runConversion()">Generate KiCad netlist + PCB guide →</button>
+  <button class="runbtn" id="runbtn" onclick="run()">Generate KiCad schematic script &rarr;</button>
+  <div class="sbar"><div class="spin" id="spin"></div><span id="st"></span></div>
 
-  <div class="status-bar">
-    <div class="spinner" id="spinner"></div>
-    <span id="status-text"></span>
+  <div class="out" id="out">
+    <div class="tabs">
+      <button class="tab active" onclick="swTab('script',this)">build_schematic.py</button>
+      <button class="tab" onclick="swTab('guide',this)">pcb_guide.txt</button>
+    </div>
+    <div class="tabwrap">
+      <div class="tp active" id="tp-script"><pre id="o-script"></pre></div>
+      <div class="tp" id="tp-guide"><pre id="o-guide"></pre></div>
+    </div>
+    <div class="dlrow">
+      <button class="dlbtn" onclick="dl('script')">&#8595; build_schematic.py</button>
+      <button class="dlbtn" onclick="dl('guide')">&#8595; pcb_guide.txt</button>
+    </div>
+    <div class="steps">
+      <p>How to use build_schematic.py &mdash; 3 steps, no coding needed:</p>
+      <ol>
+        <li>Open <strong>Command Prompt</strong> (Windows) or <strong>Terminal</strong> (Mac)</li>
+        <li>Type: <code>pip install kicad-sch-api</code> then press Enter</li>
+        <li>Type: <code>python build_schematic.py</code> then press Enter</li>
+      </ol>
+      <p style="margin-top:8px">A <strong>TIGA.kicad_sch</strong> file appears on your Desktop. Double-click it to open in KiCad. Then: <strong>Tools &rarr; Update PCB from Schematic</strong> to generate the PCB layout.</p>
+    </div>
   </div>
+</div>
 
-  <!-- OUTPUT -->
-  <div class="output-section" id="output-section">
-    <div class="output-tabs">
-      <button class="tab active" onclick="switchTab('sch',this)">build_script.py</button>
-      <button class="tab" onclick="switchTab('pcb',this)">layout.kicad_pcb</button>
-      <button class="tab" onclick="switchTab('guide',this)">pcb_guide.txt</button>
+<!-- Settings modal -->
+<div class="modal" id="modal" onclick="if(event.target===this)closeS()">
+  <div class="mbox">
+    <h2>API key</h2>
+    <p>Saved to your browser only. Used to call Anthropic directly &mdash; never stored elsewhere.</p>
+    <label class="mlbl">ANTHROPIC API KEY</label>
+    <div class="krow">
+      <input type="password" id="ki" placeholder="sk-ant-&hellip;">
+      <button onclick="togV()">&#128065;</button>
     </div>
-    <div class="tab-content">
-      <div class="tab-pane active" id="tab-sch"><pre id="out-sch"></pre></div>
-      <div class="tab-pane" id="tab-pcb"><pre id="out-pcb"></pre></div>
-      <div class="tab-pane" id="tab-guide"><pre id="out-guide"></pre></div>
+    <div class="mnote">Get yours at <a href="https://console.anthropic.com" target="_blank" style="color:var(--green)">console.anthropic.com</a> &rarr; API Keys</div>
+    <div class="banner" id="bn"></div>
+    <div class="mfooter">
+      <button class="ghost" onclick="clrKey()">Remove key</button>
+      <button class="ghost" onclick="closeS()">Cancel</button>
+      <button class="dark" onclick="saveKey()">Save key</button>
     </div>
-    <div class="dl-row">
-      <button class="dl-btn" onclick="download('sch')">↓ build_TIGA.py (run in KiCad console)</button>
-      <button class="dl-btn" onclick="download('pcb')">↓ TIGA.kicad_pcb</button>
-      <button class="dl-btn" onclick="download('pro')">↓ TIGA.kicad_pro</button>
-      <button class="dl-btn" onclick="download('guide')">↓ pcb_guide.txt</button>
-    </div>
-    <p style="font-size:12px;color:var(--text2);margin-top:10px">Put all 3 KiCad files in the same folder. Double-click <strong>TIGA.kicad_pro</strong> to open the full project in KiCad 9.</p>
   </div>
-
 </div>
 
 <script>
-// ── state ──────────────────────────────────────────────
-let files = [];
-let layers = 2;
-let boardType = 'mother';
-let lastSch = '';
-let lastPcb = '';
-let lastGuide = '';
-let lastPro = '';
+var files=[], layers=2, board='m', lastScript='', lastGuide='';
+var TIGA='TIGA Health Tracker | MCU: LilyGO T-Display-S3 (ESP32-S3) | Sensors: MPU6050 I2C SDA=43 SCL=44 | Display: TFT SPI BL=38 | Buttons: SW1 SW2 | Battery: 3.7V LiPo JST';
 
-// ── preloaded TIGA code ────────────────────────────────
-const TIGA_CODE = `// tiga.ino — TIGA Health Tracker
-// MCU: LilyGO T-Display-S3 (ESP32-S3 + 1.9" LCD)
-// Libraries: TFT_eSPI, Wire, SPI, MPU6050
-// Sensors: MPU6050 (I2C: SDA=43, SCL=44 on T-Display-S3)
-// Display: TFT via SPI (TFT_BL = GPIO38 backlight)
-// Buttons: Button1 (readButton1), Button2 (readButton2)
-// Battery: 3.7V LiPo via JST connector, monitored via ADC
-// Features: Heart rate, step counter, temperature, fall detection,
-//           balance/stability, dexterity test, SOS screen, Bitchat QR
-// States: STATE_SPLASH, STATE_MAIN, STATE_TEST_MENU, STATE_TEST_LIST,
-//         STATE_TEST_RUNNING, STATE_TEST_RESULT, STATE_BITCHAT, STATE_SOS
-// I2C used for MPU6050. SPI used for TFT display.
-// GPIO38 = backlight PWM
-// Approx power consumption: ~80-120mA active, 6-8hr on 1000mAh LiPo`;
+var dz=document.getElementById('dz');
+dz.addEventListener('dragover',function(e){e.preventDefault();dz.classList.add('over');});
+dz.addEventListener('dragleave',function(){dz.classList.remove('over');});
+dz.addEventListener('drop',function(e){e.preventDefault();dz.classList.remove('over');handleFiles(e.dataTransfer.files);});
 
-// ── drag & drop ────────────────────────────────────────
-const dropZone = document.getElementById('drop-zone');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault();
-  dropZone.classList.remove('drag-over');
-  handleFiles(e.dataTransfer.files);
-});
-
-function handleFiles(fileList) {
-  for (const f of fileList) {
-    if (!files.find(x => x.name === f.name)) files.push(f);
-  }
+function handleFiles(fl){
+  for(var i=0;i<fl.length;i++){if(!files.find(function(x){return x.name===fl[i].name;}))files.push(fl[i]);}
   renderFiles();
 }
-
-function renderFiles() {
-  const el = document.getElementById('file-list');
-  el.innerHTML = '';
-  files.forEach((f, i) => {
-    const d = document.createElement('div');
-    d.className = 'file-item';
-    d.innerHTML = `<span><span class="fname">${f.name}</span><span class="fsize">${(f.size/1024).toFixed(1)} KB</span></span><button onclick="removeFile(${i})">✕</button>`;
+function renderFiles(){
+  var el=document.getElementById('flist');
+  el.innerHTML='';
+  files.forEach(function(f,i){
+    var d=document.createElement('div');
+    d.className='fp';
+    d.innerHTML='<span><span class="fn">'+f.name+'</span><span class="fsz">'+parseFloat((f.size/1024).toFixed(1))+' KB</span></span><button onclick="rmF('+i+')">&#x2715;</button>';
     el.appendChild(d);
   });
 }
+function rmF(i){files.splice(i,1);renderFiles();}
 
-function removeFile(i) { files.splice(i, 1); renderFiles(); }
-
-// ── selectors ──────────────────────────────────────────
-function selectLayer(n, el) {
-  layers = n;
-  document.querySelectorAll('.layer-opt').forEach(c => c.classList.remove('active'));
+function selL(n,el){
+  layers=n;
+  document.querySelectorAll('.grid2 .opt').forEach(function(c){c.classList.remove('sg');});
+  el.classList.add('sg');
+}
+function selB(t,el){
+  board=t;
+  document.getElementById('bt-m').classList.remove('sb');
+  document.getElementById('bt-s').classList.remove('sb');
+  el.classList.add('sb');
+}
+function togAdv(){
+  var b=document.getElementById('advb');
+  b.classList.toggle('open');
+  document.getElementById('arr').innerHTML=b.classList.contains('open')?'&#9650;':'&#9660;';
+}
+function swTab(n,el){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.tp').forEach(function(p){p.classList.remove('active');});
   el.classList.add('active');
+  document.getElementById('tp-'+n).classList.add('active');
 }
 
-function selectBoard(type, el) {
-  boardType = type;
-  document.querySelectorAll('.board-opt').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-}
-
-function toggleAdv() {
-  const body = document.getElementById('adv-body');
-  const toggle = document.getElementById('adv-toggle');
-  const arr = document.getElementById('adv-arr');
-  body.classList.toggle('open');
-  toggle.classList.toggle('open');
-  arr.style.transform = body.classList.contains('open') ? 'rotate(180deg)' : '';
-}
-
-// ── tab switching ──────────────────────────────────────
-function switchTab(name, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('tab-' + name).classList.add('active');
-}
-
-// ── read file as text ──────────────────────────────────
-function readFileText(f) {
-  return new Promise(res => {
-    if (f.type.startsWith('image/')) {
-      res(`[Image: ${f.name} — wiring diagram / pin layout, ${(f.size/1024).toFixed(0)}KB]`);
-    } else {
-      const r = new FileReader();
-      r.onload = () => res(r.result);
-      r.onerror = () => res(`[Could not read ${f.name}]`);
-      r.readAsText(f);
-    }
+function readFile(f){
+  return new Promise(function(res){
+    if(f.type.startsWith('image/')){res('[Image: '+f.name+']');return;}
+    var r=new FileReader();
+    r.onload=function(){res(r.result);};
+    r.onerror=function(){res('[Could not read '+f.name+']');};
+    r.readAsText(f);
   });
 }
 
-// ── main conversion ────────────────────────────────────
-async function runConversion() {
-  const btn = document.getElementById('run-btn');
-  const spinner = document.getElementById('spinner');
-  const statusText = document.getElementById('status-text');
-  const outputSection = document.getElementById('output-section');
-  const description = document.getElementById('description').value.trim();
-
-  const hasFiles = files.length > 0;
-  const hasDesc = description.length > 0;
-
-  if (!hasFiles && !hasDesc) {
-    statusText.textContent = 'Please upload a file or add a description first.';
-    return;
-  }
-
-  btn.disabled = true;
-  spinner.classList.add('visible');
-  outputSection.style.display = 'none';
-
-  const steps = [
-    'Reading uploaded files…',
-    'Parsing component list from code…',
-    'Identifying pin assignments…',
-    'Generating KiCad netlist…',
-    'Building PCB layout guide…'
-  ];
-  let si = 0;
-  statusText.textContent = steps[si];
-  const stepInterval = setInterval(() => {
-    si = (si + 1) % steps.length;
-    statusText.textContent = steps[si];
-  }, 2200);
-
-  // read files
-  const fileContents = await Promise.all(files.map(readFileText));
-
-  const config = {
-    layers,
-    boardType,
-    viaDrill: document.getElementById('via-drill').value,
-    viaPad: document.getElementById('via-pad').value,
-    traceSig: document.getElementById('trace-sig').value,
-    tracePwr: document.getElementById('trace-pwr').value,
-    gndVias: document.getElementById('gnd-vias').value,
-    clearance: document.getElementById('clearance').value,
-    smdSize: document.getElementById('smd-size').value,
-    gndPlane: document.getElementById('gnd-plane').value,
-    pullup: document.getElementById('pullup').value,
-    decap: document.getElementById('decap').value,
-    special: document.getElementById('special').value.trim()
-  };
-
-  // build context — always include TIGA base code
-  const codeContext = hasFiles
-    ? fileContents.map((c, i) => `--- ${files[i].name} ---\n${c}`).join('\n\n')
-    : TIGA_CODE;
-
-  // ── get API key from localStorage ─────────────────────
-  const apiKey = localStorage.getItem('kicad_api_key');
-  if (!apiKey) {
-    clearInterval(stepInterval);
-    spinner.classList.remove('visible');
-    statusText.textContent = 'No API key. Click \u2699 Settings to add your Anthropic key.';
-    btn.disabled = false;
-    return;
-  }
-
-  const smdFP = config.smdSize === '0805' ? '0805_2012Metric' : config.smdSize === '0603' ? '0603_1608Metric' : '0402_1005Metric';
-  const boardDesc = `PROTOTYPE: ${description || 'TIGA Health Tracker - LilyGO T-Display-S3 ESP32-S3 wearable'}
-LAYOUT: ${config.boardType === 'mother' ? 'Motherboard + daughterboard' : 'Single board'} | LAYERS: ${config.layers}
-VIA: drill ${config.viaDrill}mm pad ${config.viaPad}mm | TRACES: signal ${config.traceSig}mm power ${config.tracePwr}mm
-GND VIAS: ${config.gndVias}/pin | CLEARANCE: ${config.clearance}mm | SMD: ${config.smdSize} | GND PLANE: ${config.gndPlane}
-I2C PULLUP: ${config.pullup}k | DECAP: ${config.decap}uF | SPECIAL: ${config.special || 'none'}
-CODE SUMMARY: ${codeContext.substring(0, 500)}`;
-
-  const hdrs = {
-    'Content-Type': 'application/json',
-    'x-api-key': apiKey,
-    'anthropic-version': '2023-06-01',
-    'anthropic-dangerous-direct-browser-access': 'true'
-  };
-
-  async function callAPI(userPrompt, maxTok, attempt) {
-    attempt = attempt || 1;
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: hdrs,
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: maxTok,
-        messages: [{ role: 'user', content: userPrompt }]
-      })
-    });
-    let body = {};
-    try { body = await res.json(); } catch(e) {}
-    if (!res.ok || body.error) {
-      const msg = (body.error && body.error.message) ? body.error.message : (body.type || '');
-      const isOverload = res.status === 529 || res.status === 429 || msg.toLowerCase().includes('overload');
-      if (isOverload && attempt < 4) {
-        const wait = attempt * 8000;
-        statusText.textContent = 'Anthropic busy — retrying in ' + (wait/1000) + 's (attempt ' + attempt + '/3)...';
-        await new Promise(r => setTimeout(r, wait));
-        return callAPI(userPrompt, maxTok, attempt + 1);
+function callAPI(prompt,maxTok,attempt){
+  attempt=attempt||1;
+  var key=localStorage.getItem('hw2kicad');
+  if(!key)return Promise.reject(new Error('No API key - click Settings to add one.'));
+  return fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTok,messages:[{role:'user',content:prompt}]})
+  }).then(function(res){
+    return res.json().then(function(body){
+      if(!res.ok||body.error){
+        var msg=(body.error&&body.error.message)?body.error.message:('HTTP '+res.status);
+        var busy=res.status===529||res.status===429||msg.toLowerCase().indexOf('overload')>=0;
+        if(busy&&attempt<4){
+          var wait=attempt*9000;
+          document.getElementById('st').textContent='Anthropic busy - retrying in '+(wait/1000)+'s ('+attempt+'/3)...';
+          return new Promise(function(r){setTimeout(r,wait);}).then(function(){return callAPI(prompt,maxTok,attempt+1);});
+        }
+        if(res.status===401)throw new Error('API key invalid - click Settings to update.');
+        throw new Error(msg);
       }
-      if (res.status === 401) throw new Error('API key invalid. Click ⚙ Settings to update it.');
-      if (isOverload) throw new Error('Anthropic servers busy. Wait 1-2 minutes and try again.');
-      throw new Error(msg || ('HTTP ' + res.status));
-    }
-    return (body.content || []).map(function(c) { return c.text || ''; }).join('');
-  }
-
-  try {
-    // ── Call 1: KiCad Schematic (.kicad_sch) ─────────────
-    statusText.textContent = 'Generating schematic file (1 of 3)...';
-
-    const smdFP = config.smdSize === '0805' ? '0805_2012Metric' : config.smdSize === '0603' ? '0603_1608Metric' : '0402_1005Metric';
-
-    // ── Call 1: Python script for KiCad scripting console ─
-    statusText.textContent = 'Generating KiCad Python script (1 of 2)...';
-
-    const scriptPrompt = `Write a Python script to run in KiCad 9's scripting console (pcbnew module).
-The script must create a complete schematic AND PCB for the TIGA Health Tracker.
-
-${boardDesc}
-
-The script should use pcbnew Python API to:
-1. Create a new PCB board object
-2. Add all footprints with correct positions (mm coordinates):
-   - ESP32-S3-WROOM-1 at (20, 15) - center
-   - MPU-6050 at (32, 8) - top right  
-   - JST LiPo connector at (5, 25) - bottom left
-   - AMS1117-3.3 at (8, 8) - top left
-   - Push buttons SW1 at (35, 20), SW2 at (35, 25)
-   - Resistors R1-R5 clustered near their ICs
-   - Capacitors C1-C4 near their ICs
-   - Power LED D1 near regulator
-3. Add board outline (Edge.Cuts): 40mm x 30mm rectangle
-4. Add copper fills for GND on F.Cu and B.Cu
-5. Save as 'TIGA_generated.kicad_pcb' to the desktop
-6. Print confirmation message
-
-Use this structure:
-import pcbnew, os
-board = pcbnew.CreateEmptyBoard()
-# add footprints...
-board.Save(os.path.expanduser('~/Desktop/TIGA_generated.kicad_pcb'))
-print('Saved!')
-
-Also write a separate simpler script for the schematic using the schematic API if available, or note that the PCB file contains all component and net information needed.
-
-Make the script clean, well-commented, copy-paste ready. Under 80 lines.`;
-
-    lastSch = await callAPI(scriptPrompt, 2000);
-    document.getElementById('out-sch').textContent = lastSch;
-    statusText.textContent = 'Script done. Generating PCB guide (2 of 2)...';
-
-    // ── Also generate a minimal valid .kicad_pcb directly ──
-    // We generate a small but syntactically correct file with just
-    // the board outline and footprint stubs — enough for KiCad to open
-    const pcbPrompt = `Output a minimal but syntactically COMPLETE and valid KiCad 9 .kicad_pcb file.
-It must open in KiCad 9 without any errors.
-
-${boardDesc}
-
-Requirements:
-- Keep it SHORT — only essential sections, no routing yet
-- Board outline: 40x30mm rectangle on Edge.Cuts layer
-- Include these footprints with positions (use simple pad definitions):
-  U1 ESP32-S3-WROOM-1 at (20 15), U2 AMS1117-3.3 at (8 8),
-  U3 MPU-6050 at (32 8), J1 JST connector at (5 25),
-  SW1 at (35 20), SW2 at (35 25),
-  R1 at (12 8), R2 at (14 8), R3 at (32 14), R4 at (32 17),
-  C1 at (8 12), C2 at (20 8), C3 at (22 8), C4 at (32 20)
-- Design rules section with clearance 0.2mm, track 0.25mm
-- Net list section with: GND, +3V3, I2C_SDA, I2C_SCL, SPI_MOSI, SPI_MISO, SPI_SCK, TFT_CS, TFT_DC, TFT_RST, TFT_BL, BTN1, BTN2
-
-CRITICAL SYNTAX RULES for KiCad 9 .kicad_pcb:
-- Start: (kicad_pcb (version 20230121) (generator pcbnew)
-- Each footprint: (footprint "LIB:NAME" (layer "F.Cu") (at X Y) (uuid "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx") (property "Reference" "REF" (at 0 0 0) (layer "F.SilkS") (effects (font (size 1 1)))) (property "Value" "VAL" (at 0 1.5 0) (layer "F.SilkS") (effects (font (size 1 1)))) (pad "1" smd rect (at 0 0) (size 1.5 1.5) (layers "F.Cu" "F.Paste" "F.Mask") (net 1 "GND")))
-- Board outline: (gr_rect (start 0 0) (end 40 30) (layer "Edge.Cuts") (width 0.05))
-- End the file with exactly ONE closing ) on its own line
-- Every opening ( must have a matching closing )
-- Use real uuid strings like "a1b2c3d4-1234-5678-abcd-ef0123456789"
-- DO NOT truncate. The file must be complete and balanced.`;
-
-    lastPcb = await callAPI(pcbPrompt, 3500);
-    document.getElementById('out-pcb').textContent = lastPcb;
-    statusText.textContent = 'PCB layout done. Generating guide (3 of 3)...';
-
-    // ── Call 3: PCB Guide ──────────────────────────────────
-    const guidePrompt = `Write a concise PCB layout guide for the TIGA Health Tracker ESP32-S3 wearable. Plain text.
-
-${boardDesc}
-
-Cover:
-1. What each generated file is and how to open it in KiCad 9
-2. What to verify in the schematic before moving to PCB
-3. Key routing rules: SPI traces under 50mm, I2C pullups, power trace widths
-4. Wearable tips: 10mm antenna keepout around ESP32 WiFi end, max 2mm component height
-5. Motherboard vs daughterboard split recommendation
-6. DRC checks to run and common warnings to expect
-7. JLCPCB order settings for 5 boards (approx cost $2-5)`;
-
-    lastGuide = await callAPI(guidePrompt, 1500);
-    document.getElementById('out-guide').textContent = lastGuide;
-
-    outputSection.style.display = 'block';
-    outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    clearInterval(stepInterval);
-    statusText.textContent = 'Done — 4 files ready. Put them all in one folder and open TIGA.kicad_pro in KiCad 9.';
-    spinner.classList.remove('visible');
-
-  } catch(e) {
-    clearInterval(stepInterval);
-    spinner.classList.remove('visible');
-    statusText.textContent = 'Error: ' + e.message;
-  }
-
-  btn.disabled = false;
+      return (body.content||[]).map(function(c){return c.text||'';}).join('');
+    });
+  });
 }
 
-// ── download ───────────────────────────────────────────
-function download(type) {
-  const map = {
-    sch:   { data: lastSch,   name: 'build_TIGA.py' },
-    pcb:   { data: lastPcb,   name: 'TIGA.kicad_pcb' },
-    guide: { data: lastGuide, name: 'pcb_guide.txt'   },
-    pro:   { data: lastPro,   name: 'TIGA.kicad_pro'  }
+function buildCtx(desc,code,cfg){
+  var layout=cfg.board==='m'?'Motherboard + daughterboard':'Single board';
+  return [
+    'PROTOTYPE: '+(desc||'TIGA Health Tracker ESP32-S3 wearable'),
+    'LAYOUT: '+layout+' | LAYERS: '+cfg.layers,
+    'TRACES: signal '+cfg.sig+'mm power '+cfg.pwr+'mm',
+    'VIA: '+cfg.vd+'mm/'+cfg.vp+'mm | CLEARANCE: '+cfg.clr+'mm',
+    'SMD: '+cfg.smd+' | I2C PULLUP: '+cfg.pu+'k | DECAP: '+cfg.dc+'uF',
+    'SPECIAL: '+(cfg.sp||'none'),
+    '',
+    'CODE:',
+    code
+  ].join('\n');
+}
+
+function buildScriptPrompt(ctx,smdFP){
+  return [
+    'Write a Python script using kicad-sch-api (pip install kicad-sch-api) that generates a KiCad schematic.',
+    'Output ONLY the Python script. No markdown. No backticks. No explanation.',
+    '',
+    ctx,
+    '',
+    'REQUIREMENTS:',
+    'import kicad_sch_api as ksa',
+    'import os',
+    'sch = ksa.create_schematic("TIGA Health Tracker")',
+    '',
+    'Add these components using sch.components.add():',
+    '- lib_id "RF_Module:ESP32-S3-WROOM-1" ref U1 at (100,100)',
+    '- lib_id "Sensor_IMU:MPU-6050" ref U3 at (160,80)',
+    '- lib_id "Regulator_Linear:AMS1117-3.3" ref U2 at (50,60)',
+    '- lib_id "Connector:Conn_01x02_Pin" ref J1 value "LiPo_Battery" at (50,140)',
+    '- lib_id "Connector:Conn_02x05_Odd_Even" ref J2 value "Board_Connector" at (170,130)',
+    '- lib_id "Switch:SW_Push" ref SW1 at (155,130)',
+    '- lib_id "Switch:SW_Push" ref SW2 at (165,130)',
+    '- lib_id "Device:R" ref R1 value "10k" footprint "Resistor_SMD:R_'+smdFP+'" at (80,70)',
+    '- lib_id "Device:R" ref R2 value "10k" footprint "Resistor_SMD:R_'+smdFP+'" at (90,70)',
+    '- lib_id "Device:R" ref R3 value "4.7k" footprint "Resistor_SMD:R_'+smdFP+'" at (145,70)',
+    '- lib_id "Device:R" ref R4 value "4.7k" footprint "Resistor_SMD:R_'+smdFP+'" at (155,70)',
+    '- lib_id "Device:R" ref R5 value "330" footprint "Resistor_SMD:R_'+smdFP+'" at (60,90)',
+    '- lib_id "Device:C" ref C1 value "10uF" footprint "Capacitor_SMD:C_'+smdFP+'" at (60,100)',
+    '- lib_id "Device:C" ref C2 value "100nF" footprint "Capacitor_SMD:C_'+smdFP+'" at (105,80)',
+    '- lib_id "Device:C" ref C3 value "100nF" footprint "Capacitor_SMD:C_'+smdFP+'" at (115,80)',
+    '- lib_id "Device:C" ref C4 value "100nF" footprint "Capacitor_SMD:C_'+smdFP+'" at (165,70)',
+    '- lib_id "Device:LED" ref D1 value "PWR_LED" footprint "LED_SMD:LED_0805_2012Metric" at (65,105)',
+    '',
+    'Add net labels with sch.add_label():',
+    '- "+3V3" near U1 pin 1, GND near U1 pin 2',
+    '- "I2C_SDA" and "I2C_SCL" near U3 pins',
+    '- "SPI_MOSI","SPI_MISO","SPI_SCK","TFT_CS","TFT_DC","TFT_RST","TFT_BL" near U1',
+    '- "BTN1","BTN2" near SW1,SW2',
+    '- "BATT_PLUS" near J1',
+    '',
+    'Add a few key wires with sch.wires.add(start=(x1,y1),end=(x2,y2)):',
+    '- Connect R3,R4 to I2C_SDA and I2C_SCL labels',
+    '- Connect C2,C3 to U1 power pins',
+    '',
+    'Save: sch.save(os.path.join(os.path.expanduser("~"),"Desktop","TIGA.kicad_sch"))',
+    'Print summary: component count and output path',
+    '',
+    'Write the complete runnable script now:'
+  ].join('\n');
+}
+
+function buildGuidePrompt(ctx){
+  return [
+    'Write a practical guide for this KiCad schematic project. Plain text only.',
+    '',
+    ctx,
+    '',
+    'Sections:',
+    '1. INSTALL AND RUN - pip install kicad-sch-api then python build_schematic.py',
+    '2. WHAT YOU GET - TIGA.kicad_sch on Desktop, open in KiCad schematic editor',
+    '3. VERIFY SCHEMATIC - ERC check, what to look for',
+    '4. SCHEMATIC TO PCB - Tools > Update PCB from Schematic steps',
+    '5. PCB PLACEMENT - component groups on 40x30mm board',
+    '6. ROUTING - SPI under 50mm, I2C pullups, power vs signal trace widths',
+    '7. WEARABLE TIPS - antenna keepout, max component height, board corners',
+    '8. BOARD SPLIT - motherboard vs daughterboard, connector pinout',
+    '9. DRC - common warnings and fixes',
+    '10. JLCPCB - order settings, 5 boards cost estimate'
+  ].join('\n');
+}
+
+function run(){
+  var btn=document.getElementById('runbtn');
+  var spin=document.getElementById('spin');
+  var st=document.getElementById('st');
+  var out=document.getElementById('out');
+  var desc=document.getElementById('desc').value.trim();
+  if(!files.length&&!desc){st.textContent='Please upload a file or add a description first.';return;}
+  btn.disabled=true;
+  spin.classList.add('on');
+  out.style.display='none';
+  var cfg={
+    layers:layers,board:board,
+    sig:document.getElementById('sig').value,
+    pwr:document.getElementById('pwr').value,
+    vd:document.getElementById('vd').value,
+    vp:document.getElementById('vp').value,
+    clr:document.getElementById('clr').value,
+    smd:document.getElementById('smd').value,
+    pu:document.getElementById('pu').value,
+    dc:document.getElementById('dc').value,
+    sp:document.getElementById('sp').value.trim()
   };
-  const item = map[type];
-  if (!item || !item.data) return;
-  const blob = new Blob([item.data], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = item.name;
+  var msgs=['Reading files...','Analysing components...','Building schematic script...','Generating PCB guide...'];
+  var mi=0;
+  st.textContent=msgs[0];
+  var ticker=setInterval(function(){mi=(mi+1)%msgs.length;st.textContent=msgs[mi];},2500);
+  var smdFP=cfg.smd==='0805'?'0805_2012Metric':cfg.smd==='0603'?'0603_1608Metric':'0402_1005Metric';
+
+  Promise.all(files.map(readFile)).then(function(contents){
+    var parts=files.length?contents.map(function(c,i){return '--- '+files[i].name+' ---\n'+c;}):[TIGA];
+    var code=parts.join('\n\n').substring(0,2000);
+    var ctx=buildCtx(desc,code,cfg);
+    st.textContent='Generating schematic script (1 of 2)...';
+    return callAPI(buildScriptPrompt(ctx,smdFP),3000).then(function(script){
+      lastScript=script;
+      document.getElementById('o-script').textContent=script;
+      st.textContent='Script done. Generating guide (2 of 2)...';
+      return callAPI(buildGuidePrompt(ctx),1500);
+    }).then(function(guide){
+      lastGuide=guide;
+      document.getElementById('o-guide').textContent=guide;
+    });
+  }).then(function(){
+    clearInterval(ticker);
+    spin.classList.remove('on');
+    out.style.display='block';
+    out.scrollIntoView({behavior:'smooth',block:'start'});
+    st.textContent='Done - download build_schematic.py and run it in your terminal.';
+    btn.disabled=false;
+  }).catch(function(e){
+    clearInterval(ticker);
+    spin.classList.remove('on');
+    st.textContent='Error: '+e.message;
+    btn.disabled=false;
+  });
+}
+
+function dl(type){
+  var map={script:{data:lastScript,name:'build_schematic.py'},guide:{data:lastGuide,name:'pcb_guide.txt'}};
+  var item=map[type];
+  if(!item||!item.data)return;
+  var blob=new Blob([item.data],{type:'text/plain'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=item.name;
   a.click();
 }
 
-// ── settings / API key ─────────────────────────────────
-function openSettings() {
-  const stored = localStorage.getItem('kicad_api_key') || '';
-  document.getElementById('settings-key-input').value = stored;
-  document.getElementById('settings-banner').style.display = 'none';
-  document.getElementById('settings-modal').style.display = 'flex';
+function openS(){
+  document.getElementById('ki').value=localStorage.getItem('hw2kicad')||'';
+  document.getElementById('bn').style.display='none';
+  document.getElementById('modal').classList.add('open');
 }
-
-function closeSettings() {
-  document.getElementById('settings-modal').style.display = 'none';
+function closeS(){document.getElementById('modal').classList.remove('open');}
+function togV(){var i=document.getElementById('ki');i.type=i.type==='password'?'text':'password';}
+function saveKey(){
+  var key=document.getElementById('ki').value.trim();
+  var bn=document.getElementById('bn');
+  if(!key){showBn(bn,'w','Please paste your API key.');return;}
+  if(key.indexOf('sk-ant-')!==0){showBn(bn,'e','Key must start with sk-ant-');return;}
+  localStorage.setItem('hw2kicad',key);
+  showBn(bn,'ok','Key saved. AI features active.');
+  updKey();
+  setTimeout(closeS,1200);
 }
-
-function saveKey() {
-  const key = document.getElementById('settings-key-input').value.trim();
-  const banner = document.getElementById('settings-banner');
-  if (!key) { showBanner(banner, 'danger', 'Please paste your API key.'); return; }
-  if (!key.startsWith('sk-ant-')) { showBanner(banner, 'danger', "That doesn't look like an Anthropic key — it should start with sk-ant-"); return; }
-  localStorage.setItem('kicad_api_key', key);
-  showBanner(banner, 'success', '✓ Key saved. AI features are active.');
-  updateKeyStatus();
-  setTimeout(closeSettings, 1200);
+function clrKey(){
+  localStorage.removeItem('hw2kicad');
+  document.getElementById('ki').value='';
+  showBn(document.getElementById('bn'),'w','Key removed.');
+  updKey();
 }
-
-function clearKey() {
-  if (!confirm('Remove saved API key? The tool will stop working until you add one again.')) return;
-  localStorage.removeItem('kicad_api_key');
-  document.getElementById('settings-key-input').value = '';
-  showBanner(document.getElementById('settings-banner'), 'warn', 'Key removed.');
-  updateKeyStatus();
+function showBn(el,t,msg){
+  var s={ok:'background:#edf5f0;color:#2d5a3d;border:1px solid #b8d4c4',w:'background:#fdf6ec;color:#92600a;border:1px solid #f5dfa0',e:'background:#fdf0f0;color:#c0392b;border:1px solid #f5c0c0'};
+  el.style.cssText='display:block;padding:9px 13px;border-radius:5px;font-size:13px;margin-top:10px;'+(s[t]||s.w);
+  el.textContent=msg;
 }
-
-function toggleKeyVis() {
-  const inp = document.getElementById('settings-key-input');
-  inp.type = inp.type === 'password' ? 'text' : 'password';
+function updKey(){
+  var has=!!localStorage.getItem('hw2kicad');
+  var b=document.getElementById('sbtn');
+  var l=document.getElementById('klbl');
+  if(b)b.style.borderColor=has?'#b8d4c4':'#f5c0c0';
+  if(l){l.textContent=has?'AI active':'Add API key';l.style.color=has?'#2d5a3d':'#c0392b';}
 }
-
-function showBanner(el, type, msg) {
-  const colors = {
-    success: { bg: '#edf5f1', color: '#2a6b4f', border: '#b8d4c6' },
-    danger:  { bg: '#fdf0f0', color: '#c0392b', border: '#f5c0c0' },
-    warn:    { bg: '#fdf6ec', color: '#92600a', border: '#f5dfa0' }
-  };
-  const c = colors[type];
-  el.style.cssText = `display:block;padding:10px 14px;border-radius:6px;font-size:13px;background:${c.bg};color:${c.color};border:1px solid ${c.border};margin-top:10px`;
-  el.textContent = msg;
-}
-
-function updateKeyStatus() {
-  const hasKey = !!localStorage.getItem('kicad_api_key');
-  const btn = document.getElementById('settings-btn');
-  const label = document.getElementById('settings-label');
-  if (btn) btn.style.borderColor = hasKey ? '#b8d4c6' : '#f5c0c0';
-  if (label) { label.textContent = hasKey ? 'AI active' : 'Add API key'; label.style.color = hasKey ? '#2a6b4f' : '#c0392b'; }
-}
-
-document.addEventListener('DOMContentLoaded', updateKeyStatus);
+document.addEventListener('DOMContentLoaded',updKey);
 </script>
-
-<!-- ── Settings modal ──────────────────────────────── -->
-<div id="settings-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;align-items:center;justify-content:center;" onclick="if(event.target===this)closeSettings()">
-  <div style="background:#fff;border-radius:12px;max-width:480px;width:92%;padding:2rem;box-shadow:0 8px 32px rgba(0,0,0,0.12);">
-    <h2 style="font-size:18px;font-weight:500;color:#1a1a18;margin-bottom:4px">API key</h2>
-    <p style="font-size:13px;color:#6b6b66;margin-bottom:1.25rem">Saved to your browser only — never sent anywhere except directly to Anthropic.</p>
-    <label style="font-size:12px;font-family:'IBM Plex Mono',monospace;color:#6b6b66;display:block;margin-bottom:6px">ANTHROPIC API KEY</label>
-    <div style="display:flex;gap:8px;margin-bottom:4px">
-      <input type="password" id="settings-key-input" placeholder="sk-ant-…" style="flex:1;padding:8px 10px;border:1px solid #e4e4e0;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#1a1a18;background:#f9f9f7">
-      <button onclick="toggleKeyVis()" style="padding:8px 10px;border:1px solid #e4e4e0;border-radius:6px;background:#f4f4f2;cursor:pointer;font-size:13px">👁</button>
-    </div>
-    <p style="font-size:12px;color:#6b6b66;margin-bottom:4px">Get your key at <a href="https://console.anthropic.com" target="_blank" style="color:#2a6b4f">console.anthropic.com</a> → API Keys</p>
-    <div id="settings-banner" style="display:none"></div>
-    <div style="display:flex;gap:8px;margin-top:1.25rem;justify-content:flex-end">
-      <button onclick="clearKey()" style="padding:8px 14px;border:1px solid #e4e4e0;border-radius:6px;background:#fff;font-size:13px;cursor:pointer;color:#6b6b66">Remove key</button>
-      <button onclick="closeSettings()" style="padding:8px 14px;border:1px solid #e4e4e0;border-radius:6px;background:#fff;font-size:13px;cursor:pointer">Cancel</button>
-      <button onclick="saveKey()" style="padding:8px 16px;border:none;border-radius:6px;background:#1a1a18;color:#fff;font-size:13px;font-weight:500;cursor:pointer">Save key</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
