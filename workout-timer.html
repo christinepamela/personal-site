@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0a">
+<title>Workout Timer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-2: #161616;
+    --bg-3: #222;
+    --line: #2a2a2a;
+    --text: #f5f5f5;
+    --muted: #888;
+    --work: #b6ff3c;
+    --rest: #ffb43c;
+    --warn: #ff4757;
+    --done: #5db8ff;
+    --accent: var(--work);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bot: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', system-ui, sans-serif;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    padding: calc(var(--safe-top) + 12px) 16px calc(var(--safe-bot) + 16px);
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* ---------- TOP BAR ---------- */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .exercise-name {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 8px 4px;
+    outline: none;
+    text-transform: uppercase;
+  }
+  .exercise-name::placeholder { color: var(--muted); }
+  .set-pill {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .set-pill b { color: var(--text); }
+
+  /* ---------- TIMER ---------- */
+  .timer-card {
+    background: linear-gradient(180deg, var(--bg-2), #0e0e0e);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 28px 20px 24px;
+    text-align: center;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .timer-card.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), 0 0 60px -20px var(--accent);
+  }
+  .phase-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .phase-label.active { color: var(--accent); }
+  .timer-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(80px, 22vw, 140px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+    transition: color 0.2s;
+  }
+  .timer-display.warn { color: var(--warn); animation: pulse 0.5s ease-in-out infinite alternate; }
+  @keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.04); }
+  }
+
+  /* ---------- PROGRESS BAR ---------- */
+  .progress-wrap {
+    margin-top: 18px;
+    height: 18px;
+    background: var(--bg-3);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 0.2s linear, background 0.3s;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ---------- CONTROLS ---------- */
+  .controls {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .btn {
+    border: none;
+    border-radius: 16px;
+    padding: 20px 16px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+    color: var(--bg);
+    background: var(--accent);
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-secondary {
+    background: var(--bg-2);
+    color: var(--text);
+    border: 1px solid var(--line);
+  }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--muted);
+  }
+
+  /* ---------- PRESETS ---------- */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    margin: 24px 0 10px;
+    text-transform: uppercase;
+  }
+  .presets {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .preset {
+    padding: 14px 4px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .preset:active { background: var(--bg-3); }
+  .preset.selected {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ---------- COLLAPSIBLE ---------- */
+  details {
+    margin-top: 20px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  summary {
+    list-style: none;
+    padding: 16px 18px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    user-select: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: "+";
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+  details[open] summary::after { transform: rotate(45deg); }
+  .panel { padding: 4px 18px 18px; }
+
+  /* ---------- INPUTS ---------- */
+  .field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+  }
+  .field:first-child { border-top: none; }
+  .field label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .field .hint {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    display: block;
+    margin-top: 2px;
+  }
+  .num-input {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--bg-3);
+    border-radius: 10px;
+    padding: 4px;
+  }
+  .num-input button {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+  .num-input button:active { background: var(--bg-2); }
+  .num-input input {
+    width: 60px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  .num-input input::-webkit-outer-spin-button,
+  .num-input input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  .toggle {
+    width: 48px;
+    height: 28px;
+    background: var(--bg-3);
+    border-radius: 999px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+    border: none;
+    flex-shrink: 0;
+  }
+  .toggle::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+  .toggle.on { background: var(--work); }
+  .toggle.on::after { transform: translateX(20px); }
+
+  /* ---------- SAVED WORKOUTS ---------- */
+  .saved-list { display: flex; flex-direction: column; gap: 8px; }
+  .saved-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    background: var(--bg-3);
+    border-radius: 12px;
+    gap: 10px;
+  }
+  .saved-info { flex: 1; min-width: 0; }
+  .saved-name {
+    font-weight: 700;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .saved-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .saved-actions { display: flex; gap: 6px; }
+  .icon-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .icon-btn.danger { color: var(--warn); }
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 16px 0;
+  }
+
+  /* ---------- DONE OVERLAY ---------- */
+  .done-flash {
+    position: fixed;
+    inset: 0;
+    background: var(--done);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 100;
+    transition: opacity 0.2s;
+  }
+  .done-flash.show { opacity: 0.4; }
+
+  /* ---------- HISTORY STAT ---------- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .stat {
+    background: var(--bg-3);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+  }
+  .stat-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .stat-lbl {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 28px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <input class="exercise-name" id="exerciseName" placeholder="EXERCISE NAME" maxlength="40">
+  <div class="set-pill" id="setPill">SET <b><span id="curSet">1</span>/<span id="totSet">1</span></b></div>
+</div>
+
+<div class="timer-card" id="timerCard">
+  <div class="phase-label" id="phaseLabel">READY</div>
+  <div class="timer-display" id="timerDisplay">00:60</div>
+  <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-meta">
+    <span id="elapsedLabel">0s elapsed</span>
+    <span id="remainingLabel">60s left</span>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn" id="startBtn">START</button>
+  <button class="btn btn-secondary" id="resetBtn">RESET</button>
+</div>
+
+<div class="section-label">Quick Work Duration</div>
+<div class="presets" id="presets">
+  <button class="preset" data-sec="20">20s</button>
+  <button class="preset" data-sec="30">30s</button>
+  <button class="preset" data-sec="45">45s</button>
+  <button class="preset" data-sec="60">60s</button>
+  <button class="preset" data-sec="90">90s</button>
+  <button class="preset" data-sec="120">2m</button>
+  <button class="preset" data-sec="180">3m</button>
+  <button class="preset" data-sec="300">5m</button>
+</div>
+
+<details>
+  <summary>Settings</summary>
+  <div class="panel">
+    <div class="field">
+      <div>
+        <label>Work duration</label>
+        <span class="hint">Time per active interval</span>
+      </div>
+      <div class="num-input">
+        <button data-target="workSec" data-delta="-5">−</button>
+        <input id="workSec" type="number" min="1" max="3600" value="60">
+        <button data-target="workSec" data-delta="5">+</button>
+      </div>
+    </div>
+    <div class="field">
+      <div>
+        <label>Rest duration</label>
+        <span class="hint">0 = no rest between sets</span>
+      </div>
+      <div class="num-input">
+        <button data-target="restSec" data-delta="-5">−</button>
+        <input id="restSec" type="number" min="0" max="3600" value="15">
+        <button data-target="restSec" data-delta="5">+</button>
+      </div>
+    </div>
+    <div class="field">
+      <div>
+        <label>Sets / Rounds</label>
+        <span class="hint">Number of work intervals</span>
+      </div>
+      <div class="num-input">
+        <button data-target="totalSets" data-delta="-1">−</button>
+        <input id="totalSets" type="number" min="1" max="99" value="1">
+        <button data-target="totalSets" data-delta="1">+</button>
+      </div>
+    </div>
+    <div class="field">
+      <div>
+        <label>Reps target</label>
+        <span class="hint">Optional reference (e.g. 12)</span>
+      </div>
+      <div class="num-input">
+        <button data-target="reps" data-delta="-1">−</button>
+        <input id="reps" type="number" min="0" max="999" value="0">
+        <button data-target="reps" data-delta="1">+</button>
+      </div>
+    </div>
+    <div class="field">
+      <div>
+        <label>Sound buzzer</label>
+        <span class="hint">Beep at last 3s + finish</span>
+      </div>
+      <button class="toggle on" id="soundToggle" aria-label="Sound"></button>
+    </div>
+    <div class="field">
+      <div>
+        <label>Auto-advance sets</label>
+        <span class="hint">Continue without tapping</span>
+      </div>
+      <button class="toggle on" id="autoToggle" aria-label="Auto"></button>
+    </div>
+    <div class="field">
+      <div>
+        <label>Keep screen awake</label>
+        <span class="hint">Prevents phone from sleeping</span>
+      </div>
+      <button class="toggle on" id="wakeToggle" aria-label="Wake"></button>
+    </div>
+  </div>
+</details>
+
+<details>
+  <summary>Saved Workouts</summary>
+  <div class="panel">
+    <button class="btn btn-secondary" id="saveBtn" style="width:100%;margin-bottom:12px;font-size:14px;padding:14px;">+ Save Current Setup</button>
+    <div class="saved-list" id="savedList"></div>
+  </div>
+</details>
+
+<details>
+  <summary>Today's Stats</summary>
+  <div class="panel">
+    <div class="stats">
+      <div class="stat"><div class="stat-val" id="statSets">0</div><div class="stat-lbl">Sets</div></div>
+      <div class="stat"><div class="stat-val" id="statTime">0m</div><div class="stat-lbl">Active</div></div>
+      <div class="stat"><div class="stat-val" id="statWorkouts">0</div><div class="stat-lbl">Sessions</div></div>
+    </div>
+    <button class="btn btn-ghost" id="resetStatsBtn" style="width:100%;margin-top:10px;font-size:12px;padding:10px;">Reset today's stats</button>
+  </div>
+</details>
+
+<div class="footer">TAP START · WORKS OFFLINE · ADD TO HOME SCREEN</div>
+
+<div class="done-flash" id="doneFlash"></div>
+
+<script>
+  // ---------- STORAGE (graceful fallback if localStorage unavailable) ----------
+  const store = {
+    get(k, def) {
+      try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; }
+      catch (e) { return def; }
+    },
+    set(k, v) {
+      try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+    },
+    del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+  };
+
+  // ---------- AUDIO ----------
+  let audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) {
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch (e) { return; }
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+  function tone(freq, dur, vol = 0.4, type = 'square') {
+    if (!audioCtx || !state.sound) return;
+    const t0 = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(vol, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(t0); osc.stop(t0 + dur);
+  }
+  function beepShort() { tone(880, 0.12, 0.35, 'sine'); }
+  function beepGo()    { tone(1200, 0.18, 0.45, 'sine'); }
+  function beepBuzzer() {
+    // distinctive end-of-set buzzer: two long lower tones
+    tone(440, 0.35, 0.5, 'square');
+    setTimeout(() => tone(330, 0.5, 0.5, 'square'), 200);
+  }
+  function beepFinish() {
+    // workout-complete fanfare
+    tone(660, 0.18, 0.4, 'sine');
+    setTimeout(() => tone(880, 0.18, 0.4, 'sine'), 180);
+    setTimeout(() => tone(1320, 0.4, 0.45, 'sine'), 360);
+  }
+
+  // ---------- WAKE LOCK ----------
+  let wakeLock = null;
+  async function requestWake() {
+    if (!state.wakeOn || !('wakeLock' in navigator)) return;
+    try { wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+  }
+  function releaseWake() {
+    if (wakeLock) { try { wakeLock.release(); } catch (e) {} wakeLock = null; }
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && state.running) requestWake();
+  });
+
+  // ---------- STATE ----------
+  const settings = store.get('wt_settings', {
+    work: 60, rest: 15, sets: 1, reps: 0,
+    name: '', sound: true, auto: true, wake: true
+  });
+  const state = {
+    running: false,
+    paused: false,
+    phase: 'idle',       // idle | work | rest | done
+    curSet: 1,
+    phaseDuration: settings.work,
+    phaseRemaining: settings.work,
+    rafTimer: null,
+    lastTick: 0,
+    sound: settings.sound,
+    auto: settings.auto,
+    wakeOn: settings.wake,
+    lastBeepSec: -1
+  };
+
+  // ---------- DOM ----------
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    name: $('exerciseName'), curSet: $('curSet'), totSet: $('totSet'),
+    setPill: $('setPill'), card: $('timerCard'), phase: $('phaseLabel'),
+    timer: $('timerDisplay'), fill: $('progressFill'),
+    elapsed: $('elapsedLabel'), remaining: $('remainingLabel'),
+    start: $('startBtn'), reset: $('resetBtn'),
+    work: $('workSec'), rest: $('restSec'), sets: $('totalSets'), reps: $('reps'),
+    sound: $('soundToggle'), auto: $('autoToggle'), wake: $('wakeToggle'),
+    saveBtn: $('saveBtn'), savedList: $('savedList'),
+    presets: $('presets'), flash: $('doneFlash'),
+    statSets: $('statSets'), statTime: $('statTime'), statWorkouts: $('statWorkouts'),
+    resetStats: $('resetStatsBtn')
+  };
+
+  // ---------- UTILS ----------
+  function fmt(sec) {
+    sec = Math.max(0, Math.ceil(sec));
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+  function fmtShort(sec) {
+    sec = Math.max(0, Math.ceil(sec));
+    return sec >= 60 ? `${Math.floor(sec/60)}m ${sec%60}s` : `${sec}s`;
+  }
+
+  // ---------- RENDER ----------
+  function setAccent(color) {
+    document.documentElement.style.setProperty('--accent', color);
+  }
+  function render() {
+    els.timer.textContent = fmt(state.phaseRemaining);
+    const elapsed = state.phaseDuration - state.phaseRemaining;
+    const pct = state.phaseDuration > 0 ? (elapsed / state.phaseDuration) * 100 : 0;
+    els.fill.style.width = pct + '%';
+    els.elapsed.textContent = fmtShort(elapsed) + ' elapsed';
+    els.remaining.textContent = fmtShort(state.phaseRemaining) + ' left';
+
+    els.curSet.textContent = state.curSet;
+    els.totSet.textContent = settings.sets;
+
+    // warning style for last 3s of work
+    if (state.phase === 'work' && state.phaseRemaining <= 3 && state.phaseRemaining > 0) {
+      els.timer.classList.add('warn');
+    } else {
+      els.timer.classList.remove('warn');
+    }
+
+    // phase styling
+    if (state.phase === 'work') {
+      setAccent('var(--work)');
+      els.phase.textContent = settings.reps > 0 ? `WORK · ${settings.reps} REPS` : 'WORK';
+      els.phase.classList.add('active');
+      els.card.classList.add('active');
+    } else if (state.phase === 'rest') {
+      setAccent('var(--rest)');
+      els.phase.textContent = 'REST';
+      els.phase.classList.add('active');
+      els.card.classList.add('active');
+    } else if (state.phase === 'done') {
+      setAccent('var(--done)');
+      els.phase.textContent = 'COMPLETE';
+      els.phase.classList.add('active');
+      els.card.classList.remove('active');
+    } else {
+      setAccent('var(--work)');
+      els.phase.textContent = 'READY';
+      els.phase.classList.remove('active');
+      els.card.classList.remove('active');
+    }
+
+    els.start.textContent = state.running ? (state.paused ? 'RESUME' : 'PAUSE') : (state.phase === 'done' ? 'AGAIN' : 'START');
+  }
+
+  // ---------- TIMER LOOP ----------
+  function tick(now) {
+    if (!state.running || state.paused) return;
+    const dt = (now - state.lastTick) / 1000;
+    state.lastTick = now;
+    state.phaseRemaining -= dt;
+
+    // countdown beeps at last 3 seconds of work
+    if (state.phase === 'work') {
+      const sec = Math.ceil(state.phaseRemaining);
+      if (sec <= 3 && sec > 0 && sec !== state.lastBeepSec) {
+        state.lastBeepSec = sec;
+        beepShort();
+      }
+    }
+
+    if (state.phaseRemaining <= 0) {
+      onPhaseEnd();
+    } else {
+      render();
+      state.rafTimer = requestAnimationFrame(tick);
+    }
+  }
+
+  function onPhaseEnd() {
+    state.phaseRemaining = 0;
+    render();
+
+    if (state.phase === 'work') {
+      addStat('sets', 1);
+      addStat('time', state.phaseDuration);
+
+      if (state.curSet >= settings.sets) {
+        finishWorkout();
+        return;
+      }
+      // move to rest (or skip if rest=0)
+      if (settings.rest > 0) {
+        beepBuzzer();
+        startPhase('rest', settings.rest);
+        if (state.auto) { state.lastTick = performance.now(); state.rafTimer = requestAnimationFrame(tick); }
+        else { state.paused = true; render(); }
+      } else {
+        beepBuzzer();
+        state.curSet++;
+        startPhase('work', settings.work);
+        if (state.auto) { state.lastTick = performance.now(); state.rafTimer = requestAnimationFrame(tick); }
+        else { state.paused = true; render(); }
+      }
+    } else if (state.phase === 'rest') {
+      state.curSet++;
+      beepGo();
+      startPhase('work', settings.work);
+      if (state.auto) { state.lastTick = performance.now(); state.rafTimer = requestAnimationFrame(tick); }
+      else { state.paused = true; render(); }
+    }
+  }
+
+  function startPhase(phase, duration) {
+    state.phase = phase;
+    state.phaseDuration = duration;
+    state.phaseRemaining = duration;
+    state.lastBeepSec = -1;
+    render();
+  }
+
+  function finishWorkout() {
+    state.running = false;
+    state.paused = false;
+    state.phase = 'done';
+    cancelAnimationFrame(state.rafTimer);
+    beepFinish();
+    addStat('workouts', 1);
+    flashDone();
+    releaseWake();
+    render();
+  }
+
+  function flashDone() {
+    els.flash.classList.add('show');
+    setTimeout(() => els.flash.classList.remove('show'), 600);
+  }
+
+  // ---------- CONTROLS ----------
+  els.start.addEventListener('click', () => {
+    ensureAudio();
+    if (state.phase === 'done') doReset();
+    if (!state.running) {
+      // first start
+      state.running = true;
+      state.paused = false;
+      state.curSet = 1;
+      startPhase('work', settings.work);
+      beepGo();
+      state.lastTick = performance.now();
+      state.rafTimer = requestAnimationFrame(tick);
+      requestWake();
+    } else if (state.paused) {
+      state.paused = false;
+      state.lastTick = performance.now();
+      state.rafTimer = requestAnimationFrame(tick);
+      requestWake();
+    } else {
+      state.paused = true;
+      cancelAnimationFrame(state.rafTimer);
+      releaseWake();
+    }
+    render();
+  });
+
+  els.reset.addEventListener('click', doReset);
+  function doReset() {
+    state.running = false;
+    state.paused = false;
+    state.phase = 'idle';
+    state.curSet = 1;
+    state.phaseDuration = settings.work;
+    state.phaseRemaining = settings.work;
+    cancelAnimationFrame(state.rafTimer);
+    releaseWake();
+    render();
+  }
+
+  // ---------- INPUTS ----------
+  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+  function bindInput(el, key, min, max) {
+    el.addEventListener('change', () => {
+      let v = parseInt(el.value, 10);
+      if (isNaN(v)) v = min;
+      v = clamp(v, min, max);
+      el.value = v;
+      settings[key] = v;
+      saveSettings();
+      if (!state.running) doReset();
+    });
+  }
+  bindInput(els.work, 'work', 1, 3600);
+  bindInput(els.rest, 'rest', 0, 3600);
+  bindInput(els.sets, 'sets', 1, 99);
+  bindInput(els.reps, 'reps', 0, 999);
+
+  // +/- buttons
+  document.querySelectorAll('.num-input button[data-target]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const t = btn.dataset.target;
+      const d = parseInt(btn.dataset.delta, 10);
+      const input = $(t);
+      input.value = parseInt(input.value || 0, 10) + d;
+      input.dispatchEvent(new Event('change'));
+    });
+  });
+
+  // exercise name
+  els.name.value = settings.name || '';
+  els.name.addEventListener('input', () => {
+    settings.name = els.name.value;
+    saveSettings();
+  });
+
+  // toggles
+  function bindToggle(btn, key) {
+    btn.classList.toggle('on', !!settings[key]);
+    if (key === 'sound') state.sound = settings[key];
+    if (key === 'auto') state.auto = settings[key];
+    if (key === 'wake') state.wakeOn = settings[key];
+    btn.addEventListener('click', () => {
+      settings[key] = !settings[key];
+      btn.classList.toggle('on', settings[key]);
+      if (key === 'sound') { state.sound = settings[key]; if (settings[key]) { ensureAudio(); beepShort(); } }
+      if (key === 'auto') state.auto = settings[key];
+      if (key === 'wake') { state.wakeOn = settings[key]; if (settings[key] && state.running) requestWake(); else releaseWake(); }
+      saveSettings();
+    });
+  }
+  bindToggle(els.sound, 'sound');
+  bindToggle(els.auto, 'auto');
+  bindToggle(els.wake, 'wake');
+
+  // presets
+  els.presets.querySelectorAll('.preset').forEach(p => {
+    p.addEventListener('click', () => {
+      const sec = parseInt(p.dataset.sec, 10);
+      els.work.value = sec;
+      els.work.dispatchEvent(new Event('change'));
+      markSelectedPreset();
+    });
+  });
+  function markSelectedPreset() {
+    els.presets.querySelectorAll('.preset').forEach(p => {
+      p.classList.toggle('selected', parseInt(p.dataset.sec, 10) === settings.work);
+    });
+  }
+
+  // ---------- SAVED WORKOUTS ----------
+  function getSaved() { return store.get('wt_saved', []); }
+  function setSaved(list) { store.set('wt_saved', list); renderSaved(); }
+  function renderSaved() {
+    const list = getSaved();
+    if (!list.length) {
+      els.savedList.innerHTML = '<div class="empty">No saved workouts yet</div>';
+      return;
+    }
+    els.savedList.innerHTML = list.map((w, i) => `
+      <div class="saved-item">
+        <div class="saved-info">
+          <div class="saved-name">${escapeHtml(w.name)}</div>
+          <div class="saved-meta">${w.work}s · ${w.rest}s rest · ${w.sets} set${w.sets>1?'s':''}${w.reps?` · ${w.reps} reps`:''}</div>
+        </div>
+        <div class="saved-actions">
+          <button class="icon-btn" data-load="${i}">LOAD</button>
+          <button class="icon-btn danger" data-del="${i}">×</button>
+        </div>
+      </div>
+    `).join('');
+    els.savedList.querySelectorAll('[data-load]').forEach(b => {
+      b.addEventListener('click', () => loadSaved(parseInt(b.dataset.load, 10)));
+    });
+    els.savedList.querySelectorAll('[data-del]').forEach(b => {
+      b.addEventListener('click', () => deleteSaved(parseInt(b.dataset.del, 10)));
+    });
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  els.saveBtn.addEventListener('click', () => {
+    const name = (settings.name || prompt('Name this workout:') || '').trim();
+    if (!name) return;
+    settings.name = name;
+    els.name.value = name;
+    const list = getSaved();
+    list.push({
+      name, work: settings.work, rest: settings.rest,
+      sets: settings.sets, reps: settings.reps
+    });
+    setSaved(list);
+    saveSettings();
+  });
+  function loadSaved(i) {
+    const w = getSaved()[i]; if (!w) return;
+    settings.name = w.name;
+    settings.work = w.work;
+    settings.rest = w.rest;
+    settings.sets = w.sets;
+    settings.reps = w.reps || 0;
+    syncInputs();
+    saveSettings();
+    doReset();
+  }
+  function deleteSaved(i) {
+    const list = getSaved();
+    if (!confirm(`Delete "${list[i].name}"?`)) return;
+    list.splice(i, 1);
+    setSaved(list);
+  }
+
+  function syncInputs() {
+    els.name.value = settings.name || '';
+    els.work.value = settings.work;
+    els.rest.value = settings.rest;
+    els.sets.value = settings.sets;
+    els.reps.value = settings.reps;
+    markSelectedPreset();
+  }
+
+  function saveSettings() { store.set('wt_settings', settings); }
+
+  // ---------- STATS ----------
+  function todayKey() {
+    const d = new Date();
+    return `wt_stats_${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+  }
+  function getStats() {
+    return store.get(todayKey(), { sets: 0, time: 0, workouts: 0 });
+  }
+  function setStats(s) { store.set(todayKey(), s); renderStats(); }
+  function addStat(key, val) {
+    const s = getStats();
+    s[key] = (s[key] || 0) + val;
+    setStats(s);
+  }
+  function renderStats() {
+    const s = getStats();
+    els.statSets.textContent = s.sets;
+    els.statTime.textContent = s.time >= 60 ? Math.round(s.time/60) + 'm' : s.time + 's';
+    els.statWorkouts.textContent = s.workouts;
+  }
+  els.resetStats.addEventListener('click', () => {
+    if (confirm("Clear today's stats?")) setStats({sets:0,time:0,workouts:0});
+  });
+
+  // ---------- INIT ----------
+  syncInputs();
+  renderSaved();
+  renderStats();
+  doReset();
+
+  // Prevent accidental scroll when tapping main buttons
+  ['touchmove'].forEach(ev => {
+    els.start.addEventListener(ev, e => e.preventDefault(), { passive: false });
+  });
+</script>
+
+</body>
+</html>
