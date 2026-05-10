@@ -413,6 +413,162 @@
     font-family: 'JetBrains Mono', monospace;
     letter-spacing: 0.1em;
   }
+
+  /* ---------- LIST CHIPS ---------- */
+  .chips-row {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 0 8px;
+    margin: 0 -18px 12px;
+    padding-left: 18px;
+    padding-right: 18px;
+    scrollbar-width: none;
+  }
+  .chips-row::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0;
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .chip.active {
+    background: var(--work);
+    color: var(--bg);
+    border-color: var(--work);
+  }
+  .chip-add {
+    color: var(--muted);
+    background: transparent;
+    border-style: dashed;
+  }
+  .chip-manage {
+    color: var(--muted);
+    background: transparent;
+    padding: 8px 12px;
+  }
+
+  /* ---------- REORDER BUTTONS ---------- */
+  .reorder-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-right: 4px;
+  }
+  .reorder-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--text);
+    width: 28px;
+    height: 22px;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .reorder-btn:disabled { opacity: 0.25; cursor: default; }
+  .reorder-btn:not(:disabled):active { background: var(--bg-2); }
+
+  /* ---------- MODAL ---------- */
+  .modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 480px;
+    padding: 20px;
+    margin-bottom: calc(var(--safe-bot) + 16px);
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal h3 {
+    font-size: 14px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+  .modal .name-input {
+    width: 100%;
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    outline: none;
+    margin-bottom: 14px;
+  }
+  .modal .name-input:focus { border-color: var(--accent); }
+  .modal-list-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .manage-list-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+  }
+  .manage-list-row:first-of-type { border-top: none; }
+  .manage-list-row input {
+    flex: 1;
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+  }
+
+  /* ---------- TAP-TO-START STATE ---------- */
+  .timer-card.waiting {
+    border-color: var(--work);
+    box-shadow: 0 0 0 1px var(--work), 0 0 60px -20px var(--work);
+    animation: gentlePulse 1.5s ease-in-out infinite;
+  }
+  @keyframes gentlePulse {
+    0%, 100% { box-shadow: 0 0 0 1px var(--work), 0 0 60px -20px var(--work); }
+    50% { box-shadow: 0 0 0 2px var(--work), 0 0 80px -10px var(--work); }
+  }
 </style>
 </head>
 <body>
@@ -523,6 +679,7 @@
 <details>
   <summary>Saved Workouts</summary>
   <div class="panel">
+    <div class="chips-row" id="chipsRow"></div>
     <button class="btn btn-secondary" id="saveBtn" style="width:100%;margin-bottom:12px;font-size:14px;padding:14px;">+ Save Current Setup</button>
     <div class="saved-list" id="savedList"></div>
   </div>
@@ -543,6 +700,35 @@
 <div class="footer">TAP START · WORKS OFFLINE · ADD TO HOME SCREEN</div>
 
 <div class="done-flash" id="doneFlash"></div>
+
+<!-- Save dialog: pick name + list -->
+<div class="modal-bg" id="saveModal">
+  <div class="modal">
+    <h3>Save Workout</h3>
+    <input class="name-input" id="saveNameInput" placeholder="Workout name" maxlength="40">
+    <h3 style="margin-top:8px;">Add to list</h3>
+    <div class="modal-list-options" id="saveListOptions"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="saveModalCancel">Cancel</button>
+      <button class="btn" id="saveModalConfirm">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Manage lists dialog -->
+<div class="modal-bg" id="manageModal">
+  <div class="modal">
+    <h3>Manage Lists</h3>
+    <div id="manageLists"></div>
+    <div class="manage-list-row" style="border-top:1px solid var(--line);margin-top:8px;padding-top:14px;">
+      <input id="newListInput" placeholder="New list name" maxlength="20">
+      <button class="icon-btn" id="addListBtn">+ Add</button>
+    </div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="btn btn-secondary" id="manageModalClose" style="grid-column:1/-1;">Done</button>
+    </div>
+  </div>
+</div>
 
 <script>
   // ---------- STORAGE (graceful fallback if localStorage unavailable) ----------
@@ -609,8 +795,13 @@
   // ---------- STATE ----------
   const settings = store.get('wt_settings', {
     work: 60, rest: 15, sets: 1, reps: 0,
-    name: '', sound: true, auto: true, wake: true
+    name: '', sound: true, auto: true, wake: true,
+    lists: ['Daily', 'Cardio'],
+    selectedList: 'All'
   });
+  // Migration: ensure new fields exist on old saved settings
+  if (!Array.isArray(settings.lists)) settings.lists = ['Daily', 'Cardio'];
+  if (!settings.selectedList) settings.selectedList = 'All';
   const state = {
     running: false,
     paused: false,
@@ -639,7 +830,14 @@
     saveBtn: $('saveBtn'), savedList: $('savedList'),
     presets: $('presets'), flash: $('doneFlash'),
     statSets: $('statSets'), statTime: $('statTime'), statWorkouts: $('statWorkouts'),
-    resetStats: $('resetStatsBtn')
+    resetStats: $('resetStatsBtn'),
+    chipsRow: $('chipsRow'),
+    saveModal: $('saveModal'), saveNameInput: $('saveNameInput'),
+    saveListOptions: $('saveListOptions'),
+    saveModalCancel: $('saveModalCancel'), saveModalConfirm: $('saveModalConfirm'),
+    manageModal: $('manageModal'), manageLists: $('manageLists'),
+    newListInput: $('newListInput'), addListBtn: $('addListBtn'),
+    manageModalClose: $('manageModalClose')
   };
 
   // ---------- UTILS ----------
@@ -682,24 +880,43 @@
       els.phase.textContent = settings.reps > 0 ? `WORK · ${settings.reps} REPS` : 'WORK';
       els.phase.classList.add('active');
       els.card.classList.add('active');
+      els.card.classList.remove('waiting');
     } else if (state.phase === 'rest') {
       setAccent('var(--rest)');
       els.phase.textContent = 'REST';
       els.phase.classList.add('active');
       els.card.classList.add('active');
+      els.card.classList.remove('waiting');
     } else if (state.phase === 'done') {
       setAccent('var(--done)');
       els.phase.textContent = 'COMPLETE';
       els.phase.classList.add('active');
       els.card.classList.remove('active');
+      els.card.classList.remove('waiting');
+    } else if (state.phase === 'waiting') {
+      setAccent('var(--work)');
+      els.phase.textContent = `TAP START · SET ${state.curSet} OF ${settings.sets}`;
+      els.phase.classList.add('active');
+      els.card.classList.remove('active');
+      els.card.classList.add('waiting');
     } else {
       setAccent('var(--work)');
       els.phase.textContent = 'READY';
       els.phase.classList.remove('active');
       els.card.classList.remove('active');
+      els.card.classList.remove('waiting');
     }
 
-    els.start.textContent = state.running ? (state.paused ? 'RESUME' : 'PAUSE') : (state.phase === 'done' ? 'AGAIN' : 'START');
+    // Start button label
+    if (state.phase === 'waiting') {
+      els.start.textContent = `START SET ${state.curSet}`;
+    } else if (state.running) {
+      els.start.textContent = state.paused ? 'RESUME' : 'PAUSE';
+    } else if (state.phase === 'done') {
+      els.start.textContent = 'AGAIN';
+    } else {
+      els.start.textContent = 'START';
+    }
   }
 
   // ---------- TIMER LOOP ----------
@@ -730,6 +947,12 @@
     state.phaseRemaining = 0;
     render();
 
+    // Smart advance rule:
+    //   - Time-based (reps == 0): obey state.auto for all transitions (current behavior)
+    //   - Rep-based (reps > 0): rest auto-runs after work, but next WORK set always
+    //     waits for a manual tap (user paces their reps)
+    const repBased = settings.reps > 0;
+
     if (state.phase === 'work') {
       addStat('sets', 1);
       addStat('time', state.phaseDuration);
@@ -738,26 +961,59 @@
         finishWorkout();
         return;
       }
-      // move to rest (or skip if rest=0)
+
+      // Move to rest (or skip if rest=0)
       if (settings.rest > 0) {
         beepBuzzer();
         startPhase('rest', settings.rest);
-        if (state.auto) { state.lastTick = performance.now(); state.rafTimer = requestAnimationFrame(tick); }
-        else { state.paused = true; render(); }
+        // Auto-run rest in both modes (body needs the recovery interval)
+        if (state.auto || repBased) {
+          state.lastTick = performance.now();
+          state.rafTimer = requestAnimationFrame(tick);
+        } else {
+          state.paused = true; render();
+        }
       } else {
+        // No rest configured — go directly to next work set
         beepBuzzer();
         state.curSet++;
-        startPhase('work', settings.work);
-        if (state.auto) { state.lastTick = performance.now(); state.rafTimer = requestAnimationFrame(tick); }
-        else { state.paused = true; render(); }
+        if (repBased) {
+          // wait for tap to start the next rep set
+          enterWaitingState();
+        } else {
+          startPhase('work', settings.work);
+          if (state.auto) {
+            state.lastTick = performance.now();
+            state.rafTimer = requestAnimationFrame(tick);
+          } else { state.paused = true; render(); }
+        }
       }
     } else if (state.phase === 'rest') {
       state.curSet++;
-      beepGo();
-      startPhase('work', settings.work);
-      if (state.auto) { state.lastTick = performance.now(); state.rafTimer = requestAnimationFrame(tick); }
-      else { state.paused = true; render(); }
+      if (repBased) {
+        // Rest done — wait for user to tap before next work set
+        enterWaitingState();
+      } else {
+        beepGo();
+        startPhase('work', settings.work);
+        if (state.auto) {
+          state.lastTick = performance.now();
+          state.rafTimer = requestAnimationFrame(tick);
+        } else { state.paused = true; render(); }
+      }
     }
+  }
+
+  function enterWaitingState() {
+    cancelAnimationFrame(state.rafTimer);
+    state.phase = 'waiting';
+    state.paused = true;
+    state.running = false;
+    // Show what's coming: full work duration on the clock
+    state.phaseDuration = settings.work;
+    state.phaseRemaining = settings.work;
+    beepGo(); // gentle cue that it's your turn
+    render();
   }
 
   function startPhase(phase, duration) {
@@ -789,6 +1045,20 @@
   els.start.addEventListener('click', () => {
     ensureAudio();
     if (state.phase === 'done') doReset();
+
+    if (state.phase === 'waiting') {
+      // Tap to begin the next set in rep-paced mode
+      state.running = true;
+      state.paused = false;
+      startPhase('work', settings.work);
+      beepGo();
+      state.lastTick = performance.now();
+      state.rafTimer = requestAnimationFrame(tick);
+      requestWake();
+      render();
+      return;
+    }
+
     if (!state.running) {
       // first start
       state.running = true;
@@ -895,50 +1165,242 @@
     });
   }
 
-  // ---------- SAVED WORKOUTS ----------
+  // ---------- SAVED WORKOUTS + LISTS ----------
   function getSaved() { return store.get('wt_saved', []); }
   function setSaved(list) { store.set('wt_saved', list); renderSaved(); }
-  function renderSaved() {
-    const list = getSaved();
-    if (!list.length) {
-      els.savedList.innerHTML = '<div class="empty">No saved workouts yet</div>';
+
+  function renderChips() {
+    const chips = ['All', ...settings.lists];
+    let html = chips.map(name => {
+      const active = settings.selectedList === name ? ' active' : '';
+      return `<button class="chip${active}" data-list="${escapeHtml(name)}">${escapeHtml(name)}</button>`;
+    }).join('');
+    html += `<button class="chip chip-add" id="chipAdd">+ New</button>`;
+    html += `<button class="chip chip-manage" id="chipManage" aria-label="Manage lists">⚙</button>`;
+    els.chipsRow.innerHTML = html;
+    els.chipsRow.querySelectorAll('[data-list]').forEach(c => {
+      c.addEventListener('click', () => {
+        settings.selectedList = c.dataset.list;
+        saveSettings();
+        renderChips();
+        renderSaved();
+      });
+    });
+    $('chipAdd').addEventListener('click', addNewList);
+    $('chipManage').addEventListener('click', openManageModal);
+  }
+
+  function addNewList() {
+    const name = (prompt('Name this list (e.g. Daily, Cardio):') || '').trim();
+    if (!name) return;
+    if (name === 'All' || settings.lists.includes(name)) {
+      alert('That list already exists.');
       return;
     }
-    els.savedList.innerHTML = list.map((w, i) => `
-      <div class="saved-item">
-        <div class="saved-info">
-          <div class="saved-name">${escapeHtml(w.name)}</div>
-          <div class="saved-meta">${w.work}s · ${w.rest}s rest · ${w.sets} set${w.sets>1?'s':''}${w.reps?` · ${w.reps} reps`:''}</div>
-        </div>
-        <div class="saved-actions">
-          <button class="icon-btn" data-load="${i}">LOAD</button>
-          <button class="icon-btn danger" data-del="${i}">×</button>
-        </div>
-      </div>
-    `).join('');
+    settings.lists.push(name);
+    settings.selectedList = name;
+    saveSettings();
+    renderChips();
+    renderSaved();
+  }
+
+  function renderSaved() {
+    const all = getSaved();
+    const filtered = settings.selectedList === 'All'
+      ? all.map((w, i) => ({ w, i }))
+      : all.map((w, i) => ({ w, i })).filter(x => x.w.list === settings.selectedList);
+
+    if (!filtered.length) {
+      els.savedList.innerHTML = `<div class="empty">${
+        settings.selectedList === 'All' ? 'No saved workouts yet'
+          : `No workouts in "${escapeHtml(settings.selectedList)}" yet`
+      }</div>`;
+      return;
+    }
+
+    els.savedList.innerHTML = filtered.map(({ w, i }, displayIdx) => {
+      const upDisabled = displayIdx === 0 ? 'disabled' : '';
+      const downDisabled = displayIdx === filtered.length - 1 ? 'disabled' : '';
+      const listLabel = w.list ? ` · ${escapeHtml(w.list)}` : '';
+      return `
+        <div class="saved-item">
+          <div class="reorder-btns">
+            <button class="reorder-btn" data-up="${i}" ${upDisabled} aria-label="Move up">▲</button>
+            <button class="reorder-btn" data-down="${i}" ${downDisabled} aria-label="Move down">▼</button>
+          </div>
+          <div class="saved-info">
+            <div class="saved-name">${escapeHtml(w.name)}</div>
+            <div class="saved-meta">${w.work}s · ${w.rest}s rest · ${w.sets} set${w.sets>1?'s':''}${w.reps?` · ${w.reps} reps`:''}${listLabel}</div>
+          </div>
+          <div class="saved-actions">
+            <button class="icon-btn" data-load="${i}">LOAD</button>
+            <button class="icon-btn danger" data-del="${i}">×</button>
+          </div>
+        </div>`;
+    }).join('');
+
     els.savedList.querySelectorAll('[data-load]').forEach(b => {
       b.addEventListener('click', () => loadSaved(parseInt(b.dataset.load, 10)));
     });
     els.savedList.querySelectorAll('[data-del]').forEach(b => {
       b.addEventListener('click', () => deleteSaved(parseInt(b.dataset.del, 10)));
     });
+    els.savedList.querySelectorAll('[data-up]').forEach(b => {
+      b.addEventListener('click', () => reorderSaved(parseInt(b.dataset.up, 10), -1));
+    });
+    els.savedList.querySelectorAll('[data-down]').forEach(b => {
+      b.addEventListener('click', () => reorderSaved(parseInt(b.dataset.down, 10), 1));
+    });
   }
+
+  function reorderSaved(absoluteIndex, direction) {
+    const all = getSaved();
+    if (settings.selectedList === 'All') {
+      // Move within the full list
+      const newIdx = absoluteIndex + direction;
+      if (newIdx < 0 || newIdx >= all.length) return;
+      [all[absoluteIndex], all[newIdx]] = [all[newIdx], all[absoluteIndex]];
+    } else {
+      // Move within the visible filtered list (swap with the nearest neighbor in the same list)
+      const sameListIndices = all
+        .map((w, idx) => w.list === settings.selectedList ? idx : -1)
+        .filter(idx => idx !== -1);
+      const positionInFiltered = sameListIndices.indexOf(absoluteIndex);
+      const swapWith = sameListIndices[positionInFiltered + direction];
+      if (swapWith === undefined) return;
+      [all[absoluteIndex], all[swapWith]] = [all[swapWith], all[absoluteIndex]];
+    }
+    setSaved(all);
+  }
+
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
-  els.saveBtn.addEventListener('click', () => {
-    const name = (settings.name || prompt('Name this workout:') || '').trim();
-    if (!name) return;
+
+  // Save dialog flow
+  let saveDialogList = null;
+  els.saveBtn.addEventListener('click', openSaveModal);
+
+  function openSaveModal() {
+    els.saveNameInput.value = settings.name || '';
+    saveDialogList = settings.selectedList === 'All'
+      ? (settings.lists[0] || null)
+      : settings.selectedList;
+    renderSaveListOptions();
+    els.saveModal.classList.add('show');
+    setTimeout(() => els.saveNameInput.focus(), 50);
+  }
+
+  function renderSaveListOptions() {
+    const opts = ['(none)', ...settings.lists];
+    els.saveListOptions.innerHTML = opts.map(name => {
+      const value = name === '(none)' ? '' : name;
+      const active = (saveDialogList || '') === value ? ' active' : '';
+      return `<button class="chip${active}" data-pick="${escapeHtml(value)}">${escapeHtml(name)}</button>`;
+    }).join('') + '<button class="chip chip-add" id="saveListNew">+ New</button>';
+    els.saveListOptions.querySelectorAll('[data-pick]').forEach(b => {
+      b.addEventListener('click', () => {
+        saveDialogList = b.dataset.pick || null;
+        renderSaveListOptions();
+      });
+    });
+    $('saveListNew').addEventListener('click', () => {
+      const name = (prompt('New list name:') || '').trim();
+      if (!name || name === 'All' || settings.lists.includes(name)) return;
+      settings.lists.push(name);
+      saveDialogList = name;
+      saveSettings();
+      renderSaveListOptions();
+      renderChips();
+    });
+  }
+
+  els.saveModalCancel.addEventListener('click', () => els.saveModal.classList.remove('show'));
+  els.saveModalConfirm.addEventListener('click', () => {
+    const name = els.saveNameInput.value.trim();
+    if (!name) { els.saveNameInput.focus(); return; }
     settings.name = name;
     els.name.value = name;
     const list = getSaved();
     list.push({
-      name, work: settings.work, rest: settings.rest,
-      sets: settings.sets, reps: settings.reps
+      name,
+      work: settings.work, rest: settings.rest,
+      sets: settings.sets, reps: settings.reps,
+      list: saveDialogList || ''
     });
     setSaved(list);
     saveSettings();
+    els.saveModal.classList.remove('show');
   });
+
+  // Manage lists modal
+  els.manageModalClose.addEventListener('click', () => els.manageModal.classList.remove('show'));
+  els.addListBtn.addEventListener('click', () => {
+    const name = els.newListInput.value.trim();
+    if (!name || name === 'All' || settings.lists.includes(name)) {
+      els.newListInput.focus(); return;
+    }
+    settings.lists.push(name);
+    els.newListInput.value = '';
+    saveSettings();
+    renderManageLists();
+    renderChips();
+  });
+
+  function openManageModal() {
+    renderManageLists();
+    els.manageModal.classList.add('show');
+  }
+
+  function renderManageLists() {
+    if (!settings.lists.length) {
+      els.manageLists.innerHTML = '<div class="empty">No lists yet — add one below</div>';
+      return;
+    }
+    els.manageLists.innerHTML = settings.lists.map((name, i) => `
+      <div class="manage-list-row">
+        <input data-rename="${i}" value="${escapeHtml(name)}" maxlength="20">
+        <button class="icon-btn danger" data-rmlist="${i}">Delete</button>
+      </div>
+    `).join('');
+    els.manageLists.querySelectorAll('[data-rename]').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const i = parseInt(inp.dataset.rename, 10);
+        const newName = inp.value.trim();
+        if (!newName || newName === 'All' || (settings.lists.includes(newName) && settings.lists[i] !== newName)) {
+          inp.value = settings.lists[i];
+          return;
+        }
+        const oldName = settings.lists[i];
+        settings.lists[i] = newName;
+        // Update workouts pointing to the renamed list
+        const all = getSaved();
+        all.forEach(w => { if (w.list === oldName) w.list = newName; });
+        if (settings.selectedList === oldName) settings.selectedList = newName;
+        store.set('wt_saved', all);
+        saveSettings();
+        renderChips();
+        renderSaved();
+      });
+    });
+    els.manageLists.querySelectorAll('[data-rmlist]').forEach(b => {
+      b.addEventListener('click', () => {
+        const i = parseInt(b.dataset.rmlist, 10);
+        const name = settings.lists[i];
+        if (!confirm(`Delete list "${name}"?\nWorkouts in it will move to "All" (uncategorized).`)) return;
+        settings.lists.splice(i, 1);
+        const all = getSaved();
+        all.forEach(w => { if (w.list === name) w.list = ''; });
+        if (settings.selectedList === name) settings.selectedList = 'All';
+        store.set('wt_saved', all);
+        saveSettings();
+        renderManageLists();
+        renderChips();
+        renderSaved();
+      });
+    });
+  }
+
   function loadSaved(i) {
     const w = getSaved()[i]; if (!w) return;
     settings.name = w.name;
@@ -994,9 +1456,17 @@
 
   // ---------- INIT ----------
   syncInputs();
+  renderChips();
   renderSaved();
   renderStats();
   doReset();
+
+  // Click outside modal background to dismiss
+  [els.saveModal, els.manageModal].forEach(m => {
+    m.addEventListener('click', (e) => {
+      if (e.target === m) m.classList.remove('show');
+    });
+  });
 
   // Prevent accidental scroll when tapping main buttons
   ['touchmove'].forEach(ev => {
