@@ -16,11 +16,17 @@
   Built for proto 3 field testing of firmware v6a.
   Runs in demo mode (mock data) or live mode (Serial log paste).
 
-  BLE is NOT yet wired to real firmware characteristics.
-  That comes in v6b when BLE UUIDs are defined on the device.
+  Three data modes:
+    1. Demo   — mock data, no hardware needed
+    2. Serial — paste Serial Monitor output into Log tab
+    3. BLE    — live connection to TIGA-1 device
 
-  For now: paste Serial Monitor output into the Log tab
-  and the app parses it into real readings.
+  BLE service UUID: 4fafc201-1fb5-459e-8fcc-c5c9c331914b
+  BLE data char:    beb5483e-36e1-4688-b7f5-ea07361b26a8
+  Packet: 20 bytes — see tiga_ble.h for full format
+
+  iOS: use Bluefy browser for Web Bluetooth
+  Android/Desktop Chrome: works natively
 
   Test suites covered:
     1. Heart rate accuracy (resting vs active)
@@ -307,6 +313,15 @@ nav button.active { color: var(--green); }
         <div class="conn-dot" id="conn-dot"></div>
         <span id="conn-label">Demo</span>
       </div>
+    </div>
+
+    <!-- BLE connect -->
+    <div class="card" style="padding:12px 16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
+      <div>
+        <div style="font-size:12px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">Device</div>
+        <div style="font-size:13px; margin-top:2px;" id="ble-status-line">Not connected — tap to scan</div>
+      </div>
+      <button class="btn small outline" style="width:auto; white-space:nowrap;" onclick="tryConnect()" id="ble-btn">Connect</button>
     </div>
 
     <!-- Session timer -->
@@ -896,18 +911,140 @@ function setChip(id, cls, text) {
 }
 
 // ============================================================
-// CONNECTION (demo placeholder — real BLE in v6b)
+// BLE CONNECTION
+// Service:  4fafc201-1fb5-459e-8fcc-c5c9c331914b
+// Char:     beb5483e-36e1-4688-b7f5-ea07361b26a8
+// Packet:   20 bytes — see tiga_ble.h for format
 // ============================================================
-function tryConnect() {
-  if (S.mode === 'demo') {
-    toast('BLE connection coming in v6b. Using demo mode.');
+const BLE_SERVICE  = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
+const BLE_DATA     = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
+
+let bleDevice = null;
+let bleServer = null;
+
+async function tryConnect() {
+  if (!navigator.bluetooth) {
+    toast('Web Bluetooth not available.\niOS: use Bluefy app. Android/Desktop: use Chrome.');
     return;
+  }
+
+  // If already connected — disconnect
+  if (S.mode === 'live' && bleDevice && bleDevice.gatt.connected) {
+    bleDevice.gatt.disconnect();
+    S.mode = 'demo';
+    setConnStatus('demo');
+    toast('Disconnected from device');
+    if (S.demoInterval) { clearInterval(S.demoInterval); S.demoInterval = null; }
+    return;
+  }
+
+  try {
+    setConnStatus('scanning');
+    toast('Scanning for TIGA-1…');
+
+    bleDevice = await navigator.bluetooth.requestDevice({
+      filters: [
+        { name: 'TIGA-1' },
+        { services: [BLE_SERVICE] }
+      ],
+      optionalServices: [BLE_SERVICE]
+    });
+
+    bleDevice.addEventListener('gattserverdisconnected', onBLEDisconnect);
+
+    toast('Connecting…');
+    bleServer = await bleDevice.gatt.connect();
+
+    const service = await bleServer.getPrimaryService(BLE_SERVICE);
+    const dataChar = await service.getCharacteristic(BLE_DATA);
+
+    // Subscribe to notifications
+    await dataChar.startNotifications();
+    dataChar.addEventListener('characteristicvaluechanged', onBLEData);
+
+    S.mode = 'live';
+    // Stop demo if running
+    if (S.demoInterval) { clearInterval(S.demoInterval); S.demoInterval = null; }
+    setConnStatus('live');
+    toast('Connected to ' + bleDevice.name + ' ✓');
+
+  } catch (e) {
+    setConnStatus('demo');
+    if (e.name === 'NotFoundError') {
+      toast('No TIGA device found. Is firmware flashed and device on?');
+    } else if (e.name === 'SecurityError') {
+      toast('BLE requires HTTPS. Make sure you\'re on christinepamela.com');
+    } else {
+      toast('Connection failed: ' + e.message);
+    }
+    console.error('[BLE]', e);
   }
 }
 
-function setConnStatus(ok) {
-  document.getElementById('conn-dot').className = 'conn-dot ' + (ok ? 'ok' : 'demo');
-  document.getElementById('conn-label').textContent = ok ? 'Live' : 'Demo';
+function onBLEDisconnect() {
+  S.mode = 'demo';
+  setConnStatus('demo');
+  toast('Device disconnected');
+  // Attempt auto-reconnect after 3s
+  setTimeout(() => {
+    if (bleDevice && !bleDevice.gatt.connected) {
+      toast('Reconnecting…');
+      bleDevice.gatt.connect().catch(() => toast('Reconnect failed — tap to retry'));
+    }
+  }, 3000);
+}
+
+function onBLEData(event) {
+  // Parse 20-byte packet — see tiga_ble.h for format
+  const v   = event.target.value;  // DataView
+  const get8  = (i)    => v.getUint8(i);
+  const get16 = (i)    => v.getUint16(i, true);   // little-endian
+  const get16s = (i)   => v.getInt16(i, true);     // signed little-endian
+
+  const d = S.data;
+
+  d.hr         = get8(0);
+  d.spo2       = get8(1);
+  d.spo2Valid  = get8(2) === 1;
+  d.steps      = get16(3);
+  d.altM       = get16s(5) / 10.0;
+  d.floors     = get8(7);
+  d.battery    = get8(8);
+  d.worn       = get8(9) === 1;
+  d.falls      = get8(10);
+  d.stable     = get8(11) === 1;
+  d.gpsFix     = get8(12) === 1;
+  d.gpsSats    = get8(13);
+  d.pressure   = get16(14) / 10.0;
+
+  updateDash();
+}
+
+function setConnStatus(status) {
+  const dot    = document.getElementById('conn-dot');
+  const label  = document.getElementById('conn-label');
+  const line   = document.getElementById('ble-status-line');
+  const btn    = document.getElementById('ble-btn');
+
+  if (status === 'live') {
+    dot.className    = 'conn-dot ok';
+    label.textContent = 'Live ●';
+    if (line) line.textContent = 'Connected to ' + (bleDevice?.name || 'TIGA-1');
+    if (line) line.style.color  = 'var(--green)';
+    if (btn)  btn.textContent   = 'Disconnect';
+  } else if (status === 'scanning') {
+    dot.className    = 'conn-dot demo';
+    label.textContent = 'Scanning…';
+    if (line) line.textContent = 'Scanning for TIGA-1…';
+    if (line) line.style.color  = 'var(--orange)';
+    if (btn)  btn.textContent   = 'Cancel';
+  } else {
+    dot.className    = 'conn-dot';
+    label.textContent = 'Demo';
+    if (line) line.textContent = 'Not connected — tap to scan';
+    if (line) line.style.color  = '';
+    if (btn)  btn.textContent   = 'Connect';
+  }
 }
 
 // ============================================================
@@ -1398,7 +1535,7 @@ function toast(msg) {
 // INIT
 // ============================================================
 function init() {
-  setConnStatus(false); // demo mode
+  setConnStatus('demo');   // always start in demo until BLE connects
   updateDash();
   updateTestSummary();
 
@@ -1426,3 +1563,4 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
