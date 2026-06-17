@@ -69,11 +69,12 @@ nav {
 
 /* HERO */
 .hero {
-  height: 100vh; min-height: 600px;
+  height: 100vh; min-height: 640px;
   background: var(--ink);
   position: relative;
-  display: flex; flex-direction: column; justify-content: flex-end;
+  display: flex; flex-direction: column; justify-content: center;
   overflow: hidden;
+  padding-top: 52px;
 }
 
 .hero-grid {
@@ -91,7 +92,7 @@ nav {
   top: -100px; right: -100px; pointer-events: none;
 }
 
-.hero-content { position: relative; z-index: 2; padding: 0 64px 72px; max-width: 900px; }
+.hero-content { position: relative; z-index: 2; padding: 0 64px; max-width: 900px; }
 
 .hero-kicker { font-size: 11px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); margin-bottom: 20px; opacity: 0; transform: translateY(20px); animation: fadeUp 0.7s ease 0.1s forwards; }
 
@@ -115,51 +116,94 @@ nav {
 .theta-mini-title { font-size: 14px; color: #F0EDE6; font-family: 'Cormorant Garamond', serif; }
 .theta-mini-desc { font-size: 10px; color: rgba(240,237,230,0.45); line-height: 1.4; }
 
-.scroll-indicator { position: absolute; right: 40px; bottom: 72px; display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 2; opacity: 0; animation: fadeUp 1s ease 0.8s forwards; }
+.scroll-indicator { position: absolute; right: 40px; bottom: 40px; display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 2; opacity: 0; animation: fadeUp 1s ease 0.8s forwards; }
 .scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, rgba(0,130,200,0.6), transparent); animation: scrollLine 2s ease-in-out infinite; }
 @keyframes scrollLine { 0% { transform: scaleY(0); transform-origin: top; opacity: 0; } 50% { transform: scaleY(1); transform-origin: top; opacity: 1; } 100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; } }
 .scroll-text { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(240,237,230,0.3); writing-mode: vertical-rl; }
 
 @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-/* THETA EXPLAINER STRIP */
-.theta-strip {
-  background: var(--ink-soft);
-  border-top: 0.5px solid rgba(0,130,200,0.2);
-  padding: 28px 64px;
-  display: flex;
-  gap: 0;
-  align-items: stretch;
+/* THETA EXPLAINER — VISUAL SYSTEM */
+.theta-explainer { background: var(--ink); padding: 72px 64px; }
+
+.te-intro { text-align: center; max-width: 640px; margin: 0 auto 56px; }
+.te-kicker { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(0,130,200,0.7); margin-bottom: 12px; }
+.te-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(24px, 3vw, 34px); color: #F0EDE6; font-weight: 400; }
+.te-title em { font-style: italic; color: var(--accent-light); }
+
+.te-module { max-width: 880px; margin: 0 auto 64px; }
+.te-module:last-child { margin-bottom: 0; }
+.te-module-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(240,237,230,0.4); margin-bottom: 16px; text-align: center; }
+
+/* Module 1: Core vs Breakthrough split */
+.te-bracket-row { display: flex; gap: 3px; margin-bottom: 6px; height: 20px; }
+.te-bracket-spacer { flex: 7; }
+.te-bracket { flex: 3; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; }
+.te-bracket-line { width: 100%; height: 8px; border: 0.5px solid rgba(181,132,26,0.5); border-bottom: none; border-radius: 4px 4px 0 0; }
+.te-bracket-label { font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; color: #E8C97E; }
+
+.te-split { display: flex; gap: 3px; border-radius: 10px; overflow: hidden; height: 64px; margin-bottom: 16px; }
+.te-split-seg { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+.te-split-seg.core { flex: 7; background: rgba(29,107,72,0.18); border: 0.5px solid rgba(29,107,72,0.4); }
+.te-split-seg.edge { flex: 2; background: rgba(181,132,26,0.14); border: 0.5px solid rgba(181,132,26,0.4); }
+.te-split-seg.beyond { flex: 1; background: rgba(139,26,26,0.14); border: 0.5px solid rgba(139,26,26,0.4); }
+.te-split-name { font-size: 13px; font-weight: 500; }
+.te-split-seg.core .te-split-name { color: #6FC99A; }
+.te-split-seg.edge .te-split-name { color: #E8C97E; }
+.te-split-seg.beyond .te-split-name { color: #D47070; }
+.te-split-sub { font-size: 10px; color: rgba(240,237,230,0.4); }
+.te-split-caption { text-align: center; font-size: 12px; color: rgba(240,237,230,0.55); line-height: 1.6; max-width: 600px; margin: 0 auto 24px; }
+
+/* Module 2: Breakthrough zoomed - Edge / Beyond with subtypes */
+.te-zoom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.te-zoom-card { border-radius: 10px; padding: 20px; border: 0.5px solid; }
+.te-zoom-card.edge { background: rgba(181,132,26,0.08); border-color: rgba(181,132,26,0.35); }
+.te-zoom-card.beyond { background: rgba(139,26,26,0.08); border-color: rgba(139,26,26,0.35); }
+.te-zoom-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+.te-zoom-name { font-size: 14px; font-weight: 500; }
+.te-zoom-card.edge .te-zoom-name { color: #E8C97E; }
+.te-zoom-card.beyond .te-zoom-name { color: #D47070; }
+.te-zoom-horizon { font-size: 10px; color: rgba(240,237,230,0.4); }
+.te-zoom-types { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.te-zoom-type { font-size: 12px; color: rgba(240,237,230,0.7); padding-left: 10px; border-left: 2px solid rgba(255,255,255,0.12); }
+.te-zoom-type strong { color: rgba(240,237,230,0.92); font-weight: 500; }
+.te-zoom-example { margin-top: 12px; font-size: 11px; color: rgba(240,237,230,0.4); font-style: italic; }
+
+/* Module 3: How breakthrough is built - Mavericks to Skunkworks to Open Source */
+.te-flow { display: flex; align-items: stretch; gap: 0; margin-bottom: 20px; }
+.te-flow-step { flex: 1; padding: 18px 14px; text-align: center; position: relative; }
+.te-flow-step:not(:last-child)::after {
+  content: '→'; position: absolute; right: -2px; top: 50%; transform: translateY(-50%);
+  color: rgba(240,237,230,0.25); font-size: 16px; z-index: 1;
 }
+.te-flow-name { font-size: 13px; font-weight: 500; color: #F0EDE6; margin-bottom: 4px; }
+.te-flow-stage { font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent-light); margin-bottom: 8px; }
+.te-flow-desc { font-size: 11px; color: rgba(240,237,230,0.45); line-height: 1.5; }
 
-.theta-intro {
-  flex: 1.2;
-  padding-right: 40px;
-  border-right: 0.5px solid rgba(255,255,255,0.07);
-  margin-right: 40px;
+.te-trifecta { display: flex; gap: 16px; justify-content: center; margin-top: 8px; }
+.te-trifecta-item { flex: 1; max-width: 200px; text-align: center; padding: 14px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); }
+.te-trifecta-name { font-size: 12px; font-weight: 500; color: var(--accent-light); margin-bottom: 4px; }
+.te-trifecta-desc { font-size: 11px; color: rgba(240,237,230,0.45); line-height: 1.5; }
+
+/* Module 4: KPIs */
+.te-kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.te-kpi-card { padding: 18px; border-radius: 8px; background: rgba(0,130,200,0.06); border: 0.5px solid rgba(0,130,200,0.2); }
+.te-kpi-name { font-size: 12px; font-weight: 500; color: #87CEEB; margin-bottom: 6px; }
+.te-kpi-desc { font-size: 11px; color: rgba(240,237,230,0.5); line-height: 1.55; }
+
+/* Closing line of the explainer */
+.te-closing { max-width: 720px; margin: 56px auto 0; text-align: center; padding-top: 32px; border-top: 0.5px solid rgba(255,255,255,0.08); }
+.te-closing-text { font-family: 'Cormorant Garamond', serif; font-size: clamp(17px, 2vw, 21px); font-style: italic; color: rgba(240,237,230,0.85); line-height: 1.5; }
+
+@media (max-width: 900px) {
+  .theta-explainer { padding: 48px 24px; }
+  .te-zoom-grid { grid-template-columns: 1fr; }
+  .te-flow { flex-direction: column; gap: 8px; }
+  .te-flow-step:not(:last-child)::after { content: '↓'; right: 50%; top: auto; bottom: -14px; transform: translateX(50%); }
+  .te-trifecta { flex-direction: column; }
+  .te-trifecta-item { max-width: none; }
+  .te-kpi-grid { grid-template-columns: 1fr; }
 }
-
-.theta-intro-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,130,200,0.7); margin-bottom: 8px; }
-.theta-intro-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #F0EDE6; font-weight: 400; margin-bottom: 6px; }
-.theta-intro-body { font-size: 12px; color: rgba(240,237,230,0.5); line-height: 1.6; }
-
-.theta-zones { display: flex; gap: 0; flex: 2; }
-
-.theta-zone { flex: 1; padding: 0 24px; border-right: 0.5px solid rgba(255,255,255,0.06); }
-.theta-zone:last-child { border-right: none; }
-
-.theta-zone-dot { width: 8px; height: 8px; border-radius: 50%; margin-bottom: 8px; }
-.theta-zone-dot.core { background: var(--core-green); }
-.theta-zone-dot.edge { background: var(--edge-amber); }
-.theta-zone-dot.beyond { background: var(--beyond-crimson); }
-
-.theta-zone-name { font-size: 12px; font-weight: 500; margin-bottom: 4px; }
-.theta-zone.core .theta-zone-name { color: #6FC99A; }
-.theta-zone.edge .theta-zone-name { color: #E8C97E; }
-.theta-zone.beyond .theta-zone-name { color: #D47070; }
-
-.theta-zone-pct { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: rgba(240,237,230,0.5); margin-bottom: 4px; }
-.theta-zone-desc { font-size: 11px; color: rgba(240,237,230,0.4); line-height: 1.5; }
 
 /* SECTIONS */
 section { padding: 80px 64px; }
@@ -211,6 +255,82 @@ section { padding: 80px 64px; }
 
 /* THETA MAP */
 .map-section { padding: 80px 64px; background: #fff; }
+
+/* ERA CARDS - leadership/period through Theta lens */
+.era-list { display: flex; flex-direction: column; gap: 0; max-width: 880px; }
+
+.era-card {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 28px;
+  padding: 28px 0;
+  border-bottom: 0.5px solid var(--border-light);
+}
+
+.era-card:first-child { padding-top: 0; }
+.era-card:last-child { border-bottom: none; }
+
+.era-period {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  color: var(--blue);
+  padding-top: 2px;
+}
+
+.era-label {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.era-title { font-weight: 500; font-size: 15px; color: var(--text-primary); margin-bottom: 8px; }
+
+.era-bars { display: flex; gap: 4px; margin-bottom: 10px; height: 8px; border-radius: 4px; overflow: hidden; }
+.era-bar-seg { height: 100%; }
+.era-bar-seg.core { background: var(--core-green); }
+.era-bar-seg.edge { background: var(--edge-amber); }
+.era-bar-seg.beyond { background: var(--beyond-crimson); }
+
+.era-pcts { display: flex; gap: 14px; font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
+.era-pcts span.core-pct { color: var(--core-green); font-weight: 500; }
+.era-pcts span.edge-pct { color: var(--edge-amber); font-weight: 500; }
+.era-pcts span.beyond-pct { color: var(--beyond-crimson); font-weight: 500; }
+
+.era-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+
+.era-outcome { display: inline-flex; align-items: baseline; gap: 6px; margin-bottom: 10px; padding: 4px 10px; border-radius: 5px; background: rgba(0,130,200,0.07); border: 0.5px solid rgba(0,130,200,0.2); flex-wrap: wrap; max-width: 100%; }
+.era-outcome-label { font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted); flex-shrink: 0; }
+.era-outcome-value { font-size: 12px; font-weight: 500; color: var(--blue); }
+
+@media (max-width: 900px) {
+  .era-card { grid-template-columns: 1fr; gap: 6px; }
+}
+
+/* COMPETITOR ALLOCATION BARS */
+.comp-alloc { margin-top: 14px; padding-top: 12px; border-top: 0.5px solid rgba(0,0,0,0.06); }
+.comp-alloc-bars { display: flex; gap: 3px; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+.comp-alloc-seg { height: 100%; }
+.comp-alloc-seg.core { background: var(--core-green); }
+.comp-alloc-seg.edge { background: var(--edge-amber); }
+.comp-alloc-seg.beyond { background: var(--beyond-crimson); }
+.comp-alloc-label { font-size: 10px; color: var(--text-muted); }
+
+/* LITMUS VERDICT */
+.litmus-box {
+  margin-top: 16px;
+  padding: 16px 18px;
+  border-radius: 8px;
+  background: rgba(139,26,26,0.05);
+  border-left: 3px solid var(--beyond-crimson);
+}
+
+.litmus-box.balanced { background: rgba(29,107,72,0.05); border-left-color: var(--core-green); }
+
+.litmus-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--beyond-crimson); margin-bottom: 6px; font-weight: 500; }
+.litmus-box.balanced .litmus-label { color: var(--core-green); }
+.litmus-text { font-size: 13px; color: var(--text-primary); line-height: 1.6; font-weight: 500; }
 
 .map-header { margin-bottom: 36px; }
 
@@ -291,6 +411,10 @@ section { padding: 80px 64px; }
 .comp-card { background: #fff; border: 0.5px solid rgba(0,0,0,0.1); border-radius: 10px; padding: 18px 14px; transition: transform 0.2s; }
 .comp-card:hover { transform: translateY(-2px); }
 .comp-card.featured { border: 1.5px solid var(--blue); background: rgba(0,130,200,0.03); }
+
+.comp-badges { display: flex; gap: 6px; margin-bottom: 10px; }
+.comp-rank { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: var(--ink); color: #F0EDE6; letter-spacing: 0.02em; }
+.comp-country { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 4px; background: var(--paper-warm); color: var(--text-muted); letter-spacing: 0.02em; }
 
 .comp-name { font-weight: 500; font-size: 13px; margin-bottom: 4px; color: var(--text-primary); }
 .comp-tag { font-size: 11px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.4; }
@@ -534,10 +658,6 @@ footer { background: var(--ink); padding: 28px 64px; display: flex; justify-cont
   section { padding: 52px 24px; }
   .hero-content { padding: 0 24px 52px; }
   .belief-strip { padding: 36px 24px; }
-  .theta-strip { flex-direction: column; padding: 28px 24px; }
-  .theta-intro { padding-right: 0; border-right: none; margin-right: 0; margin-bottom: 24px; border-bottom: 0.5px solid rgba(255,255,255,0.07); padding-bottom: 24px; }
-  .theta-zones { flex-direction: column; gap: 16px; }
-  .theta-zone { padding: 0; border-right: none; }
   .about-grid, .map-triangle-wrap, .alloc-grid, .diag-grid, .sw-grid, .my-diag-grid { grid-template-columns: 1fr; gap: 32px; }
   .comp-grid { grid-template-columns: 1fr 1fr; }
   .partner-grid, .firsts-grid, .govt-grid { grid-template-columns: 1fr; }
@@ -606,35 +726,6 @@ footer { background: var(--ink); padding: 28px 64px; display: flex; justify-cont
   </div>
 </section>
 
-<!-- THETA EXPLAINER STRIP -->
-<div class="theta-strip">
-  <div class="theta-intro">
-    <div class="theta-intro-label">What is the Theta Framework</div>
-    <div class="theta-intro-title">Mapping where a company bets its future</div>
-    <div class="theta-intro-body">Every company's innovation can be placed across three zones. The mix between them determines whether a company is optimizing the present, building the next wave, or shaping what comes after. The right balance varies — it depends on a company's maturity, market position, goals, and the macro environment. The diagnostic is about understanding where a company sits, not whether it hits a fixed number.</div>
-  </div>
-  <div class="theta-zones">
-    <div class="theta-zone core">
-      <div class="theta-zone-dot core"></div>
-      <div class="theta-zone-name">Core</div>
-      <div class="theta-zone-pct">Today's engine</div>
-      <div class="theta-zone-desc">Existing markets. Incremental improvement. Typically the largest allocation — but the right balance varies by company, stage, and market conditions.</div>
-    </div>
-    <div class="theta-zone edge">
-      <div class="theta-zone-dot edge"></div>
-      <div class="theta-zone-name">Edge</div>
-      <div class="theta-zone-pct">Next wave</div>
-      <div class="theta-zone-desc">New markets. New architectures. 3 to 7 year horizon. Where the next S-curve is built before the current one flattens.</div>
-    </div>
-    <div class="theta-zone beyond">
-      <div class="theta-zone-dot beyond"></div>
-      <div class="theta-zone-name">Beyond</div>
-      <div class="theta-zone-pct">Frontier bets</div>
-      <div class="theta-zone-desc">Speculative. Emerging markets. Radical technology change. The smallest slice in most companies — but the one that defines who they become.</div>
-    </div>
-  </div>
-</div>
-
 <!-- ABOUT -->
 <section class="section-white" id="about">
   <p class="section-kicker fade-in">About</p>
@@ -673,88 +764,211 @@ footer { background: var(--ink); padding: 28px 64px; display: flex; justify-cont
   </div>
 </section>
 
-<div class="belief-strip fade-in">
-  <p class="belief-quote">"The challenge for us is to make sure that when operators look for a partner to drive their transformation, they see Ericsson not just as a vendor, but as the company that makes networks think."</p>
-  <p class="belief-attr" style="text-align:center;">Börje Ekholm, President and CEO, Ericsson</p>
-</div>
+<!-- THETA EXPLAINER — VISUAL SYSTEM -->
+<section class="theta-explainer">
+  <div class="te-intro fade-in">
+    <p class="te-kicker">The Theta Framework — Part 1</p>
+    <h2 class="te-title">Every company runs on two kinds of innovation: <em>core, and breakthrough</em></h2>
+  </div>
 
-<!-- TIMELINE -->
-<section class="section-paper" id="timeline">
-  <p class="section-kicker fade-in">148 Years</p>
-  <h2 class="section-title fade-in">From telegraph repairs <em>to 6G research</em></h2>
+  <!-- MODULE 1: Core vs Breakthrough -->
+  <div class="te-module fade-in">
+    <p class="te-module-label">1 — The fundamental split</p>
 
-  <div class="timeline">
-    <div class="tl-item fade-in">
-      <div class="tl-year">1876</div>
-      <div class="tl-dot filled"></div>
-      <div class="tl-phase">Origin</div>
-      <div class="tl-title">The workshop in Stockholm</div>
-      <div class="tl-desc">Lars Magnus Ericsson opens a mechanical repair shop and quickly pivots to manufacturing telephone equipment. From day one, the business model is infrastructure, not devices.</div>
-    </div>
-    <div class="tl-item fade-in">
-      <div class="tl-year">1976</div>
-      <div class="tl-dot filled"></div>
-      <div class="tl-inflection">
-        <div class="tl-phase">Inflection I</div>
-        <div class="tl-title">AXE digital switch</div>
-        <div class="tl-desc">The modular AXE architecture becomes the software-defined network of its era, deployed by operators on every continent. This single product funds three decades of R&D and embeds Ericsson into every major operator relationship in the world.</div>
+    <div class="te-bracket-row">
+      <div class="te-bracket-spacer"></div>
+      <div class="te-bracket">
+        <div class="te-bracket-label">Breakthrough</div>
+        <div class="te-bracket-line"></div>
       </div>
     </div>
-    <div class="tl-item fade-in">
-      <div class="tl-year">1991</div>
-      <div class="tl-dot"></div>
-      <div class="tl-phase">Standard-setting</div>
-      <div class="tl-title">Co-architects GSM</div>
-      <div class="tl-desc">Ericsson is one of the primary authors of the 2G standard, enabling digital roaming and the first wave of mass mobile adoption. Standards authorship becomes a repeatable competitive advantage.</div>
-    </div>
-    <div class="tl-item fade-in">
-      <div class="tl-year">2001</div>
-      <div class="tl-dot"></div>
-      <div class="tl-phase">Strategic exit</div>
-      <div class="tl-title">Sony Ericsson joint venture</div>
-      <div class="tl-desc">After a fire at a key semiconductor supplier devastates supply, Ericsson exits consumer devices entirely. A painful moment that sharpens the company's identity as pure infrastructure.</div>
-    </div>
-    <div class="tl-item fade-in">
-      <div class="tl-year">2009</div>
-      <div class="tl-dot filled"></div>
-      <div class="tl-inflection">
-        <div class="tl-phase">Inflection II</div>
-        <div class="tl-title">World's first commercial 4G network</div>
-        <div class="tl-desc">Ericsson and Nokia Siemens launch LTE in Stockholm and Oslo with TeliaSonera. The early 4G lead locks in key North American and European operator relationships for the decade that follows.</div>
+
+    <div class="te-split">
+      <div class="te-split-seg core">
+        <div class="te-split-name">Core</div>
+        <div class="te-split-sub">~70%</div>
+      </div>
+      <div class="te-split-seg edge">
+        <div class="te-split-name">Edge</div>
+        <div class="te-split-sub">~20%</div>
+      </div>
+      <div class="te-split-seg beyond">
+        <div class="te-split-name">Beyond</div>
+        <div class="te-split-sub">~10%</div>
       </div>
     </div>
-    <div class="tl-item fade-in">
-      <div class="tl-year">2019</div>
-      <div class="tl-dot"></div>
-      <div class="tl-phase">Crisis</div>
-      <div class="tl-title">$1.06B DOJ settlement</div>
-      <div class="tl-desc">A decade of bribery in Djibouti, China, Vietnam, Indonesia and Kuwait is exposed. The FCPA penalties and an ongoing Iraq investigation that followed reshape the company's culture toward deep compliance anxiety.</div>
-    </div>
-    <div class="tl-item fade-in">
-      <div class="tl-year">2021</div>
-      <div class="tl-dot"></div>
-      <div class="tl-phase">The platform bet</div>
-      <div class="tl-title">Vonage acquired for $6.2B</div>
-      <div class="tl-desc">Ericsson's most ambitious move: a communications API platform to build the "Global Network Platform" vision. Integration has been harder than projected but the strategic direction remains the most important question in the company's next chapter.</div>
-    </div>
-    <div class="tl-item fade-in">
-      <div class="tl-year">2025</div>
-      <div class="tl-dot filled"></div>
-      <div class="tl-inflection">
-        <div class="tl-phase">Inflection III</div>
-        <div class="tl-title">The margin recovery</div>
-        <div class="tl-desc">Gross margins improve from 44.9% to 48.1% despite flat revenue. Three years of restructuring show the cost base is now right-sized. The question pivots from survival to second-act construction.</div>
+    <p class="te-split-caption">Core protects today's revenue. Breakthrough, Edge and Beyond together, builds what replaces it. The split is rarely even, ideally it sits near 70-20-10, but it shouldn't be forced to be.</p>
+  </div>
+
+  <!-- MODULE 2: Breakthrough zoomed - Edge / Beyond -->
+  <div class="te-module fade-in">
+    <p class="te-module-label">2 — Breakthrough has two horizons</p>
+    <div class="te-zoom-grid">
+      <div class="te-zoom-card edge">
+        <div class="te-zoom-head">
+          <div class="te-zoom-name">Edge</div>
+          <div class="te-zoom-horizon">3–7 years</div>
+        </div>
+        <div class="te-zoom-types">
+          <div class="te-zoom-type"><strong>Architectural</strong> — reconfiguring how something already works</div>
+          <div class="te-zoom-type"><strong>Disruptive</strong> — displacing the incumbent model entirely</div>
+        </div>
+        <div class="te-zoom-example">Example: the iPod, Uber, Open RAN</div>
+      </div>
+      <div class="te-zoom-card beyond">
+        <div class="te-zoom-head">
+          <div class="te-zoom-name">Beyond</div>
+          <div class="te-zoom-horizon">7–15+ years</div>
+        </div>
+        <div class="te-zoom-types">
+          <div class="te-zoom-type"><strong>Transformational</strong> — creates a new market or industry</div>
+          <div class="te-zoom-type"><strong>Frontier</strong> — speculative research, often decades out</div>
+        </div>
+        <div class="te-zoom-example">Example: the internet, AGI, quantum computing</div>
       </div>
     </div>
   </div>
+
+  <div class="te-closing fade-in">
+    <p class="te-closing-text">Core and breakthrough cannot be run on the same rules. Holding breakthrough to the margin targets and shareholder cadence built for core does not protect the company. It just guarantees breakthrough never gets the room to breathe.</p>
+  </div>
 </section>
 
-<!-- THETA MAP -->
+<div class="belief-strip fade-in">
+  <p class="belief-quote">Ekholm has described the company's ambition as moving from a networking company to "a platform company, leveraging 5G as the most powerful innovation platform ever seen."</p>
+  <p class="belief-attr" style="text-align:center;">Börje Ekholm, President and CEO, Ericsson, on the strategic shift behind the Vonage acquisition</p>
+</div>
+
+<!-- ERICSSON THROUGH THE THETA LENS -->
+<section class="section-paper" id="timeline">
+  <p class="section-kicker fade-in">148 Years, Read Through Theta</p>
+  <h2 class="section-title fade-in">Ericsson <em>through the Theta lens</em></h2>
+  <p style="color:var(--text-secondary);font-size:14px;max-width:680px;margin-bottom:48px;" class="fade-in">The history that matters here is not just what Ericsson built. It is how the balance between Core, Edge, and Beyond shifted at each turn, and what that shift cost or earned in the market. Each era below carries its outcome, measured in global infrastructure market share, so the cost of underinvesting in Edge and Beyond is not just an assertion. Reading the eras this way is the same lens used later for Malaysia and for the competitors, so the comparison holds together rather than describing three different things in three different vocabularies.</p>
+
+  <div class="era-list">
+    <div class="era-card fade-in">
+      <div>
+        <div class="era-period">1876–1976</div>
+        <div class="era-label">Founding Era</div>
+      </div>
+      <div>
+        <div class="era-title">Infrastructure as identity</div>
+        <div class="era-outcome"><span class="era-outcome-label">Market share</span><span class="era-outcome-value">No global benchmark exists yet</span></div>
+        <div class="era-bars">
+          <div class="era-bar-seg core" style="width:80%;"></div>
+          <div class="era-bar-seg edge" style="width:15%;"></div>
+          <div class="era-bar-seg beyond" style="width:5%;"></div>
+        </div>
+        <div class="era-pcts"><span class="core-pct">Core ~80%</span><span class="edge-pct">Edge ~15%</span><span class="beyond-pct">Beyond ~5%</span></div>
+        <div class="era-desc">Lars Magnus Ericsson built a telephone hardware business and stayed there for a century. Core-heavy by necessity, not by failure of ambition. There was no Edge to chase yet because the market itself was still forming.</div>
+      </div>
+    </div>
+
+    <div class="era-card fade-in">
+      <div>
+        <div class="era-period">1976–1991</div>
+        <div class="era-label">The AXE Era</div>
+      </div>
+      <div>
+        <div class="era-title">A 30-year Core bet that became the whole company</div>
+        <div class="era-outcome"><span class="era-outcome-label">Market share</span><span class="era-outcome-value">World's largest telecom equipment supplier</span></div>
+        <div class="era-bars">
+          <div class="era-bar-seg core" style="width:55%;"></div>
+          <div class="era-bar-seg edge" style="width:35%;"></div>
+          <div class="era-bar-seg beyond" style="width:10%;"></div>
+        </div>
+        <div class="era-pcts"><span class="core-pct">Core ~55%</span><span class="edge-pct">Edge ~35%</span><span class="beyond-pct">Beyond ~10%</span></div>
+        <div class="era-desc">The AXE digital switch began as an Edge bet, a modular architecture nobody had proven at scale, and graduated into Core so completely that it funded three decades of R&D on its own. This is the Theta model working as designed: an Edge bet maturing into the engine that pays for the next one.</div>
+      </div>
+    </div>
+
+    <div class="era-card fade-in">
+      <div>
+        <div class="era-period">1991–2001</div>
+        <div class="era-label">Standards Era</div>
+      </div>
+      <div>
+        <div class="era-title">Co-authoring GSM, then misreading the Edge</div>
+        <div class="era-outcome"><span class="era-outcome-label">Market share</span><span class="era-outcome-value">~36% global mobile infrastructure share by 2011</span></div>
+        <div class="era-bars">
+          <div class="era-bar-seg core" style="width:60%;"></div>
+          <div class="era-bar-seg edge" style="width:30%;"></div>
+          <div class="era-bar-seg beyond" style="width:10%;"></div>
+        </div>
+        <div class="era-pcts"><span class="core-pct">Core ~60%</span><span class="edge-pct">Edge ~30%</span><span class="beyond-pct">Beyond ~10%</span></div>
+        <div class="era-desc">Standards authorship for 2G was a genuine Edge win. But Ericsson also chased consumer handsets through this period, treating a fundamentally different business, B2C devices, with the same Core operating assumptions as B2B infrastructure. The 2001 Sony Ericsson exit is the correction: an admission that consumer devices were never really Ericsson's Edge to win.</div>
+      </div>
+    </div>
+
+    <div class="era-card fade-in">
+      <div>
+        <div class="era-period">2009–2019</div>
+        <div class="era-label">The 4G Decade</div>
+      </div>
+      <div>
+        <div class="era-title">Core discipline restored, Beyond left thin</div>
+        <div class="era-outcome"><span class="era-outcome-label">Market share</span><span class="era-outcome-value">Slips to ~27% by 2017 as Huawei overtakes the lead</span></div>
+        <div class="era-bars">
+          <div class="era-bar-seg core" style="width:78%;"></div>
+          <div class="era-bar-seg edge" style="width:18%;"></div>
+          <div class="era-bar-seg beyond" style="width:4%;"></div>
+        </div>
+        <div class="era-pcts"><span class="core-pct">Core ~78%</span><span class="edge-pct">Edge ~18%</span><span class="beyond-pct">Beyond ~4%</span></div>
+        <div class="era-desc">The world's first commercial 4G launch locked in operator relationships for a decade and the company leaned hard into that win. Effective, but it is the same pattern that hurt Intel under Otellini: a strong Core can mask how thin the Beyond bench has become until the next S-curve is already underway elsewhere.</div>
+      </div>
+    </div>
+
+    <div class="era-card fade-in">
+      <div>
+        <div class="era-period">2019–2021</div>
+        <div class="era-label">The Compliance Reset</div>
+      </div>
+      <div>
+        <div class="era-title">A $1.06B settlement rewires the culture, not just the balance sheet</div>
+        <div class="era-outcome"><span class="era-outcome-label">Market share</span><span class="era-outcome-value">Falls to second place globally, ~23.5%, behind Huawei's 30%</span></div>
+        <div class="era-bars">
+          <div class="era-bar-seg core" style="width:82%;"></div>
+          <div class="era-bar-seg edge" style="width:14%;"></div>
+          <div class="era-bar-seg beyond" style="width:4%;"></div>
+        </div>
+        <div class="era-pcts"><span class="core-pct">Core ~82%</span><span class="edge-pct">Edge ~14%</span><span class="beyond-pct">Beyond ~4%</span></div>
+        <div class="era-desc">The FCPA penalties and the Iraq investigation that followed did not just cost money. They installed a compliance-first instinct that outlived the legal exposure. Risk appetite for Edge and Beyond work contracted at exactly the moment competitors were accelerating Open RAN and cloud-native architectures.</div>
+      </div>
+    </div>
+
+    <div class="era-card fade-in">
+      <div>
+        <div class="era-period">2021–2025</div>
+        <div class="era-label">The Platform Bet</div>
+      </div>
+      <div>
+        <div class="era-title">Vonage, margin recovery, and an unresolved Beyond</div>
+        <div class="era-outcome"><span class="era-outcome-label">Market share</span><span class="era-outcome-value">Holds firm at #2, Huawei and Ericsson now ~two-thirds of the RAN market combined</span></div>
+        <div class="era-bars">
+          <div class="era-bar-seg core" style="width:70%;"></div>
+          <div class="era-bar-seg edge" style="width:20%;"></div>
+          <div class="era-bar-seg beyond" style="width:10%;"></div>
+        </div>
+        <div class="era-pcts"><span class="core-pct">Core ~70%</span><span class="edge-pct">Edge ~20%</span><span class="beyond-pct">Beyond ~10%</span></div>
+        <div class="era-desc">The $6.2B Vonage acquisition is Ericsson's most explicit Beyond bet in its history, an attempt to build a Global Network Platform rather than just sell boxes. On paper this is the most Theta-balanced era since the AXE years. Whether the culture underneath that allocation matches the ambition on paper is the question the rest of this case study tests.</div>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:var(--text-secondary);max-width:680px;margin-top:28px;line-height:1.65;" class="fade-in">When the focus on Edge and Beyond reduces, market share gets impacted. Huawei has been constantly pushing for technology advancement and market acquisition through breakthrough innovation, and the eras where Ericsson's Edge and Beyond investment thinned are the same eras where that share slipped.</p>
+
+  <div class="reading-card fade-in" style="margin-top:36px;max-width:680px;">
+    <strong style="font-size:11px;color:var(--text-primary);display:block;margin-bottom:5px;">Reading this table</strong>
+    These splits are estimates built from R&D disclosures, strategic announcements, and acquisition size, the same method used for every company and era in this case study. They are directional, not audited figures. What matters is the shape of the shift across eras, not the precision of any single number.
+  </div>
+</section>
+
+<!-- THETA MAP VISUAL -->
 <section class="map-section" id="theta-map">
   <div class="map-header fade-in">
-    <p class="section-kicker">Theta Innovation Map</p>
-    <h2 class="section-title" style="margin-bottom:8px;">Where Ericsson bets its future</h2>
-    <p style="color:var(--text-secondary);font-size:14px;max-width:600px;">Each initiative plotted by how far it reaches into new markets (x-axis) and how radically it changes the underlying technology (y-axis).</p>
+    <p class="section-kicker">Today's Portfolio, Plotted</p>
+    <h2 class="section-title" style="margin-bottom:8px;">Where the 2025 allocation actually sits</h2>
+    <p style="color:var(--text-secondary);font-size:14px;max-width:600px;">The 70/20/10-era split translates into specific initiatives. Each one plotted by how far it reaches into new markets (x-axis) and how radically it changes the underlying technology (y-axis).</p>
   </div>
 
   <div class="map-triangle-wrap">
@@ -764,14 +978,14 @@ footer { background: var(--ink); padding: 28px 64px; display: flex; justify-cont
           <div class="tri-zone-marker"><div class="tri-dot beyond"></div></div>
           <div>
             <div class="tri-zone-title">Beyond — Breakthrough bets</div>
-            <div class="tri-zone-text">Network APIs turning connectivity into a developer platform. 6G and Internet of the Senses research. These are speculative, long-horizon, and genuinely transformational if they land.</div>
+            <div class="tri-zone-text">6G research and Internet of the Senses work. Speculative, long-horizon, genuinely transformational if they land, currently running more as strategic narrative than funded conviction.</div>
           </div>
         </div>
         <div class="tri-zone edge-row">
           <div class="tri-zone-marker"><div class="tri-dot edge"></div></div>
           <div>
             <div class="tri-zone-title">Edge — The decisive battleground</div>
-            <div class="tri-zone-text">Open RAN re-architecting the industry. Private 5G selling to factories and mines rather than operators. Network APIs are arguably Edge rather than Beyond, as real commercial deployments are underway with 70+ operators.</div>
+            <div class="tri-zone-text">Open RAN re-architecting the industry. Private 5G selling to factories and mines rather than operators. The Vonage and Aduna API platform sits here too, real commercial deployments with 70+ operators, not a lab project.</div>
           </div>
         </div>
         <div class="tri-zone core-row">
@@ -801,18 +1015,17 @@ footer { background: var(--ink); padding: 28px 64px; display: flex; justify-cont
   </div>
 </section>
 
-<!-- ALLOCATION (merged, no separate heading) -->
-<section class="section-paper" id="allocation">
-  <p class="section-kicker fade-in">Portfolio Allocation</p>
-  <h2 class="section-title fade-in">Right numbers on paper. <em>Wrong culture underneath.</em></h2>
+<!-- ALLOCATION SNAPSHOT -->
+<section class="section-white" id="allocation">
+  <p class="section-kicker fade-in">2026 Snapshot</p>
+  <h2 class="section-title fade-in">Right numbers on paper. <em>Wrong strategy for Edge and Beyond.</em></h2>
 
   <div class="alloc-grid">
     <div class="fade-in">
-      <p style="color:var(--text-secondary);margin-bottom:28px;font-size:14px;">For a mature global infrastructure company in a consolidating market, a heavy lean toward Core is expected and defensible. Ericsson's estimated split — roughly 70% core, 20% edge, 10% beyond — reflects that reality. The Theta diagnostic does not judge the numbers against a fixed rule. It asks a different question: given Ericsson's position, goals, and the speed of market change, is this mix intentional and is it working? The split looks coherent. The culture underneath it is what this section examines.</p>
       <div class="chart-legend">
-        <div class="legend-item"><div class="legend-swatch" style="background:#1D6B48;"></div>Core</div>
-        <div class="legend-item"><div class="legend-swatch" style="background:#B5841A;"></div>Edge</div>
-        <div class="legend-item"><div class="legend-swatch" style="background:#8B1A1A;"></div>Beyond</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#1D6B48;"></div>Core — 70%</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#B5841A;"></div>Edge — 20%</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#8B1A1A;"></div>Beyond — 10%</div>
       </div>
       <div class="doughnut-wrap" style="height:240px;margin-top:16px;">
         <canvas id="doughnutChart" role="img" aria-label="Doughnut chart showing Ericsson estimated portfolio allocation across Core, Edge and Beyond">Ericsson portfolio: Core majority, smaller Edge and Beyond allocations</canvas>
@@ -821,38 +1034,52 @@ footer { background: var(--ink); padding: 28px 64px; display: flex; justify-cont
           <div class="doughnut-zones">3 Zones</div>
         </div>
       </div>
+      <div class="bar-items" style="margin-top:28px;">
+        <div class="bar-item">
+          <div class="bar-header"><span class="bar-label core">Core</span><span class="bar-pcts">~70%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:70%;background:var(--core-green);"></div></div>
+        </div>
+        <div class="bar-item">
+          <div class="bar-header"><span class="bar-label edge">Edge</span><span class="bar-pcts">~20%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:20%;background:var(--edge-amber);"></div></div>
+        </div>
+        <div class="bar-item">
+          <div class="bar-header"><span class="bar-label beyond">Beyond</span><span class="bar-pcts">~10%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--beyond-crimson);"></div></div>
+        </div>
+      </div>
     </div>
 
-    <div class="bar-items fade-in">
-      <div class="bar-item">
-        <div class="bar-header">
-          <span class="bar-label core">Core — 70%</span>
-          <span class="bar-pcts">Estimated ~70% of investment</span>
+    <div class="fade-in">
+      <div class="sw-panel strengths" style="margin-bottom:20px;">
+        <div class="sw-panel-title">What works</div>
+        <div class="sw-item">
+          <div class="sw-marker">+</div>
+          <div class="sw-body">Core allocation matches the AXE-era discipline. Margins improved from 44.9% to 48.1%.</div>
         </div>
-        <div class="bar-track">
-          <div class="bar-fill" style="width:70%;background:var(--core-green);"></div>
+        <div class="sw-item">
+          <div class="sw-marker">+</div>
+          <div class="sw-body">Edge bets, Open RAN and Private 5G, target the right markets at the right size.</div>
         </div>
-        <div class="bar-comment">Well-executed and deliberately heavy. Margins improved from 44.9% to 48.1%. For a company this size in a maturing infrastructure market, a dominant core allocation is rational. The risk is subtler: when core teams are rewarded for optimization, they develop an antibody to anything that looks like it might disrupt the product lines funding their bonuses.</div>
+        <div class="sw-item">
+          <div class="sw-marker">+</div>
+          <div class="sw-body">$6.2B Vonage commitment signals Beyond is taken seriously at the capital level.</div>
+        </div>
       </div>
-      <div class="bar-item">
-        <div class="bar-header">
-          <span class="bar-label edge">Edge — 20%</span>
-          <span class="bar-pcts">Estimated ~20% of investment</span>
+      <div class="sw-panel weaknesses">
+        <div class="sw-panel-title">What doesn't</div>
+        <div class="sw-item">
+          <div class="sw-marker">−</div>
+          <div class="sw-body">Core teams rewarded for optimization develop an antibody to anything that risks disrupting their own product lines.</div>
         </div>
-        <div class="bar-track">
-          <div class="bar-fill" style="width:20%;background:var(--edge-amber);"></div>
+        <div class="sw-item">
+          <div class="sw-marker">−</div>
+          <div class="sw-body">Edge sells to factory CIOs and developers, not telecom CTOs. The 50-year sales motion does not transfer.</div>
         </div>
-        <div class="bar-comment">Meaningful and the right bets — but fragile in execution. Open RAN and Private 5G address real market shifts. The problem is that these sell to factory CIOs and software developers, not telecom CTOs. A completely different sales motion that Ericsson's 50-year playbook does not cover.</div>
-      </div>
-      <div class="bar-item">
-        <div class="bar-header">
-          <span class="bar-label beyond">Beyond — 10%</span>
-          <span class="bar-pcts">Estimated ~10% of investment</span>
+        <div class="sw-item">
+          <div class="sw-marker">−</div>
+          <div class="sw-body">Beyond is underweighted in leadership attention relative to its strategic importance. Capital without protection.</div>
         </div>
-        <div class="bar-track">
-          <div class="bar-fill" style="width:10%;background:var(--beyond-crimson);"></div>
-        </div>
-        <div class="bar-comment">Small by design — but underweighted in leadership attention and organizational protection relative to its strategic importance. The Vonage API platform is the most important bet in the company's history. At $6.2B it signals commitment. The integration difficulty signals the deeper cultural challenge.</div>
       </div>
     </div>
   </div>
@@ -861,49 +1088,100 @@ footer { background: var(--ink); padding: 28px 64px; display: flex; justify-cont
 <!-- COMPETITORS -->
 <section class="section-white" id="competitors">
   <p class="section-kicker fade-in">Competitive Landscape</p>
-  <h2 class="section-title fade-in">A two-horse race <em>split by geopolitics</em></h2>
+  <h2 class="section-title fade-in">How each rival actually <em>allocates</em></h2>
+  <p style="color:var(--text-secondary);font-size:14px;max-width:680px;margin-bottom:36px;" class="fade-in">Strength dots tell you who is winning. They do not tell you why. The Theta split below estimates how each competitor actually divides attention and investment, the same method used for Ericsson's own eras, which is what makes the comparison mean something rather than just rank everyone on a scale of strong to weak.</p>
 
   <div class="comp-grid fade-in">
     <div class="comp-card featured">
+      <div class="comp-badges"><span class="comp-rank">#2 worldwide</span><span class="comp-country">Sweden</span></div>
       <div class="comp-name">Ericsson</div>
       <div class="comp-tag">Western 5G infrastructure leader</div>
       <div class="comp-zone-row"><div class="comp-zone-dot strong"></div>Core: Best-in-class 5G RAN</div>
       <div class="comp-zone-row"><div class="comp-zone-dot strong"></div>Edge: Open RAN and Private 5G</div>
       <div class="comp-zone-row"><div class="comp-zone-dot mid"></div>Beyond: Vonage API platform</div>
-      <div class="comp-verdict">Featured · ~13% global share</div>
+      <div class="comp-alloc">
+        <div class="comp-alloc-bars">
+          <div class="comp-alloc-seg core" style="width:70%;"></div>
+          <div class="comp-alloc-seg edge" style="width:20%;"></div>
+          <div class="comp-alloc-seg beyond" style="width:10%;"></div>
+        </div>
+        <div class="comp-alloc-label">~70 / 20 / 10 — balanced on paper, untested in culture</div>
+      </div>
+      <div class="comp-verdict">~16% outside China · ~two-thirds combined with Huawei</div>
     </div>
     <div class="comp-card">
+      <div class="comp-badges"><span class="comp-rank">#1 worldwide</span><span class="comp-country">China</span></div>
       <div class="comp-name">Huawei</div>
       <div class="comp-tag">Global leader, geopolitically blocked in the West</div>
       <div class="comp-zone-row"><div class="comp-zone-dot strong"></div>Core: ~31% global share</div>
       <div class="comp-zone-row"><div class="comp-zone-dot strong"></div>Edge: 5G-Advanced in China</div>
       <div class="comp-zone-row"><div class="comp-zone-dot strong"></div>Beyond: State-backed 6G R&D</div>
+      <div class="comp-alloc">
+        <div class="comp-alloc-bars">
+          <div class="comp-alloc-seg core" style="width:60%;"></div>
+          <div class="comp-alloc-seg edge" style="width:25%;"></div>
+          <div class="comp-alloc-seg beyond" style="width:15%;"></div>
+        </div>
+        <div class="comp-alloc-label">~60 / 25 / 15 — state backing funds Beyond at a scale no rival matches</div>
+      </div>
       <div class="comp-verdict">Banned US/EU · Dominates rest</div>
     </div>
     <div class="comp-card">
+      <div class="comp-badges"><span class="comp-rank">#3 worldwide</span><span class="comp-country">Finland</span></div>
       <div class="comp-name">Nokia</div>
       <div class="comp-tag">Closest Western rival, losing North America</div>
       <div class="comp-zone-row"><div class="comp-zone-dot strong"></div>Core: Comparable RAN portfolio</div>
       <div class="comp-zone-row"><div class="comp-zone-dot mid"></div>Edge: IP/optical growing fast</div>
       <div class="comp-zone-row"><div class="comp-zone-dot weak"></div>Beyond: Bell Labs heritage, limited output</div>
+      <div class="comp-alloc">
+        <div class="comp-alloc-bars">
+          <div class="comp-alloc-seg core" style="width:75%;"></div>
+          <div class="comp-alloc-seg edge" style="width:20%;"></div>
+          <div class="comp-alloc-seg beyond" style="width:5%;"></div>
+        </div>
+        <div class="comp-alloc-label">~75 / 20 / 5 — Bell Labs heritage, but Beyond is mostly historical reputation now</div>
+      </div>
       <div class="comp-verdict">Ceding ground in key markets</div>
     </div>
     <div class="comp-card">
+      <div class="comp-badges"><span class="comp-rank">#5 worldwide</span><span class="comp-country">South Korea</span></div>
       <div class="comp-name">Samsung</div>
       <div class="comp-tag">Open RAN disruptor from outside telecoms</div>
       <div class="comp-zone-row"><div class="comp-zone-dot mid"></div>Core: Strong in Korea and parts of US</div>
       <div class="comp-zone-row"><div class="comp-zone-dot strong"></div>Edge: Vertically integrated O-RAN</div>
       <div class="comp-zone-row"><div class="comp-zone-dot weak"></div>Beyond: Limited platform vision</div>
+      <div class="comp-alloc">
+        <div class="comp-alloc-bars">
+          <div class="comp-alloc-seg core" style="width:55%;"></div>
+          <div class="comp-alloc-seg edge" style="width:35%;"></div>
+          <div class="comp-alloc-seg beyond" style="width:10%;"></div>
+        </div>
+        <div class="comp-alloc-label">~55 / 35 / 10 — telecom is itself Samsung's Edge bet, not its Core</div>
+      </div>
       <div class="comp-verdict">Rising in US Open RAN</div>
     </div>
     <div class="comp-card">
+      <div class="comp-badges"><span class="comp-rank">#4 worldwide</span><span class="comp-country">China</span></div>
       <div class="comp-name">ZTE</div>
       <div class="comp-tag">Budget-tier Chinese alternative</div>
       <div class="comp-zone-row"><div class="comp-zone-dot mid"></div>Core: Cost-competitive in developing markets</div>
       <div class="comp-zone-row"><div class="comp-zone-dot weak"></div>Edge: Limited innovation pipeline</div>
       <div class="comp-zone-row"><div class="comp-zone-dot weak"></div>Beyond: Minimal</div>
+      <div class="comp-alloc">
+        <div class="comp-alloc-bars">
+          <div class="comp-alloc-seg core" style="width:85%;"></div>
+          <div class="comp-alloc-seg edge" style="width:12%;"></div>
+          <div class="comp-alloc-seg beyond" style="width:3%;"></div>
+        </div>
+        <div class="comp-alloc-label">~85 / 12 / 3 — cost leadership is the entire strategy, not a phase of it</div>
+      </div>
       <div class="comp-verdict">Developing market focus</div>
     </div>
+  </div>
+
+  <div class="reading-card fade-in" style="margin-bottom:36px;max-width:680px;">
+    <strong style="font-size:11px;color:var(--text-primary);display:block;margin-bottom:5px;">What the splits actually reveal</strong>
+    Huawei's Beyond allocation is not bigger because Huawei is more innovative. It is bigger because state-backed capital does not answer to quarterly margin targets the way Ericsson's does. Samsung's split looks edge-heavy not because it is bold in telecom, but because telecom genuinely is a side bet for a company whose real Core is semiconductors and consumer electronics. The splits explain the strength dots above them, not the other way around.
   </div>
 
   <div class="chart-legend fade-in">
@@ -1003,6 +1281,74 @@ footer { background: var(--ink); padding: 28px 64px; display: flex; justify-cont
   </div>
 </section>
 
+<!-- THETA EXPLAINER PART 2 - how breakthrough is built, led, measured -->
+<section class="theta-explainer">
+  <div class="te-intro fade-in">
+    <p class="te-kicker">The Theta Framework — Part 2</p>
+    <h2 class="te-title">How breakthrough actually <em>gets built</em></h2>
+  </div>
+
+  <!-- MODULE 3: How breakthrough is built -->
+  <div class="te-module fade-in">
+    <p class="te-module-label">3 — How breakthrough becomes the next core</p>
+    <div class="te-flow">
+      <div class="te-flow-step">
+        <div class="te-flow-stage">Chaos</div>
+        <div class="te-flow-name">Mavericks</div>
+        <div class="te-flow-desc">Raw ideas, no roadmap. Survival depends on conviction.</div>
+      </div>
+      <div class="te-flow-step">
+        <div class="te-flow-stage">Build</div>
+        <div class="te-flow-name">Skunkworks</div>
+        <div class="te-flow-desc">Small, protected, autonomous. Shielded from corporate inertia.</div>
+      </div>
+      <div class="te-flow-step">
+        <div class="te-flow-stage">Scale</div>
+        <div class="te-flow-name">Open source ethos</div>
+        <div class="te-flow-desc">Transparency and modularity turn a bet into a stable core.</div>
+      </div>
+    </div>
+    <p class="te-module-label" style="margin-top:28px;">The leadership it requires</p>
+    <div class="te-trifecta">
+      <div class="te-trifecta-item">
+        <div class="te-trifecta-name">Agility</div>
+        <div class="te-trifecta-desc">Willingness to bend the rulebook</div>
+      </div>
+      <div class="te-trifecta-item">
+        <div class="te-trifecta-name">Consciousness</div>
+        <div class="te-trifecta-desc">Awareness over ego</div>
+      </div>
+      <div class="te-trifecta-item">
+        <div class="te-trifecta-name">Courage</div>
+        <div class="te-trifecta-desc">Acting despite the fear of failure</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4: KPIs -->
+  <div class="te-module fade-in">
+    <p class="te-module-label">4 — How breakthrough gets measured, differently</p>
+    <div class="te-kpi-grid">
+      <div class="te-kpi-card">
+        <div class="te-kpi-name">Learning velocity</div>
+        <div class="te-kpi-desc">Speed of iteration. How fast a hypothesis turns into real-world feedback.</div>
+      </div>
+      <div class="te-kpi-card">
+        <div class="te-kpi-name">Risk-taking and failure rate</div>
+        <div class="te-kpi-desc">Intelligent experimentation. Low failure usually signals excessive caution, not safety.</div>
+      </div>
+      <div class="te-kpi-card">
+        <div class="te-kpi-name">Adoption and market traction</div>
+        <div class="te-kpi-desc">Winning with real users. Validates demand beyond an internal pitch deck.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="te-closing fade-in">
+    <p class="te-closing-text">The diagnostic that follows asks a direct question: is Ericsson's breakthrough work actually running on this logic, with its own leadership style and its own KPIs, or is it still being judged by Core's rules?</p>
+  </div>
+</section>
+
 <!-- DIAGNOSTIC GLOBAL -->
 <section class="section-ink" id="diagnostic">
   <p class="section-kicker on-ink fade-in">Theta Diagnostic</p>
@@ -1060,14 +1406,22 @@ footer { background: var(--ink); padding: 28px 64px; display: flex; justify-cont
       </div>
 
       <div class="diag-block fade-in">
-        <div class="diag-block-title">Relativity</div>
-        <p style="font-size:13px;color:rgba(240,237,230,0.65);line-height:1.7;">Against Nokia in the West, Ericsson is winning. Against Huawei globally, it is second by share but first in the markets that matter geopolitically. Against its own trajectory five years ago, meaningfully better margins and clearer direction. Against the scale of transformation required to build a software and platform business on top of a hardware legacy, the progress so far is insufficient. The clock is the variable most people are not watching closely enough.</p>
+        <div class="diag-block-title">Relativity — four factors, not one yardstick</div>
+        <div class="culture-row"><span class="culture-label">Technology context</span><span class="culture-value">Hardware-legacy company building software-first. The leap is real, not cosmetic.</span></div>
+        <div class="culture-row"><span class="culture-label">Market maturity</span><span class="culture-value">5G capex flat, operators past initial rollout. The easy growth phase is over.</span></div>
+        <div class="culture-row"><span class="culture-label">Organizational capacity</span><span class="culture-value">Compliance-first culture moves at compliance-first speed, not Edge speed.</span></div>
+        <div class="culture-row"><span class="culture-label">How progress is measured</span><span class="culture-value">Against five years ago, real gains. Against the clock running on this S-curve, behind.</span></div>
       </div>
     </div>
 
     <div class="verdict-box fade-in">
       <div class="verdict-title">Transitioning ☑ △ ×</div>
       <div class="verdict-body">Core innovations are strong and well-executed. Edge and Beyond breakthrough innovations are promising but operating inside the wrong cultural and governance conditions to reach their potential. The Vonage API platform, if it works, changes the company's identity. If it does not, the core revenue base will shrink faster than the edge can fill it. The separation of core and breakthrough innovation, with their own environments and their own rules, is the structural question worth sitting with.</div>
+
+      <div class="litmus-box" style="margin-top:20px;background:rgba(255,255,255,0.04);border-left-color:var(--accent-light);">
+        <div class="litmus-label" style="color:var(--accent-light);">Said plainly</div>
+        <div class="litmus-text" style="color:rgba(240,237,230,0.85);">A heavy Core, a reactive Edge, and a Beyond that is strategic narrative more than funded conviction. Closer to Intel under Otellini than to NVIDIA under Huang. Maximizing the business it already has while someone else's culture builds the next S-curve.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -1085,15 +1439,15 @@ footer { background: var(--ink); padding: 28px 64px; display: flex; justify-cont
 <!-- MY ABOUT -->
 <section class="section-white">
   <p class="section-kicker fade-in">Malaysia at a Glance</p>
-  <h2 class="section-title fade-in">60 years. <em>One defining contract.</em></h2>
+  <h2 class="section-title fade-in">Speed of execution. <em>Edge logic runs the whole operation.</em></h2>
 
   <div class="about-grid">
     <div class="about-prose fade-in">
-      <p>Ericsson has been in Malaysia since 1965, but the relationship it holds today is unlike any other country office it operates. In 2021, it was awarded an RM11 billion exclusive contract to design, build, and manage Malaysia's national 5G network through Digital Nasional Berhad, a government-owned special purpose vehicle. This made Ericsson not a vendor but the technical architect of a country's digital backbone.</p>
-      <p>What followed has been genuinely unusual. The Malaysia operation has developed the kind of startup speed, government alignment, and willingness to deploy world-first capabilities that global Ericsson struggles to replicate. It is not testing autonomous networks. It is running them, at scale, for millions of daily users, under the world's first TM Forum Level 4 certification. Malaysia has become Ericsson's most complex live laboratory and its most credible global reference.</p>
+      <p>Every other part of this case study describes a company arguing with its own Core, a 148-year-old hardware identity that Edge and Beyond bets have to fight for oxygen against. Malaysia does not have that fight, because Malaysia was never built inside the parent's Core logic in the first place. In 2021, Ericsson was awarded an RM11 billion exclusive contract to design, build, and manage Malaysia's national 5G network through Digital Nasional Berhad, a government-owned special purpose vehicle. That contract did not inherit Ericsson's global governance, its margin targets, or its compliance-first instincts. It defined its own.</p>
+      <p>This is the actual reason Malaysia moves at a different speed. It is not that the local team is unusually talented or unusually lucky, though both are true. It is that the entire operation runs on Edge-zone rules, fast iteration, its own KPIs tied to national deployment milestones rather than quarterly margin, and a tolerance for technical risk that global Ericsson's compliance culture would not permit. When the market and the technology demanded something the old playbook could not deliver, Malaysia did not try to force the new thing back into the old shape. It built a new Core for itself, one defined by deployment speed and government alignment rather than telecom hardware tradition.</p>
       <div class="hidden-fact">
         <div class="hidden-fact-label">What makes Malaysia structurally different</div>
-        <p>DNB's single wholesale network model, where one Ericsson-built infrastructure serves six competing operators simultaneously through Dynamic Radio Resource Partitioning, has no comparable deployment anywhere else in the world. Malaysia is genuinely novel terrain for the company.</p>
+        <p>DNB's single wholesale network model, where one Ericsson-built infrastructure serves six competing operators simultaneously through Dynamic Radio Resource Partitioning, has no comparable deployment anywhere else in the world. Malaysia is genuinely novel terrain for the company, and novel terrain is exactly where Edge-zone logic is supposed to operate.</p>
       </div>
     </div>
     <div>
@@ -1153,8 +1507,8 @@ footer { background: var(--ink); padding: 28px 64px; display: flex; justify-cont
         <div class="tri-zone core-row">
           <div class="tri-zone-marker"><div class="tri-dot core"></div></div>
           <div>
-            <div class="tri-zone-title">Core (75%) — World-class, not just optimized</div>
-            <div class="tri-zone-text">National 5G RAN deployment for DNB. Dynamic Radio Resource Partitioning serving six operators on one network. The core work here is operating at a level that wins global awards. It is not just efficient. It is exceptional.</div>
+            <div class="tri-zone-title">Core (75%) — A Core that Malaysia defined for itself</div>
+            <div class="tri-zone-text">National 5G RAN deployment for DNB. Dynamic Radio Resource Partitioning serving six operators on one network. This is not global Ericsson's hardware Core inherited downward. It is a Core built around deployment speed and national policy alignment, judged by its own milestones, which is exactly why it can operate at a level that wins global awards rather than just stay efficient.</div>
           </div>
         </div>
       </div>
@@ -1324,14 +1678,22 @@ footer { background: var(--ink); padding: 28px 64px; display: flex; justify-cont
       </div>
 
       <div class="diag-block fade-in">
-        <div class="diag-block-title">Relativity</div>
-        <p style="font-size:13px;color:rgba(240,237,230,0.65);line-height:1.7;">Against global Ericsson, Malaysia is an outlier in pace, trust, and live innovation deployment. Against regional peers Thailand, Indonesia, and Vietnam, Malaysia leads in 5G coverage, autonomy milestones, and government alignment. Against the second network threat, Ericsson's operational depth is the moat. Level 4 autonomy cannot be replicated by a new deployment in fewer than three to four years. That window is the opportunity.</p>
+        <div class="diag-block-title">Relativity — four factors, not one yardstick</div>
+        <div class="culture-row"><span class="culture-label">Technology context</span><span class="culture-value">Starting point was a clean national rollout, not a legacy network to retrofit.</span></div>
+        <div class="culture-row"><span class="culture-label">Market maturity</span><span class="culture-value">First-mover in Southeast Asia on Level 4 autonomy, ahead of regional peers.</span></div>
+        <div class="culture-row"><span class="culture-label">Organizational capacity</span><span class="culture-value">Government-aligned, single-customer mandate. Moves at deployment speed, not compliance speed.</span></div>
+        <div class="culture-row"><span class="culture-label">How progress is measured</span><span class="culture-value">Against its own milestones, ahead. Against the second-network clock, the window is narrowing.</span></div>
       </div>
     </div>
 
     <div class="verdict-box fade-in">
       <div class="verdict-title">Balanced ☑ ☑ ☑ — Rare for a country operation</div>
       <div class="verdict-body">Core innovations are world-class, not just efficient. Edge innovations have genuine government momentum. Beyond innovations are live in production, generating data no lab can produce. The Malaysia operation has created the conditions that global Ericsson struggles to replicate: geography as a shield for maverick leadership, government as a demand catalyst for breakthrough bets, and a single-customer mandate that forced operational excellence to become structural. The question it leaves open is whether this can remain exceptional as the second network introduces competition, and whether the enterprise adoption story can be written before the exclusivity window narrows.</div>
+
+      <div class="litmus-box balanced" style="margin-top:20px;background:rgba(255,255,255,0.04);border-left-color:#6FC99A;">
+        <div class="litmus-label" style="color:#6FC99A;">Said plainly</div>
+        <div class="litmus-text" style="color:rgba(240,237,230,0.85);">This is closer to NVIDIA under Huang than to anything else in Ericsson's own portfolio: balanced, bold, building toward what it wants to become rather than defending what it already is. The catch is that NVIDIA built that culture on purpose. Malaysia mostly inherited it by not being built inside the parent's Core in the first place.</div>
+      </div>
     </div>
   </div>
 </section>
