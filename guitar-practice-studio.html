@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guitar Learner</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f0f10;
+    --surface: #1a1a1d;
+    --surface2: #222226;
+    --border: rgba(255,255,255,0.1);
+    --text: #f0ede8;
+    --muted: #888;
+    --accent: #e8a838;
+    --accent2: #4fc8a0;
+    --accent3: #c46b8a;
+    --danger: #e05555;
+    --success: #4fc8a0;
+    --warn: #e8a838;
+    --radius: 12px;
+    --font: 'Segoe UI', system-ui, sans-serif;
+  }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; }
+
+  /* Nav */
+  nav { display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top:0; z-index:10; }
+  .tab { padding: 14px 20px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; transition: all .2s; display:flex; align-items:center; gap:6px; background:none; border-left:none; border-right:none; border-top:none; }
+  .tab:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+  .tab svg { width:16px; height:16px; }
+
+  /* Pages */
+  .page { display:none; padding: 24px; max-width: 860px; margin: 0 auto; }
+  .page.active { display:block; }
+
+  /* Headings */
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 6px; }
+  h2 { font-size: 17px; font-weight: 500; margin-bottom: 12px; }
+  h3 { font-size: 14px; font-weight: 500; margin-bottom: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+
+  /* Cards */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+  .card-sm { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+
+  /* Buttons */
+  .btn { display:inline-flex; align-items:center; gap:6px; padding: 10px 18px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all .15s; border: 1px solid var(--border); background: var(--surface2); color: var(--text); }
+  .btn:hover { background: rgba(255,255,255,0.08); }
+  .btn.primary { background: var(--accent); color: #111; border-color: var(--accent); }
+  .btn.primary:hover { opacity: .9; }
+  .btn.success { background: var(--accent2); color: #0a1f18; border-color: var(--accent2); }
+  .btn.danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-row { display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; }
+
+  /* ── TUNER ── */
+  .tuner-strings { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .string-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 10px; text-align: center; cursor: pointer; transition: all .2s; }
+  .string-btn:hover { border-color: var(--accent); }
+  .string-btn.active { border-color: var(--accent); background: rgba(232,168,56,.1); }
+  .string-btn .sname { font-size: 28px; font-weight: 600; color: var(--accent); }
+  .string-btn .slabel { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .tuner-display { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 20px; text-align: center; margin-bottom: 16px; }
+  #detected-note { font-size: 64px; font-weight: 600; letter-spacing: -2px; min-height: 80px; }
+  #detected-freq { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+
+  .meter { position:relative; height: 10px; background: var(--border); border-radius: 99px; overflow:hidden; margin: 12px 0; }
+  .meter-fill { position:absolute; top:0; left:50%; width:4px; height:100%; border-radius:99px; transition: left .08s; }
+  .meter-center { position:absolute; top:0; left:50%; transform:translateX(-50%); width:2px; height:100%; background: rgba(255,255,255,.3); }
+  .meter-labels { display:flex; justify-content:space-between; font-size: 11px; color: var(--muted); }
+
+  #tune-instruction { font-size: 15px; font-weight: 500; margin-top: 10px; min-height: 24px; }
+  #tune-status { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  /* ── CHORDS ── */
+  .lesson-nav { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+  .lesson-chip { padding: 6px 14px; border-radius:99px; font-size:13px; cursor:pointer; border:1px solid var(--border); background:none; color:var(--muted); transition:all .15s; }
+  .lesson-chip:hover { color:var(--text); border-color: rgba(255,255,255,.3); }
+  .lesson-chip.active { background:var(--accent); color:#111; border-color:var(--accent); }
+
+  .chord-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .chord-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; cursor:pointer; text-align:center; transition:all .15s; }
+  .chord-card:hover { border-color: var(--accent2); }
+  .chord-card.active { border-color: var(--accent2); background: rgba(79,200,160,.08); }
+  .chord-card .cname { font-size:22px; font-weight:600; color:var(--accent2); }
+  .chord-card .ctype { font-size:11px; color:var(--muted); }
+
+  /* Chord diagram */
+  .chord-diagram { display:flex; gap:20px; flex-wrap:wrap; }
+  .chord-svg-wrap { flex-shrink:0; }
+  .chord-info { flex:1; min-width:200px; }
+  .chord-fingers { list-style:none; font-size:14px; line-height:2; }
+  .chord-fingers li { display:flex; align-items:center; gap:8px; }
+  .finger-dot { width:22px; height:22px; border-radius:50%; background:var(--accent2); color:#0a1f18; font-size:11px; font-weight:600; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .open-dot { width:22px; height:22px; border-radius:50%; border:2px solid var(--accent); color:var(--accent); font-size:11px; font-weight:600; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .x-dot { width:22px; height:22px; color:var(--danger); font-size:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+  /* ── VOICE ── */
+  .pitch-display { background: var(--surface2); border: 1px solid var(--border); border-radius:var(--radius); padding:24px; text-align:center; margin-bottom:16px; }
+  #voice-note { font-size:56px; font-weight:600; }
+  #voice-freq { font-size:13px; color:var(--muted); }
+  #voice-guide { font-size:14px; margin-top:8px; color:var(--accent); min-height:20px; }
+  .vocal-range-bar { position:relative; height:24px; background:linear-gradient(to right, var(--surface2), #2a1a3a, #1a2a3a, #1a3a2a, var(--surface2)); border:1px solid var(--border); border-radius:99px; overflow:hidden; margin:16px 0; }
+  #voice-marker { position:absolute; top:2px; width:20px; height:20px; background:var(--accent); border-radius:50%; transition: left .1s; transform:translateX(-50%); }
+  .range-labels { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-bottom:4px; }
+
+  .key-guide-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:10px; margin-top:16px; }
+  .key-guide-card { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:12px; }
+  .key-guide-card .kname { font-size:16px; font-weight:600; color:var(--accent); }
+  .key-guide-card .krange { font-size:12px; color:var(--muted); margin-top:2px; }
+  .key-guide-card .kchords { font-size:13px; color:var(--text); margin-top:6px; }
+
+  /* ── SONGS ── */
+  .song-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:14px; margin-bottom:20px; }
+  .song-card { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:16px; cursor:pointer; transition:all .15s; }
+  .song-card:hover { border-color:var(--accent3); }
+  .song-card.active { border-color:var(--accent3); background:rgba(196,107,138,.08); }
+  .song-title { font-size:16px; font-weight:500; }
+  .song-artist { font-size:13px; color:var(--muted); margin-top:2px; }
+  .song-diff { display:inline-block; padding:2px 8px; border-radius:99px; font-size:11px; margin-top:6px; font-weight:500; }
+  .diff-easy { background:rgba(79,200,160,.15); color:var(--accent2); }
+  .diff-medium { background:rgba(232,168,56,.15); color:var(--accent); }
+  .diff-hard { background:rgba(196,107,138,.15); color:var(--accent3); }
+
+  .chord-sequence { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0; }
+  .beat-box { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 14px; text-align:center; min-width:50px; transition:all .15s; }
+  .beat-box.playing { background:var(--accent3); color:#1a0d13; border-color:var(--accent3); font-weight:600; }
+  .beat-chord { font-size:18px; font-weight:500; }
+  .beat-num { font-size:10px; color:var(--muted); margin-top:2px; }
+  .beat-box.playing .beat-num { color: rgba(0,0,0,.5); }
+
+  .bpm-row { display:flex; align-items:center; gap:12px; margin:12px 0; }
+  #bpm-range { flex:1; }
+  #bpm-val { font-size:14px; font-weight:500; min-width:60px; }
+
+  /* Lessons */
+  .lesson-content { line-height:1.8; font-size:15px; }
+  .lesson-content p { margin-bottom:12px; }
+  .lesson-content ul { padding-left:20px; margin-bottom:12px; }
+  .lesson-content li { margin-bottom:6px; }
+  .lesson-content .highlight { background:rgba(232,168,56,.12); border-left:3px solid var(--accent); padding:12px 16px; border-radius:0 8px 8px 0; margin:16px 0; font-size:14px; }
+
+  /* Status indicator */
+  .mic-status { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); }
+  .mic-dot { width:8px; height:8px; border-radius:50%; background:var(--danger); }
+  .mic-dot.on { background:var(--success); animation:pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  /* Responsive */
+  @media(max-width:600px) {
+    .tuner-strings { grid-template-columns:repeat(2,1fr); }
+    .chord-diagram { flex-direction:column; }
+    nav { overflow-x:auto; }
+    .tab { font-size:12px; padding:12px 14px; }
+    h1 { font-size:18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <button class="tab active" onclick="switchTab('tuner')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Tuner
+  </button>
+  <button class="tab" onclick="switchTab('lessons')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+    Music Basics
+  </button>
+  <button class="tab" onclick="switchTab('chords')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+    Chords
+  </button>
+  <button class="tab" onclick="switchTab('songs')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    Songs
+  </button>
+  <button class="tab" onclick="switchTab('voice')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+    Voice
+  </button>
+</nav>
+
+<!-- ═══════════════ TUNER ═══════════════ -->
+<div id="page-tuner" class="page active">
+  <h1>Guitar Tuner</h1>
+  <p class="subtitle">Select a string, play it, and follow the needle. Standard tuning: E A D G B e</p>
+
+  <div class="card card-sm" style="margin-bottom:16px; font-size:14px; line-height:1.7; color:var(--muted);">
+    <strong style="color:var(--text)">How pitch works:</strong> Each guitar string vibrates at a specific <em>frequency</em> measured in Hz (cycles per second). Lower numbers = lower, deeper pitch (like bass). Higher numbers = higher, brighter pitch (like a whistle). When a string is too <em>loose</em>, it plays flat (too low). When too <em>tight</em>, it plays sharp (too high). Tune by turning the tuning peg — tighten to raise pitch, loosen to lower it.
+  </div>
+
+  <div class="card card-sm" style="margin-bottom:16px; font-size:14px; line-height:1.7; color:var(--muted); border-left:3px solid var(--accent2); border-radius:0 8px 8px 0;">
+    <strong style="color:var(--text)">🔌 Playing electric guitar unplugged?</strong> Electric strings are quiet without an amp, so the laptop/phone mic may struggle to hear them clearly. Either plug into an amp at low volume and place the mic near the speaker, or hold the mic close to the strings/pickups if playing unplugged. Acoustic and nylon-string guitars are loud enough on their own — no adjustment needed.
+  </div>
+
+  <div class="tuner-strings">
+    <div class="string-btn active" onclick="selectString(0)">
+      <div class="sname">E2</div>
+      <div class="slabel">6th string (thickest)</div>
+    </div>
+    <div class="string-btn" onclick="selectString(1)">
+      <div class="sname">A2</div>
+      <div class="slabel">5th string</div>
+    </div>
+    <div class="string-btn" onclick="selectString(2)">
+      <div class="sname">D3</div>
+      <div class="slabel">4th string</div>
+    </div>
+    <div class="string-btn" onclick="selectString(3)">
+      <div class="sname">G3</div>
+      <div class="slabel">3rd string</div>
+    </div>
+    <div class="string-btn" onclick="selectString(4)">
+      <div class="sname">B3</div>
+      <div class="slabel">2nd string</div>
+    </div>
+    <div class="string-btn" onclick="selectString(5)">
+      <div class="sname">e4</div>
+      <div class="slabel">1st string (thinnest)</div>
+    </div>
+  </div>
+
+  <div class="tuner-display">
+    <div id="detected-note">–</div>
+    <div id="detected-freq">Play a string to begin</div>
+    <div class="meter">
+      <div class="meter-center"></div>
+      <div class="meter-fill" id="meter-fill" style="left:50%; background:var(--muted);"></div>
+    </div>
+    <div class="meter-labels"><span>♭ Too low — loosen peg</span><span>In tune ✓</span><span>♯ Too high — tighten peg</span></div>
+    <div id="tune-instruction"></div>
+    <div id="tune-status"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn primary" id="tuner-btn" onclick="toggleTuner()">🎙 Start listening</button>
+    <span class="mic-status"><span class="mic-dot" id="mic-dot"></span><span id="mic-label">Microphone off</span></span>
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <h2>Reference tones — tap to hear</h2>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">Play each reference tone, then pluck your string and match it by ear.</p>
+    <div class="tuner-strings">
+      <div class="string-btn" onclick="playRef(82.41)"><div class="sname">E2</div><div class="slabel">82.4 Hz · 6th</div></div>
+      <div class="string-btn" onclick="playRef(110.00)"><div class="sname">A2</div><div class="slabel">110 Hz · 5th</div></div>
+      <div class="string-btn" onclick="playRef(146.83)"><div class="sname">D3</div><div class="slabel">146.8 Hz · 4th</div></div>
+      <div class="string-btn" onclick="playRef(196.00)"><div class="sname">G3</div><div class="slabel">196 Hz · 3rd</div></div>
+      <div class="string-btn" onclick="playRef(246.94)"><div class="sname">B3</div><div class="slabel">246.9 Hz · 2nd</div></div>
+      <div class="string-btn" onclick="playRef(329.63)"><div class="sname">e4</div><div class="slabel">329.6 Hz · 1st</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MUSIC BASICS ═══════════════ -->
+<div id="page-lessons" class="page">
+  <h1>Music Basics</h1>
+  <p class="subtitle">Everything you need to understand before playing chords</p>
+
+  <div class="lesson-nav">
+    <button class="lesson-chip active" onclick="showLesson('notes')">Notes & Pitch</button>
+    <button class="lesson-chip" onclick="showLesson('rhythm')">Rhythm & Beats</button>
+    <button class="lesson-chip" onclick="showLesson('chords101')">What is a Chord?</button>
+    <button class="lesson-chip" onclick="showLesson('reading')">Reading Chord Charts</button>
+  </div>
+
+  <div id="lesson-notes" class="card lesson-content">
+    <h2>Notes & Pitch</h2>
+    <p>Music uses 12 notes, cycling over and over at different <strong>octaves</strong> (higher or lower versions of the same note). They are:</p>
+    <div style="display:flex; gap:6px; flex-wrap:wrap; margin:12px 0;">
+      <span style="background:var(--accent);color:#111;padding:4px 10px;border-radius:6px;font-weight:500;font-size:14px;">C</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:6px;font-size:14px;">C#/D♭</span>
+      <span style="background:var(--accent);color:#111;padding:4px 10px;border-radius:6px;font-weight:500;font-size:14px;">D</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:6px;font-size:14px;">D#/E♭</span>
+      <span style="background:var(--accent);color:#111;padding:4px 10px;border-radius:6px;font-weight:500;font-size:14px;">E</span>
+      <span style="background:var(--accent);color:#111;padding:4px 10px;border-radius:6px;font-weight:500;font-size:14px;">F</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:6px;font-size:14px;">F#/G♭</span>
+      <span style="background:var(--accent);color:#111;padding:4px 10px;border-radius:6px;font-weight:500;font-size:14px;">G</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:6px;font-size:14px;">G#/A♭</span>
+      <span style="background:var(--accent);color:#111;padding:4px 10px;border-radius:6px;font-weight:500;font-size:14px;">A</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:6px;font-size:14px;">A#/B♭</span>
+      <span style="background:var(--accent);color:#111;padding:4px 10px;border-radius:6px;font-weight:500;font-size:14px;">B</span>
+    </div>
+    <p>The <strong style="color:var(--accent)">amber</strong> ones are natural notes. The others are <em>sharps (#) or flats (♭)</em> — in-between notes.</p>
+    <div class="highlight">💡 <strong>Pitch = frequency.</strong> Higher pitch = more vibrations per second (Hz). A string vibrates faster when it's shorter (pressing a fret shortens it) or tighter. Lower pitch = slower vibrations, deeper sound.</div>
+    <p>On a guitar, moving one fret <strong>up</strong> raises the pitch by a <em>semitone</em> (one step in the 12-note scale). Moving two frets = a <em>whole tone</em>.</p>
+  </div>
+
+  <div id="lesson-rhythm" class="card lesson-content" style="display:none;">
+    <h2>Rhythm & Beats</h2>
+    <p>Music is divided into <strong>bars</strong> (also called measures). Each bar has a fixed number of <strong>beats</strong>. Most songs use <strong>4/4 time</strong> — 4 beats per bar.</p>
+    <div class="highlight">Count out loud: <strong>1 – 2 – 3 – 4 – 1 – 2 – 3 – 4...</strong><br>Each number = one beat. Tap your foot on each count.</div>
+    <p><strong>Tempo</strong> is how fast the beats are, measured in BPM (beats per minute). 60 BPM = 1 beat per second. 120 BPM = 2 per second. Most beginner songs are 70–100 BPM.</p>
+    <p>A <strong>strumming pattern</strong> tells you when to strum down (↓) and when to strum up (↑) across the beats. A simple beginner pattern:</p>
+    <div style="font-size:20px; letter-spacing:.15em; background:var(--surface2); padding:14px 18px; border-radius:8px; font-family:monospace; margin:8px 0;">↓ · ↓ · ↓ · ↓</div>
+    <p style="font-size:13px; color:var(--muted);">One down-strum on each beat. Simple, steady, easy.</p>
+  </div>
+
+  <div id="lesson-chords101" class="card lesson-content" style="display:none;">
+    <h2>What is a Chord?</h2>
+    <p>A <strong>chord</strong> is three or more notes played at the same time. On guitar, you press several strings at specific frets so they all ring together in harmony.</p>
+    <p>The two most important types:</p>
+    <ul>
+      <li><strong>Major chords</strong> — bright, happy sound. E.g. C major, G major, D major.</li>
+      <li><strong>Minor chords</strong> — darker, more emotional. E.g. Am, Em, Dm.</li>
+    </ul>
+    <div class="highlight">🎯 Start with these 5 open chords — they use open strings (you don't press all strings) and are the foundation of hundreds of songs: <strong>G, C, D, Em, Am</strong></div>
+    <p>A <strong>chord progression</strong> is a sequence of chords that forms the backbone of a song. For example: G → Em → C → D is used in countless pop, rock, and folk songs.</p>
+  </div>
+
+  <div id="lesson-reading" class="card lesson-content" style="display:none;">
+    <h2>Reading Chord Diagrams</h2>
+    <p>A chord diagram is a grid showing the guitar neck head-on. Here's how to read it:</p>
+
+    <div class="highlight">🎯 <strong>Where exactly do I put my finger?</strong> The neck is divided into sections called <strong>frets</strong>, separated by thin metal strips (fret wires). Counting starts at the headstock end: the first gap after the <strong>nut</strong> (the ridge right before the tuning pegs) is fret 1, the next gap is fret 2, and so on toward the guitar body. To play "2nd fret," press your fingertip into the space between fret wire 1 and fret wire 2 — just behind the 2nd wire, not on top of it. Pressing close to the fret wire (not in the middle of the gap) takes less effort and sounds cleaner.</div>
+
+    <svg viewBox="0 0 280 200" style="width:100%;max-width:280px;display:block;margin:16px 0;" fill="none">
+      <!-- fretboard -->
+      <rect x="40" y="20" width="180" height="150" rx="4" fill="#2a2a2e" stroke="#444" stroke-width="1"/>
+      <!-- nut -->
+      <rect x="40" y="20" width="180" height="8" rx="2" fill="#888"/>
+      <!-- frets -->
+      <line x1="40" y1="60" x2="220" y2="60" stroke="#555" stroke-width="1.5"/>
+      <line x1="40" y1="100" x2="220" y2="100" stroke="#555" stroke-width="1.5"/>
+      <line x1="40" y1="140" x2="220" y2="140" stroke="#555" stroke-width="1.5"/>
+      <!-- strings (6) -->
+      <line x1="60" y1="20" x2="60" y2="170" stroke="#aaa" stroke-width="1"/>
+      <line x1="92" y1="20" x2="92" y2="170" stroke="#aaa" stroke-width="1.2"/>
+      <line x1="124" y1="20" x2="124" y2="170" stroke="#aaa" stroke-width="1.4"/>
+      <line x1="156" y1="20" x2="156" y2="170" stroke="#aaa" stroke-width="1.6"/>
+      <line x1="188" y1="20" x2="188" y2="170" stroke="#aaa" stroke-width="1.8"/>
+      <line x1="220" y1="20" x2="220" y2="170" stroke="#aaa" stroke-width="2"/>
+      <!-- labels -->
+      <text x="60" y="195" text-anchor="middle" fill="#888" font-size="10">e</text>
+      <text x="92" y="195" text-anchor="middle" fill="#888" font-size="10">B</text>
+      <text x="124" y="195" text-anchor="middle" fill="#888" font-size="10">G</text>
+      <text x="156" y="195" text-anchor="middle" fill="#888" font-size="10">D</text>
+      <text x="188" y="195" text-anchor="middle" fill="#888" font-size="10">A</text>
+      <text x="220" y="195" text-anchor="middle" fill="#888" font-size="10">E</text>
+      <text x="10" y="9" text-anchor="middle" fill="#666" font-size="8">nut</text>
+      <text x="28" y="44" text-anchor="middle" fill="#888" font-size="9">fret 1</text>
+      <text x="28" y="84" text-anchor="middle" fill="#888" font-size="9">fret 2</text>
+      <text x="28" y="124" text-anchor="middle" fill="#888" font-size="9">fret 3</text>
+      <!-- dots -->
+      <circle cx="92" cy="42" r="10" fill="#4fc8a0"/>
+      <text x="92" y="46" text-anchor="middle" fill="#0a1f18" font-size="10" font-weight="bold">1</text>
+      <circle cx="156" cy="82" r="10" fill="#4fc8a0"/>
+      <text x="156" y="86" text-anchor="middle" fill="#0a1f18" font-size="10" font-weight="bold">2</text>
+      <!-- open -->
+      <circle cx="60" cy="10" r="6" stroke="#e8a838" stroke-width="1.5" fill="none"/>
+    </svg>
+    <p style="font-size:13px; color:var(--muted); margin-top:-8px;">Example above: green dot on the B string at fret 1 (finger 1 / index), and on the D string at fret 2 (finger 2 / middle). The fret <em>number</em> in the diagram on the left tells you how far down the neck to go — count the gaps from the nut.</p>
+
+    <ul style="font-size:14px; margin-top:14px;">
+      <li><strong>Vertical lines</strong> = the 6 strings (left = thinnest e, right = thickest E)</li>
+      <li><strong>Horizontal lines</strong> = the fret wires (top = nut, where the headstock is)</li>
+      <li><strong>Filled dot</strong> = press in the gap right behind that fret wire (number = which finger)</li>
+      <li><strong>Open circle</strong> at top = play that string open (no fret pressed at all)</li>
+      <li><strong>X</strong> at top = don't play that string</li>
+    </ul>
+    <div class="highlight">Fingers: 1 = index · 2 = middle · 3 = ring · 4 = pinky · T = thumb</div>
+  </div>
+</div>
+
+<!-- ═══════════════ CHORDS ═══════════════ -->
+<div id="page-chords" class="page">
+  <h1>Chord Practice</h1>
+  <p class="subtitle">Select a chord to see the diagram, hear it, and check your playing</p>
+
+  <div class="chord-grid" id="chord-grid"></div>
+
+  <div class="card" id="chord-detail" style="display:none;">
+    <div class="chord-diagram" id="chord-diagram-area"></div>
+    <div class="btn-row">
+      <button class="btn primary" onclick="playChord()">▶ Hear this chord</button>
+      <button class="btn" id="chord-listen-btn" onclick="toggleChordListen()">🎙 Check my chord</button>
+    </div>
+    <div id="chord-feedback" style="margin-top:12px; font-size:14px; min-height:20px;"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ SONGS ═══════════════ -->
+<div id="page-songs" class="page">
+  <h1>Song Practice</h1>
+  <p class="subtitle">Simple songs to practice chord changes with a backing beat</p>
+
+  <div class="song-grid" id="song-grid"></div>
+
+  <div class="card" id="song-detail" style="display:none;">
+    <h2 id="song-name-h"></h2>
+    <p id="song-artist-p" style="color:var(--muted); font-size:14px; margin-bottom:12px;"></p>
+    <p id="song-info" style="font-size:14px; margin-bottom:14px;"></p>
+
+    <h3>Chord sequence</h3>
+    <div class="chord-sequence" id="beat-display"></div>
+
+    <div class="bpm-row">
+      <span style="font-size:13px;color:var(--muted);">Tempo:</span>
+      <input type="range" id="bpm-range" min="40" max="140" value="70" oninput="updateBPM(this.value)">
+      <span id="bpm-val">70 BPM</span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn primary" id="play-btn" onclick="togglePlay()">▶ Start</button>
+      <button class="btn" onclick="resetSong()">↺ Reset</button>
+    </div>
+
+    <div id="song-tips" class="card-sm" style="margin-top:16px; font-size:14px; color:var(--muted); line-height:1.7;"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ VOICE ═══════════════ -->
+<div id="page-voice" class="page">
+  <h1>Voice Practice</h1>
+  <p class="subtitle">Tune your singing to match the chords you play</p>
+
+  <div class="card card-sm" style="margin-bottom:16px; font-size:14px; line-height:1.7; color:var(--muted);">
+    <strong style="color:var(--text)">How singing with guitar works:</strong> Each chord has a <em>root note</em> — the note it's named after. When you sing a song, your melody notes should generally fit within the chord being played. The <strong>key</strong> of a song tells you which set of chords and notes fit together. Singing too high = your voice is straining above the chord. Too low = it sounds muddy. The sweet spot is where your voice and the guitar ring together.
+  </div>
+
+  <div class="pitch-display">
+    <div id="voice-note">–</div>
+    <div id="voice-freq">Sing into your microphone</div>
+    <div id="voice-guide"></div>
+    <div class="range-labels">
+      <span>Low</span><span>Mid</span><span>High</span>
+    </div>
+    <div class="vocal-range-bar">
+      <div id="voice-marker" style="left:50%;"></div>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-bottom:20px;">
+    <button class="btn primary" id="voice-btn" onclick="toggleVoice()">🎙 Start voice detection</button>
+    <span class="mic-status"><span class="mic-dot" id="voice-mic-dot"></span><span id="voice-mic-label">Microphone off</span></span>
+  </div>
+
+  <div class="card">
+    <h2>Singing key guide</h2>
+    <p style="font-size:14px; color:var(--muted); margin-bottom:14px;">Choose a song key that fits your voice range. If a song feels too high or low, you can <em>capo</em> the guitar (clip onto a fret to raise all strings) or just pick a different key.</p>
+    <div class="key-guide-grid">
+      <div class="key-guide-card">
+        <div class="kname">Key of G</div>
+        <div class="krange">Good for most voices</div>
+        <div class="kchords">Chords: G · Em · C · D</div>
+      </div>
+      <div class="key-guide-card">
+        <div class="kname">Key of C</div>
+        <div class="krange">Natural, mid-range</div>
+        <div class="kchords">Chords: C · Am · F · G</div>
+      </div>
+      <div class="key-guide-card">
+        <div class="kname">Key of D</div>
+        <div class="krange">Slightly higher</div>
+        <div class="kchords">Chords: D · Bm · G · A</div>
+      </div>
+      <div class="key-guide-card">
+        <div class="kname">Key of Am</div>
+        <div class="krange">Minor — deeper feel</div>
+        <div class="kchords">Chords: Am · F · C · G</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <h2>Vocal warm-up exercise</h2>
+    <p style="font-size:14px; margin-bottom:12px;">Play each note on guitar and sing along to match it. Start from the middle and move outward.</p>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="btn" onclick="playRef(196)">G3 · 196 Hz</button>
+      <button class="btn" onclick="playRef(220)">A3 · 220 Hz</button>
+      <button class="btn" onclick="playRef(246.9)">B3 · 247 Hz</button>
+      <button class="btn" onclick="playRef(261.6)">C4 · 262 Hz</button>
+      <button class="btn" onclick="playRef(293.7)">D4 · 294 Hz</button>
+      <button class="btn" onclick="playRef(329.6)">E4 · 330 Hz</button>
+      <button class="btn" onclick="playRef(392)">G4 · 392 Hz</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══ DATA ═══
+const STRINGS = [
+  {name:'E2', freq:82.41},  {name:'A2', freq:110.00},
+  {name:'D3', freq:146.83}, {name:'G3', freq:196.00},
+  {name:'B3', freq:246.94}, {name:'e4', freq:329.63}
+];
+
+const CHORDS = [
+  { name:'G',  type:'Major', fingers:[
+    {string:6,fret:3,finger:2},{string:5,fret:2,finger:1},{string:1,fret:3,finger:3},
+    {string:2,fret:0},{string:3,fret:0},{string:4,fret:0}
+  ], muted:[], open:[2,3,4], freqs:[196,246.94,293.66,329.63,392,493.88],
+    tips:'Keep your fingers arched. The G chord can be tricky — make sure strings 1,2,3 ring open.' },
+  { name:'C',  type:'Major', fingers:[
+    {string:5,fret:3,finger:3},{string:4,fret:2,finger:2},{string:2,fret:1,finger:1},
+    {string:3,fret:0},{string:1,fret:0}
+  ], muted:[6], open:[3,1], freqs:[261.63,329.63,392,523.25,659.25],
+    tips:'String 6 (thickest) is muted — tuck your thumb or just avoid it. Focus on strings 5 to 1.' },
+  { name:'D',  type:'Major', fingers:[
+    {string:3,fret:2,finger:1},{string:1,fret:2,finger:2},{string:2,fret:3,finger:3},
+    {string:4,fret:0}
+  ], muted:[6,5], open:[4], freqs:[293.66,440,587.33,880],
+    tips:'Only strum strings 4 through 1. Keep fingers bunched together near the 2nd fret.' },
+  { name:'Em', type:'Minor', fingers:[
+    {string:5,fret:2,finger:1},{string:4,fret:2,finger:2}
+  ], muted:[], open:[6,3,2,1], freqs:[164.81,246.94,329.63,392,493.88,659.25],
+    tips:'Easiest open chord! Just two fingers. All 6 strings ring out. Great chord to start with.' },
+  { name:'Am', type:'Minor', fingers:[
+    {string:4,fret:2,finger:2},{string:3,fret:2,finger:3},{string:2,fret:1,finger:1},
+    {string:1,fret:0},{string:5,fret:0}
+  ], muted:[6], open:[1,5], freqs:[220,329.63,440,523.25,659.25],
+    tips:'Similar shape to C. Index finger on B string 1st fret. Keep fingers curved so the open high e rings.' },
+  { name:'E',  type:'Major', fingers:[
+    {string:5,fret:2,finger:2},{string:4,fret:2,finger:3},{string:3,fret:1,finger:1}
+  ], muted:[], open:[6,2,1], freqs:[164.81,246.94,329.63,415.3,493.88,659.25],
+    tips:'Big, full sound — all 6 strings. Mirror image of Am. Ring/middle on A+D, index on G.' },
+  { name:'Dm', type:'Minor', fingers:[
+    {string:1,fret:1,finger:1},{string:3,fret:2,finger:2},{string:2,fret:3,finger:3}
+  ], muted:[6,5], open:[4], freqs:[293.66,349.23,440,587.33],
+    tips:'Only strum strings 4–1. Three fingers close together. The shape feels like a triangle.' },
+  { name:'A',  type:'Major', fingers:[
+    {string:4,fret:2,finger:1},{string:3,fret:2,finger:2},{string:2,fret:2,finger:3}
+  ], muted:[6], open:[5,1], freqs:[220,329.63,440,554.37,659.25],
+    tips:'Three fingers on the same fret feels cramped — try a mini-barre with one finger across strings 2,3,4.' }
+];
+
+const SONGS = [
+  { title:'Knockin\' on Heaven\'s Door', artist:'Bob Dylan', diff:'easy',
+    progression:['G','D','Am','Am','G','D','C','C'],
+    bpm:65, info:'Key of G · 4/4 time · Simple 4-chord pattern. Strum slowly, 4 beats per chord.',
+    tips:'This song uses just G, D, Am, C. The Am and C bars feel similar. Focus on clean transitions.' },
+  { title:'House of the Rising Sun', artist:'The Animals', diff:'medium',
+    progression:['Am','C','D','F','Am','C','E','E'],
+    bpm:75, info:'Key of Am · 6/8 feel · Classic minor song. Each chord gets 2 bars.',
+    tips:'Minor key gives this song its haunting feel. Practice Am → C → D transitions slowly before speeding up.' },
+  { title:'Wish You Were Here', artist:'Pink Floyd', diff:'medium',
+    progression:['Em','G','Em','G','A','C','D','G'],
+    bpm:72, info:'Key of G · 4/4 time · Iconic intro fingerpicking. Here we practice the chord structure.',
+    tips:'The real song has a famous fingerpicked intro, but the chord version is great for strumming practice.' },
+  { title:'Smoke on the Water', artist:'Deep Purple', diff:'easy',
+    progression:['G','Bb','C','G','Bb','Db','C','G'],
+    bpm:112, info:'Key of G · Classic rock riff. The chord version keeps it accessible.',
+    tips:'One of the most famous rock songs ever. The original uses power chords — here we use open chords.' },
+  { title:'Sweet Home Chicago', artist:'Robert Johnson', diff:'medium',
+    progression:['E','A','E','E','A','A','E','B'],
+    bpm:100, info:'Key of E · 12-bar blues · Classic blues structure.',
+    tips:'The 12-bar blues is the backbone of rock and blues. Learn this pattern and you can play dozens of songs.' },
+  { title:'Wonderwall', artist:'Oasis', diff:'easy',
+    progression:['Em','G','D','A','Em','G','D','A'],
+    bpm:87, info:'Key of G/Em · 4/4 time · One of the most popular beginner songs.',
+    tips:'Just 4 chords in rotation. Em to G is easy. Focus on the D to A transition — it requires some stretching.' }
+];
+
+// ═══ AUDIO ENGINE ═══
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playRef(freq, dur=1.5) {
+  const ctx = getAudio();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.type = 'triangle';
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0.3, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+  osc.start(); osc.stop(ctx.currentTime + dur);
+}
+
+function playChord() {
+  if (!currentChord) return;
+  const ctx = getAudio();
+  currentChord.freqs.forEach((f, i) => {
+    setTimeout(() => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'triangle';
+      osc.frequency.value = f;
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2);
+      osc.start(); osc.stop(ctx.currentTime + 2);
+    }, i * 40);
+  });
+}
+
+function playMetronome(beat) {
+  const ctx = getAudio();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.frequency.value = beat === 0 ? 880 : 440;
+  gain.gain.setValueAtTime(0.15, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+  osc.start(); osc.stop(ctx.currentTime + 0.1);
+}
+
+// ═══ PITCH DETECTION ═══
+let analyserNode = null, pitchStream = null, pitchAnimFrame = null;
+const noteNames = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+function freqToNote(freq) {
+  if (freq < 50) return null;
+  const noteNum = Math.round(12 * Math.log2(freq / 440)) + 69;
+  const name = noteNames[noteNum % 12];
+  const octave = Math.floor(noteNum / 12) - 1;
+  const targetFreq = 440 * Math.pow(2, (noteNum - 69) / 12);
+  const cents = 1200 * Math.log2(freq / targetFreq);
+  return { name: name + octave, shortName: name, octave, freq, noteNum, cents, targetFreq };
+}
+
+function autoCorrelate(buf, sampleRate) {
+  let SIZE = buf.length, rms = 0;
+  for (let i=0;i<SIZE;i++) rms += buf[i]*buf[i];
+  rms = Math.sqrt(rms/SIZE);
+  if (rms < 0.015) return -1;
+  let r1=0,r2=SIZE-1;
+  for (let i=0;i<SIZE/2;i++) if (Math.abs(buf[i])<0.2){r1=i;break;}
+  for (let i=1;i<SIZE/2;i++) if (Math.abs(buf[SIZE-i])<0.2){r2=SIZE-i;break;}
+  buf = buf.slice(r1,r2);
+  SIZE = buf.length;
+  const c = new Float32Array(SIZE).fill(0);
+  for (let i=0;i<SIZE;i++) for(let j=0;j<SIZE-i;j++) c[i] += buf[j]*buf[j+i];
+  let d=0; while(c[d]>c[d+1])d++;
+  let maxval=-1,maxpos=-1;
+  for (let i=d;i<SIZE;i++) { if(c[i]>maxval){maxval=c[i];maxpos=i;} }
+  let T0=maxpos;
+  const x1=c[T0-1],x2=c[T0],x3=c[T0+1];
+  T0 += (x3-x1)/(2*(2*x2-x1-x3));
+  return sampleRate/T0;
+}
+
+async function startPitchDetect(onNote, onStop) {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    pitchStream = stream;
+    const ctx = getAudio();
+    const src = ctx.createMediaStreamSource(stream);
+    analyserNode = ctx.createAnalyser();
+    analyserNode.fftSize = 2048;
+    src.connect(analyserNode);
+    const buf = new Float32Array(analyserNode.fftSize);
+    function loop() {
+      pitchAnimFrame = requestAnimationFrame(loop);
+      analyserNode.getFloatTimeDomainData(buf);
+      const freq = autoCorrelate(buf, ctx.sampleRate);
+      if (freq > 0) onNote(freq);
+      else onNote(null);
+    }
+    loop();
+    return true;
+  } catch(e) {
+    alert('Microphone access denied. Please allow microphone access in your browser.');
+    return false;
+  }
+}
+
+function stopPitchDetect() {
+  if (pitchAnimFrame) cancelAnimationFrame(pitchAnimFrame);
+  if (pitchStream) pitchStream.getTracks().forEach(t => t.stop());
+  pitchStream = null; analyserNode = null;
+}
+
+// ═══ TUNER ═══
+let tunerActive = false, selectedString = 0;
+
+function selectString(i) {
+  selectedString = i;
+  document.querySelectorAll('.string-btn').forEach((b,j) => b.classList.toggle('active', j===i));
+}
+
+function toggleTuner() {
+  if (tunerActive) {
+    stopPitchDetect();
+    tunerActive = false;
+    document.getElementById('tuner-btn').textContent = '🎙 Start listening';
+    document.getElementById('mic-dot').classList.remove('on');
+    document.getElementById('mic-label').textContent = 'Microphone off';
+    document.getElementById('detected-note').textContent = '–';
+    document.getElementById('detected-freq').textContent = 'Play a string to begin';
+    document.getElementById('tune-instruction').textContent = '';
+    document.getElementById('meter-fill').style.left = '50%';
+    document.getElementById('meter-fill').style.background = 'var(--muted)';
+  } else {
+    startPitchDetect(onTunerNote).then(ok => {
+      if (!ok) return;
+      tunerActive = true;
+      document.getElementById('tuner-btn').textContent = '⏹ Stop';
+      document.getElementById('mic-dot').classList.add('on');
+      document.getElementById('mic-label').textContent = 'Listening...';
+    });
+  }
+}
+
+function onTunerNote(freq) {
+  if (!freq) {
+    document.getElementById('detected-note').textContent = '–';
+    document.getElementById('detected-freq').textContent = 'No sound detected';
+    document.getElementById('tune-instruction').textContent = '';
+    document.getElementById('meter-fill').style.left = '50%';
+    return;
+  }
+  const note = freqToNote(freq);
+  if (!note) return;
+  const target = STRINGS[selectedString];
+  document.getElementById('detected-note').textContent = note.name;
+  document.getElementById('detected-freq').textContent = freq.toFixed(1) + ' Hz  ·  Target: ' + target.freq + ' Hz (' + target.name + ')';
+
+  const cents = 1200 * Math.log2(freq / target.freq);
+  const pct = Math.max(5, Math.min(95, 50 + cents * 0.4));
+  const fill = document.getElementById('meter-fill');
+  fill.style.left = pct + '%';
+
+  const absCents = Math.abs(cents);
+  if (absCents < 8) {
+    fill.style.background = 'var(--success)';
+    document.getElementById('tune-instruction').textContent = '✓ In tune!';
+    document.getElementById('tune-instruction').style.color = 'var(--success)';
+  } else if (cents < 0) {
+    fill.style.background = 'var(--warn)';
+    document.getElementById('tune-instruction').textContent = '⬆ Too low — tighten the tuning peg';
+    document.getElementById('tune-instruction').style.color = 'var(--warn)';
+  } else {
+    fill.style.background = 'var(--danger)';
+    document.getElementById('tune-instruction').textContent = '⬇ Too high — loosen the tuning peg';
+    document.getElementById('tune-instruction').style.color = 'var(--danger)';
+  }
+  document.getElementById('tune-status').textContent = (absCents < 2 ? 'Perfect' : absCents < 8 ? 'Very close' : absCents < 20 ? Math.round(absCents) + ' cents off' : 'Way off — ' + Math.round(absCents) + ' cents');
+}
+
+// ═══ CHORDS ═══
+let currentChord = null, chordListenActive = false;
+
+function buildChordGrid() {
+  const grid = document.getElementById('chord-grid');
+  CHORDS.forEach((ch, i) => {
+    const div = document.createElement('div');
+    div.className = 'chord-card';
+    div.id = 'cc' + i;
+    div.innerHTML = '<div class="cname">' + ch.name + '</div><div class="ctype">' + ch.type + '</div>';
+    div.onclick = () => showChord(i);
+    grid.appendChild(div);
+  });
+}
+
+function showChord(i) {
+  currentChord = CHORDS[i];
+  document.querySelectorAll('.chord-card').forEach((c,j) => c.classList.toggle('active', j===i));
+  document.getElementById('chord-detail').style.display = 'block';
+  renderChordDiagram(currentChord);
+}
+
+function renderChordDiagram(ch) {
+  const area = document.getElementById('chord-diagram-area');
+  const FRETS = 5, STRINGS_N = 6;
+  const sw = 200, sh = 200;
+  const strX = i => 20 + i * (sw - 40) / (STRINGS_N - 1);
+  const fretY = f => 30 + f * (sh - 50) / FRETS;
+  let svg = `<svg viewBox="0 0 ${sw} ${sh}" style="width:200px;height:200px;flex-shrink:0" fill="none">`;
+  svg += `<rect x="18" y="28" width="${sw-36}" height="${(sh-50)/FRETS*5}" rx="2" fill="#1e1e22" stroke="#555" stroke-width="0.5"/>`;
+  svg += `<rect x="18" y="28" width="${sw-36}" height="5" rx="1" fill="#888"/>`;
+  for (let f=1;f<=FRETS;f++) svg += `<line x1="18" y1="${fretY(f)}" x2="${sw-18}" y2="${fretY(f)}" stroke="#444" stroke-width="1"/>`;
+  for (let f=1;f<=FRETS;f++) svg += `<text x="6" y="${fretY(f-0.5)+3}" text-anchor="middle" fill="#666" font-size="8">${f}</text>`;
+  for (let s=0;s<STRINGS_N;s++) svg += `<line x1="${strX(s)}" y1="28" x2="${strX(s)}" y2="${fretY(FRETS)}" stroke="#aaa" stroke-width="${1+s*0.3}"/>`;
+  for (let s=0;s<STRINGS_N;s++) {
+    const strNum = STRINGS_N - s;
+    const fp = ch.fingers.find(f => f.string === strNum);
+    const isOpen = ch.open && ch.open.includes(strNum);
+    const isMuted = ch.muted && ch.muted.includes(strNum);
+    const x = strX(s);
+    if (fp) {
+      const y = fretY(fp.fret - 0.5);
+      svg += `<circle cx="${x}" cy="${y}" r="9" fill="#4fc8a0"/>`;
+      svg += `<text x="${x}" y="${y+4}" text-anchor="middle" fill="#0a1f18" font-size="10" font-weight="bold">${fp.finger}</text>`;
+    } else if (isOpen) {
+      svg += `<circle cx="${x}" cy="16" r="6" stroke="#e8a838" stroke-width="1.5"/>`;
+    } else if (isMuted) {
+      svg += `<text x="${x}" y="20" text-anchor="middle" fill="#e05555" font-size="14" font-weight="bold">×</text>`;
+    }
+  }
+  const noteLabels = ['e','B','G','D','A','E'];
+  for (let s=0;s<STRINGS_N;s++) svg += `<text x="${strX(s)}" y="${sh-4}" text-anchor="middle" fill="#666" font-size="9">${noteLabels[s]}</text>`;
+  svg += '</svg>';
+
+  let fingersHtml = '<ul class="chord-fingers">';
+  ch.fingers.filter(f => f.finger).sort((a,b)=>a.finger-b.finger).forEach(f => {
+    const strName = ['e','B','G','D','A','E'][6-f.string];
+    const fingerName = ['Index','Middle','Ring','Pinky'][f.finger-1] || 'F'+f.finger;
+    fingersHtml += `<li><div class="finger-dot">${f.finger}</div>${fingerName} finger · ${strName} string · fret ${f.fret}</li>`;
+  });
+  if (ch.open && ch.open.length) {
+    ch.open.forEach(s => {
+      const strName = ['e','B','G','D','A','E'][6-s];
+      fingersHtml += `<li><div class="open-dot">○</div>${strName} string — play open (no fret)</li>`;
+    });
+  }
+  if (ch.muted && ch.muted.length) {
+    ch.muted.forEach(s => {
+      const strName = ['e','B','G','D','A','E'][6-s];
+      fingersHtml += `<li><div class="x-dot">✕</div>${strName} string — don't play</li>`;
+    });
+  }
+  fingersHtml += '</ul>';
+  fingersHtml += `<div class="card-sm" style="margin-top:14px;font-size:13px;color:var(--muted);line-height:1.7">${ch.tips}</div>`;
+
+  area.innerHTML = svg + `<div class="chord-info"><h2 style="margin-bottom:16px;">${ch.name} ${ch.type}</h2>${fingersHtml}</div>`;
+}
+
+function toggleChordListen() {
+  if (chordListenActive) {
+    stopPitchDetect();
+    chordListenActive = false;
+    document.getElementById('chord-listen-btn').textContent = '🎙 Check my chord';
+    document.getElementById('chord-feedback').textContent = '';
+  } else {
+    startPitchDetect(onChordNote).then(ok => {
+      if (!ok) return;
+      chordListenActive = true;
+      document.getElementById('chord-listen-btn').textContent = '⏹ Stop checking';
+    });
+  }
+}
+
+let lastChordFreq = null;
+function onChordNote(freq) {
+  if (!freq || !currentChord) return;
+  lastChordFreq = freq;
+  const note = freqToNote(freq);
+  if (!note) return;
+  const chordNotes = currentChord.freqs.map(f => freqToNote(f)).filter(Boolean).map(n => n.shortName);
+  const inChord = chordNotes.includes(note.shortName);
+  const fb = document.getElementById('chord-feedback');
+  if (inChord) {
+    fb.style.color = 'var(--success)';
+    fb.textContent = '✓ ' + note.shortName + ' — that note is in the ' + currentChord.name + ' chord!';
+  } else {
+    fb.style.color = 'var(--warn)';
+    fb.textContent = '· ' + note.shortName + ' — not quite. Chord notes: ' + chordNotes.join(', ');
+  }
+}
+
+// ═══ SONGS ═══
+let currentSong = null, isPlaying = false, beatIdx = 0, beatTimer = null, currentBPM = 70;
+
+function buildSongGrid() {
+  const grid = document.getElementById('song-grid');
+  SONGS.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'song-card';
+    div.innerHTML = `<div class="song-title">${s.title}</div><div class="song-artist">${s.artist}</div><div class="song-diff diff-${s.diff}">${s.diff}</div>`;
+    div.onclick = () => showSong(i);
+    grid.appendChild(div);
+  });
+}
+
+function showSong(i) {
+  if (isPlaying) togglePlay();
+  currentSong = SONGS[i];
+  beatIdx = 0;
+  document.querySelectorAll('.song-card').forEach((c,j) => c.classList.toggle('active', j===i));
+  document.getElementById('song-detail').style.display = 'block';
+  document.getElementById('song-name-h').textContent = currentSong.title;
+  document.getElementById('song-artist-p').textContent = currentSong.artist;
+  document.getElementById('song-info').textContent = currentSong.info;
+  document.getElementById('song-tips').innerHTML = '<strong>Tips:</strong> ' + currentSong.tips;
+  currentBPM = currentSong.bpm;
+  document.getElementById('bpm-range').value = currentBPM;
+  document.getElementById('bpm-val').textContent = currentBPM + ' BPM';
+  renderBeats();
+}
+
+function renderBeats() {
+  if (!currentSong) return;
+  const disp = document.getElementById('beat-display');
+  disp.innerHTML = '';
+  currentSong.progression.forEach((ch, i) => {
+    const div = document.createElement('div');
+    div.className = 'beat-box' + (i === beatIdx ? ' playing' : '');
+    div.id = 'beat-' + i;
+    div.innerHTML = `<div class="beat-chord">${ch}</div><div class="beat-num">${i+1}</div>`;
+    disp.appendChild(div);
+  });
+}
+
+function updateBPM(v) {
+  currentBPM = parseInt(v);
+  document.getElementById('bpm-val').textContent = currentBPM + ' BPM';
+  if (isPlaying) { clearInterval(beatTimer); scheduleBeat(); }
+}
+
+function scheduleBeat() {
+  const interval = 60000 / currentBPM * 2;
+  beatTimer = setInterval(() => {
+    document.querySelectorAll('.beat-box').forEach((b,j) => b.classList.toggle('playing', j===beatIdx));
+    playMetronome(beatIdx % 4 === 0 ? 0 : 1);
+    beatIdx = (beatIdx + 1) % currentSong.progression.length;
+  }, interval);
+}
+
+function togglePlay() {
+  if (!currentSong) return;
+  isPlaying = !isPlaying;
+  if (isPlaying) {
+    getAudio();
+    document.getElementById('play-btn').textContent = '⏹ Stop';
+    beatIdx = 0; scheduleBeat();
+  } else {
+    clearInterval(beatTimer);
+    document.getElementById('play-btn').textContent = '▶ Start';
+    document.querySelectorAll('.beat-box').forEach(b => b.classList.remove('playing'));
+    beatIdx = 0;
+  }
+}
+
+function resetSong() {
+  if (isPlaying) togglePlay();
+  beatIdx = 0;
+  document.querySelectorAll('.beat-box').forEach(b => b.classList.remove('playing'));
+}
+
+// ═══ VOICE ═══
+let voiceActive = false;
+const VOCAL_LOW = 100, VOCAL_HIGH = 800;
+
+function toggleVoice() {
+  if (voiceActive) {
+    stopPitchDetect();
+    voiceActive = false;
+    document.getElementById('voice-btn').textContent = '🎙 Start voice detection';
+    document.getElementById('voice-mic-dot').classList.remove('on');
+    document.getElementById('voice-mic-label').textContent = 'Microphone off';
+    document.getElementById('voice-note').textContent = '–';
+    document.getElementById('voice-freq').textContent = 'Sing into your microphone';
+    document.getElementById('voice-guide').textContent = '';
+    document.getElementById('voice-marker').style.left = '50%';
+  } else {
+    startPitchDetect(onVoiceNote).then(ok => {
+      if (!ok) return;
+      voiceActive = true;
+      document.getElementById('voice-btn').textContent = '⏹ Stop';
+      document.getElementById('voice-mic-dot').classList.add('on');
+      document.getElementById('voice-mic-label').textContent = 'Listening...';
+    });
+  }
+}
+
+function onVoiceNote(freq) {
+  if (!freq) {
+    document.getElementById('voice-note').textContent = '–';
+    document.getElementById('voice-freq').textContent = 'No sound detected';
+    document.getElementById('voice-guide').textContent = '';
+    return;
+  }
+  const note = freqToNote(freq);
+  if (!note) return;
+  document.getElementById('voice-note').textContent = note.name;
+  document.getElementById('voice-freq').textContent = freq.toFixed(0) + ' Hz';
+  const logLow = Math.log2(VOCAL_LOW), logHigh = Math.log2(VOCAL_HIGH);
+  const pct = Math.max(2, Math.min(98, ((Math.log2(freq) - logLow) / (logHigh - logLow)) * 100));
+  document.getElementById('voice-marker').style.left = pct + '%';
+  let guide = '';
+  if (freq < 150) guide = 'Very low — bass range. Try singing higher.';
+  else if (freq < 220) guide = 'Low — good for baritone. Key of E or A works well.';
+  else if (freq < 330) guide = 'Mid range — comfortable for most voices. Key of G or C.';
+  else if (freq < 500) guide = 'Upper mid — bright tenor range. Key of D or capo 2 on G.';
+  else guide = 'High — soprano range. Relax your throat and support from your diaphragm.';
+  document.getElementById('voice-guide').textContent = guide;
+}
+
+// ═══ LESSONS ═══
+function showLesson(id) {
+  ['notes','rhythm','chords101','reading'].forEach(l => {
+    document.getElementById('lesson-'+l).style.display = l===id ? 'block' : 'none';
+  });
+  document.querySelectorAll('.lesson-chip').forEach(c => {
+    c.classList.toggle('active', c.textContent.toLowerCase().includes(id.replace('101','').replace('reading','read')));
+  });
+  document.querySelectorAll('.lesson-chip').forEach((c, i) => {
+    const ids = ['notes','rhythm','chords101','reading'];
+    c.classList.toggle('active', ids[i] === id);
+  });
+}
+
+// ═══ TABS ═══
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ═══ INIT ═══
+buildChordGrid();
+buildSongGrid();
+</script>
+</body>
+</html>
