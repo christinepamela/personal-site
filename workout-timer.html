@@ -26,6 +26,7 @@
     --accent: var(--work);
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bot: env(safe-area-inset-bottom, 0px);
+    --nav-h: 64px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body {
@@ -38,12 +39,58 @@
     -webkit-font-smoothing: antialiased;
   }
   body {
-    padding: calc(var(--safe-top) + 12px) 16px calc(var(--safe-bot) + 16px);
+    padding: calc(var(--safe-top) + 12px) 16px calc(var(--safe-bot) + var(--nav-h) + 16px);
     max-width: 640px;
     margin: 0 auto;
   }
 
-  /* ---------- TOP BAR ---------- */
+  /* ---------- SCREENS ---------- */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ---------- BOTTOM NAV ---------- */
+  .bottom-nav {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--line);
+    padding: 6px 0 calc(var(--safe-bot) + 6px);
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    z-index: 50;
+  }
+  .nav-btn {
+    flex: 1;
+    max-width: 160px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    padding: 8px 4px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    transition: color 0.2s;
+  }
+  .nav-btn .nav-icon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 800;
+  }
+  .nav-btn.active { color: var(--work); }
+  .nav-btn:active { transform: scale(0.94); }
+
+  /* ---------- TOP BAR (TIMER SCREEN) ---------- */
   .topbar {
     display: flex;
     align-items: center;
@@ -77,6 +124,58 @@
     white-space: nowrap;
   }
   .set-pill b { color: var(--text); }
+
+  /* ---------- SESSION PILL (context of a session on Timer screen) ---------- */
+  .session-pill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    gap: 10px;
+  }
+  .session-pill .sess-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .session-pill .sess-progress {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--work);
+    text-transform: uppercase;
+  }
+  .session-pill .sess-next {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .session-pill .sess-next b { color: var(--text); }
+  .session-pill .sess-btn {
+    background: var(--work);
+    color: var(--bg);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .session-pill .sess-btn.secondary {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--line);
+  }
 
   /* ---------- TIMER ---------- */
   .timer-card {
@@ -117,7 +216,7 @@
     to { transform: scale(1.04); }
   }
 
-  /* ---------- PROGRESS BAR ---------- */
+  /* ---------- PROGRESS BAR (timer) ---------- */
   .progress-wrap {
     margin-top: 18px;
     height: 18px;
@@ -248,6 +347,7 @@
     align-items: center;
     padding: 12px 0;
     border-top: 1px solid var(--line);
+    gap: 12px;
   }
   .field:first-child { border-top: none; }
   .field label {
@@ -269,6 +369,7 @@
     background: var(--bg-3);
     border-radius: 10px;
     padding: 4px;
+    flex-shrink: 0;
   }
   .num-input button {
     width: 32px;
@@ -322,50 +423,6 @@
   .toggle.on { background: var(--work); }
   .toggle.on::after { transform: translateX(20px); }
 
-  /* ---------- SAVED WORKOUTS ---------- */
-  .saved-list { display: flex; flex-direction: column; gap: 8px; }
-  .saved-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 14px;
-    background: var(--bg-3);
-    border-radius: 12px;
-    gap: 10px;
-  }
-  .saved-info { flex: 1; min-width: 0; }
-  .saved-name {
-    font-weight: 700;
-    font-size: 14px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .saved-meta {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-  .saved-actions { display: flex; gap: 6px; }
-  .icon-btn {
-    background: transparent;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    color: var(--text);
-    padding: 6px 10px;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-  }
-  .icon-btn.danger { color: var(--warn); }
-  .empty {
-    text-align: center;
-    color: var(--muted);
-    font-size: 13px;
-    padding: 16px 0;
-  }
-
   /* ---------- DONE OVERLAY ---------- */
   .done-flash {
     position: fixed;
@@ -378,12 +435,11 @@
   }
   .done-flash.show { opacity: 0.4; }
 
-  /* ---------- HISTORY STAT ---------- */
+  /* ---------- STATS ---------- */
   .stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    margin-bottom: 4px;
   }
   .stat {
     background: var(--bg-3);
@@ -414,7 +470,7 @@
     letter-spacing: 0.1em;
   }
 
-  /* ---------- LIST CHIPS ---------- */
+  /* ---------- CHIPS ---------- */
   .chips-row {
     display: flex;
     gap: 6px;
@@ -457,7 +513,50 @@
     padding: 8px 12px;
   }
 
-  /* ---------- REORDER BUTTONS ---------- */
+  /* ---------- LIBRARY LIST ---------- */
+  .saved-list { display: flex; flex-direction: column; gap: 8px; }
+  .saved-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    background: var(--bg-3);
+    border-radius: 12px;
+    gap: 10px;
+  }
+  .saved-info { flex: 1; min-width: 0; cursor: pointer; }
+  .saved-name {
+    font-weight: 700;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .saved-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .saved-actions { display: flex; gap: 6px; }
+  .icon-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .icon-btn.danger { color: var(--warn); }
+  .icon-btn.primary { color: var(--work); border-color: var(--work); }
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 16px 0;
+  }
   .reorder-btns {
     display: flex;
     flex-direction: column;
@@ -503,7 +602,7 @@
     max-width: 480px;
     padding: 20px;
     margin-bottom: calc(var(--safe-bot) + 16px);
-    max-height: 80vh;
+    max-height: 85vh;
     overflow-y: auto;
   }
   .modal h3 {
@@ -514,7 +613,7 @@
     margin-bottom: 16px;
     font-weight: 700;
   }
-  .modal .name-input {
+  .modal .name-input, .modal .text-input {
     width: 100%;
     background: var(--bg-3);
     border: 1px solid var(--line);
@@ -525,9 +624,9 @@
     font-size: 16px;
     font-weight: 600;
     outline: none;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
-  .modal .name-input:focus { border-color: var(--accent); }
+  .modal .name-input:focus, .modal .text-input:focus { border-color: var(--accent); }
   .modal-list-options {
     display: flex;
     flex-wrap: wrap;
@@ -539,6 +638,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
+  .modal-actions .btn { padding: 16px; font-size: 15px; }
   .manage-list-row {
     display: flex;
     align-items: center;
@@ -558,8 +658,29 @@
     font-weight: 600;
     outline: none;
   }
+  .edit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .edit-cell {
+    background: var(--bg-3);
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+  .edit-cell .lbl {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+  .edit-cell .num-input { background: transparent; padding: 0; }
+  .edit-cell .num-input input { width: 40px; font-size: 15px; }
 
-  /* ---------- TAP-TO-START STATE ---------- */
+  /* ---------- TIMER-WAITING STATE ---------- */
   .timer-card.waiting {
     border-color: var(--work);
     box-shadow: 0 0 0 1px var(--work), 0 0 60px -20px var(--work);
@@ -569,144 +690,673 @@
     0%, 100% { box-shadow: 0 0 0 1px var(--work), 0 0 60px -20px var(--work); }
     50% { box-shadow: 0 0 0 2px var(--work), 0 0 80px -10px var(--work); }
   }
+
+  /* ===========================================================
+     TODAY SCREEN
+     =========================================================== */
+  .today-header {
+    margin-bottom: 16px;
+    padding: 4px 0 0;
+  }
+  .today-daytag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .today-daytag b { color: var(--work); }
+  .today-theme {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+  .today-goal {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .today-rest-note {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 32px 20px;
+    text-align: center;
+    color: var(--muted);
+    margin-top: 16px;
+  }
+  .today-rest-note .big {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--rest);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .progress-card {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .progress-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .progress-card-head b { color: var(--work); }
+  .day-progress-bar {
+    height: 10px;
+    background: var(--bg-3);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .day-progress-fill {
+    height: 100%;
+    background: var(--work);
+    border-radius: 999px;
+    transition: width 0.4s;
+  }
+  .week-strip {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .week-dot {
+    aspect-ratio: 1;
+    background: var(--bg-3);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    padding: 4px 0;
+  }
+  .week-dot.done { background: var(--work); color: var(--bg); }
+  .week-dot.today { border: 1.5px solid var(--work); }
+  .week-dot.rest { background: transparent; border: 1px dashed var(--line); }
+  .week-dot .d-num {
+    font-size: 13px;
+    font-weight: 800;
+    margin-top: 1px;
+    letter-spacing: 0;
+  }
+
+  .today-section {
+    margin-top: 20px;
+  }
+  .today-section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+    padding: 0 2px;
+  }
+  .today-section-title {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.25em;
+    color: var(--text);
+    text-transform: uppercase;
+  }
+  .today-section-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .today-ex-list { display: flex; flex-direction: column; gap: 6px; }
+  .today-ex {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    transition: all 0.15s;
+  }
+  .today-ex.done {
+    opacity: 0.55;
+    background: transparent;
+  }
+  .today-ex.current {
+    border-color: var(--work);
+    box-shadow: 0 0 0 1px var(--work);
+  }
+  .today-ex-check {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--line);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .today-ex.done .today-ex-check {
+    background: var(--work);
+    border-color: var(--work);
+    color: var(--bg);
+  }
+  .today-ex-info {
+    flex: 1;
+    min-width: 0;
+    cursor: pointer;
+  }
+  .today-ex-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .today-ex.done .today-ex-name { text-decoration: line-through; }
+  .today-ex-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .today-ex-play {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--work);
+    color: var(--bg);
+    border: none;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .today-ex.done .today-ex-play {
+    background: var(--bg-3);
+    color: var(--muted);
+  }
+
+  .today-empty {
+    background: var(--bg-2);
+    border: 1px dashed var(--line);
+    border-radius: 16px;
+    padding: 30px 20px;
+    text-align: center;
+    color: var(--muted);
+    margin-top: 16px;
+  }
+  .today-empty a {
+    color: var(--work);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  /* ===========================================================
+     PLAN SCREEN
+     =========================================================== */
+  .plan-tabs {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 16px;
+  }
+  .day-tab {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    padding: 10px 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .day-tab.active { background: var(--work); color: var(--bg); }
+  .day-tab.today-marker::after {
+    content: "";
+    display: block;
+    width: 4px;
+    height: 4px;
+    background: currentColor;
+    border-radius: 50%;
+    margin: 3px auto 0;
+  }
+
+  .day-editor { padding: 4px; }
+  .day-edit-field {
+    margin-bottom: 12px;
+  }
+  .day-edit-field label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .day-edit-field input, .day-edit-field textarea {
+    width: 100%;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    outline: none;
+    resize: vertical;
+  }
+  .day-edit-field textarea {
+    min-height: 60px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .day-edit-field input:focus, .day-edit-field textarea:focus { border-color: var(--accent); }
+
+  .rest-toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+  .rest-toggle-row label { font-size: 14px; font-weight: 700; }
+
+  .section-editor {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .section-editor-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--bg-3);
+  }
+  .section-editor-head input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    outline: none;
+  }
+  .section-body { padding: 8px 12px 12px; }
+  .section-ex-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+  .section-ex-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    background: var(--bg-3);
+    border-radius: 8px;
+  }
+  .section-ex-info { flex: 1; min-width: 0; }
+  .section-ex-name {
+    font-size: 13px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .section-ex-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .add-inline {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .add-inline .icon-btn { flex: 1; padding: 8px 10px; }
+
+  .plan-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .plan-actions .icon-btn { flex: 1; padding: 12px; }
+
+  /* Library picker inside modal */
+  .picker-list { max-height: 50vh; overflow-y: auto; padding-right: 4px; margin: 0 -4px 12px; padding-left: 4px; }
+  .picker-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg-3);
+    border-radius: 10px;
+    margin-bottom: 6px;
+    cursor: pointer;
+  }
+  .picker-item:active { background: var(--line); }
+  .picker-name { font-size: 14px; font-weight: 700; }
+  .picker-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  /* ---------- helpers ---------- */
+  .row-flex { display: flex; gap: 8px; align-items: center; }
+  .grow { flex: 1; min-width: 0; }
+  .mt10 { margin-top: 10px; }
+  .mb10 { margin-bottom: 10px; }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <input class="exercise-name" id="exerciseName" placeholder="EXERCISE NAME" maxlength="40">
-  <div class="set-pill" id="setPill">SET <b><span id="curSet">1</span>/<span id="totSet">1</span></b></div>
+<!-- ============================================================
+     SCREEN: TODAY
+     ============================================================ -->
+<div class="screen" id="todayScreen">
+  <div class="today-header">
+    <div class="today-daytag"><b id="todayDayName">Loading</b> · <span id="todayDate"></span></div>
+    <div class="today-theme" id="todayTheme">Set up your plan</div>
+    <div class="today-goal" id="todayGoal">Go to Plan to build your week.</div>
+  </div>
+
+  <div class="progress-card">
+    <div class="progress-card-head">
+      <span>Today · <b id="progExText">0 / 0</b></span>
+      <span id="progStreak">🔥 0-day streak</span>
+    </div>
+    <div class="day-progress-bar"><div class="day-progress-fill" id="dayProgFill"></div></div>
+    <div class="stats" style="margin-top:10px;">
+      <div class="stat"><div class="stat-val" id="tdExercises">0</div><div class="stat-lbl">Exercises</div></div>
+      <div class="stat"><div class="stat-val" id="tdMinutes">0m</div><div class="stat-lbl">Active</div></div>
+      <div class="stat"><div class="stat-val" id="tdSets">0</div><div class="stat-lbl">Sets</div></div>
+    </div>
+    <div class="week-strip" id="weekStrip"></div>
+  </div>
+
+  <div id="todayBody"></div>
 </div>
 
-<div class="timer-card" id="timerCard">
-  <div class="phase-label" id="phaseLabel">READY</div>
-  <div class="timer-display" id="timerDisplay">00:60</div>
-  <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
-  <div class="progress-meta">
-    <span id="elapsedLabel">0s elapsed</span>
-    <span id="remainingLabel">60s left</span>
+<!-- ============================================================
+     SCREEN: TIMER (the original working timer, preserved)
+     ============================================================ -->
+<div class="screen active" id="timerScreen">
+
+  <div class="session-pill" id="sessionPill" style="display:none;">
+    <div class="sess-info">
+      <div class="sess-progress" id="sessProgress">SESSION · 1 OF 8</div>
+      <div class="sess-next" id="sessNext">Next: <b>—</b></div>
+    </div>
+    <button class="sess-btn secondary" id="sessLeaveBtn">Exit</button>
+    <button class="sess-btn" id="sessNextBtn">Next ▸</button>
   </div>
+
+  <div class="topbar">
+    <input class="exercise-name" id="exerciseName" placeholder="EXERCISE NAME" maxlength="40">
+    <div class="set-pill" id="setPill">SET <b><span id="curSet">1</span>/<span id="totSet">1</span></b></div>
+  </div>
+
+  <div class="timer-card" id="timerCard">
+    <div class="phase-label" id="phaseLabel">READY</div>
+    <div class="timer-display" id="timerDisplay">00:60</div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-meta">
+      <span id="elapsedLabel">0s elapsed</span>
+      <span id="remainingLabel">60s left</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="startBtn">START</button>
+    <button class="btn btn-secondary" id="resetBtn">RESET</button>
+  </div>
+
+  <div class="section-label">Quick Work Duration</div>
+  <div class="presets" id="presets">
+    <button class="preset" data-sec="20">20s</button>
+    <button class="preset" data-sec="30">30s</button>
+    <button class="preset" data-sec="45">45s</button>
+    <button class="preset" data-sec="60">60s</button>
+    <button class="preset" data-sec="90">90s</button>
+    <button class="preset" data-sec="120">2m</button>
+    <button class="preset" data-sec="180">3m</button>
+    <button class="preset" data-sec="300">5m</button>
+  </div>
+
+  <details>
+    <summary>Settings</summary>
+    <div class="panel">
+      <div class="field">
+        <div>
+          <label>Work duration</label>
+          <span class="hint">Time per active interval</span>
+        </div>
+        <div class="num-input">
+          <button data-target="workSec" data-delta="-5">−</button>
+          <input id="workSec" type="number" min="1" max="3600" value="60">
+          <button data-target="workSec" data-delta="5">+</button>
+        </div>
+      </div>
+      <div class="field">
+        <div>
+          <label>Rest duration</label>
+          <span class="hint">0 = no rest between sets</span>
+        </div>
+        <div class="num-input">
+          <button data-target="restSec" data-delta="-5">−</button>
+          <input id="restSec" type="number" min="0" max="3600" value="15">
+          <button data-target="restSec" data-delta="5">+</button>
+        </div>
+      </div>
+      <div class="field">
+        <div>
+          <label>Sets / Rounds</label>
+          <span class="hint">Number of work intervals</span>
+        </div>
+        <div class="num-input">
+          <button data-target="totalSets" data-delta="-1">−</button>
+          <input id="totalSets" type="number" min="1" max="99" value="1">
+          <button data-target="totalSets" data-delta="1">+</button>
+        </div>
+      </div>
+      <div class="field">
+        <div>
+          <label>Reps target</label>
+          <span class="hint">Optional reference (e.g. 12)</span>
+        </div>
+        <div class="num-input">
+          <button data-target="reps" data-delta="-1">−</button>
+          <input id="reps" type="number" min="0" max="999" value="0">
+          <button data-target="reps" data-delta="1">+</button>
+        </div>
+      </div>
+      <div class="field">
+        <div>
+          <label>Sound buzzer</label>
+          <span class="hint">Beep at last 3s + finish</span>
+        </div>
+        <button class="toggle on" id="soundToggle" aria-label="Sound"></button>
+      </div>
+      <div class="field">
+        <div>
+          <label>Auto-advance sets</label>
+          <span class="hint">Continue without tapping</span>
+        </div>
+        <button class="toggle on" id="autoToggle" aria-label="Auto"></button>
+      </div>
+      <div class="field">
+        <div>
+          <label>Keep screen awake</label>
+          <span class="hint">Prevents phone from sleeping</span>
+        </div>
+        <button class="toggle on" id="wakeToggle" aria-label="Wake"></button>
+      </div>
+      <div class="field">
+        <div>
+          <label>Auto-advance session</label>
+          <span class="hint">Move to next exercise automatically</span>
+        </div>
+        <button class="toggle on" id="autoSessionToggle" aria-label="Auto Session"></button>
+      </div>
+    </div>
+  </details>
+
+  <div class="footer">TAP START · WORKS OFFLINE · ADD TO HOME SCREEN</div>
 </div>
 
-<div class="controls">
-  <button class="btn" id="startBtn">START</button>
-  <button class="btn btn-secondary" id="resetBtn">RESET</button>
+<!-- ============================================================
+     SCREEN: PLAN
+     ============================================================ -->
+<div class="screen" id="planScreen">
+  <div class="plan-tabs" id="planTabs"></div>
+
+  <div class="day-editor" id="dayEditor"></div>
+
+  <div class="plan-actions">
+    <button class="icon-btn" id="copyDayBtn">Copy this day →</button>
+    <button class="icon-btn danger" id="clearDayBtn">Clear day</button>
+  </div>
+
+  <details style="margin-top:24px;">
+    <summary>Exercise Library</summary>
+    <div class="panel">
+      <div class="chips-row" id="chipsRow"></div>
+      <button class="btn btn-secondary" id="saveBtn" style="width:100%;margin-bottom:12px;font-size:14px;padding:14px;">+ Add New Exercise</button>
+      <div class="saved-list" id="savedList"></div>
+    </div>
+  </details>
+
+  <details style="margin-top:14px;">
+    <summary>Goals & Templates</summary>
+    <div class="panel">
+      <div class="field">
+        <div>
+          <label>Daily exercise goal</label>
+          <span class="hint">Number of exercises to aim for</span>
+        </div>
+        <div class="num-input">
+          <button data-target="goalEx" data-delta="-1">−</button>
+          <input id="goalEx" type="number" min="1" max="99" value="8">
+          <button data-target="goalEx" data-delta="1">+</button>
+        </div>
+      </div>
+      <div class="field">
+        <div>
+          <label>Daily active-minute goal</label>
+          <span class="hint">Minutes of work time</span>
+        </div>
+        <div class="num-input">
+          <button data-target="goalMin" data-delta="-5">−</button>
+          <input id="goalMin" type="number" min="1" max="600" value="30">
+          <button data-target="goalMin" data-delta="5">+</button>
+        </div>
+      </div>
+      <div class="field">
+        <div>
+          <label>Today's display</label>
+          <span class="hint">Which stats to highlight</span>
+        </div>
+        <select id="displayMode" style="background:var(--bg-3);border:1px solid var(--line);color:var(--text);padding:8px 12px;border-radius:8px;font-family:'Manrope',sans-serif;font-weight:700;">
+          <option value="all">All (default)</option>
+          <option value="exercises">Exercises done</option>
+          <option value="minutes">Active minutes</option>
+          <option value="streak">Streak only</option>
+        </select>
+      </div>
+      <button class="btn btn-secondary" id="loadSampleBtn" style="width:100%;margin-top:16px;font-size:14px;padding:14px;">+ Load Sample Weekly Plan</button>
+      <button class="btn btn-ghost" id="resetStatsBtn" style="width:100%;margin-top:8px;font-size:12px;padding:10px;">Reset today's stats</button>
+    </div>
+  </details>
 </div>
 
-<div class="section-label">Quick Work Duration</div>
-<div class="presets" id="presets">
-  <button class="preset" data-sec="20">20s</button>
-  <button class="preset" data-sec="30">30s</button>
-  <button class="preset" data-sec="45">45s</button>
-  <button class="preset" data-sec="60">60s</button>
-  <button class="preset" data-sec="90">90s</button>
-  <button class="preset" data-sec="120">2m</button>
-  <button class="preset" data-sec="180">3m</button>
-  <button class="preset" data-sec="300">5m</button>
-</div>
-
-<details>
-  <summary>Settings</summary>
-  <div class="panel">
-    <div class="field">
-      <div>
-        <label>Work duration</label>
-        <span class="hint">Time per active interval</span>
-      </div>
-      <div class="num-input">
-        <button data-target="workSec" data-delta="-5">−</button>
-        <input id="workSec" type="number" min="1" max="3600" value="60">
-        <button data-target="workSec" data-delta="5">+</button>
-      </div>
-    </div>
-    <div class="field">
-      <div>
-        <label>Rest duration</label>
-        <span class="hint">0 = no rest between sets</span>
-      </div>
-      <div class="num-input">
-        <button data-target="restSec" data-delta="-5">−</button>
-        <input id="restSec" type="number" min="0" max="3600" value="15">
-        <button data-target="restSec" data-delta="5">+</button>
-      </div>
-    </div>
-    <div class="field">
-      <div>
-        <label>Sets / Rounds</label>
-        <span class="hint">Number of work intervals</span>
-      </div>
-      <div class="num-input">
-        <button data-target="totalSets" data-delta="-1">−</button>
-        <input id="totalSets" type="number" min="1" max="99" value="1">
-        <button data-target="totalSets" data-delta="1">+</button>
-      </div>
-    </div>
-    <div class="field">
-      <div>
-        <label>Reps target</label>
-        <span class="hint">Optional reference (e.g. 12)</span>
-      </div>
-      <div class="num-input">
-        <button data-target="reps" data-delta="-1">−</button>
-        <input id="reps" type="number" min="0" max="999" value="0">
-        <button data-target="reps" data-delta="1">+</button>
-      </div>
-    </div>
-    <div class="field">
-      <div>
-        <label>Sound buzzer</label>
-        <span class="hint">Beep at last 3s + finish</span>
-      </div>
-      <button class="toggle on" id="soundToggle" aria-label="Sound"></button>
-    </div>
-    <div class="field">
-      <div>
-        <label>Auto-advance sets</label>
-        <span class="hint">Continue without tapping</span>
-      </div>
-      <button class="toggle on" id="autoToggle" aria-label="Auto"></button>
-    </div>
-    <div class="field">
-      <div>
-        <label>Keep screen awake</label>
-        <span class="hint">Prevents phone from sleeping</span>
-      </div>
-      <button class="toggle on" id="wakeToggle" aria-label="Wake"></button>
-    </div>
-  </div>
-</details>
-
-<details>
-  <summary>Saved Workouts</summary>
-  <div class="panel">
-    <div class="chips-row" id="chipsRow"></div>
-    <button class="btn btn-secondary" id="saveBtn" style="width:100%;margin-bottom:12px;font-size:14px;padding:14px;">+ Save Current Setup</button>
-    <div class="saved-list" id="savedList"></div>
-  </div>
-</details>
-
-<details>
-  <summary>Today's Stats</summary>
-  <div class="panel">
-    <div class="stats">
-      <div class="stat"><div class="stat-val" id="statSets">0</div><div class="stat-lbl">Sets</div></div>
-      <div class="stat"><div class="stat-val" id="statTime">0m</div><div class="stat-lbl">Active</div></div>
-      <div class="stat"><div class="stat-val" id="statWorkouts">0</div><div class="stat-lbl">Sessions</div></div>
-    </div>
-    <button class="btn btn-ghost" id="resetStatsBtn" style="width:100%;margin-top:10px;font-size:12px;padding:10px;">Reset today's stats</button>
-  </div>
-</details>
-
-<div class="footer">TAP START · WORKS OFFLINE · ADD TO HOME SCREEN</div>
+<!-- ============================================================
+     BOTTOM NAV
+     ============================================================ -->
+<nav class="bottom-nav">
+  <button class="nav-btn" data-nav="today">
+    <span class="nav-icon">◐</span>
+    <span>Today</span>
+  </button>
+  <button class="nav-btn active" data-nav="timer">
+    <span class="nav-icon">▶</span>
+    <span>Timer</span>
+  </button>
+  <button class="nav-btn" data-nav="plan">
+    <span class="nav-icon">☰</span>
+    <span>Plan</span>
+  </button>
+</nav>
 
 <div class="done-flash" id="doneFlash"></div>
 
-<!-- Save dialog: pick name + list -->
+<!-- ==========================================================
+     MODALS
+     ========================================================== -->
+
+<!-- Save / Add exercise dialog -->
 <div class="modal-bg" id="saveModal">
   <div class="modal">
-    <h3>Save Workout</h3>
-    <input class="name-input" id="saveNameInput" placeholder="Workout name" maxlength="40">
-    <h3 style="margin-top:8px;">Add to list</h3>
+    <h3 id="saveModalTitle">Add Exercise</h3>
+    <input class="name-input" id="saveNameInput" placeholder="Exercise name" maxlength="60">
+    <div class="edit-grid">
+      <div class="edit-cell">
+        <div class="lbl">Work (s)</div>
+        <div class="num-input"><button data-target="editWork" data-delta="-5">−</button><input id="editWork" type="number" min="1" max="3600" value="60"><button data-target="editWork" data-delta="5">+</button></div>
+      </div>
+      <div class="edit-cell">
+        <div class="lbl">Rest (s)</div>
+        <div class="num-input"><button data-target="editRest" data-delta="-5">−</button><input id="editRest" type="number" min="0" max="3600" value="15"><button data-target="editRest" data-delta="5">+</button></div>
+      </div>
+      <div class="edit-cell">
+        <div class="lbl">Sets</div>
+        <div class="num-input"><button data-target="editSets" data-delta="-1">−</button><input id="editSets" type="number" min="1" max="99" value="1"><button data-target="editSets" data-delta="1">+</button></div>
+      </div>
+      <div class="edit-cell">
+        <div class="lbl">Reps</div>
+        <div class="num-input"><button data-target="editReps" data-delta="-1">−</button><input id="editReps" type="number" min="0" max="999" value="0"><button data-target="editReps" data-delta="1">+</button></div>
+      </div>
+    </div>
+    <h3 style="margin-top:0;">Category</h3>
     <div class="modal-list-options" id="saveListOptions"></div>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="saveModalCancel">Cancel</button>
@@ -715,13 +1365,13 @@
   </div>
 </div>
 
-<!-- Manage lists dialog -->
+<!-- Manage categories dialog -->
 <div class="modal-bg" id="manageModal">
   <div class="modal">
-    <h3>Manage Lists</h3>
+    <h3>Manage Categories</h3>
     <div id="manageLists"></div>
     <div class="manage-list-row" style="border-top:1px solid var(--line);margin-top:8px;padding-top:14px;">
-      <input id="newListInput" placeholder="New list name" maxlength="20">
+      <input id="newListInput" placeholder="New category name" maxlength="20">
       <button class="icon-btn" id="addListBtn">+ Add</button>
     </div>
     <div class="modal-actions" style="margin-top:14px;">
@@ -730,8 +1380,33 @@
   </div>
 </div>
 
+<!-- Pick exercise from library (for adding to Plan) -->
+<div class="modal-bg" id="pickerModal">
+  <div class="modal">
+    <h3>Add Exercise from Library</h3>
+    <div class="chips-row" id="pickerChips" style="margin: 0 -20px 12px; padding-left:20px; padding-right:20px;"></div>
+    <div class="picker-list" id="pickerList"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="pickerCancel" style="grid-column:1/-1;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Copy day dialog -->
+<div class="modal-bg" id="copyModal">
+  <div class="modal">
+    <h3>Copy this day to…</h3>
+    <div id="copyTargets" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="copyCancel" style="grid-column:1/-1;">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  // ---------- STORAGE (graceful fallback if localStorage unavailable) ----------
+  // ====================================================================
+  // STORAGE (graceful fallback if localStorage unavailable)
+  // ====================================================================
   const store = {
     get(k, def) {
       try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; }
@@ -743,7 +1418,9 @@
     del(k) { try { localStorage.removeItem(k); } catch (e) {} }
   };
 
-  // ---------- AUDIO ----------
+  // ====================================================================
+  // AUDIO
+  // ====================================================================
   let audioCtx = null;
   function ensureAudio() {
     if (!audioCtx) {
@@ -768,18 +1445,18 @@
   function beepShort() { tone(880, 0.12, 0.35, 'sine'); }
   function beepGo()    { tone(1200, 0.18, 0.45, 'sine'); }
   function beepBuzzer() {
-    // distinctive end-of-set buzzer: two long lower tones
     tone(440, 0.35, 0.5, 'square');
     setTimeout(() => tone(330, 0.5, 0.5, 'square'), 200);
   }
   function beepFinish() {
-    // workout-complete fanfare
     tone(660, 0.18, 0.4, 'sine');
     setTimeout(() => tone(880, 0.18, 0.4, 'sine'), 180);
     setTimeout(() => tone(1320, 0.4, 0.45, 'sine'), 360);
   }
 
-  // ---------- WAKE LOCK ----------
+  // ====================================================================
+  // WAKE LOCK
+  // ====================================================================
   let wakeLock = null;
   async function requestWake() {
     if (!state.wakeOn || !('wakeLock' in navigator)) return;
@@ -792,20 +1469,30 @@
     if (document.visibilityState === 'visible' && state.running) requestWake();
   });
 
-  // ---------- STATE ----------
+  // ====================================================================
+  // SETTINGS + STATE
+  // ====================================================================
   const settings = store.get('wt_settings', {
     work: 60, rest: 15, sets: 1, reps: 0,
     name: '', sound: true, auto: true, wake: true,
     lists: ['Daily', 'Cardio'],
-    selectedList: 'All'
+    selectedList: 'All',
+    autoSession: true,
+    goalEx: 8,
+    goalMin: 30,
+    displayMode: 'all'
   });
-  // Migration: ensure new fields exist on old saved settings
   if (!Array.isArray(settings.lists)) settings.lists = ['Daily', 'Cardio'];
   if (!settings.selectedList) settings.selectedList = 'All';
+  if (typeof settings.autoSession !== 'boolean') settings.autoSession = true;
+  if (!settings.goalEx) settings.goalEx = 8;
+  if (!settings.goalMin) settings.goalMin = 30;
+  if (!settings.displayMode) settings.displayMode = 'all';
+
   const state = {
     running: false,
     paused: false,
-    phase: 'idle',       // idle | work | rest | done
+    phase: 'idle',       // idle | work | rest | done | waiting
     curSet: 1,
     phaseDuration: settings.work,
     phaseRemaining: settings.work,
@@ -813,34 +1500,63 @@
     lastTick: 0,
     sound: settings.sound,
     auto: settings.auto,
-    wakeOn: settings.wake,
-    lastBeepSec: -1
+    wakeOn: settings.wakeOn ?? settings.wake,
+    lastBeepSec: -1,
+    // Session context (when timer is loaded from Today plan)
+    session: null   // { dayKey, items: [{sec, ex, name, work, rest, sets, reps}], currentIdx }
   };
 
-  // ---------- DOM ----------
+  const DAY_KEYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const DAY_NAMES = { Mon:'Monday', Tue:'Tuesday', Wed:'Wednesday', Thu:'Thursday', Fri:'Friday', Sat:'Saturday', Sun:'Sunday' };
+
+  // ====================================================================
+  // DOM
+  // ====================================================================
   const $ = (id) => document.getElementById(id);
   const els = {
+    // Screens
+    todayScreen: $('todayScreen'), timerScreen: $('timerScreen'), planScreen: $('planScreen'),
+    // Timer
     name: $('exerciseName'), curSet: $('curSet'), totSet: $('totSet'),
     setPill: $('setPill'), card: $('timerCard'), phase: $('phaseLabel'),
     timer: $('timerDisplay'), fill: $('progressFill'),
     elapsed: $('elapsedLabel'), remaining: $('remainingLabel'),
     start: $('startBtn'), reset: $('resetBtn'),
     work: $('workSec'), rest: $('restSec'), sets: $('totalSets'), reps: $('reps'),
-    sound: $('soundToggle'), auto: $('autoToggle'), wake: $('wakeToggle'),
-    saveBtn: $('saveBtn'), savedList: $('savedList'),
+    sound: $('soundToggle'), auto: $('autoToggle'), wake: $('wakeToggle'), autoSession: $('autoSessionToggle'),
     presets: $('presets'), flash: $('doneFlash'),
-    statSets: $('statSets'), statTime: $('statTime'), statWorkouts: $('statWorkouts'),
-    resetStats: $('resetStatsBtn'),
-    chipsRow: $('chipsRow'),
-    saveModal: $('saveModal'), saveNameInput: $('saveNameInput'),
-    saveListOptions: $('saveListOptions'),
+    // Session pill
+    sessionPill: $('sessionPill'), sessProgress: $('sessProgress'), sessNext: $('sessNext'),
+    sessNextBtn: $('sessNextBtn'), sessLeaveBtn: $('sessLeaveBtn'),
+    // Today
+    todayDayName: $('todayDayName'), todayDate: $('todayDate'),
+    todayTheme: $('todayTheme'), todayGoal: $('todayGoal'),
+    todayBody: $('todayBody'),
+    progExText: $('progExText'), progStreak: $('progStreak'),
+    dayProgFill: $('dayProgFill'), weekStrip: $('weekStrip'),
+    tdExercises: $('tdExercises'), tdMinutes: $('tdMinutes'), tdSets: $('tdSets'),
+    // Plan
+    planTabs: $('planTabs'), dayEditor: $('dayEditor'),
+    copyDayBtn: $('copyDayBtn'), clearDayBtn: $('clearDayBtn'),
+    savedList: $('savedList'), chipsRow: $('chipsRow'), saveBtn: $('saveBtn'),
+    goalEx: $('goalEx'), goalMin: $('goalMin'), displayMode: $('displayMode'),
+    loadSampleBtn: $('loadSampleBtn'), resetStats: $('resetStatsBtn'),
+    // Modals
+    saveModal: $('saveModal'), saveModalTitle: $('saveModalTitle'),
+    saveNameInput: $('saveNameInput'), saveListOptions: $('saveListOptions'),
     saveModalCancel: $('saveModalCancel'), saveModalConfirm: $('saveModalConfirm'),
+    editWork: $('editWork'), editRest: $('editRest'), editSets: $('editSets'), editReps: $('editReps'),
     manageModal: $('manageModal'), manageLists: $('manageLists'),
     newListInput: $('newListInput'), addListBtn: $('addListBtn'),
-    manageModalClose: $('manageModalClose')
+    manageModalClose: $('manageModalClose'),
+    pickerModal: $('pickerModal'), pickerChips: $('pickerChips'),
+    pickerList: $('pickerList'), pickerCancel: $('pickerCancel'),
+    copyModal: $('copyModal'), copyTargets: $('copyTargets'), copyCancel: $('copyCancel')
   };
 
-  // ---------- UTILS ----------
+  // ====================================================================
+  // UTILS
+  // ====================================================================
   function fmt(sec) {
     sec = Math.max(0, Math.ceil(sec));
     const m = Math.floor(sec / 60);
@@ -851,8 +1567,26 @@
     sec = Math.max(0, Math.ceil(sec));
     return sec >= 60 ? `${Math.floor(sec/60)}m ${sec%60}s` : `${sec}s`;
   }
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function todayDayKey() {
+    // JS getDay(): 0=Sun,1=Mon..6=Sat. Map to Mon..Sun.
+    const map = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    return map[new Date().getDay()];
+  }
+  function isoDate(d) {
+    d = d || new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 
-  // ---------- RENDER ----------
+  // ====================================================================
+  // TIMER RENDER + LOOP (preserved from working version)
+  // ====================================================================
   function setAccent(color) {
     document.documentElement.style.setProperty('--accent', color);
   }
@@ -867,14 +1601,12 @@
     els.curSet.textContent = state.curSet;
     els.totSet.textContent = settings.sets;
 
-    // warning style for last 3s of work
     if (state.phase === 'work' && state.phaseRemaining <= 3 && state.phaseRemaining > 0) {
       els.timer.classList.add('warn');
     } else {
       els.timer.classList.remove('warn');
     }
 
-    // phase styling
     if (state.phase === 'work') {
       setAccent('var(--work)');
       els.phase.textContent = settings.reps > 0 ? `WORK · ${settings.reps} REPS` : 'WORK';
@@ -907,7 +1639,6 @@
       els.card.classList.remove('waiting');
     }
 
-    // Start button label
     if (state.phase === 'waiting') {
       els.start.textContent = `START SET ${state.curSet}`;
     } else if (state.running) {
@@ -917,16 +1648,16 @@
     } else {
       els.start.textContent = 'START';
     }
+
+    renderSessionPill();
   }
 
-  // ---------- TIMER LOOP ----------
   function tick(now) {
     if (!state.running || state.paused) return;
     const dt = (now - state.lastTick) / 1000;
     state.lastTick = now;
     state.phaseRemaining -= dt;
 
-    // countdown beeps at last 3 seconds of work
     if (state.phase === 'work') {
       const sec = Math.ceil(state.phaseRemaining);
       if (sec <= 3 && sec > 0 && sec !== state.lastBeepSec) {
@@ -946,11 +1677,6 @@
   function onPhaseEnd() {
     state.phaseRemaining = 0;
     render();
-
-    // Smart advance rule:
-    //   - Time-based (reps == 0): obey state.auto for all transitions (current behavior)
-    //   - Rep-based (reps > 0): rest auto-runs after work, but next WORK set always
-    //     waits for a manual tap (user paces their reps)
     const repBased = settings.reps > 0;
 
     if (state.phase === 'work') {
@@ -958,15 +1684,14 @@
       addStat('time', state.phaseDuration);
 
       if (state.curSet >= settings.sets) {
-        finishWorkout();
+        // This exercise is done. If we're in a session, mark complete + advance.
+        finishExerciseOrWorkout();
         return;
       }
 
-      // Move to rest (or skip if rest=0)
       if (settings.rest > 0) {
         beepBuzzer();
         startPhase('rest', settings.rest);
-        // Auto-run rest in both modes (body needs the recovery interval)
         if (state.auto || repBased) {
           state.lastTick = performance.now();
           state.rafTimer = requestAnimationFrame(tick);
@@ -974,11 +1699,9 @@
           state.paused = true; render();
         }
       } else {
-        // No rest configured — go directly to next work set
         beepBuzzer();
         state.curSet++;
         if (repBased) {
-          // wait for tap to start the next rep set
           enterWaitingState();
         } else {
           startPhase('work', settings.work);
@@ -991,7 +1714,6 @@
     } else if (state.phase === 'rest') {
       state.curSet++;
       if (repBased) {
-        // Rest done — wait for user to tap before next work set
         enterWaitingState();
       } else {
         beepGo();
@@ -1009,10 +1731,9 @@
     state.phase = 'waiting';
     state.paused = true;
     state.running = false;
-    // Show what's coming: full work duration on the clock
     state.phaseDuration = settings.work;
     state.phaseRemaining = settings.work;
-    beepGo(); // gentle cue that it's your turn
+    beepGo();
     render();
   }
 
@@ -1024,16 +1745,61 @@
     render();
   }
 
-  function finishWorkout() {
+  function finishExerciseOrWorkout() {
+    // Mark exercise complete on Today (if part of session)
+    if (state.session) {
+      const item = state.session.items[state.session.currentIdx];
+      if (item) markExerciseDone(state.session.dayKey, item.sec, item.ex);
+      addStat('exercises', 1);
+      // Advance to next exercise?
+      const next = state.session.currentIdx + 1;
+      if (next < state.session.items.length) {
+        if (settings.autoSession) {
+          state.session.currentIdx = next;
+          // Small delay so the buzzer isn't stepped on
+          beepFinish();
+          setTimeout(() => loadSessionExercise(state.session.currentIdx, true), 800);
+          return;
+        } else {
+          state.running = false;
+          state.paused = false;
+          state.phase = 'done';
+          cancelAnimationFrame(state.rafTimer);
+          beepFinish();
+          releaseWake();
+          flashDone();
+          render();
+          renderToday();
+          return;
+        }
+      } else {
+        // Session finished
+        state.running = false;
+        state.paused = false;
+        state.phase = 'done';
+        cancelAnimationFrame(state.rafTimer);
+        beepFinish();
+        addStat('workouts', 1);
+        state.session = null;
+        flashDone();
+        releaseWake();
+        render();
+        renderToday();
+        return;
+      }
+    }
+    // Standalone workout finished
     state.running = false;
     state.paused = false;
     state.phase = 'done';
     cancelAnimationFrame(state.rafTimer);
     beepFinish();
     addStat('workouts', 1);
+    addStat('exercises', 1);
     flashDone();
     releaseWake();
     render();
+    renderToday();
   }
 
   function flashDone() {
@@ -1041,13 +1807,30 @@
     setTimeout(() => els.flash.classList.remove('show'), 600);
   }
 
-  // ---------- CONTROLS ----------
+  function renderSessionPill() {
+    if (!state.session) {
+      els.sessionPill.style.display = 'none';
+      return;
+    }
+    els.sessionPill.style.display = 'flex';
+    const total = state.session.items.length;
+    const cur = state.session.currentIdx + 1;
+    els.sessProgress.textContent = `SESSION · ${cur} OF ${total}`;
+    const next = state.session.items[state.session.currentIdx + 1];
+    els.sessNext.innerHTML = next ? `Next: <b>${escapeHtml(next.name)}</b>` : `<b>Last exercise</b>`;
+    els.sessNextBtn.disabled = false;
+    els.sessNextBtn.style.opacity = next ? '1' : '0.5';
+    els.sessNextBtn.textContent = next ? 'Next ▸' : 'Finish';
+  }
+
+  // ====================================================================
+  // TIMER CONTROLS
+  // ====================================================================
   els.start.addEventListener('click', () => {
     ensureAudio();
     if (state.phase === 'done') doReset();
 
     if (state.phase === 'waiting') {
-      // Tap to begin the next set in rep-paced mode
       state.running = true;
       state.paused = false;
       startPhase('work', settings.work);
@@ -1060,7 +1843,6 @@
     }
 
     if (!state.running) {
-      // first start
       state.running = true;
       state.paused = false;
       state.curSet = 1;
@@ -1095,9 +1877,36 @@
     render();
   }
 
-  // ---------- INPUTS ----------
-  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
-  function bindInput(el, key, min, max) {
+  // Session pill controls
+  els.sessNextBtn.addEventListener('click', () => {
+    if (!state.session) return;
+    const next = state.session.currentIdx + 1;
+    if (next < state.session.items.length) {
+      // If the current exercise wasn't finished yet, still mark it done (they're moving on)
+      const item = state.session.items[state.session.currentIdx];
+      if (item) markExerciseDone(state.session.dayKey, item.sec, item.ex);
+      addStat('exercises', 1);
+      state.session.currentIdx = next;
+      loadSessionExercise(state.session.currentIdx, true);
+    } else {
+      // Last one → end session
+      state.session = null;
+      doReset();
+      renderToday();
+    }
+  });
+  els.sessLeaveBtn.addEventListener('click', () => {
+    if (!confirm('Exit session? Progress is kept.')) return;
+    state.session = null;
+    doReset();
+    renderToday();
+  });
+
+  // ====================================================================
+  // INPUTS
+  // ====================================================================
+  function bindInput(el, key, min, max, opts) {
+    opts = opts || {};
     el.addEventListener('change', () => {
       let v = parseInt(el.value, 10);
       if (isNaN(v)) v = min;
@@ -1105,33 +1914,34 @@
       el.value = v;
       settings[key] = v;
       saveSettings();
-      if (!state.running) doReset();
+      if (opts.resetTimer && !state.running) doReset();
+      if (opts.onChange) opts.onChange(v);
     });
   }
-  bindInput(els.work, 'work', 1, 3600);
-  bindInput(els.rest, 'rest', 0, 3600);
-  bindInput(els.sets, 'sets', 1, 99);
-  bindInput(els.reps, 'reps', 0, 999);
+  bindInput(els.work, 'work', 1, 3600, { resetTimer: true });
+  bindInput(els.rest, 'rest', 0, 3600, { resetTimer: true });
+  bindInput(els.sets, 'sets', 1, 99, { resetTimer: true });
+  bindInput(els.reps, 'reps', 0, 999, { resetTimer: true });
 
-  // +/- buttons
   document.querySelectorAll('.num-input button[data-target]').forEach(btn => {
     btn.addEventListener('click', () => {
       const t = btn.dataset.target;
       const d = parseInt(btn.dataset.delta, 10);
       const input = $(t);
-      input.value = parseInt(input.value || 0, 10) + d;
+      if (!input) return;
+      const cur = parseInt(input.value || 0, 10);
+      input.value = (isNaN(cur) ? 0 : cur) + d;
       input.dispatchEvent(new Event('change'));
     });
   });
 
-  // exercise name
   els.name.value = settings.name || '';
   els.name.addEventListener('input', () => {
     settings.name = els.name.value;
     saveSettings();
   });
 
-  // toggles
+  // Toggles
   function bindToggle(btn, key) {
     btn.classList.toggle('on', !!settings[key]);
     if (key === 'sound') state.sound = settings[key];
@@ -1149,8 +1959,15 @@
   bindToggle(els.sound, 'sound');
   bindToggle(els.auto, 'auto');
   bindToggle(els.wake, 'wake');
+  // Auto session toggle
+  els.autoSession.classList.toggle('on', !!settings.autoSession);
+  els.autoSession.addEventListener('click', () => {
+    settings.autoSession = !settings.autoSession;
+    els.autoSession.classList.toggle('on', settings.autoSession);
+    saveSettings();
+  });
 
-  // presets
+  // Presets
   els.presets.querySelectorAll('.preset').forEach(p => {
     p.addEventListener('click', () => {
       const sec = parseInt(p.dataset.sec, 10);
@@ -1165,7 +1982,19 @@
     });
   }
 
-  // ---------- SAVED WORKOUTS + LISTS ----------
+  function syncInputs() {
+    els.name.value = settings.name || '';
+    els.work.value = settings.work;
+    els.rest.value = settings.rest;
+    els.sets.value = settings.sets;
+    els.reps.value = settings.reps;
+    markSelectedPreset();
+  }
+  function saveSettings() { store.set('wt_settings', settings); }
+
+  // ====================================================================
+  // LIBRARY (was Saved Workouts). Fully editable now.
+  // ====================================================================
   function getSaved() { return store.get('wt_saved', []); }
   function setSaved(list) { store.set('wt_saved', list); renderSaved(); }
 
@@ -1176,7 +2005,7 @@
       return `<button class="chip${active}" data-list="${escapeHtml(name)}">${escapeHtml(name)}</button>`;
     }).join('');
     html += `<button class="chip chip-add" id="chipAdd">+ New</button>`;
-    html += `<button class="chip chip-manage" id="chipManage" aria-label="Manage lists">⚙</button>`;
+    html += `<button class="chip chip-manage" id="chipManage" aria-label="Manage categories">⚙</button>`;
     els.chipsRow.innerHTML = html;
     els.chipsRow.querySelectorAll('[data-list]').forEach(c => {
       c.addEventListener('click', () => {
@@ -1191,12 +2020,9 @@
   }
 
   function addNewList() {
-    const name = (prompt('Name this list (e.g. Daily, Cardio):') || '').trim();
+    const name = (prompt('Name this category (e.g. Core, Arms):') || '').trim();
     if (!name) return;
-    if (name === 'All' || settings.lists.includes(name)) {
-      alert('That list already exists.');
-      return;
-    }
+    if (name === 'All' || settings.lists.includes(name)) { alert('That category already exists.'); return; }
     settings.lists.push(name);
     settings.selectedList = name;
     saveSettings();
@@ -1212,8 +2038,8 @@
 
     if (!filtered.length) {
       els.savedList.innerHTML = `<div class="empty">${
-        settings.selectedList === 'All' ? 'No saved workouts yet'
-          : `No workouts in "${escapeHtml(settings.selectedList)}" yet`
+        settings.selectedList === 'All' ? 'No exercises yet. Tap + to add one.'
+          : `No exercises in "${escapeHtml(settings.selectedList)}" yet`
       }</div>`;
       return;
     }
@@ -1228,43 +2054,42 @@
             <button class="reorder-btn" data-up="${i}" ${upDisabled} aria-label="Move up">▲</button>
             <button class="reorder-btn" data-down="${i}" ${downDisabled} aria-label="Move down">▼</button>
           </div>
-          <div class="saved-info">
+          <div class="saved-info" data-edit="${i}">
             <div class="saved-name">${escapeHtml(w.name)}</div>
             <div class="saved-meta">${w.work}s · ${w.rest}s rest · ${w.sets} set${w.sets>1?'s':''}${w.reps?` · ${w.reps} reps`:''}${listLabel}</div>
           </div>
           <div class="saved-actions">
-            <button class="icon-btn" data-load="${i}">LOAD</button>
+            <button class="icon-btn primary" data-load="${i}">Load</button>
             <button class="icon-btn danger" data-del="${i}">×</button>
           </div>
         </div>`;
     }).join('');
 
     els.savedList.querySelectorAll('[data-load]').forEach(b => {
-      b.addEventListener('click', () => loadSaved(parseInt(b.dataset.load, 10)));
+      b.addEventListener('click', (e) => { e.stopPropagation(); loadSaved(parseInt(b.dataset.load, 10)); });
     });
     els.savedList.querySelectorAll('[data-del]').forEach(b => {
-      b.addEventListener('click', () => deleteSaved(parseInt(b.dataset.del, 10)));
+      b.addEventListener('click', (e) => { e.stopPropagation(); deleteSaved(parseInt(b.dataset.del, 10)); });
+    });
+    els.savedList.querySelectorAll('[data-edit]').forEach(b => {
+      b.addEventListener('click', () => openEditExerciseModal(parseInt(b.dataset.edit, 10)));
     });
     els.savedList.querySelectorAll('[data-up]').forEach(b => {
-      b.addEventListener('click', () => reorderSaved(parseInt(b.dataset.up, 10), -1));
+      b.addEventListener('click', (e) => { e.stopPropagation(); reorderSaved(parseInt(b.dataset.up, 10), -1); });
     });
     els.savedList.querySelectorAll('[data-down]').forEach(b => {
-      b.addEventListener('click', () => reorderSaved(parseInt(b.dataset.down, 10), 1));
+      b.addEventListener('click', (e) => { e.stopPropagation(); reorderSaved(parseInt(b.dataset.down, 10), 1); });
     });
   }
 
   function reorderSaved(absoluteIndex, direction) {
     const all = getSaved();
     if (settings.selectedList === 'All') {
-      // Move within the full list
       const newIdx = absoluteIndex + direction;
       if (newIdx < 0 || newIdx >= all.length) return;
       [all[absoluteIndex], all[newIdx]] = [all[newIdx], all[absoluteIndex]];
     } else {
-      // Move within the visible filtered list (swap with the nearest neighbor in the same list)
-      const sameListIndices = all
-        .map((w, idx) => w.list === settings.selectedList ? idx : -1)
-        .filter(idx => idx !== -1);
+      const sameListIndices = all.map((w, idx) => w.list === settings.selectedList ? idx : -1).filter(idx => idx !== -1);
       const positionInFiltered = sameListIndices.indexOf(absoluteIndex);
       const swapWith = sameListIndices[positionInFiltered + direction];
       if (swapWith === undefined) return;
@@ -1273,19 +2098,39 @@
     setSaved(all);
   }
 
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
-
-  // Save dialog flow
+  // Save/edit exercise modal
+  let editingIndex = -1;  // -1 = adding new
   let saveDialogList = null;
-  els.saveBtn.addEventListener('click', openSaveModal);
 
-  function openSaveModal() {
-    els.saveNameInput.value = settings.name || '';
-    saveDialogList = settings.selectedList === 'All'
-      ? (settings.lists[0] || null)
-      : settings.selectedList;
+  els.saveBtn.addEventListener('click', () => openEditExerciseModal(-1));
+
+  function openEditExerciseModal(idx) {
+    editingIndex = idx;
+    // Ensure category picker is visible (may have been hidden by a prior day-exercise flow)
+    els.saveListOptions.style.display = '';
+    if (els.saveListOptions.previousElementSibling) {
+      els.saveListOptions.previousElementSibling.style.display = '';
+    }
+    dayEditContext = null;
+    if (idx >= 0) {
+      const w = getSaved()[idx];
+      if (!w) return;
+      els.saveModalTitle.textContent = 'Edit Exercise';
+      els.saveNameInput.value = w.name;
+      els.editWork.value = w.work;
+      els.editRest.value = w.rest;
+      els.editSets.value = w.sets;
+      els.editReps.value = w.reps || 0;
+      saveDialogList = w.list || '';
+    } else {
+      els.saveModalTitle.textContent = 'Add Exercise';
+      els.saveNameInput.value = settings.name || '';
+      els.editWork.value = settings.work;
+      els.editRest.value = settings.rest;
+      els.editSets.value = settings.sets;
+      els.editReps.value = settings.reps;
+      saveDialogList = settings.selectedList === 'All' ? (settings.lists[0] || '') : settings.selectedList;
+    }
     renderSaveListOptions();
     els.saveModal.classList.add('show');
     setTimeout(() => els.saveNameInput.focus(), 50);
@@ -1299,13 +2144,10 @@
       return `<button class="chip${active}" data-pick="${escapeHtml(value)}">${escapeHtml(name)}</button>`;
     }).join('') + '<button class="chip chip-add" id="saveListNew">+ New</button>';
     els.saveListOptions.querySelectorAll('[data-pick]').forEach(b => {
-      b.addEventListener('click', () => {
-        saveDialogList = b.dataset.pick || null;
-        renderSaveListOptions();
-      });
+      b.addEventListener('click', () => { saveDialogList = b.dataset.pick || ''; renderSaveListOptions(); });
     });
     $('saveListNew').addEventListener('click', () => {
-      const name = (prompt('New list name:') || '').trim();
+      const name = (prompt('New category:') || '').trim();
       if (!name || name === 'All' || settings.lists.includes(name)) return;
       settings.lists.push(name);
       saveDialogList = name;
@@ -1317,44 +2159,47 @@
 
   els.saveModalCancel.addEventListener('click', () => els.saveModal.classList.remove('show'));
   els.saveModalConfirm.addEventListener('click', () => {
+    // Day-exercise context is handled by the other listener; skip library save here.
+    if (editingIndex === -2) return;
     const name = els.saveNameInput.value.trim();
     if (!name) { els.saveNameInput.focus(); return; }
-    settings.name = name;
-    els.name.value = name;
+    const work = clamp(parseInt(els.editWork.value)||60, 1, 3600);
+    const rest = clamp(parseInt(els.editRest.value)||0, 0, 3600);
+    const sets = clamp(parseInt(els.editSets.value)||1, 1, 99);
+    const reps = clamp(parseInt(els.editReps.value)||0, 0, 999);
     const list = getSaved();
-    list.push({
-      name,
-      work: settings.work, rest: settings.rest,
-      sets: settings.sets, reps: settings.reps,
-      list: saveDialogList || ''
-    });
+    const item = { name, work, rest, sets, reps, list: saveDialogList || '' };
+    if (editingIndex >= 0) list[editingIndex] = item;
+    else list.push(item);
     setSaved(list);
-    saveSettings();
     els.saveModal.classList.remove('show');
+    // If we edited the currently loaded exercise, sync fields
+    if (editingIndex >= 0 && settings.name === item.name) {
+      settings.work = work; settings.rest = rest; settings.sets = sets; settings.reps = reps;
+      saveSettings();
+      syncInputs();
+      if (!state.running) doReset();
+    }
   });
 
-  // Manage lists modal
+  // Manage categories modal
   els.manageModalClose.addEventListener('click', () => els.manageModal.classList.remove('show'));
   els.addListBtn.addEventListener('click', () => {
     const name = els.newListInput.value.trim();
-    if (!name || name === 'All' || settings.lists.includes(name)) {
-      els.newListInput.focus(); return;
-    }
+    if (!name || name === 'All' || settings.lists.includes(name)) { els.newListInput.focus(); return; }
     settings.lists.push(name);
     els.newListInput.value = '';
     saveSettings();
     renderManageLists();
     renderChips();
   });
-
   function openManageModal() {
     renderManageLists();
     els.manageModal.classList.add('show');
   }
-
   function renderManageLists() {
     if (!settings.lists.length) {
-      els.manageLists.innerHTML = '<div class="empty">No lists yet — add one below</div>';
+      els.manageLists.innerHTML = '<div class="empty">No categories yet — add one below</div>';
       return;
     }
     els.manageLists.innerHTML = settings.lists.map((name, i) => `
@@ -1368,12 +2213,10 @@
         const i = parseInt(inp.dataset.rename, 10);
         const newName = inp.value.trim();
         if (!newName || newName === 'All' || (settings.lists.includes(newName) && settings.lists[i] !== newName)) {
-          inp.value = settings.lists[i];
-          return;
+          inp.value = settings.lists[i]; return;
         }
         const oldName = settings.lists[i];
         settings.lists[i] = newName;
-        // Update workouts pointing to the renamed list
         const all = getSaved();
         all.forEach(w => { if (w.list === oldName) w.list = newName; });
         if (settings.selectedList === oldName) settings.selectedList = newName;
@@ -1387,7 +2230,7 @@
       b.addEventListener('click', () => {
         const i = parseInt(b.dataset.rmlist, 10);
         const name = settings.lists[i];
-        if (!confirm(`Delete list "${name}"?\nWorkouts in it will move to "All" (uncategorized).`)) return;
+        if (!confirm(`Delete category "${name}"?\nExercises in it move to uncategorised.`)) return;
         settings.lists.splice(i, 1);
         const all = getSaved();
         all.forEach(w => { if (w.list === name) w.list = ''; });
@@ -1410,7 +2253,10 @@
     settings.reps = w.reps || 0;
     syncInputs();
     saveSettings();
+    // Load into timer + jump to Timer screen
+    state.session = null;
     doReset();
+    switchScreen('timer');
   }
   function deleteSaved(i) {
     const list = getSaved();
@@ -1419,59 +2265,872 @@
     setSaved(list);
   }
 
-  function syncInputs() {
-    els.name.value = settings.name || '';
-    els.work.value = settings.work;
-    els.rest.value = settings.rest;
-    els.sets.value = settings.sets;
-    els.reps.value = settings.reps;
-    markSelectedPreset();
+  // ====================================================================
+  // STATS + PROGRESS TRACKING
+  // ====================================================================
+  function todayKey() { return isoDate(); }
+  function getStats(dateKey) {
+    return store.get(`wt_stats_${dateKey || todayKey()}`, { sets: 0, time: 0, exercises: 0, workouts: 0 });
   }
-
-  function saveSettings() { store.set('wt_settings', settings); }
-
-  // ---------- STATS ----------
-  function todayKey() {
-    const d = new Date();
-    return `wt_stats_${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+  function setStats(s, dateKey) {
+    store.set(`wt_stats_${dateKey || todayKey()}`, s);
+    renderTodayStats();
   }
-  function getStats() {
-    return store.get(todayKey(), { sets: 0, time: 0, workouts: 0 });
-  }
-  function setStats(s) { store.set(todayKey(), s); renderStats(); }
   function addStat(key, val) {
     const s = getStats();
     s[key] = (s[key] || 0) + val;
     setStats(s);
   }
-  function renderStats() {
+
+  function renderTodayStats() {
     const s = getStats();
-    els.statSets.textContent = s.sets;
-    els.statTime.textContent = s.time >= 60 ? Math.round(s.time/60) + 'm' : s.time + 's';
-    els.statWorkouts.textContent = s.workouts;
+    els.tdExercises.textContent = s.exercises || 0;
+    els.tdMinutes.textContent = s.time >= 60 ? Math.round(s.time/60) + 'm' : (s.time || 0) + 's';
+    els.tdSets.textContent = s.sets || 0;
+
+    // Progress bar + text based on display mode
+    const goalEx = settings.goalEx || 8;
+    const goalMin = settings.goalMin || 30;
+    const ex = s.exercises || 0;
+    const min = Math.round((s.time||0)/60);
+    let pct = 0, text = '';
+    if (settings.displayMode === 'minutes') {
+      pct = Math.min(100, min/goalMin*100);
+      text = `${min} / ${goalMin} min`;
+    } else if (settings.displayMode === 'exercises') {
+      pct = Math.min(100, ex/goalEx*100);
+      text = `${ex} / ${goalEx} exercises`;
+    } else if (settings.displayMode === 'streak') {
+      const streak = calcStreak();
+      pct = Math.min(100, streak*10);
+      text = `${streak}-day streak`;
+    } else {
+      pct = Math.min(100, Math.max(ex/goalEx, min/goalMin) * 100);
+      text = `${ex}/${goalEx} ex · ${min}/${goalMin} min`;
+    }
+    els.dayProgFill.style.width = pct + '%';
+    els.progExText.textContent = text;
+
+    const streak = calcStreak();
+    els.progStreak.textContent = streak > 0 ? `🔥 ${streak}-day streak` : `Start your streak`;
+
+    renderWeekStrip();
   }
+
+  function calcStreak() {
+    let streak = 0;
+    for (let i = 0; i < 400; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = isoDate(d);
+      const s = store.get(`wt_stats_${key}`, null);
+      const hasWork = s && ((s.exercises || 0) > 0 || (s.time || 0) > 0);
+      if (hasWork) streak++;
+      else if (i === 0) { /* today may be blank; don't break streak */ }
+      else break;
+    }
+    return streak;
+  }
+
+  function renderWeekStrip() {
+    // Show Mon-Sun for the current week
+    const now = new Date();
+    const jsDay = now.getDay(); // 0=Sun
+    const daysFromMon = (jsDay + 6) % 7;
+    const monday = new Date(now); monday.setDate(now.getDate() - daysFromMon);
+
+    let html = '';
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday); d.setDate(monday.getDate() + i);
+      const key = isoDate(d);
+      const isToday = key === isoDate(now);
+      const s = store.get(`wt_stats_${key}`, null);
+      const done = s && ((s.exercises||0) > 0 || (s.time||0) > 0);
+      const dayKey = DAY_KEYS[i];
+      const plan = getPlan();
+      const isRest = plan.days[dayKey] && plan.days[dayKey].isRest;
+      const cls = ['week-dot'];
+      if (done) cls.push('done');
+      if (isToday) cls.push('today');
+      if (isRest && !done) cls.push('rest');
+      html += `<div class="${cls.join(' ')}">
+                 <div>${dayKey.slice(0,1)}</div>
+                 <div class="d-num">${d.getDate()}</div>
+               </div>`;
+    }
+    els.weekStrip.innerHTML = html;
+  }
+
   els.resetStats.addEventListener('click', () => {
-    if (confirm("Clear today's stats?")) setStats({sets:0,time:0,workouts:0});
+    if (confirm("Clear today's stats?")) setStats({sets:0,time:0,exercises:0,workouts:0});
   });
 
-  // ---------- INIT ----------
+  // ====================================================================
+  // WEEKLY PLAN
+  // ====================================================================
+  function getPlan() {
+    const p = store.get('wt_plan', null);
+    if (p && p.days) return p;
+    // Default: 7 empty days
+    const plan = { days: {} };
+    DAY_KEYS.forEach(k => plan.days[k] = { theme: '', goal: '', isRest: false, sections: [] });
+    return plan;
+  }
+  function setPlan(p) { store.set('wt_plan', p); }
+
+  let currentPlanDay = todayDayKey();
+
+  function renderPlanTabs() {
+    const today = todayDayKey();
+    els.planTabs.innerHTML = DAY_KEYS.map(k => {
+      const active = k === currentPlanDay ? ' active' : '';
+      const tm = k === today ? ' today-marker' : '';
+      return `<button class="day-tab${active}${tm}" data-day="${k}">${k}</button>`;
+    }).join('');
+    els.planTabs.querySelectorAll('.day-tab').forEach(t => {
+      t.addEventListener('click', () => {
+        currentPlanDay = t.dataset.day;
+        renderPlanTabs();
+        renderDayEditor();
+      });
+    });
+  }
+
+  function renderDayEditor() {
+    const plan = getPlan();
+    const day = plan.days[currentPlanDay] || { theme:'', goal:'', isRest:false, sections:[] };
+    const dayName = DAY_NAMES[currentPlanDay];
+
+    let html = `
+      <div class="day-edit-field">
+        <label>${dayName} theme</label>
+        <input id="dayTheme" placeholder="e.g. Lower Body + Glutes + Core" value="${escapeHtml(day.theme)}">
+      </div>
+      <div class="day-edit-field">
+        <label>Goal</label>
+        <textarea id="dayGoal" placeholder="e.g. firmer legs, hips, glutes, swimming kick power">${escapeHtml(day.goal)}</textarea>
+      </div>
+      <div class="rest-toggle-row">
+        <label>Rest day</label>
+        <button class="toggle ${day.isRest?'on':''}" id="restToggle"></button>
+      </div>
+    `;
+
+    if (!day.isRest) {
+      html += `<div id="sectionsList">`;
+      (day.sections || []).forEach((sec, sIdx) => {
+        html += `
+        <div class="section-editor">
+          <div class="section-editor-head">
+            <input data-sec-name="${sIdx}" value="${escapeHtml(sec.name)}" placeholder="Section name (e.g. Strength)">
+            <button class="reorder-btn" data-sec-up="${sIdx}" ${sIdx===0?'disabled':''}>▲</button>
+            <button class="reorder-btn" data-sec-down="${sIdx}" ${sIdx===day.sections.length-1?'disabled':''}>▼</button>
+            <button class="icon-btn danger" data-sec-del="${sIdx}">×</button>
+          </div>
+          <div class="section-body">
+            <input class="text-input" data-sec-note="${sIdx}" value="${escapeHtml(sec.note||'')}" placeholder="Optional note (e.g. 30 min)" style="margin-bottom:8px;padding:8px 12px;font-size:13px;">
+            <div class="section-ex-list">
+              ${(sec.exercises||[]).map((ex, eIdx) => `
+                <div class="section-ex-row">
+                  <div class="reorder-btns">
+                    <button class="reorder-btn" data-ex-up="${sIdx}-${eIdx}" ${eIdx===0?'disabled':''}>▲</button>
+                    <button class="reorder-btn" data-ex-down="${sIdx}-${eIdx}" ${eIdx===sec.exercises.length-1?'disabled':''}>▼</button>
+                  </div>
+                  <div class="section-ex-info" data-ex-edit="${sIdx}-${eIdx}">
+                    <div class="section-ex-name">${escapeHtml(ex.name)}</div>
+                    <div class="section-ex-meta">${ex.work}s · ${ex.rest}s rest · ${ex.sets}×${ex.reps||'∞'}</div>
+                  </div>
+                  <button class="icon-btn danger" data-ex-del="${sIdx}-${eIdx}">×</button>
+                </div>
+              `).join('')}
+            </div>
+            <div class="add-inline">
+              <button class="icon-btn primary" data-add-from-lib="${sIdx}">+ From library</button>
+              <button class="icon-btn" data-add-new="${sIdx}">+ New</button>
+            </div>
+          </div>
+        </div>`;
+      });
+      html += `</div>
+        <button class="btn btn-secondary" id="addSectionBtn" style="width:100%;margin-top:10px;font-size:14px;padding:14px;">+ Add Section</button>
+      `;
+    }
+
+    els.dayEditor.innerHTML = html;
+
+    // Bind theme & goal
+    const themeEl = $('dayTheme'), goalEl = $('dayGoal'), restEl = $('restToggle');
+    themeEl && themeEl.addEventListener('input', () => { updateDay(d => d.theme = themeEl.value); });
+    goalEl && goalEl.addEventListener('input', () => { updateDay(d => d.goal = goalEl.value); });
+    restEl && restEl.addEventListener('click', () => {
+      updateDay(d => d.isRest = !d.isRest);
+      renderDayEditor();
+    });
+
+    // Section name / note edits
+    els.dayEditor.querySelectorAll('[data-sec-name]').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const i = parseInt(inp.dataset.secName, 10);
+        updateDay(d => d.sections[i].name = inp.value);
+      });
+    });
+    els.dayEditor.querySelectorAll('[data-sec-note]').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const i = parseInt(inp.dataset.secNote, 10);
+        updateDay(d => d.sections[i].note = inp.value);
+      });
+    });
+
+    // Section reorder / delete
+    els.dayEditor.querySelectorAll('[data-sec-up]').forEach(b => {
+      b.addEventListener('click', () => moveSection(parseInt(b.dataset.secUp,10), -1));
+    });
+    els.dayEditor.querySelectorAll('[data-sec-down]').forEach(b => {
+      b.addEventListener('click', () => moveSection(parseInt(b.dataset.secDown,10), 1));
+    });
+    els.dayEditor.querySelectorAll('[data-sec-del]').forEach(b => {
+      b.addEventListener('click', () => {
+        const i = parseInt(b.dataset.secDel, 10);
+        if (!confirm('Delete this section and all its exercises?')) return;
+        updateDay(d => d.sections.splice(i, 1));
+        renderDayEditor();
+      });
+    });
+
+    // Exercise reorder / delete / edit
+    els.dayEditor.querySelectorAll('[data-ex-up]').forEach(b => {
+      b.addEventListener('click', () => { const [s,e] = b.dataset.exUp.split('-').map(Number); moveExercise(s,e,-1); });
+    });
+    els.dayEditor.querySelectorAll('[data-ex-down]').forEach(b => {
+      b.addEventListener('click', () => { const [s,e] = b.dataset.exDown.split('-').map(Number); moveExercise(s,e,1); });
+    });
+    els.dayEditor.querySelectorAll('[data-ex-del]').forEach(b => {
+      b.addEventListener('click', () => {
+        const [s,e] = b.dataset.exDel.split('-').map(Number);
+        updateDay(d => d.sections[s].exercises.splice(e,1));
+        renderDayEditor();
+      });
+    });
+    els.dayEditor.querySelectorAll('[data-ex-edit]').forEach(b => {
+      b.addEventListener('click', () => {
+        const [s,e] = b.dataset.exEdit.split('-').map(Number);
+        openEditDayExercise(s, e);
+      });
+    });
+
+    // Add exercise buttons
+    els.dayEditor.querySelectorAll('[data-add-from-lib]').forEach(b => {
+      b.addEventListener('click', () => openPicker(parseInt(b.dataset.addFromLib, 10)));
+    });
+    els.dayEditor.querySelectorAll('[data-add-new]').forEach(b => {
+      b.addEventListener('click', () => {
+        const s = parseInt(b.dataset.addNew, 10);
+        openEditDayExercise(s, -1);
+      });
+    });
+
+    const addSec = $('addSectionBtn');
+    addSec && addSec.addEventListener('click', () => {
+      updateDay(d => {
+        d.sections = d.sections || [];
+        d.sections.push({ name:'Section', note:'', exercises:[] });
+      });
+      renderDayEditor();
+    });
+  }
+
+  function updateDay(mutator) {
+    const plan = getPlan();
+    if (!plan.days[currentPlanDay]) plan.days[currentPlanDay] = { theme:'', goal:'', isRest:false, sections:[] };
+    mutator(plan.days[currentPlanDay]);
+    setPlan(plan);
+    if (currentPlanDay === todayDayKey()) renderToday();
+    renderWeekStrip();
+  }
+  function moveSection(idx, dir) {
+    updateDay(d => {
+      const t = idx + dir; if (t < 0 || t >= d.sections.length) return;
+      [d.sections[idx], d.sections[t]] = [d.sections[t], d.sections[idx]];
+    });
+    renderDayEditor();
+  }
+  function moveExercise(sIdx, eIdx, dir) {
+    updateDay(d => {
+      const list = d.sections[sIdx].exercises;
+      const t = eIdx + dir; if (t < 0 || t >= list.length) return;
+      [list[eIdx], list[t]] = [list[t], list[eIdx]];
+    });
+    renderDayEditor();
+  }
+
+  // Edit a day exercise (or add new) via same save modal, but "flying" through a small subroutine
+  let dayEditContext = null; // { sIdx, eIdx }
+  function openEditDayExercise(sIdx, eIdx) {
+    dayEditContext = { sIdx, eIdx };
+    const plan = getPlan();
+    const day = plan.days[currentPlanDay];
+    const isNew = eIdx < 0;
+    const ex = isNew ? { name:'', work:60, rest:15, sets:1, reps:0 } : day.sections[sIdx].exercises[eIdx];
+    // Reuse the save modal but skip category (day exercises aren't categorized)
+    editingIndex = -2; // sentinel: day exercise, not library
+    els.saveModalTitle.textContent = isNew ? 'Add Exercise to Section' : 'Edit Exercise';
+    els.saveNameInput.value = ex.name;
+    els.editWork.value = ex.work;
+    els.editRest.value = ex.rest;
+    els.editSets.value = ex.sets;
+    els.editReps.value = ex.reps || 0;
+    // hide category picker for day-context
+    els.saveListOptions.style.display = 'none';
+    els.saveListOptions.previousElementSibling.style.display = 'none'; // Category h3
+    els.saveModal.classList.add('show');
+    setTimeout(() => els.saveNameInput.focus(), 50);
+  }
+
+  // Extend save modal handler to route day-exercise saves
+  const originalSaveConfirm = els.saveModalConfirm.onclick;
+  els.saveModalConfirm.addEventListener('click', (e) => {
+    if (editingIndex !== -2 || !dayEditContext) return;  // Library flow handles itself
+    e.stopImmediatePropagation();
+    const name = els.saveNameInput.value.trim();
+    if (!name) { els.saveNameInput.focus(); return; }
+    const item = {
+      name,
+      work: clamp(parseInt(els.editWork.value)||60, 1, 3600),
+      rest: clamp(parseInt(els.editRest.value)||0, 0, 3600),
+      sets: clamp(parseInt(els.editSets.value)||1, 1, 99),
+      reps: clamp(parseInt(els.editReps.value)||0, 0, 999)
+    };
+    const { sIdx, eIdx } = dayEditContext;
+    updateDay(d => {
+      d.sections[sIdx].exercises = d.sections[sIdx].exercises || [];
+      if (eIdx < 0) d.sections[sIdx].exercises.push(item);
+      else d.sections[sIdx].exercises[eIdx] = item;
+    });
+    els.saveModal.classList.remove('show');
+    els.saveListOptions.style.display = '';
+    els.saveListOptions.previousElementSibling.style.display = '';
+    dayEditContext = null;
+    editingIndex = -1;
+    renderDayEditor();
+  }, true);
+  // Reset visibility if user cancels day-context
+  els.saveModalCancel.addEventListener('click', () => {
+    els.saveListOptions.style.display = '';
+    els.saveListOptions.previousElementSibling.style.display = '';
+    dayEditContext = null;
+  });
+
+  // Library picker for adding to plan sections
+  let pickerContext = null; // { sIdx, filter }
+  function openPicker(sIdx) {
+    pickerContext = { sIdx, filter: 'All' };
+    renderPickerChips();
+    renderPickerList();
+    els.pickerModal.classList.add('show');
+  }
+  function renderPickerChips() {
+    const chips = ['All', ...settings.lists];
+    els.pickerChips.innerHTML = chips.map(name => {
+      const active = pickerContext.filter === name ? ' active' : '';
+      return `<button class="chip${active}" data-pfilter="${escapeHtml(name)}">${escapeHtml(name)}</button>`;
+    }).join('');
+    els.pickerChips.querySelectorAll('[data-pfilter]').forEach(c => {
+      c.addEventListener('click', () => {
+        pickerContext.filter = c.dataset.pfilter;
+        renderPickerChips(); renderPickerList();
+      });
+    });
+  }
+  function renderPickerList() {
+    const all = getSaved();
+    const filtered = pickerContext.filter === 'All' ? all : all.filter(w => w.list === pickerContext.filter);
+    if (!filtered.length) {
+      els.pickerList.innerHTML = '<div class="empty">No exercises here yet</div>';
+      return;
+    }
+    els.pickerList.innerHTML = filtered.map((w, i) => `
+      <div class="picker-item" data-pick-idx="${all.indexOf(w)}">
+        <div>
+          <div class="picker-name">${escapeHtml(w.name)}</div>
+          <div class="picker-meta">${w.work}s · ${w.rest}s · ${w.sets}×${w.reps||'∞'}${w.list?` · ${escapeHtml(w.list)}`:''}</div>
+        </div>
+        <button class="icon-btn primary">+ Add</button>
+      </div>
+    `).join('');
+    els.pickerList.querySelectorAll('[data-pick-idx]').forEach(el => {
+      el.addEventListener('click', () => {
+        const i = parseInt(el.dataset.pickIdx, 10);
+        const src = getSaved()[i];
+        if (!src) return;
+        updateDay(d => {
+          d.sections[pickerContext.sIdx].exercises = d.sections[pickerContext.sIdx].exercises || [];
+          d.sections[pickerContext.sIdx].exercises.push({
+            name: src.name, work: src.work, rest: src.rest, sets: src.sets, reps: src.reps || 0
+          });
+        });
+        els.pickerModal.classList.remove('show');
+        renderDayEditor();
+      });
+    });
+  }
+  els.pickerCancel.addEventListener('click', () => els.pickerModal.classList.remove('show'));
+
+  // Copy day
+  els.copyDayBtn.addEventListener('click', () => {
+    els.copyTargets.innerHTML = DAY_KEYS.filter(k => k !== currentPlanDay).map(k => `
+      <button class="chip" data-copy-to="${k}">${k}</button>
+    `).join('');
+    els.copyTargets.querySelectorAll('[data-copy-to]').forEach(b => {
+      b.addEventListener('click', () => {
+        const to = b.dataset.copyTo;
+        if (!confirm(`Overwrite ${DAY_NAMES[to]} with a copy of ${DAY_NAMES[currentPlanDay]}?`)) return;
+        const plan = getPlan();
+        plan.days[to] = JSON.parse(JSON.stringify(plan.days[currentPlanDay]));
+        setPlan(plan);
+        els.copyModal.classList.remove('show');
+        renderToday();
+        renderWeekStrip();
+        alert(`Copied to ${DAY_NAMES[to]}.`);
+      });
+    });
+    els.copyModal.classList.add('show');
+  });
+  els.copyCancel.addEventListener('click', () => els.copyModal.classList.remove('show'));
+
+  els.clearDayBtn.addEventListener('click', () => {
+    if (!confirm(`Clear all sections for ${DAY_NAMES[currentPlanDay]}?`)) return;
+    updateDay(d => { d.sections = []; d.isRest = false; });
+    renderDayEditor();
+  });
+
+  // Load sample plan
+  els.loadSampleBtn.addEventListener('click', () => {
+    if (!confirm('Install the sample weekly plan?\nThis overwrites your current plan.')) return;
+    setPlan(SAMPLE_PLAN());
+    currentPlanDay = todayDayKey();
+    renderPlanTabs();
+    renderDayEditor();
+    renderToday();
+    renderWeekStrip();
+    // Also add any missing exercises to library
+    seedLibraryFromSample();
+    renderChips();
+    renderSaved();
+    alert('Sample weekly plan installed. Go to Today to see it.');
+  });
+
+  // ====================================================================
+  // TODAY SCREEN
+  // ====================================================================
+  function markExerciseDone(dayKey, sIdx, eIdx) {
+    const key = todayKey();
+    const marks = store.get(`wt_marks_${key}`, {});
+    const slotId = `${dayKey}-${sIdx}-${eIdx}`;
+    marks[slotId] = true;
+    store.set(`wt_marks_${key}`, marks);
+  }
+  function toggleExerciseDone(dayKey, sIdx, eIdx) {
+    const key = todayKey();
+    const marks = store.get(`wt_marks_${key}`, {});
+    const slotId = `${dayKey}-${sIdx}-${eIdx}`;
+    if (marks[slotId]) { delete marks[slotId]; addStat('exercises', -1); }
+    else { marks[slotId] = true; addStat('exercises', 1); }
+    store.set(`wt_marks_${key}`, marks);
+    renderToday();
+  }
+  function getTodayMarks() {
+    return store.get(`wt_marks_${todayKey()}`, {});
+  }
+
+  function renderToday() {
+    const dayKey = todayDayKey();
+    const plan = getPlan();
+    const day = plan.days[dayKey] || { theme:'', goal:'', isRest:false, sections:[] };
+    const now = new Date();
+    els.todayDayName.textContent = DAY_NAMES[dayKey].toUpperCase();
+    els.todayDate.textContent = now.toLocaleDateString(undefined, { month:'short', day:'numeric' });
+
+    if (day.theme) els.todayTheme.textContent = day.theme;
+    else els.todayTheme.textContent = 'No plan set for today';
+    if (day.goal) els.todayGoal.textContent = 'Goal: ' + day.goal;
+    else els.todayGoal.innerHTML = '<span style="color:var(--muted)">Set one up in the Plan tab.</span>';
+
+    // Body
+    if (day.isRest) {
+      els.todayBody.innerHTML = `
+        <div class="today-rest-note">
+          <div class="big">REST DAY</div>
+          <div>Take it easy. A gentle walk is fine — no training today.</div>
+        </div>`;
+      renderTodayStats();
+      return;
+    }
+
+    if (!(day.sections || []).length) {
+      els.todayBody.innerHTML = `
+        <div class="today-empty">
+          <div style="font-size:15px;margin-bottom:8px;">No exercises scheduled.</div>
+          <div>Go to <a onclick="switchScreen('plan')">Plan</a> to build ${DAY_NAMES[dayKey]}.</div>
+        </div>`;
+      renderTodayStats();
+      return;
+    }
+
+    const marks = getTodayMarks();
+    const currentSlot = state.session ? `${state.session.dayKey}-${state.session.items[state.session.currentIdx]?.sec}-${state.session.items[state.session.currentIdx]?.ex}` : null;
+
+    let html = '';
+    day.sections.forEach((sec, sIdx) => {
+      html += `<div class="today-section">
+        <div class="today-section-head">
+          <div class="today-section-title">${escapeHtml(sec.name || 'Section')}</div>
+          ${sec.note ? `<div class="today-section-note">${escapeHtml(sec.note)}</div>` : ''}
+        </div>
+        <div class="today-ex-list">
+      `;
+      (sec.exercises || []).forEach((ex, eIdx) => {
+        const slotId = `${dayKey}-${sIdx}-${eIdx}`;
+        const done = !!marks[slotId];
+        const isCurrent = slotId === currentSlot;
+        html += `
+          <div class="today-ex ${done?'done':''} ${isCurrent?'current':''}">
+            <button class="today-ex-check" data-check="${sIdx}-${eIdx}">${done?'✓':''}</button>
+            <div class="today-ex-info" data-play="${sIdx}-${eIdx}">
+              <div class="today-ex-name">${escapeHtml(ex.name)}</div>
+              <div class="today-ex-meta">${ex.sets} × ${ex.reps || `${ex.work}s`}${ex.rest?` · ${ex.rest}s rest`:''}</div>
+            </div>
+            <button class="today-ex-play" data-play="${sIdx}-${eIdx}">▶</button>
+          </div>
+        `;
+      });
+      html += `</div></div>`;
+    });
+
+    // Total & Start Session button
+    const totalEx = day.sections.reduce((n, s) => n + (s.exercises||[]).length, 0);
+    const doneCount = Object.keys(marks).filter(k => k.startsWith(dayKey+'-')).length;
+    html += `
+      <div style="margin-top:20px;">
+        <button class="btn" id="startSessionBtn" style="width:100%;">
+          ${doneCount === totalEx ? '↺ RESTART SESSION' : (doneCount > 0 ? '▶ CONTINUE SESSION' : `▶ START FULL SESSION · ${totalEx} EXERCISES`)}
+        </button>
+      </div>
+    `;
+
+    els.todayBody.innerHTML = html;
+
+    els.todayBody.querySelectorAll('[data-check]').forEach(b => {
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const [s,x] = b.dataset.check.split('-').map(Number);
+        toggleExerciseDone(dayKey, s, x);
+      });
+    });
+    els.todayBody.querySelectorAll('[data-play]').forEach(b => {
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const [s,x] = b.dataset.play.split('-').map(Number);
+        loadDayExercise(dayKey, s, x, false);
+      });
+    });
+    const ssb = $('startSessionBtn');
+    ssb && ssb.addEventListener('click', () => startFullSession(dayKey));
+
+    renderTodayStats();
+  }
+
+  function loadDayExercise(dayKey, sIdx, eIdx, autoStart) {
+    const plan = getPlan();
+    const ex = plan.days[dayKey]?.sections?.[sIdx]?.exercises?.[eIdx];
+    if (!ex) return;
+    // Load into timer settings
+    settings.name = ex.name;
+    settings.work = ex.work;
+    settings.rest = ex.rest;
+    settings.sets = ex.sets;
+    settings.reps = ex.reps || 0;
+    saveSettings();
+    syncInputs();
+    // Single-exercise "mini-session" so completion still counts + tap-through works nicely
+    state.session = {
+      dayKey,
+      items: [{ sec: sIdx, ex: eIdx, name: ex.name, work: ex.work, rest: ex.rest, sets: ex.sets, reps: ex.reps || 0 }],
+      currentIdx: 0
+    };
+    doReset();
+    switchScreen('timer');
+    if (autoStart) {
+      setTimeout(() => els.start.click(), 300);
+    }
+  }
+
+  function startFullSession(dayKey) {
+    const plan = getPlan();
+    const day = plan.days[dayKey];
+    if (!day) return;
+    const marks = getTodayMarks();
+    const items = [];
+    (day.sections || []).forEach((sec, sIdx) => {
+      (sec.exercises || []).forEach((ex, eIdx) => {
+        const slotId = `${dayKey}-${sIdx}-${eIdx}`;
+        if (!marks[slotId]) {
+          items.push({ sec: sIdx, ex: eIdx, name: ex.name, work: ex.work, rest: ex.rest, sets: ex.sets, reps: ex.reps || 0 });
+        }
+      });
+    });
+    if (!items.length) {
+      // All done → start from beginning
+      (day.sections || []).forEach((sec, sIdx) => {
+        (sec.exercises || []).forEach((ex, eIdx) => {
+          items.push({ sec: sIdx, ex: eIdx, name: ex.name, work: ex.work, rest: ex.rest, sets: ex.sets, reps: ex.reps || 0 });
+        });
+      });
+      // Clear marks
+      store.set(`wt_marks_${todayKey()}`, {});
+    }
+    if (!items.length) { alert('No exercises to run.'); return; }
+    state.session = { dayKey, items, currentIdx: 0 };
+    loadSessionExercise(0, true);
+  }
+
+  function loadSessionExercise(idx, autoStart) {
+    if (!state.session) return;
+    const item = state.session.items[idx];
+    if (!item) return;
+    settings.name = item.name;
+    settings.work = item.work;
+    settings.rest = item.rest;
+    settings.sets = item.sets;
+    settings.reps = item.reps || 0;
+    saveSettings();
+    syncInputs();
+    doReset();
+    switchScreen('timer');
+    if (autoStart) {
+      setTimeout(() => els.start.click(), 400);
+    }
+  }
+
+  // ====================================================================
+  // GOALS
+  // ====================================================================
+  bindInput(els.goalEx, 'goalEx', 1, 99, { onChange: () => renderTodayStats() });
+  bindInput(els.goalMin, 'goalMin', 1, 600, { onChange: () => renderTodayStats() });
+  els.goalEx.value = settings.goalEx;
+  els.goalMin.value = settings.goalMin;
+  els.displayMode.value = settings.displayMode;
+  els.displayMode.addEventListener('change', () => {
+    settings.displayMode = els.displayMode.value;
+    saveSettings();
+    renderTodayStats();
+  });
+
+  // ====================================================================
+  // SCREEN SWITCHING
+  // ====================================================================
+  function switchScreen(name) {
+    ['todayScreen','timerScreen','planScreen'].forEach(id => {
+      $(id).classList.toggle('active', id === (name+'Screen'));
+    });
+    document.querySelectorAll('.nav-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.nav === name);
+    });
+    if (name === 'today') renderToday();
+    if (name === 'plan') { renderPlanTabs(); renderDayEditor(); }
+    window.scrollTo(0, 0);
+  }
+  window.switchScreen = switchScreen;
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.addEventListener('click', () => switchScreen(b.dataset.nav));
+  });
+
+  // Click outside modal to close
+  [els.saveModal, els.manageModal, els.pickerModal, els.copyModal].forEach(m => {
+    m.addEventListener('click', (e) => { if (e.target === m) m.classList.remove('show'); });
+  });
+
+  // ====================================================================
+  // SAMPLE PLAN (Christine's typed plan)
+  // ====================================================================
+  function SAMPLE_PLAN() {
+    return {
+      days: {
+        Mon: {
+          theme: 'Lower Body + Glutes + Core',
+          goal: 'firmer legs, hips, glutes, swimming kick power',
+          isRest: false,
+          sections: [
+            { name:'Strength', note:'30 min', exercises: [
+              { name:'Kettlebell Goblet Squat', work:60, rest:20, sets:3, reps:10 },
+              { name:'Kettlebell Romanian Deadlift', work:60, rest:20, sets:3, reps:12 },
+              { name:'Glute Bridge', work:45, rest:15, sets:3, reps:15 },
+              { name:'Side Leg Raise', work:45, rest:15, sets:3, reps:15 },
+              { name:'Calf Raises', work:45, rest:15, sets:3, reps:20 }
+            ]},
+            { name:'Core finisher', exercises: [
+              { name:'Dead Bug', work:45, rest:15, sets:3, reps:10 }
+            ]},
+            { name:'Stretch', note:'10 min', exercises: [
+              { name:'Figure Four', work:45, rest:5, sets:2, reps:0 },
+              { name:'Crescent Lunge', work:45, rest:5, sets:2, reps:0 },
+              { name:'Warrior II', work:45, rest:5, sets:2, reps:0 },
+              { name:'Supine Spinal Twist', work:45, rest:5, sets:2, reps:0 }
+            ]}
+          ]
+        },
+        Tue: {
+          theme: 'Swimming Core + Pilates Control',
+          goal: 'body position, balance, swimming technique',
+          isRest: false,
+          sections: [
+            { name:'Core', exercises: [
+              { name:'Plank', work:45, rest:20, sets:3, reps:0 },
+              { name:'Side Plank', work:30, rest:15, sets:3, reps:0 },
+              { name:'Flutter Kicks', work:30, rest:15, sets:3, reps:0 },
+              { name:'Pilates Hundred', work:45, rest:20, sets:3, reps:0 },
+              { name:'Bird Dog', work:45, rest:15, sets:3, reps:10 },
+              { name:'Ankle Mobility Circles', work:120, rest:15, sets:2, reps:0 }
+            ]},
+            { name:'Stretch', exercises: [
+              { name:'Cobra Pose', work:45, rest:5, sets:2, reps:0 },
+              { name:'Child Pose', work:45, rest:5, sets:2, reps:0 },
+              { name:'Downward Dog', work:45, rest:5, sets:2, reps:0 },
+              { name:'Swim Stretch', work:45, rest:5, sets:2, reps:0 }
+            ]}
+          ]
+        },
+        Wed: {
+          theme: 'Upper Body + Back + Arms',
+          goal: 'swimming strength, posture, elegant shoulders',
+          isRest: false,
+          sections: [
+            { name:'Strength', exercises: [
+              { name:'Lat Pulldown', work:45, rest:20, sets:3, reps:12 },
+              { name:'W-shaped Pull', work:45, rest:20, sets:3, reps:12 },
+              { name:'Side Pulls', work:45, rest:20, sets:3, reps:12 },
+              { name:'Bicep Curls', work:45, rest:15, sets:3, reps:15 },
+              { name:'Hammer Curls', work:45, rest:15, sets:3, reps:12 },
+              { name:'Bent-over Arm Extension', work:45, rest:15, sets:3, reps:12 }
+            ]},
+            { name:'Shoulder mobility', exercises: [
+              { name:'Shoulder Circles', work:30, rest:10, sets:2, reps:20 }
+            ]},
+            { name:'Stretch', exercises: [
+              { name:'Triangle Pose', work:45, rest:5, sets:2, reps:0 },
+              { name:'Warrior II', work:45, rest:5, sets:2, reps:0 },
+              { name:'Child Pose', work:45, rest:5, sets:2, reps:0 }
+            ]}
+          ]
+        },
+        Thu: {
+          theme: 'Full Body Kettlebell + Standing Core',
+          goal: 'athletic strength, metabolism, coordination',
+          isRest: false,
+          sections: [
+            { name:'Kettlebell Circuit', note:'3 rounds', exercises: [
+              { name:'Kettlebell Swing', work:45, rest:15, sets:3, reps:15 },
+              { name:'Kettlebell Side Swing', work:45, rest:15, sets:3, reps:10 },
+              { name:'High Pull', work:45, rest:15, sets:3, reps:10 },
+              { name:'Rocket Press', work:45, rest:75, sets:3, reps:10 }
+            ]},
+            { name:'Standing Core', exercises: [
+              { name:'Backward Leg Raise + Arm Swing', work:60, rest:15, sets:3, reps:10 },
+              { name:'Step Back Arm Swing', work:60, rest:15, sets:3, reps:10 },
+              { name:'Hip Rotation', work:45, rest:15, sets:2, reps:15 }
+            ]},
+            { name:'Stretch', exercises: [
+              { name:'Crescent Lunge', work:45, rest:5, sets:2, reps:0 },
+              { name:'Warrior II', work:45, rest:5, sets:2, reps:0 },
+              { name:'Figure Four', work:45, rest:5, sets:2, reps:0 }
+            ]}
+          ]
+        },
+        Fri: {
+          theme: 'Mobility + Swimming Prep',
+          goal: 'get ready for swim class — no hard training',
+          isRest: false,
+          sections: [
+            { name:'Activation', note:'20-25 min', exercises: [
+              { name:'Scapular Push Ups', work:45, rest:15, sets:3, reps:10 },
+              { name:'Bird Dog', work:45, rest:15, sets:3, reps:10 },
+              { name:'Glute Bridge', work:45, rest:15, sets:2, reps:15 },
+              { name:'Dead Bug', work:45, rest:15, sets:2, reps:10 },
+              { name:'Ankle Mobility', work:180, rest:15, sets:1, reps:0 }
+            ]},
+            { name:'Stretch', exercises: [
+              { name:'Cobra', work:45, rest:5, sets:2, reps:0 },
+              { name:'Downward Dog', work:45, rest:5, sets:2, reps:0 },
+              { name:'Child Pose', work:45, rest:5, sets:2, reps:0 },
+              { name:'Supine Spinal Twist', work:45, rest:5, sets:2, reps:0 }
+            ]}
+          ]
+        },
+        Sat: {
+          theme: 'Full Rest',
+          goal: 'recovery — a gentle walk is fine, no training',
+          isRest: true,
+          sections: []
+        },
+        Sun: {
+          theme: 'Skipping + Optional Mobility',
+          goal: 'light cardio and mobility',
+          isRest: false,
+          sections: [
+            { name:'Skipping', note:'5 rounds', exercises: [
+              { name:'Skipping', work:60, rest:60, sets:5, reps:0 }
+            ]},
+            { name:'Mobility', exercises: [
+              { name:'Figure Four', work:45, rest:5, sets:2, reps:0 },
+              { name:'Hip Rotation', work:45, rest:5, sets:2, reps:15 },
+              { name:'Butterfly Stretch', work:45, rest:5, sets:2, reps:0 },
+              { name:'Cobra', work:45, rest:5, sets:2, reps:0 }
+            ]}
+          ]
+        }
+      }
+    };
+  }
+
+  function seedLibraryFromSample() {
+    const all = getSaved();
+    const existingNames = new Set(all.map(w => w.name.toLowerCase()));
+    const plan = SAMPLE_PLAN();
+    const catByExercise = {
+      // rough categorisation to seed the library
+    };
+    Object.entries(plan.days).forEach(([dayKey, day]) => {
+      (day.sections || []).forEach(sec => {
+        (sec.exercises || []).forEach(ex => {
+          if (!existingNames.has(ex.name.toLowerCase())) {
+            all.push({ name: ex.name, work: ex.work, rest: ex.rest, sets: ex.sets, reps: ex.reps || 0, list: sec.name || '' });
+            existingNames.add(ex.name.toLowerCase());
+          }
+        });
+      });
+    });
+    store.set('wt_saved', all);
+  }
+
+  // ====================================================================
+  // INIT
+  // ====================================================================
   syncInputs();
   renderChips();
   renderSaved();
-  renderStats();
-  doReset();
+  renderTodayStats();
+  renderToday();
+  renderPlanTabs();
+  renderDayEditor();
 
-  // Click outside modal background to dismiss
-  [els.saveModal, els.manageModal].forEach(m => {
-    m.addEventListener('click', (e) => {
-      if (e.target === m) m.classList.remove('show');
-    });
-  });
+  // Default to Today screen if a plan exists for today; otherwise Timer
+  const initialPlan = getPlan();
+  const initialDay = initialPlan.days[todayDayKey()];
+  const hasPlan = initialDay && (initialDay.isRest || (initialDay.sections && initialDay.sections.length));
+  if (hasPlan) switchScreen('today');
+  else switchScreen('timer');
 
   // Prevent accidental scroll when tapping main buttons
-  ['touchmove'].forEach(ev => {
-    els.start.addEventListener(ev, e => e.preventDefault(), { passive: false });
-  });
+  els.start.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 </script>
 
 </body>
