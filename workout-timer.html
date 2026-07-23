@@ -1303,7 +1303,8 @@
           <option value="streak">Streak only</option>
         </select>
       </div>
-      <button class="btn btn-secondary" id="loadSampleBtn" style="width:100%;margin-top:16px;font-size:14px;padding:14px;">+ Load Sample Weekly Plan</button>
+      <button class="btn btn-secondary" id="restoreLibBtn" style="width:100%;margin-top:16px;font-size:14px;padding:14px;">↺ Restore My Library</button>
+      <button class="btn btn-secondary" id="loadSampleBtn" style="width:100%;margin-top:8px;font-size:14px;padding:14px;">+ Load Sample Weekly Plan</button>
       <button class="btn btn-ghost" id="resetStatsBtn" style="width:100%;margin-top:8px;font-size:12px;padding:10px;">Reset today's stats</button>
     </div>
   </details>
@@ -1540,7 +1541,7 @@
     copyDayBtn: $('copyDayBtn'), clearDayBtn: $('clearDayBtn'),
     savedList: $('savedList'), chipsRow: $('chipsRow'), saveBtn: $('saveBtn'),
     goalEx: $('goalEx'), goalMin: $('goalMin'), displayMode: $('displayMode'),
-    loadSampleBtn: $('loadSampleBtn'), resetStats: $('resetStatsBtn'),
+    loadSampleBtn: $('loadSampleBtn'), restoreLibBtn: $('restoreLibBtn'), resetStats: $('resetStatsBtn'),
     // Modals
     saveModal: $('saveModal'), saveModalTitle: $('saveModalTitle'),
     saveNameInput: $('saveNameInput'), saveListOptions: $('saveListOptions'),
@@ -3110,6 +3111,112 @@
     });
     store.set('wt_saved', all);
   }
+
+  // ====================================================================
+  // RESTORE LIBRARY — Christine's saved exercises, recovered from screenshots
+  // ====================================================================
+  function RESTORE_LIBRARY() {
+    return [
+      // Daily stretch (quick versions)
+      { name: 'Cobra pose stretch',  work: 45, rest: 15, sets: 1, reps: 1, list: 'Daily stretch' },
+      { name: 'Bird dog',            work: 45, rest: 15, sets: 1, reps: 1, list: 'Daily stretch' },
+      { name: 'Crescent lunge',      work: 30, rest: 15, sets: 2, reps: 1, list: 'Daily stretch' },
+      { name: 'Warrior II',          work: 30, rest: 15, sets: 2, reps: 1, list: 'Daily stretch' },
+      { name: 'Triangle pose',       work: 30, rest: 15, sets: 2, reps: 1, list: 'Daily stretch' },
+      { name: 'Figure four',         work: 20, rest: 15, sets: 2, reps: 1, list: 'Daily stretch' },
+      { name: 'Supine spinal twist', work: 30, rest: 15, sets: 2, reps: 1, list: 'Daily stretch' },
+      { name: 'Leg flaps',           work: 90, rest: 15, sets: 1, reps: 2, list: 'Daily stretch' },
+      { name: 'Side planks',         work: 45, rest: 15, sets: 2, reps: 1, list: 'Daily stretch' },
+      { name: 'Scapular push-ups',   work: 20, rest: 15, sets: 5, reps: 1, list: 'Daily stretch' },
+      { name: 'Child pose',          work: 20, rest: 15, sets: 1, reps: 2, list: 'Daily stretch' },
+      { name: 'Side-lying leg lifts',work: 30, rest: 15, sets: 1, reps: 2, list: 'Daily stretch' },
+      { name: 'Plank',               work: 90, rest: 15, sets: 1, reps: 2, list: 'Daily stretch' },
+      { name: 'The hundred',         work: 60, rest: 15, sets: 1, reps: 0, list: 'Daily stretch' },
+
+      // Pilates stretch (longer flow, 3 sets × 16)
+      { name: 'Swim stretch',        work: 45, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
+      { name: 'Downward dog',        work: 45, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
+      { name: 'Triangle pose',       work: 30, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
+      { name: 'Crescent lunge pose', work: 30, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
+      { name: 'Warrior II',          work: 30, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
+      { name: 'Child pose',          work: 45, rest: 15, sets: 1, reps: 0, list: 'Pilates stretch' },
+      { name: 'Supine spine twist',  work: 30, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
+      { name: 'Figure 4',            work: 30, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
+      { name: 'Scapular push-ups',   work: 45, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
+      { name: 'Bird dog',            work: 45, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
+      { name: 'Cobra pose stretch',  work: 45, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
+
+      // Core
+      { name: 'Planks',              work: 30, rest: 15, sets: 3, reps: 1, list: 'Core' },
+      { name: 'Side planks',         work: 20, rest: 15, sets: 2, reps: 1, list: 'Core' },
+      { name: 'Glute bridge',        work: 20, rest: 15, sets: 3, reps: 1, list: 'Core' },
+      { name: 'Flutter kicks',       work: 30, rest: 15, sets: 3, reps: 1, list: 'Core' },
+      { name: 'Hundred',             work: 30, rest: 15, sets: 3, reps: 1, list: 'Core' },
+      { name: 'Dead bug',            work: 30, rest: 15, sets: 3, reps: 1, list: 'Core' },
+      { name: 'Calf raises',         work: 20, rest: 15, sets: 3, reps: 1, list: 'Core' },
+      { name: 'Ankle mobility circles', work: 20, rest: 15, sets: 3, reps: 1, list: 'Core' },
+
+      // Standing core / glutes
+      { name: 'Backward leg raise & arm swing', work: 120, rest: 15, sets: 3, reps: 20, list: 'Standing core' },
+      { name: 'Side leg raised',     work: 120, rest: 15, sets: 3, reps: 20, list: 'Standing core' },
+      { name: 'Step back arm swing', work: 120, rest: 15, sets: 3, reps: 20, list: 'Standing core' },
+
+      // Pelvic floor
+      { name: 'Butterfly pelvic crunches', work: 30, rest: 15, sets: 3, reps: 20, list: 'Pelvic' },
+      { name: 'Alternating toe taps',work: 30, rest: 15, sets: 3, reps: 20, list: 'Pelvic' },
+      { name: 'Reverse crunches',    work: 30, rest: 15, sets: 3, reps: 20, list: 'Pelvic' },
+      { name: 'Hip rotation',        work: 30, rest: 15, sets: 3, reps: 20, list: 'Pelvic' },
+      { name: 'Deep squats',         work: 120, rest: 15, sets: 1, reps: 0, list: 'Pelvic' },
+
+      // Kettlebell (full-body strength)
+      { name: 'Kettlebell swing',    work: 60, rest: 15, sets: 1, reps: 20, list: 'Kettlebell' },
+      { name: 'Kettlebell side swing', work: 60, rest: 15, sets: 1, reps: 20, list: 'Kettlebell' },
+      { name: 'Deadlifts',           work: 60, rest: 15, sets: 1, reps: 20, list: 'Kettlebell' },
+      { name: 'High pulls',          work: 60, rest: 15, sets: 1, reps: 20, list: 'Kettlebell' },
+      { name: 'Rocket presses',      work: 60, rest: 15, sets: 1, reps: 20, list: 'Kettlebell' },
+
+      // Arms
+      { name: 'Bicep curls',         work: 45, rest: 15, sets: 5, reps: 16, list: 'Arms' },
+      { name: 'Hammer curls',        work: 45, rest: 15, sets: 5, reps: 16, list: 'Arms' },
+      { name: 'Neck extension',      work: 45, rest: 15, sets: 5, reps: 16, list: 'Arms' },
+      { name: 'Bent over arm extension', work: 45, rest: 15, sets: 5, reps: 16, list: 'Arms' },
+
+      // Back and shoulders
+      { name: 'Lat pulldown',        work: 45, rest: 15, sets: 4, reps: 20, list: 'Back and shoulders' },
+      { name: 'Shoulder circles',    work: 45, rest: 15, sets: 4, reps: 20, list: 'Back and shoulders' },
+      { name: 'Side pulls',          work: 45, rest: 15, sets: 4, reps: 20, list: 'Back and shoulders' },
+      { name: 'W-shaped push-ups',   work: 45, rest: 15, sets: 4, reps: 20, list: 'Back and shoulders' },
+      { name: 'Shoulder bridge',     work: 20, rest: 15, sets: 5, reps: 1, list: 'Back and shoulders' },
+
+      // Cardio
+      { name: 'Swimming',            work: 60, rest: 15, sets: 1, reps: 1, list: 'Cardio' }
+    ];
+  }
+
+  els.restoreLibBtn.addEventListener('click', () => {
+    const lib = RESTORE_LIBRARY();
+    if (!confirm(`Restore ${lib.length} exercises to your library?\nItems already in your library (same name + category) are kept as-is.`)) return;
+    const existing = getSaved();
+    const keyOf = (w) => `${w.name.toLowerCase()}|${(w.list||'').toLowerCase()}`;
+    const existingKeys = new Set(existing.map(keyOf));
+    const toAdd = lib.filter(w => !existingKeys.has(keyOf(w)));
+    const newList = [...existing, ...toAdd];
+
+    // Add any new categories to the chip row
+    const cats = new Set(settings.lists);
+    toAdd.forEach(w => { if (w.list) cats.add(w.list); });
+    // Preserve original ordering: keep old lists first, add new ones in the order they appear in restore data
+    const oldLists = settings.lists.filter(l => cats.has(l));
+    const newLists = [];
+    toAdd.forEach(w => { if (w.list && !oldLists.includes(w.list) && !newLists.includes(w.list)) newLists.push(w.list); });
+    settings.lists = [...oldLists, ...newLists];
+
+    setSaved(newList);
+    saveSettings();
+    renderChips();
+    renderSaved();
+    alert(`Restored ${toAdd.length} exercise${toAdd.length===1?'':'s'} across ${newLists.length} new categor${newLists.length===1?'y':'ies'}.`);
+  });
 
   // ====================================================================
   // INIT
