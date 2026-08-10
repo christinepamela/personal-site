@@ -715,11 +715,6 @@
     letter-spacing: -0.01em;
     margin-bottom: 6px;
   }
-  .today-goal {
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.4;
-  }
   .today-rest-note {
     background: var(--bg-2);
     border: 1px solid var(--line);
@@ -793,7 +788,7 @@
   }
   .week-dot.done { background: var(--work); color: var(--bg); }
   .week-dot.today { border: 1.5px solid var(--work); }
-  .week-dot.rest { background: transparent; border: 1px dashed var(--line); }
+  .week-dot.rest { background: rgba(255, 180, 60, 0.18); color: var(--rest); border: none; }
   .week-dot .d-num {
     font-size: 13px;
     font-weight: 800;
@@ -1097,7 +1092,6 @@
   <div class="today-header">
     <div class="today-daytag"><b id="todayDayName">Loading</b> · <span id="todayDate"></span></div>
     <div class="today-theme" id="todayTheme">Set up your plan</div>
-    <div class="today-goal" id="todayGoal">Go to Plan to build your week.</div>
   </div>
 
   <div class="progress-card">
@@ -1531,7 +1525,7 @@
     sessNextBtn: $('sessNextBtn'), sessLeaveBtn: $('sessLeaveBtn'),
     // Today
     todayDayName: $('todayDayName'), todayDate: $('todayDate'),
-    todayTheme: $('todayTheme'), todayGoal: $('todayGoal'),
+    todayTheme: $('todayTheme'),
     todayBody: $('todayBody'),
     progExText: $('progExText'), progStreak: $('progStreak'),
     dayProgFill: $('dayProgFill'), weekStrip: $('weekStrip'),
@@ -2319,6 +2313,8 @@
   }
 
   function calcStreak() {
+    const plan = getPlan();
+    const dayMap = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     let streak = 0;
     for (let i = 0; i < 400; i++) {
       const d = new Date();
@@ -2326,7 +2322,9 @@
       const key = isoDate(d);
       const s = store.get(`wt_stats_${key}`, null);
       const hasWork = s && ((s.exercises || 0) > 0 || (s.time || 0) > 0);
-      if (hasWork) streak++;
+      const dayKey = dayMap[d.getDay()];
+      const isPlannedRest = plan.days[dayKey] && plan.days[dayKey].isRest;
+      if (hasWork || isPlannedRest) streak++;
       else if (i === 0) { /* today may be blank; don't break streak */ }
       else break;
     }
@@ -2407,10 +2405,6 @@
         <label>${dayName} theme</label>
         <input id="dayTheme" placeholder="e.g. Lower Body + Glutes + Core" value="${escapeHtml(day.theme)}">
       </div>
-      <div class="day-edit-field">
-        <label>Goal</label>
-        <textarea id="dayGoal" placeholder="e.g. firmer legs, hips, glutes, swimming kick power">${escapeHtml(day.goal)}</textarea>
-      </div>
       <div class="rest-toggle-row">
         <label>Rest day</label>
         <button class="toggle ${day.isRest?'on':''}" id="restToggle"></button>
@@ -2460,9 +2454,8 @@
     els.dayEditor.innerHTML = html;
 
     // Bind theme & goal
-    const themeEl = $('dayTheme'), goalEl = $('dayGoal'), restEl = $('restToggle');
+    const themeEl = $('dayTheme'), restEl = $('restToggle');
     themeEl && themeEl.addEventListener('input', () => { updateDay(d => d.theme = themeEl.value); });
-    goalEl && goalEl.addEventListener('input', () => { updateDay(d => d.goal = goalEl.value); });
     restEl && restEl.addEventListener('click', () => {
       updateDay(d => d.isRest = !d.isRest);
       renderDayEditor();
@@ -2753,8 +2746,6 @@
 
     if (day.theme) els.todayTheme.textContent = day.theme;
     else els.todayTheme.textContent = 'No plan set for today';
-    if (day.goal) els.todayGoal.textContent = 'Goal: ' + day.goal;
-    else els.todayGoal.innerHTML = '<span style="color:var(--muted)">Set one up in the Plan tab.</span>';
 
     // Body
     if (day.isRest) {
@@ -2762,6 +2753,7 @@
         <div class="today-rest-note">
           <div class="big">REST DAY</div>
           <div>Take it easy. A gentle walk is fine — no training today.</div>
+          <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:var(--work);text-transform:uppercase;">Streak stays safe 🔥</div>
         </div>`;
       renderTodayStats();
       return;
@@ -2954,22 +2946,30 @@
   // SAMPLE PLAN (Christine's typed plan)
   // ====================================================================
   function SAMPLE_PLAN() {
+    // Every non-rest day gets a Wall Angel warm-up at the start and Heel Slide cool-down at the end.
+    const warmUp = () => ({ name:'Warm-up', exercises: [
+      { name:'Wall Angel', work:45, rest:15, sets:2, reps:10 }
+    ]});
+    const coolDown = () => ({ name:'Cool-down', exercises: [
+      { name:'Heel Slide', work:45, rest:15, sets:2, reps:10 }
+    ]});
+    const withBookends = (sections) => [warmUp(), ...sections, coolDown()];
+
     return {
       days: {
         Mon: {
           theme: 'Lower Body + Glutes + Core',
-          goal: 'firmer legs, hips, glutes, swimming kick power',
           isRest: false,
-          sections: [
+          sections: withBookends([
             { name:'Strength', note:'30 min', exercises: [
               { name:'Kettlebell Goblet Squat', work:60, rest:20, sets:3, reps:10 },
               { name:'Kettlebell Romanian Deadlift', work:60, rest:20, sets:3, reps:12 },
               { name:'Glute Bridge', work:45, rest:15, sets:3, reps:15 },
-              { name:'Side Leg Raise', work:45, rest:15, sets:3, reps:15 },
+              { name:'Side Leg Raise', work:45, rest:15, sets:4, reps:15 },
               { name:'Calf Raises', work:45, rest:15, sets:3, reps:20 }
             ]},
             { name:'Core finisher', exercises: [
-              { name:'Dead Bug', work:45, rest:15, sets:3, reps:10 }
+              { name:'Dead Bug', work:45, rest:15, sets:4, reps:10 }
             ]},
             { name:'Stretch', note:'10 min', exercises: [
               { name:'Figure Four', work:45, rest:5, sets:2, reps:0 },
@@ -2977,19 +2977,18 @@
               { name:'Warrior II', work:45, rest:5, sets:2, reps:0 },
               { name:'Supine Spinal Twist', work:45, rest:5, sets:2, reps:0 }
             ]}
-          ]
+          ])
         },
         Tue: {
           theme: 'Swimming Core + Pilates Control',
-          goal: 'body position, balance, swimming technique',
           isRest: false,
-          sections: [
+          sections: withBookends([
             { name:'Core', exercises: [
               { name:'Plank', work:45, rest:20, sets:3, reps:0 },
-              { name:'Side Plank', work:30, rest:15, sets:3, reps:0 },
+              { name:'Side Plank', work:30, rest:15, sets:4, reps:0 },
               { name:'Flutter Kicks', work:30, rest:15, sets:3, reps:0 },
               { name:'Pilates Hundred', work:45, rest:20, sets:3, reps:0 },
-              { name:'Bird Dog', work:45, rest:15, sets:3, reps:10 },
+              { name:'Bird Dog', work:45, rest:15, sets:4, reps:10 },
               { name:'Ankle Mobility Circles', work:120, rest:15, sets:2, reps:0 }
             ]},
             { name:'Stretch', exercises: [
@@ -2998,13 +2997,12 @@
               { name:'Downward Dog', work:45, rest:5, sets:2, reps:0 },
               { name:'Swim Stretch', work:45, rest:5, sets:2, reps:0 }
             ]}
-          ]
+          ])
         },
         Wed: {
           theme: 'Upper Body + Back + Arms',
-          goal: 'swimming strength, posture, elegant shoulders',
           isRest: false,
-          sections: [
+          sections: withBookends([
             { name:'Strength', exercises: [
               { name:'Lat Pulldown', work:45, rest:20, sets:3, reps:12 },
               { name:'W-shaped Pull', work:45, rest:20, sets:3, reps:12 },
@@ -3021,22 +3019,21 @@
               { name:'Warrior II', work:45, rest:5, sets:2, reps:0 },
               { name:'Child Pose', work:45, rest:5, sets:2, reps:0 }
             ]}
-          ]
+          ])
         },
         Thu: {
           theme: 'Full Body Kettlebell + Standing Core',
-          goal: 'athletic strength, metabolism, coordination',
           isRest: false,
-          sections: [
+          sections: withBookends([
             { name:'Kettlebell Circuit', note:'3 rounds', exercises: [
               { name:'Kettlebell Swing', work:45, rest:15, sets:3, reps:15 },
-              { name:'Kettlebell Side Swing', work:45, rest:15, sets:3, reps:10 },
+              { name:'Kettlebell Side Swing', work:45, rest:15, sets:4, reps:10 },
               { name:'High Pull', work:45, rest:15, sets:3, reps:10 },
-              { name:'Rocket Press', work:45, rest:75, sets:3, reps:10 }
+              { name:'Rocket Press', work:45, rest:75, sets:4, reps:10 }
             ]},
             { name:'Standing Core', exercises: [
-              { name:'Backward Leg Raise + Arm Swing', work:60, rest:15, sets:3, reps:10 },
-              { name:'Step Back Arm Swing', work:60, rest:15, sets:3, reps:10 },
+              { name:'Backward Leg Raise + Arm Swing', work:60, rest:15, sets:4, reps:10 },
+              { name:'Step Back Arm Swing', work:60, rest:15, sets:4, reps:10 },
               { name:'Hip Rotation', work:45, rest:15, sets:2, reps:15 }
             ]},
             { name:'Stretch', exercises: [
@@ -3044,16 +3041,15 @@
               { name:'Warrior II', work:45, rest:5, sets:2, reps:0 },
               { name:'Figure Four', work:45, rest:5, sets:2, reps:0 }
             ]}
-          ]
+          ])
         },
         Fri: {
           theme: 'Mobility + Swimming Prep',
-          goal: 'get ready for swim class — no hard training',
           isRest: false,
-          sections: [
+          sections: withBookends([
             { name:'Activation', note:'20-25 min', exercises: [
               { name:'Scapular Push Ups', work:45, rest:15, sets:3, reps:10 },
-              { name:'Bird Dog', work:45, rest:15, sets:3, reps:10 },
+              { name:'Bird Dog', work:45, rest:15, sets:4, reps:10 },
               { name:'Glute Bridge', work:45, rest:15, sets:2, reps:15 },
               { name:'Dead Bug', work:45, rest:15, sets:2, reps:10 },
               { name:'Ankle Mobility', work:180, rest:15, sets:1, reps:0 }
@@ -3064,19 +3060,17 @@
               { name:'Child Pose', work:45, rest:5, sets:2, reps:0 },
               { name:'Supine Spinal Twist', work:45, rest:5, sets:2, reps:0 }
             ]}
-          ]
+          ])
         },
         Sat: {
           theme: 'Full Rest',
-          goal: 'recovery — a gentle walk is fine, no training',
           isRest: true,
           sections: []
         },
         Sun: {
           theme: 'Skipping + Optional Mobility',
-          goal: 'light cardio and mobility',
           isRest: false,
-          sections: [
+          sections: withBookends([
             { name:'Skipping', note:'5 rounds', exercises: [
               { name:'Skipping', work:60, rest:60, sets:5, reps:0 }
             ]},
@@ -3086,7 +3080,7 @@
               { name:'Butterfly Stretch', work:45, rest:5, sets:2, reps:0 },
               { name:'Cobra', work:45, rest:5, sets:2, reps:0 }
             ]}
-          ]
+          ])
         }
       }
     };
@@ -3119,7 +3113,7 @@
     return [
       // Daily stretch (quick versions)
       { name: 'Cobra pose stretch',  work: 45, rest: 15, sets: 1, reps: 1, list: 'Daily stretch' },
-      { name: 'Bird dog',            work: 45, rest: 15, sets: 1, reps: 1, list: 'Daily stretch' },
+      { name: 'Bird dog',            work: 45, rest: 15, sets: 2, reps: 1, list: 'Daily stretch' },
       { name: 'Crescent lunge',      work: 30, rest: 15, sets: 2, reps: 1, list: 'Daily stretch' },
       { name: 'Warrior II',          work: 30, rest: 15, sets: 2, reps: 1, list: 'Daily stretch' },
       { name: 'Triangle pose',       work: 30, rest: 15, sets: 2, reps: 1, list: 'Daily stretch' },
@@ -3129,21 +3123,21 @@
       { name: 'Side planks',         work: 45, rest: 15, sets: 2, reps: 1, list: 'Daily stretch' },
       { name: 'Scapular push-ups',   work: 20, rest: 15, sets: 5, reps: 1, list: 'Daily stretch' },
       { name: 'Child pose',          work: 20, rest: 15, sets: 1, reps: 2, list: 'Daily stretch' },
-      { name: 'Side-lying leg lifts',work: 30, rest: 15, sets: 1, reps: 2, list: 'Daily stretch' },
+      { name: 'Side-lying leg lifts',work: 30, rest: 15, sets: 2, reps: 2, list: 'Daily stretch' },
       { name: 'Plank',               work: 90, rest: 15, sets: 1, reps: 2, list: 'Daily stretch' },
       { name: 'The hundred',         work: 60, rest: 15, sets: 1, reps: 0, list: 'Daily stretch' },
 
       // Pilates stretch (longer flow, 3 sets × 16)
       { name: 'Swim stretch',        work: 45, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
       { name: 'Downward dog',        work: 45, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
-      { name: 'Triangle pose',       work: 30, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
-      { name: 'Crescent lunge pose', work: 30, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
-      { name: 'Warrior II',          work: 30, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
+      { name: 'Triangle pose',       work: 30, rest: 15, sets: 4, reps: 16, list: 'Pilates stretch' },
+      { name: 'Crescent lunge pose', work: 30, rest: 15, sets: 4, reps: 16, list: 'Pilates stretch' },
+      { name: 'Warrior II',          work: 30, rest: 15, sets: 4, reps: 16, list: 'Pilates stretch' },
       { name: 'Child pose',          work: 45, rest: 15, sets: 1, reps: 0, list: 'Pilates stretch' },
-      { name: 'Supine spine twist',  work: 30, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
-      { name: 'Figure 4',            work: 30, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
+      { name: 'Supine spine twist',  work: 30, rest: 15, sets: 4, reps: 16, list: 'Pilates stretch' },
+      { name: 'Figure 4',            work: 30, rest: 15, sets: 4, reps: 16, list: 'Pilates stretch' },
       { name: 'Scapular push-ups',   work: 45, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
-      { name: 'Bird dog',            work: 45, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
+      { name: 'Bird dog',            work: 45, rest: 15, sets: 4, reps: 16, list: 'Pilates stretch' },
       { name: 'Cobra pose stretch',  work: 45, rest: 15, sets: 3, reps: 16, list: 'Pilates stretch' },
 
       // Core
@@ -3152,28 +3146,28 @@
       { name: 'Glute bridge',        work: 20, rest: 15, sets: 3, reps: 1, list: 'Core' },
       { name: 'Flutter kicks',       work: 30, rest: 15, sets: 3, reps: 1, list: 'Core' },
       { name: 'Hundred',             work: 30, rest: 15, sets: 3, reps: 1, list: 'Core' },
-      { name: 'Dead bug',            work: 30, rest: 15, sets: 3, reps: 1, list: 'Core' },
+      { name: 'Dead bug',            work: 30, rest: 15, sets: 4, reps: 1, list: 'Core' },
       { name: 'Calf raises',         work: 20, rest: 15, sets: 3, reps: 1, list: 'Core' },
       { name: 'Ankle mobility circles', work: 20, rest: 15, sets: 3, reps: 1, list: 'Core' },
 
       // Standing core / glutes
-      { name: 'Backward leg raise & arm swing', work: 120, rest: 15, sets: 3, reps: 20, list: 'Standing core' },
-      { name: 'Side leg raised',     work: 120, rest: 15, sets: 3, reps: 20, list: 'Standing core' },
-      { name: 'Step back arm swing', work: 120, rest: 15, sets: 3, reps: 20, list: 'Standing core' },
+      { name: 'Backward leg raise & arm swing', work: 120, rest: 15, sets: 4, reps: 20, list: 'Standing core' },
+      { name: 'Side leg raised',     work: 120, rest: 15, sets: 4, reps: 20, list: 'Standing core' },
+      { name: 'Step back arm swing', work: 120, rest: 15, sets: 4, reps: 20, list: 'Standing core' },
 
       // Pelvic floor
       { name: 'Butterfly pelvic crunches', work: 30, rest: 15, sets: 3, reps: 20, list: 'Pelvic' },
-      { name: 'Alternating toe taps',work: 30, rest: 15, sets: 3, reps: 20, list: 'Pelvic' },
+      { name: 'Alternating toe taps',work: 30, rest: 15, sets: 4, reps: 20, list: 'Pelvic' },
       { name: 'Reverse crunches',    work: 30, rest: 15, sets: 3, reps: 20, list: 'Pelvic' },
-      { name: 'Hip rotation',        work: 30, rest: 15, sets: 3, reps: 20, list: 'Pelvic' },
+      { name: 'Hip rotation',        work: 30, rest: 15, sets: 4, reps: 20, list: 'Pelvic' },
       { name: 'Deep squats',         work: 120, rest: 15, sets: 1, reps: 0, list: 'Pelvic' },
 
       // Kettlebell (full-body strength)
       { name: 'Kettlebell swing',    work: 60, rest: 15, sets: 1, reps: 20, list: 'Kettlebell' },
-      { name: 'Kettlebell side swing', work: 60, rest: 15, sets: 1, reps: 20, list: 'Kettlebell' },
+      { name: 'Kettlebell side swing', work: 60, rest: 15, sets: 2, reps: 20, list: 'Kettlebell' },
       { name: 'Deadlifts',           work: 60, rest: 15, sets: 1, reps: 20, list: 'Kettlebell' },
       { name: 'High pulls',          work: 60, rest: 15, sets: 1, reps: 20, list: 'Kettlebell' },
-      { name: 'Rocket presses',      work: 60, rest: 15, sets: 1, reps: 20, list: 'Kettlebell' },
+      { name: 'Rocket presses',      work: 60, rest: 15, sets: 2, reps: 20, list: 'Kettlebell' },
 
       // Arms
       { name: 'Bicep curls',         work: 45, rest: 15, sets: 5, reps: 16, list: 'Arms' },
