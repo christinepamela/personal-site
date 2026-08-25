@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dyson &middot; Built on Mavericks, Struggling to Scale Breakthroughs | Theta Innovation Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --company-primary: #1C2630;
+  --company-accent: #C8006B;
+  --dyson-magenta: #C8006B;
+  --ink: #0F1519;
+  --ink-soft: #1B242B;
+  --paper: #F6F5F3;
+  --paper-warm: #ECEAE6;
+  --muted: #8B948F;
+  --core-green: #2D6A4F;
+  --edge-amber: #B5841A;
+  --beyond-crimson: #8B1A1A;
+  --gold: #C8006B;
+  --gold-light: rgba(200,0,107,0.07);
+  --steel: #9AA5AD;
+  --border: rgba(200,0,107,0.18);
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--paper); color:var(--ink); line-height:1.7; overflow-x:hidden; }
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding:0 3rem; height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(15,21,25,0.9); backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(200,0,107,0.18);
+}
+.nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.05rem; font-weight:500; letter-spacing:0.18em; color:var(--gold); text-transform:uppercase; }
+.nav-links { display:flex; gap:1.7rem; }
+.nav-links a { font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.5); text-decoration:none; transition:color 0.3s; }
+.nav-links a:hover, .nav-links a:focus-visible { color:var(--gold); }
+
+/* HERO */
+.hero { position:relative; min-height:100vh; display:flex; align-items:center; background:var(--ink); overflow:hidden; }
+.hero-cyclone {
+  position:absolute; right:-14%; top:50%; transform:translateY(-50%);
+  width:920px; height:920px; pointer-events:none; opacity:0.5;
+}
+.hero-cyclone span {
+  position:absolute; top:50%; left:50%; border-radius:50%;
+  border:1px solid rgba(200,0,107,0.16);
+  transform:translate(-50%,-50%);
+  animation:spin 60s linear infinite;
+}
+.hero-cyclone span:nth-child(1){ width:100%; height:100%; border-color:rgba(154,165,173,0.10); animation-duration:90s; }
+.hero-cyclone span:nth-child(2){ width:78%; height:78%; border-color:rgba(200,0,107,0.13); animation-duration:70s; animation-direction:reverse; }
+.hero-cyclone span:nth-child(3){ width:58%; height:58%; border-color:rgba(154,165,173,0.14); animation-duration:52s; }
+.hero-cyclone span:nth-child(4){ width:40%; height:40%; border-color:rgba(200,0,107,0.22); animation-duration:38s; animation-direction:reverse; }
+.hero-cyclone span:nth-child(5){ width:24%; height:24%; border-color:rgba(200,0,107,0.34); animation-duration:24s; }
+.hero-cyclone span::after {
+  content:''; position:absolute; top:-2px; left:50%; width:3px; height:3px; border-radius:50%; background:var(--gold); opacity:0.75;
+}
+@keyframes spin { from{transform:translate(-50%,-50%) rotate(0deg)} to{transform:translate(-50%,-50%) rotate(360deg)} }
+.hero-radial {
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 50% 65% at 18% 55%, rgba(200,0,107,0.09) 0%,transparent 65%),
+    radial-gradient(ellipse 45% 45% at 82% 30%, rgba(154,165,173,0.07) 0%,transparent 62%);
+}
+.hero-noise {
+  position:absolute; inset:0; pointer-events:none; opacity:0.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:128px;
+}
+.hero-content { position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:7rem 3rem 5rem; width:100%; }
+.hero-kicker {
+  font-size:0.68rem; letter-spacing:0.32em; text-transform:uppercase; color:var(--gold); margin-bottom:2rem;
+  opacity:0; animation:fadeUp 0.8s 0.3s forwards;
+  display:flex; align-items:center; gap:1rem;
+}
+.hero-kicker::before { content:''; display:block; width:36px; height:1px; background:var(--gold); opacity:0.6; }
+.hero-headline {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.5rem,5.1vw,4.8rem);
+  font-weight:300; line-height:1.03; color:#fff; margin-bottom:1.5rem;
+  opacity:0; animation:fadeUp 0.9s 0.5s forwards;
+}
+.hero-headline em { font-style:italic; color:var(--gold); }
+.hero-subtitle {
+  font-size:1.08rem; font-weight:300; line-height:1.75; color:rgba(255,255,255,0.56);
+  max-width:640px; margin-bottom:4rem;
+  opacity:0; animation:fadeUp 0.9s 0.7s forwards;
+}
+.hero-meta {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:0;
+  border-top:1px solid rgba(200,0,107,0.22); padding-top:2.5rem;
+  opacity:0; animation:fadeUp 0.9s 0.9s forwards;
+}
+.meta-item { padding:0 2rem 0 0; }
+.meta-item:not(:last-child) { border-right:1px solid rgba(154,165,173,0.18); margin-right:2rem; }
+.meta-label { font-size:0.62rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); opacity:0.8; margin-bottom:0.4rem; }
+.meta-value { font-family:'Cormorant Garamond',serif; font-size:1.45rem; font-weight:400; color:#fff; }
+.meta-sub { font-size:0.72rem; color:rgba(255,255,255,0.38); margin-top:0.2rem; }
+.scroll-indicator { position:absolute; right:3rem; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; align-items:center; gap:1rem; z-index:3; opacity:0; animation:fadeIn 1s 1.2s forwards; }
+.scroll-line { width:1px; height:80px; background:linear-gradient(to bottom,transparent,var(--gold)); animation:scrollLine 2.2s ease-in-out infinite; }
+@keyframes scrollLine { 0%{transform:scaleY(0);transform-origin:top;opacity:0} 50%{transform:scaleY(1);transform-origin:top;opacity:1} 100%{transform:scaleY(1);transform-origin:bottom;opacity:0} }
+.scroll-text { font-size:0.58rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold); writing-mode:vertical-rl; opacity:0.6; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* SHARED */
+.section-white { background:#fff; }
+.section-warm { background:var(--paper-warm); }
+.section-ink { background:var(--ink); color:#fff; }
+.container { max-width:1200px; margin:0 auto; padding:6rem 3rem; }
+.container-wide { max-width:1400px; margin:0 auto; padding:6rem 3rem; }
+.section-label { font-size:0.62rem; letter-spacing:0.32em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem; display:flex; align-items:center; gap:1rem; }
+.section-label::before { content:''; display:block; width:28px; height:1px; background:var(--gold); opacity:0.7; }
+h2.section-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2rem,4vw,3.2rem); font-weight:300; line-height:1.15; margin-bottom:2rem; letter-spacing:-0.01em; }
+h2.section-title em { font-style:italic; color:var(--gold); }
+.section-white h2.section-title, .section-warm h2.section-title { color:var(--ink); }
+.section-ink h2.section-title { color:#fff; }
+p { font-size:1.02rem; line-height:1.82; color:#3a3a3a; margin-bottom:1.4rem; }
+.section-ink p { color:rgba(255,255,255,0.72); }
+.lede { max-width:720px; }
+
+/* INDICATOR STRIP */
+.indicator-strip { background:var(--company-primary); padding:1.6rem 3rem; display:flex; align-items:center; gap:3rem; position:relative; overflow:hidden; }
+.indicator-strip::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--dyson-magenta); }
+.ind-label { font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; color:rgba(255,255,255,0.55); white-space:nowrap; }
+.ind-items { display:flex; gap:3.5rem; align-items:center; flex-wrap:wrap; }
+.ind-item { display:flex; flex-direction:column; gap:0.2rem; }
+.ind-val { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:300; color:#fff; line-height:1; }
+.ind-desc { font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.5); }
+.ind-item.down .ind-val { color:#E8698F; }
+.ind-item.up .ind-val { color:#7FBFA0; }
+
+/* ABOUT */
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:start; }
+.hidden-fact { background:var(--ink); color:#fff; padding:2rem 2.5rem; margin-top:2.5rem; border-left:3px solid var(--gold); }
+.hidden-fact-label { font-size:0.62rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--gold); margin-bottom:0.8rem; }
+.hidden-fact p { color:rgba(255,255,255,0.78); font-size:0.93rem; margin:0; }
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px; }
+.stat-cell { background:var(--paper); padding:2.5rem 2rem; transition:background 0.3s; }
+.stat-cell:hover { background:var(--gold-light); }
+.stat-number { font-family:'Cormorant Garamond',serif; font-size:3.1rem; font-weight:300; color:var(--ink); line-height:1; margin-bottom:0.5rem; }
+.stat-unit { font-size:1.1rem; color:var(--gold); }
+.stat-desc { font-size:0.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-top:0.3rem; }
+.stat-cell.neg .stat-number { color:var(--dyson-magenta); }
+.stat-cell.pos .stat-number { color:var(--core-green); }
+.belief-strip { background:var(--company-primary); padding:5rem 3rem; text-align:center; }
+.belief-quote { font-family:'Cormorant Garamond',serif; font-size:clamp(1.6rem,3vw,2.5rem); font-style:italic; font-weight:300; color:#fff; max-width:860px; margin:0 auto 1.5rem; line-height:1.5; }
+.belief-attr { font-size:0.72rem; letter-spacing:0.22em; text-transform:uppercase; color:rgba(200,0,107,0.9); }
+
+/* TIMELINE */
+.timeline { position:relative; }
+.timeline-line { position:absolute; left:7rem; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,transparent,var(--gold) 8%,var(--gold) 92%,transparent); opacity:0.3; }
+.timeline-entry { display:grid; grid-template-columns:7rem auto; gap:3rem; padding:0 0 3.5rem; position:relative; }
+.timeline-year { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:300; color:var(--muted); text-align:right; padding-top:0.1rem; position:relative; }
+.timeline-dot { position:absolute; right:-3.4rem; top:0.45rem; width:10px; height:10px; border-radius:50%; border:2px solid var(--gold); background:var(--paper-warm); }
+.timeline-dot.filled { background:var(--gold); }
+.timeline-phase { font-size:0.58rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); margin-bottom:0.4rem; }
+.timeline-title { font-family:'Cormorant Garamond',serif; font-size:1.32rem; font-weight:400; color:var(--ink); margin-bottom:0.5rem; }
+.timeline-body { font-size:0.93rem; color:#555; margin:0; line-height:1.72; }
+.timeline-inflection .timeline-title { color:var(--company-primary); }
+.timeline-inflection .timeline-dot { width:14px; height:14px; background:var(--gold); border-color:var(--gold); right:-3.6rem; top:0.3rem; }
+.timeline-crisis .timeline-title { color:var(--beyond-crimson); }
+.timeline-crisis .timeline-dot { background:var(--beyond-crimson); border-color:var(--beyond-crimson); width:14px; height:14px; right:-3.6rem; top:0.3rem; }
+
+/* THETA MAP */
+.theta-map-grid { display:grid; grid-template-columns:340px 1fr; gap:4rem; align-items:start; }
+.zone-legend { display:flex; flex-direction:column; gap:1.5rem; }
+.zone-pill { padding:1.5rem 2rem; border-radius:2px; position:relative; overflow:hidden; }
+.zone-pill::before { content:''; position:absolute; top:0; left:0; bottom:0; width:3px; }
+.zone-core { background:rgba(45,106,79,0.07); }
+.zone-core::before { background:var(--core-green); }
+.zone-edge { background:rgba(181,132,26,0.07); }
+.zone-edge::before { background:var(--edge-amber); }
+.zone-beyond { background:rgba(139,26,26,0.07); }
+.zone-beyond::before { background:var(--beyond-crimson); }
+.zone-pill-label { font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem; font-weight:500; }
+.zone-core .zone-pill-label { color:var(--core-green); }
+.zone-edge .zone-pill-label { color:var(--edge-amber); }
+.zone-beyond .zone-pill-label { color:var(--beyond-crimson); }
+.zone-pill-title { font-family:'Cormorant Garamond',serif; font-size:1.28rem; font-weight:400; color:var(--ink); margin-bottom:0.4rem; }
+.zone-pill p { font-size:0.86rem; color:#555; margin:0; line-height:1.65; }
+.reading-card { background:var(--ink); color:rgba(255,255,255,0.72); padding:1.5rem 2rem; margin-top:1rem; font-size:0.84rem; line-height:1.72; }
+.reading-card strong { color:var(--gold); }
+.chart-container { position:relative; height:500px; }
+
+/* CONVERSION GATE (SIGNATURE) */
+.gate-intro { max-width:720px; margin-bottom:3rem; }
+.gate-table { display:flex; flex-direction:column; gap:2px; }
+.gate-head { display:grid; grid-template-columns:1.5fr 0.7fr 1fr 1.6fr 0.9fr; gap:1.5rem; padding:0.9rem 1.6rem; background:var(--ink); }
+.gate-head span { font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); }
+.gate-row { display:grid; grid-template-columns:1.5fr 0.7fr 1fr 1.6fr 0.9fr; gap:1.5rem; padding:1.3rem 1.6rem; background:#fff; align-items:center; border-left:3px solid transparent; transition:background 0.25s, border-color 0.25s; }
+.gate-row:hover { background:var(--paper); }
+.gate-row.pass { border-left-color:var(--core-green); }
+.gate-row.partial { border-left-color:var(--edge-amber); }
+.gate-row.fail { border-left-color:var(--beyond-crimson); }
+.gate-name { font-family:'Cormorant Garamond',serif; font-size:1.12rem; color:var(--ink); }
+.gate-meta { font-size:0.78rem; color:var(--muted); }
+.gate-note { font-size:0.83rem; color:#555; line-height:1.6; }
+.gate-flag { font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase; padding:0.25rem 0.7rem; border:1px solid; display:inline-block; white-space:nowrap; }
+.flag-pass { border-color:var(--core-green); color:var(--core-green); }
+.flag-partial { border-color:var(--edge-amber); color:var(--edge-amber); }
+.flag-fail { border-color:var(--beyond-crimson); color:var(--beyond-crimson); }
+.gate-summary { background:var(--company-primary); padding:2rem 2.5rem; margin-top:2px; border-left:3px solid var(--gold); }
+.gate-summary p { color:rgba(255,255,255,0.76); font-size:0.92rem; margin:0; line-height:1.78; }
+
+/* ZONES DEEP DIVE */
+.zone-deep-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:2px; }
+.zdg-cell { padding:2.5rem 2rem; }
+.zdg-core { background:rgba(45,106,79,0.07); border-top:3px solid var(--core-green); }
+.zdg-edge { background:rgba(181,132,26,0.07); border-top:3px solid var(--edge-amber); }
+.zdg-beyond { background:rgba(139,26,26,0.06); border-top:3px solid var(--beyond-crimson); }
+.zdg-label { font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; font-weight:500; margin-bottom:0.8rem; }
+.zdg-core .zdg-label { color:var(--core-green); }
+.zdg-edge .zdg-label { color:var(--edge-amber); }
+.zdg-beyond .zdg-label { color:var(--beyond-crimson); }
+.zdg-status { display:inline-block; font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; padding:0.2rem 0.7rem; border:1px solid; margin-bottom:1rem; }
+.status-strong { border-color:var(--core-green); color:var(--core-green); }
+.status-promising { border-color:var(--edge-amber); color:var(--edge-amber); }
+.status-bold { border-color:var(--beyond-crimson); color:var(--beyond-crimson); }
+.zdg-title { font-family:'Cormorant Garamond',serif; font-size:1.28rem; font-weight:400; color:var(--ink); margin-bottom:0.8rem; }
+.zdg-body { font-size:0.86rem; color:#555; line-height:1.72; margin-bottom:1rem; }
+.zdg-list { list-style:none; }
+.zdg-list li { padding:0.5rem 0; border-bottom:1px solid rgba(0,0,0,0.07); font-size:0.8rem; color:#555; }
+
+/* PORTFOLIO */
+.portfolio-grid { display:grid; grid-template-columns:380px 1fr; gap:5rem; align-items:center; }
+.doughnut-wrap { position:relative; height:340px; }
+.doughnut-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:none; }
+.doughnut-center-label { font-family:'Cormorant Garamond',serif; font-size:1.05rem; color:var(--ink); line-height:1.35; }
+.doughnut-center-sub { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-top:0.3rem; }
+.allocation-bars { display:flex; flex-direction:column; gap:2.5rem; }
+.alloc-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.6rem; }
+.alloc-name { font-size:0.84rem; font-weight:500; color:var(--ink); }
+.alloc-pct { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; }
+.alloc-track { height:4px; background:rgba(0,0,0,0.08); position:relative; }
+.alloc-fill { height:100%; position:absolute; top:0; left:0; }
+.alloc-benchmark { position:absolute; top:-6px; width:2px; height:16px; background:var(--ink); opacity:0.3; }
+.alloc-commentary { font-size:0.8rem; color:var(--muted); margin-top:0.6rem; line-height:1.65; }
+
+/* TWO FAILURES */
+.failure-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; }
+.failure-panel { background:#fff; padding:2.8rem; border-top:3px solid var(--beyond-crimson); }
+.failure-tag { font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--beyond-crimson); margin-bottom:0.8rem; }
+.failure-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:400; color:var(--ink); margin-bottom:1.2rem; }
+.failure-panel p { font-size:0.92rem; color:#555; line-height:1.8; }
+.failure-facts { list-style:none; margin:1.4rem 0; }
+.failure-facts li { display:flex; gap:1rem; padding:0.7rem 0; border-bottom:1px solid rgba(0,0,0,0.07); font-size:0.82rem; color:#555; }
+.failure-facts span { color:var(--muted); min-width:96px; flex-shrink:0; font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; padding-top:0.15rem; }
+.failure-panel.wide { grid-column:1 / -1; }
+.wide-cols { display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; }
+.wide-cols p:last-child { margin-bottom:0; }
+.failure-panel.wide .failure-lesson { margin-top:1.8rem; }
+.failure-lesson { background:var(--paper-warm); padding:1.3rem 1.6rem; border-left:3px solid var(--beyond-crimson); }
+.failure-lesson p { margin:0; font-size:0.86rem; color:#444; }
+
+/* LEADERSHIP */
+.leader-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:start; }
+.leader-panel { background:var(--ink); padding:3rem; border-left:3px solid var(--gold); }
+.leader-panel-title { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:300; color:#fff; margin-bottom:1.2rem; }
+.leader-panel p { color:rgba(255,255,255,0.68); font-size:0.9rem; margin-bottom:1rem; }
+.obsession-list { list-style:none; margin-top:1.2rem; }
+.obsession-list li { padding:0.9rem 0; border-bottom:1px solid rgba(200,0,107,0.18); display:flex; gap:1rem; align-items:flex-start; }
+.obsession-num { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:300; color:rgba(200,0,107,0.5); line-height:1; flex-shrink:0; width:30px; }
+.obsession-text { font-size:0.84rem; color:rgba(255,255,255,0.65); line-height:1.65; }
+.obsession-text strong { color:rgba(255,255,255,0.92); }
+.callout-dark { background:var(--ink); padding:1.8rem 2rem; margin-top:1.5rem; border-left:3px solid var(--gold); }
+.callout-dark-label { font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); margin-bottom:0.8rem; }
+.callout-dark p { color:rgba(255,255,255,0.72); font-size:0.9rem; margin:0; line-height:1.75; }
+
+/* INSIGHT STRIP */
+.insight-strip { padding:4rem 3rem; text-align:center; }
+.insight-strip-dark { background:var(--ink); }
+.insight-strip-brand { background:var(--company-primary); }
+.insight-quote { font-family:'Cormorant Garamond',serif; font-size:clamp(1.5rem,2.8vw,2.2rem); font-style:italic; font-weight:300; max-width:880px; margin:0 auto; line-height:1.5; color:#fff; }
+.insight-quote em { color:var(--gold); }
+
+/* COMPETITORS */
+.competitor-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:1.5px; margin-bottom:4rem; }
+.comp-card { background:var(--paper); padding:2rem 1.5rem; transition:transform 0.25s,box-shadow 0.25s; }
+.comp-card:hover { transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,0.1); }
+.comp-card.featured { background:#fff; border:1.5px solid rgba(200,0,107,0.35); box-shadow:0 4px 24px rgba(200,0,107,0.1); }
+.comp-name { font-family:'Cormorant Garamond',serif; font-size:1.28rem; font-weight:400; color:var(--ink); margin-bottom:0.3rem; }
+.comp-tag { font-size:0.7rem; color:var(--muted); margin-bottom:1.4rem; line-height:1.55; }
+.comp-zone-row { display:flex; align-items:flex-start; gap:0.6rem; margin-bottom:0.8rem; }
+.zone-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:0.35rem; }
+.zone-dot-core { background:var(--core-green); }
+.zone-dot-edge { background:var(--edge-amber); }
+.zone-dot-beyond { background:var(--beyond-crimson); }
+.comp-zone-text { font-size:0.78rem; color:#555; line-height:1.55; }
+.comp-verdict { display:inline-block; margin-top:1.2rem; padding:0.3rem 0.9rem; font-size:0.62rem; letter-spacing:0.15em; text-transform:uppercase; border:1px solid; }
+.verdict-strong { border-color:var(--core-green); color:var(--core-green); }
+.verdict-crisis { border-color:var(--dyson-magenta); color:var(--dyson-magenta); }
+.verdict-fortress { border-color:var(--company-primary); color:var(--company-primary); }
+.verdict-focused { border-color:var(--edge-amber); color:var(--edge-amber); }
+.verdict-ascending { border-color:var(--beyond-crimson); color:var(--beyond-crimson); }
+.radar-wrap { height:460px; max-width:660px; margin:0 auto; }
+
+/* S&W */
+.sw-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; }
+.sw-panel { padding:2.5rem; }
+.sw-panel-strength { border:1px solid rgba(45,106,79,0.25); background:rgba(45,106,79,0.03); }
+.sw-panel-weakness { border:1px solid rgba(139,26,26,0.2); background:rgba(139,26,26,0.02); }
+.sw-title { font-family:'Cormorant Garamond',serif; font-size:1.45rem; font-weight:400; margin-bottom:2rem; }
+.sw-panel-strength .sw-title { color:var(--core-green); }
+.sw-panel-weakness .sw-title { color:var(--beyond-crimson); }
+.sw-item { display:flex; gap:1.2rem; margin-bottom:1.8rem; align-items:flex-start; }
+.sw-marker { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.72rem; font-weight:600; margin-top:0.1rem; }
+.sw-panel-strength .sw-marker { background:rgba(45,106,79,0.12); color:var(--core-green); }
+.sw-panel-weakness .sw-marker { background:rgba(139,26,26,0.1); color:var(--beyond-crimson); }
+.sw-lead { font-weight:500; color:var(--ink); font-size:0.93rem; margin-bottom:0.3rem; }
+.sw-desc { font-size:0.86rem; color:#666; line-height:1.68; margin:0; }
+
+/* OPEN SOURCE COMPARISON */
+.os-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; }
+.os-compare { display:flex; flex-direction:column; gap:1.5rem; }
+.os-dimension { font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); text-align:center; padding:0.5rem; background:var(--paper-warm); }
+.os-row { display:grid; grid-template-columns:1fr 1fr; gap:2px; }
+.os-cell { padding:1.4rem 1.8rem; }
+.os-cell-model { background:rgba(45,106,79,0.06); border-left:3px solid var(--core-green); }
+.os-cell-dyson { background:rgba(200,0,107,0.05); border-left:3px solid var(--dyson-magenta); }
+.os-cell-label { font-size:0.58rem; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.5rem; }
+.os-cell-model .os-cell-label { color:var(--core-green); }
+.os-cell-dyson .os-cell-label { color:var(--dyson-magenta); }
+.os-cell-content { font-size:0.84rem; color:#555; line-height:1.65; }
+
+/* HORIZON TABLE */
+.horizon-table { width:100%; border-collapse:collapse; }
+.horizon-table th { text-align:left; padding:0.8rem 1rem; font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; background:var(--ink); color:var(--gold); font-weight:400; }
+.horizon-table td { padding:0.9rem 1rem; border-bottom:1px solid rgba(0,0,0,0.07); font-size:0.86rem; color:#444; vertical-align:top; }
+.horizon-table tr:nth-child(even) td { background:rgba(0,0,0,0.025); }
+.horizon-table td:first-child { font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--ink); white-space:nowrap; }
+
+/* DIAGNOSTIC */
+.diagnostic-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; }
+.diag-block { margin-bottom:2.5rem; }
+.diag-label { font-size:0.62rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); opacity:0.8; margin-bottom:0.8rem; }
+.diag-title { font-family:'Cormorant Garamond',serif; font-size:1.22rem; font-weight:300; color:rgba(255,255,255,0.9); margin-bottom:0.8rem; }
+.diag-body { font-size:0.88rem; color:rgba(255,255,255,0.58); line-height:1.78; margin:0; }
+.archetype-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.8rem; }
+.archetype-chip { padding:0.35rem 0.9rem; border:1px solid; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; }
+.chip-ok { border-color:var(--core-green); color:#7FBFA0; }
+.chip-mid { border-color:var(--edge-amber); color:#D9B458; }
+.chip-gap { border-color:var(--beyond-crimson); color:#E08A8A; }
+.tension-box { background:rgba(200,0,107,0.08); border-left:3px solid var(--gold); padding:1.5rem 2rem; }
+.tension-box p { color:rgba(255,255,255,0.78); font-size:0.9rem; margin:0; line-height:1.75; }
+.inline-bars { display:flex; flex-direction:column; gap:1.2rem; margin-top:1rem; }
+.inline-bar-row { display:flex; align-items:center; gap:1rem; }
+.inline-bar-label { font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.45); width:70px; flex-shrink:0; }
+.inline-bar-track { flex:1; height:3px; background:rgba(255,255,255,0.1); position:relative; }
+.inline-bar-actual { height:100%; position:absolute; top:0; left:0; }
+.inline-bar-bench { position:absolute; top:-4px; width:2px; height:11px; background:rgba(255,255,255,0.3); }
+.inline-bar-pct { font-size:0.72rem; color:rgba(255,255,255,0.55); width:40px; text-align:right; flex-shrink:0; }
+.verdict-block { background:rgba(200,0,107,0.06); border:1px solid rgba(200,0,107,0.25); padding:2rem 2.5rem; margin-top:1.5rem; }
+.verdict-headline { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:300; color:#fff; margin-bottom:0.8rem; }
+.verdict-sub { font-size:0.88rem; color:rgba(255,255,255,0.6); line-height:1.78; margin:0; }
+
+/* RECOMMENDATIONS */
+.rec-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:2px; margin-top:2rem; }
+.rec-tile { background:#fff; padding:2.2rem 2rem; border-top:3px solid var(--gold); transition:box-shadow 0.25s; }
+.rec-tile:hover { box-shadow:0 8px 30px rgba(0,0,0,0.08); }
+.rec-zone { display:inline-block; font-size:0.58rem; letter-spacing:0.15em; text-transform:uppercase; padding:0.2rem 0.6rem; margin-bottom:0.8rem; background:var(--gold-light); color:var(--dyson-magenta); }
+.rec-title { font-family:'Cormorant Garamond',serif; font-size:1.22rem; font-weight:400; color:var(--ink); margin-bottom:0.6rem; }
+.rec-body { font-size:0.85rem; color:#666; line-height:1.72; margin:0; }
+
+/* FAILURE LINE */
+.failline { position:relative; margin:0 0 4rem; padding-top:2.5rem; }
+.failline::before { content:''; position:absolute; top:calc(2.5rem + 6px); left:0; right:0; height:1px; background:linear-gradient(to right,transparent,rgba(139,26,26,0.4) 8%,rgba(139,26,26,0.4) 92%,transparent); }
+.failline-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; position:relative; }
+.failline-node { padding-top:0; }
+.failline-dot { width:13px; height:13px; border-radius:50%; background:var(--beyond-crimson); margin-bottom:1.2rem; position:relative; }
+.failline-dot::after { content:''; position:absolute; inset:-5px; border-radius:50%; border:1px solid rgba(139,26,26,0.3); }
+.failline-year { font-family:'Cormorant Garamond',serif; font-size:1.25rem; color:var(--beyond-crimson); line-height:1; margin-bottom:0.4rem; }
+.failline-name { font-size:0.86rem; font-weight:500; color:var(--ink); margin-bottom:0.3rem; }
+.failline-note { font-size:0.79rem; color:var(--muted); line-height:1.6; }
+.failline-caption { font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--beyond-crimson); position:absolute; top:0; left:0; }
+
+/* CONTAINMENT */
+.contain-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin-top:2rem; }
+.contain-cell { padding:2.4rem 2rem; }
+.contain-in { background:rgba(139,26,26,0.05); border-top:3px solid var(--beyond-crimson); }
+.contain-out { background:rgba(45,106,79,0.06); border-top:3px solid var(--core-green); }
+.contain-label { font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.7rem; }
+.contain-in .contain-label { color:var(--beyond-crimson); }
+.contain-out .contain-label { color:var(--core-green); }
+.contain-title { font-family:'Cormorant Garamond',serif; font-size:1.3rem; color:var(--ink); margin-bottom:0.8rem; }
+.contain-cell p { font-size:0.88rem; color:#555; line-height:1.75; margin-bottom:0.9rem; }
+.contain-cell p:last-child { margin-bottom:0; }
+
+/* THESIS OPTIONS */
+.thesis-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-top:2rem; }
+.thesis-cell { background:#fff; padding:2rem 1.8rem; border-top:3px solid var(--edge-amber); }
+.thesis-num { font-family:'Cormorant Garamond',serif; font-size:1.7rem; color:rgba(181,132,26,0.55); line-height:1; margin-bottom:0.6rem; }
+.thesis-title { font-family:'Cormorant Garamond',serif; font-size:1.15rem; color:var(--ink); margin-bottom:0.5rem; }
+.thesis-body { font-size:0.84rem; color:#666; line-height:1.7; margin:0; }
+.thesis-verdict { font-size:0.75rem; color:var(--muted); border-top:1px solid rgba(0,0,0,0.08); margin-top:0.9rem; padding-top:0.7rem; }
+.thesis-verdict strong { color:var(--ink); }
+
+/* RELATIVITY */
+.rel-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:start; }
+.rel-ledger { display:flex; flex-direction:column; gap:2px; }
+.rel-row { display:grid; grid-template-columns:1fr 1fr; gap:2px; }
+.rel-cell { padding:1.3rem 1.6rem; font-size:0.85rem; line-height:1.68; }
+.rel-cell-dyson { background:rgba(200,0,107,0.05); border-left:3px solid var(--dyson-magenta); color:#555; }
+.rel-cell-public { background:rgba(154,165,173,0.12); border-left:3px solid var(--steel); color:#555; }
+.rel-cell-head { font-size:0.58rem; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:0.45rem; }
+.rel-cell-dyson .rel-cell-head { color:var(--dyson-magenta); }
+.rel-cell-public .rel-cell-head { color:#6C7780; }
+.rel-dimension { font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); text-align:center; padding:0.5rem; background:var(--paper-warm); }
+
+/* CLOSING */
+.right-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2.5rem; margin-top:2.5rem; }
+.right-item { border-top:1px solid rgba(200,0,107,0.3); padding-top:1.4rem; }
+.right-title { font-family:'Cormorant Garamond',serif; font-size:1.25rem; color:#fff; margin-bottom:0.6rem; }
+.right-body { font-size:0.88rem; color:rgba(255,255,255,0.6); line-height:1.75; margin:0; }
+
+/* FOOTER */
+footer { background:var(--ink); padding:3rem; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(200,0,107,0.15); gap:1.5rem; flex-wrap:wrap; }
+.footer-left { font-size:0.72rem; color:rgba(255,255,255,0.38); letter-spacing:0.1em; }
+.footer-left span { color:var(--gold); margin-right:1rem; }
+.footer-right { font-family:'Cormorant Garamond',serif; font-size:0.95rem; color:rgba(255,255,255,0.35); letter-spacing:0.08em; }
+.footer-right a { color:rgba(255,255,255,0.5); text-decoration:none; }
+.footer-right a:hover { color:var(--gold); }
+
+/* FADE */
+.fade-up { opacity:0; transform:translateY(24px); transition:opacity 0.7s ease,transform 0.7s ease; }
+.fade-up.visible { opacity:1; transform:translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
+  .fade-up { opacity:1; transform:none; }
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:0 1.5rem;}
+  .nav-links{display:none;}
+  .container,.container-wide{padding:4rem 1.5rem;}
+  .about-grid,.theta-map-grid,.portfolio-grid,.sw-grid,.diagnostic-grid,
+  .zone-deep-grid,.leader-grid,.os-grid,.failure-grid,.rec-grid,
+  .contain-grid,.thesis-grid,.rel-grid,.right-grid,.wide-cols{grid-template-columns:1fr;}
+  .failline-row{grid-template-columns:1fr 1fr; gap:2rem 1.5rem;}
+  .failline::before{display:none;}
+  .rel-row{grid-template-columns:1fr;}
+  .hero-meta{grid-template-columns:1fr 1fr; gap:1.5rem;}
+  .meta-item:not(:last-child){border-right:none;margin-right:0;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .competitor-grid{grid-template-columns:1fr 1fr;}
+  .scroll-indicator{display:none;}
+  .hero-cyclone{display:none;}
+  .timeline-entry{grid-template-columns:5rem auto;gap:2rem;}
+  .timeline-line{left:5rem;}
+  .timeline-dot{right:-2.4rem;}
+  .indicator-strip{flex-direction:column;align-items:flex-start;gap:1rem;}
+  .ind-items{gap:2rem;}
+  footer{flex-direction:column;text-align:center;}
+  .os-row{grid-template-columns:1fr;}
+  .gate-head{display:none;}
+  .gate-row{grid-template-columns:1fr; gap:0.5rem;}
+  .chart-container{height:420px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Dyson x Theta</div>
+  <div class="nav-links">
+    <a href="#about">Overview</a>
+    <a href="#timeline">Arc</a>
+    <a href="#theta-map">Innovation Map</a>
+    <a href="#gate">Conversion Gate</a>
+    <a href="#failures">Failures</a>
+    <a href="#beyond-read">Beyond</a>
+    <a href="#competitors">Competitors</a>
+    <a href="#relativity">Relativity</a>
+    <a href="#diagnostic">Diagnostic</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-cyclone"><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="hero-radial"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">Theta Innovation Case Study &middot; Founder-Led Portfolio Governance</div>
+    <h1 class="hero-headline">Built on Mavericks,<br>Struggling to Scale <em>Breakthroughs</em></h1>
+    <p class="hero-subtitle">It took 5,127 prototypes to prove that a small team with total control can beat an entire industry. Fifty years on, Dyson still invents better than almost anyone. The unresolved question is what happens after the invention works, when a breakthrough has to be absorbed by an organisation built to protect inventors rather than integrate them.</p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">Founded</div>
+        <div class="meta-value">1991</div>
+        <div class="meta-sub">Malmesbury, England</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Ownership</div>
+        <div class="meta-value">100% Family</div>
+        <div class="meta-sub">No external shareholders</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">2025 Revenue</div>
+        <div class="meta-value">&pound;6.13B</div>
+        <div class="meta-sub">Second year of decline</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Theta Verdict</div>
+        <div class="meta-value">Transitioning</div>
+        <div class="meta-sub">Strong Core &middot; Stalled conversion</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Read</span>
+  </div>
+</div>
+
+<!-- INDICATOR STRIP -->
+<div class="indicator-strip">
+  <div class="ind-label">2025 Indicators</div>
+  <div class="ind-items">
+    <div class="ind-item down"><div class="ind-val">&minus;6.7%</div><div class="ind-desc">Revenue, to &pound;6.13bn</div></div>
+    <div class="ind-item up"><div class="ind-val">+18%</div><div class="ind-desc">EBITDA, to &pound;1.11bn</div></div>
+    <div class="ind-item up"><div class="ind-val">+15%</div><div class="ind-desc">Operating profit, &pound;600m</div></div>
+    <div class="ind-item"><div class="ind-val">13</div><div class="ind-desc">New products, a record</div></div>
+    <div class="ind-item"><div class="ind-val">252</div><div class="ind-desc">Patents filed</div></div>
+    <div class="ind-item"><div class="ind-val">&pound;400m+</div><div class="ind-desc">R&amp;D investment</div></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="section-white" id="about">
+  <div class="container">
+    <div class="section-label">What Dyson Is</div>
+    <div class="about-grid fade-up">
+      <div>
+        <h2 class="section-title">An engineering house that <em>refuses</em> to be a consumer goods company</h2>
+        <p>Most companies in home appliances are marketing organisations with a factory attached. Dyson is the inverse. Roughly a third of its people are engineers and scientists, product cycles run for years rather than seasons, and the person with the final say on a hair dryer's weight distribution is still the founder. The company sells vacuums, purifiers and styling tools, but it thinks of itself as a motor and airflow business that happens to package its physics into things people buy.</p>
+        <p>That identity produced a remarkable decade. Cordless floor care, then hair care, then wet cleaning, each built on the same miniaturised high-speed digital motor. Hair care in particular turned an accessory category into a second profit engine, which is rare enough that most diversification case studies would end there and call it a success.</p>
+        <p>The last two years complicate the story. Revenue has fallen twice in a row after more than twenty years of growth, hit by weak consumer confidence, currency swings and US tariffs on goods made in Malaysia and the Philippines. Profitability recovered sharply in 2025, but it recovered through cost discipline and a restructuring that removed around a thousand UK roles, not through growth. The engine still runs. It is running on efficiency.</p>
+        <div class="hidden-fact">
+          <div class="hidden-fact-label">Hidden Fact</div>
+          <p>Dyson designed a robot vacuum in 2001, the DC06, and killed it before it ever reached a shop. James Dyson thought it was too heavy and too slow, so he shelved the category rather than ship a compromise. It took thirteen years to return. By then the market had been defined by someone else. The instinct that produced 5,127 prototypes and the instinct that lost a category are the same instinct.</p>
+        </div>
+      </div>
+      <div>
+        <div class="stat-grid">
+          <div class="stat-cell pos">
+            <div class="stat-number">&pound;1.11<span class="stat-unit">bn</span></div>
+            <div class="stat-desc">2025 EBITDA, up 18%</div>
+          </div>
+          <div class="stat-cell neg">
+            <div class="stat-number">&minus;&pound;440<span class="stat-unit">m</span></div>
+            <div class="stat-desc">Revenue lost in 2025</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number">20<span class="stat-unit">m+</span></div>
+            <div class="stat-desc">Products sold per year</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number">&pound;2.75<span class="stat-unit">bn</span></div>
+            <div class="stat-desc">Five-year technology plan</div>
+          </div>
+          <div class="stat-cell">
+            <div class="stat-number">4,000<span class="stat-unit">+</span></div>
+            <div class="stat-desc">People on UK campuses</div>
+          </div>
+          <div class="stat-cell neg">
+            <div class="stat-number">1,000</div>
+            <div class="stat-desc">UK roles cut in 2024</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="belief-strip">
+    <div class="belief-quote">"Success teaches you nothing. Failures teach you everything."</div>
+    <div class="belief-attr">Sir James Dyson, Founder and Chief Engineer</div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="section-warm" id="timeline">
+  <div class="container">
+    <div class="section-label">The Arc</div>
+    <h2 class="section-title" style="margin-bottom:3.5rem;">From a coach house to a <em>Singapore</em> battery plant</h2>
+    <div class="timeline fade-up">
+      <div class="timeline-line"></div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">1974<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Chaos</div>
+          <div class="timeline-title">The Ballbarrow, and the lesson that shaped everything after it</div>
+          <p class="timeline-body">James Dyson replaces a wheelbarrow's wheel with a ball and builds a business around it. But he is removed from the company he founded, after the patent is assigned to the firm rather than to him. He drew one conclusion from that loss and never revised it. Never give away control of your invention.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">1978<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Chaos &middot; The Problem</div>
+          <div class="timeline-title">A clogged vacuum bag becomes a fifteen-year obsession</div>
+          <p class="timeline-body">Frustrated by a machine that lost suction as soon as its bag filled, he takes it apart, notices the bag itself is the flaw, and adapts the industrial cyclone he had seen at a sawmill. The problem is diagnosed in an afternoon. Solving it takes five years and 5,127 prototypes built in a coach house, one variable changed at a time.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">1983<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Build &middot; Rejection</div>
+          <div class="timeline-title">Every major manufacturer says no, so Japan says yes</div>
+          <p class="timeline-body">Hoover, Electrolux and the rest decline the technology, in part because replacement bags were a profitable annuity they had no reason to destroy. The G-Force launches in Japan under licence and becomes a luxury object. The licensing income keeps the project alive through years of patent litigation.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry timeline-inflection">
+        <div class="timeline-year">1993<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Inflection &middot; Build to Core</div>
+          <div class="timeline-title">The DC01 launches and becomes Britain's best-selling vacuum</div>
+          <p class="timeline-body">Funded by a bank loan secured against the family home, the first Dyson-branded machine costs roughly twice what competitors charge and wins anyway. The transparent bin, which market research had advised against, turns out to be the proof of the claim. This is the moment a fifteen-year Chaos project becomes a Core business.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">2001<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Edge &middot; Shelved</div>
+          <div class="timeline-title">The DC06 robot is finished, then withdrawn before launch</div>
+          <p class="timeline-body">Dyson builds a working robotic vacuum, looks at it, and decides it is not good enough to sell. He was probably right about the machine. He was expensively wrong about the category. Others defined robotic floor care over the following decade, and Dyson came back as a challenger to a market it could have opened.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry timeline-inflection">
+        <div class="timeline-year">2009<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Inflection &middot; Platform</div>
+          <div class="timeline-title">The digital motor turns one product into a portfolio</div>
+          <p class="timeline-body">A miniaturised, brushless, very high speed motor becomes the component that unlocks hand dryers, bladeless fans, cordless sticks, purifiers and eventually hair care. This is the most successful thing Dyson has ever done in portfolio terms, and it happened through a shared technology rather than a shared process.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry timeline-crisis">
+        <div class="timeline-year">2015<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Beyond &middot; Acquisition</div>
+          <div class="timeline-title">Dyson buys Sakti3, a solid-state battery start-up from Michigan</div>
+          <p class="timeline-body">A fifteen million dollar investment becomes a ninety million dollar acquisition. The idea was to buy a decade of battery research rather than live through it. Within two years the licence on Sakti3's founding patents had been dropped and its founder had left the building.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry timeline-inflection">
+        <div class="timeline-year">2016<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Edge to Core</div>
+          <div class="timeline-title">The Supersonic proves the motor platform can enter beauty</div>
+          <p class="timeline-body">Four years of work, more than a hundred engineers, and a category that had barely changed in decades. Hair care goes on to become Dyson's second profit engine and its highest-margin business. It is the clearest evidence that Dyson can convert an Edge bet into a Core franchise when the bet sits close to the motor.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry timeline-crisis">
+        <div class="timeline-year">2019<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Beyond &middot; Cancelled</div>
+          <div class="timeline-title">The N526 electric car is killed after roughly &pound;500m</div>
+          <p class="timeline-body">The prototype worked. A seven-seat SUV with a claimed 600-mile range, driven by the founder himself. The arithmetic did not work. Dyson would have had to price it near &pound;150,000 to break even against rivals spending tens of billions. The same year, the global headquarters moved to Singapore.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">2020<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Beyond &middot; Redirection</div>
+          <div class="timeline-title">A &pound;2.75bn five-year plan aimed at software, AI, robotics and energy storage</div>
+          <p class="timeline-body">The capability built for the car is pointed back at the home. A Bristol software centre, a Philippines technology campus, a robotics hangar at Hullavington, and a battery plant in Singapore described as the largest advanced manufacturing investment in the company's history.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry timeline-crisis">
+        <div class="timeline-year">2023<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Edge &middot; Misread</div>
+          <div class="timeline-title">The Dyson Zone ships, and the market does not follow</div>
+          <p class="timeline-body">Air-purifying headphones with a detachable visor, engineered through hundreds of prototypes and priced near a thousand dollars. Lifetime sales were later described by the company as being in the thousands. Its stripped-back successor, the OnTrac, sold roughly ten times as many at half the price.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">2024<div class="timeline-dot"></div></div>
+        <div>
+          <div class="timeline-phase">Operator Mode</div>
+          <div class="timeline-title">Hanno Kirner becomes CEO and profit halves</div>
+          <p class="timeline-body">An executive from Jaguar Land Rover and the Tata battery programme takes over. Pre-tax profit falls by close to half despite record unit volumes, and around a thousand UK roles are removed. The company describes the year as a reorganisation. In Theta terms it is the arrival of an operator inside a founder company.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry timeline-inflection">
+        <div class="timeline-year">2025<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Inflection &middot; Cadence</div>
+          <div class="timeline-title">Thirteen launches, an AI robot, and the Zone quietly discontinued</div>
+          <p class="timeline-body">The Spot+Scrub Ai robot uses vision and machine learning to find stains, clean them repeatedly, and check its own work. The PencilVac reaches 38mm in diameter. Revenue falls again under tariff pressure while EBITDA rises 18%. The company is moving faster and earning more on less.</p>
+        </div>
+      </div>
+
+      <div class="timeline-entry">
+        <div class="timeline-year">2026<div class="timeline-dot filled"></div></div>
+        <div>
+          <div class="timeline-phase">Signal</div>
+          <div class="timeline-title">More products than ever, at more price points than ever</div>
+          <p class="timeline-body">Kirner's stated plan for 2026 is a wider ladder of prices designed to reach millions of new customers. For a company whose entire identity has been built on premium positioning, this is the most significant strategic sentence it has published in years.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- THETA MAP -->
+<section class="section-white" id="theta-map">
+  <div class="container-wide">
+    <div class="section-label">Theta Innovation Map</div>
+    <h2 class="section-title">Where Dyson's bets <em>actually</em> live</h2>
+    <div class="theta-map-grid fade-up">
+      <div>
+        <div class="zone-legend">
+          <div class="zone-pill zone-core">
+            <div class="zone-pill-label">Core Zone &middot; ~65% (benchmark 70%)</div>
+            <div class="zone-pill-title">Three engines, not one</div>
+            <p>Floor care, hair care and air treatment each behave like a Core business with its own cadence. The V16, the V8 refresh, the Supersonic r, the Airwrap Co-anda 2x and the HushJet purifier are all incremental by Theta definition, yet each involves genuine engineering rather than a specification bump. Dyson's Core is unusual because it is run with an Edge mentality. Failure is permitted here in a way it is not permitted at most large companies.</p>
+          </div>
+          <div class="zone-pill zone-edge">
+            <div class="zone-pill-label">Edge Zone &middot; ~25% (benchmark 20%)</div>
+            <div class="zone-pill-title">Well funded, unevenly converted</div>
+            <p>Robotics, wearables, lighting and wet cleaning all sit here, backed by a Bristol AI centre, a robotics hangar at Hullavington and hundreds of software hires. The funding is not the constraint. Two of these bets have converted into real businesses. Two have not, and one has been withdrawn from sale. The Edge is where Dyson's real diagnostic sits.</p>
+          </div>
+          <div class="zone-pill zone-beyond">
+            <div class="zone-pill-label">Beyond Zone &middot; ~10% (benchmark 10%)</div>
+            <div class="zone-pill-title">Ambitious, and quieter than it was</div>
+            <p>Domestic manipulation robotics, proprietary cell chemistry, and a 36,000-acre agricultural technology business that sits outside the appliance company entirely. The ambition is real. What has changed since the car is the volume. Dyson now talks about robots by the end of the decade and says almost nothing publicly about solid state, which was once the centrepiece of the whole strategy.</p>
+          </div>
+        </div>
+        <div class="reading-card" style="margin-top:1.5rem;">
+          <strong>The Theta Lens:</strong> Dyson's allocation is close to textbook. That is precisely why it is interesting. The failures in this portfolio are not funding failures, they are conversion failures. Bets that sit near the digital motor travel from Edge to Core reliably. Bets that require a new supply chain, a new buying occasion, or a new manufacturing discipline tend to stall at the boundary regardless of how well they are engineered.
+        </div>
+      </div>
+      <div>
+        <div class="chart-container">
+          <canvas id="scatterChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONVERSION GATE -->
+<section class="section-warm" id="gate">
+  <div class="container-wide">
+    <div class="section-label">The Signature Diagnostic</div>
+    <h2 class="section-title">The conversion gate</h2>
+    <div class="gate-intro">
+      <p>Portfolio allocation tells you what a company funds. It does not tell you what a company can absorb. The more useful question for Dyson is what happened at the boundary, when a bet finished proving itself and had to become an ordinary part of the business. Every entry below cleared the engineering bar. Only some cleared the gate.</p>
+    </div>
+    <div class="gate-table fade-up">
+      <div class="gate-head">
+        <span>The bet</span><span>Zone</span><span>Distance from the motor</span><span>What happened at the boundary</span><span>Converted</span>
+      </div>
+
+      <div class="gate-row pass">
+        <div class="gate-name">Cordless stick vacuums</div>
+        <div class="gate-meta">Edge</div>
+        <div class="gate-meta">Zero. It is the motor.</div>
+        <div class="gate-note">Cannibalised its own corded range on purpose and became the largest business in the company.</div>
+        <div><span class="gate-flag flag-pass">Yes</span></div>
+      </div>
+
+      <div class="gate-row pass">
+        <div class="gate-name">Hair care</div>
+        <div class="gate-meta">Edge</div>
+        <div class="gate-meta">One step. Motor plus airflow.</div>
+        <div class="gate-note">New customer, new channel, same physics. Now the second profit engine and the highest-margin category.</div>
+        <div><span class="gate-flag flag-pass">Yes</span></div>
+      </div>
+
+      <div class="gate-row pass">
+        <div class="gate-name">Air purification</div>
+        <div class="gate-meta">Core to Edge</div>
+        <div class="gate-meta">One step. Motor plus filtration.</div>
+        <div class="gate-note">Built a connected data asset across millions of machines that now feeds product development.</div>
+        <div><span class="gate-flag flag-pass">Yes</span></div>
+      </div>
+
+      <div class="gate-row partial">
+        <div class="gate-name">Wet floor cleaning</div>
+        <div class="gate-meta">Edge</div>
+        <div class="gate-meta">Two steps. New fluid handling.</div>
+        <div class="gate-note">WashG1 arrived after competitors had defined the category. The 2025 and 2026 range is stronger, but Dyson is following here rather than leading.</div>
+        <div><span class="gate-flag flag-partial">Late</span></div>
+      </div>
+
+      <div class="gate-row partial">
+        <div class="gate-name">Robotics</div>
+        <div class="gate-meta">Edge</div>
+        <div class="gate-meta">Three steps. Vision, autonomy, cloud.</div>
+        <div class="gate-note">Shelved in 2001, relaunched in 2014, redefined in 2025 with Spot+Scrub Ai. Genuinely differentiated, still priced for early adopters, still small against Chinese incumbents.</div>
+        <div><span class="gate-flag flag-partial">In progress</span></div>
+      </div>
+
+      <div class="gate-row fail">
+        <div class="gate-name">Dyson Zone</div>
+        <div class="gate-meta">Edge</div>
+        <div class="gate-meta">Far. New occasion, new buyer.</div>
+        <div class="gate-note">Superb engineering aimed at a problem people were not shopping for. Lifetime sales in the thousands, then discontinued. The audio-only OnTrac outsold it about tenfold.</div>
+        <div><span class="gate-flag flag-fail">No</span></div>
+      </div>
+
+      <div class="gate-row fail">
+        <div class="gate-name">Lightcycle lighting</div>
+        <div class="gate-meta">Edge</div>
+        <div class="gate-meta">Far. No motor, no airflow.</div>
+        <div class="gate-note">Real thermal and optical engineering, no route into the existing sales motion, and no visible pull from the rest of the portfolio.</div>
+        <div><span class="gate-flag flag-fail">No</span></div>
+      </div>
+
+      <div class="gate-row fail">
+        <div class="gate-name">Sakti3 solid-state cells</div>
+        <div class="gate-meta">Beyond</div>
+        <div class="gate-meta">Far. Acquired, not built.</div>
+        <div class="gate-note">Patent licence dropped within two years, founder departed, technology never adopted. Dyson's Singapore plant makes its own proprietary cells instead.</div>
+        <div><span class="gate-flag flag-fail">No</span></div>
+      </div>
+
+      <div class="gate-row fail">
+        <div class="gate-name">N526 electric car</div>
+        <div class="gate-meta">Beyond</div>
+        <div class="gate-meta">Far. Entirely new industry.</div>
+        <div class="gate-note">Technically finished, commercially impossible at Dyson's scale. Cancelled rather than partnered, because partnering would have meant sharing control.</div>
+        <div><span class="gate-flag flag-fail">No</span></div>
+      </div>
+
+      <div class="gate-summary">
+        <p>The pattern is simple. If an innovation uses Dyson's digital motor, it scales. If it doesn't, it stalls. The motor is the only reliable path Dyson has for turning a new idea into a business, because the organisation's culture follows the hardware. Establishing new core culture is the gap.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSIGHT 1 -->
+<div class="insight-strip insight-strip-brand fade-up">
+  <div class="insight-quote">
+    Dyson does not have an allocation problem.<br>It has a <em>conversion</em> problem.
+  </div>
+</div>
+
+<!-- ZONE DEEP DIVE -->
+<section class="section-white">
+  <div class="container">
+    <div class="section-label">Zone by Zone</div>
+    <h2 class="section-title">What is <em>actually happening</em> in each zone</h2>
+    <div class="zone-deep-grid fade-up">
+
+      <div class="zdg-cell zdg-core">
+        <div class="zdg-label">Core Zone</div>
+        <span class="zdg-status status-strong">Profitable, Under Pressure</span>
+        <div class="zdg-title">Three engines carrying a company through a tariff shock</div>
+        <p class="zdg-body">The Core did its job in 2025. Revenue fell and earnings rose, which is the signature of a business that can cut without breaking. The threat is not immediate decline but slow compression. Rivals now match Dyson on published suction figures at half the price, and the premium has to be justified by something other than raw numbers. The 2026 decision to launch across a wider range of price points is the first real admission that the top of the market alone is no longer enough.</p>
+        <ul class="zdg-list">
+          <li>V16 Piston Animal: 900W motor, 315 air watts in boost mode</li>
+          <li>PencilVac: 38mm diameter, Asia first, US and UK in 2026</li>
+          <li>Hair care remains the highest-margin category in the group</li>
+          <li>HushJet compact purifier engineered for very low noise</li>
+          <li>Over 20 million units sold annually across the portfolio</li>
+        </ul>
+      </div>
+
+      <div class="zdg-cell zdg-edge">
+        <div class="zdg-label">Edge Zone</div>
+        <span class="zdg-status status-promising">Funded, Selectively Converting</span>
+        <div class="zdg-title">The zone where the diagnosis actually lives</div>
+        <p class="zdg-body">Jake Dyson's framing of the robotics programme is the most disciplined strategic thinking the company currently publishes. Dyson has studied manipulation and stair climbing for roughly a decade and has deliberately not shipped either, choosing instead a problem it can solve reliably today, which is finding and removing stains. That is correct Edge discipline. The counter-evidence is the Zone, where the same organisation shipped a beautifully engineered answer to a question few people were asking, then withdrew it.</p>
+        <ul class="zdg-list">
+          <li>Spot+Scrub Ai: vision system, stain detection, repeated passes, self-verification</li>
+          <li>Hullavington robotics centre, 250 roboticists hired with 700 more planned</li>
+          <li>Robotics teams across the UK, Singapore, Malaysia and Poland</li>
+          <li>Dyson Robotics Lab at Imperial College, part of 22 university programmes</li>
+          <li>&pound;100m Bristol technology centre for software and AI engineers</li>
+        </ul>
+      </div>
+
+      <div class="zdg-cell zdg-beyond">
+        <div class="zdg-label">Beyond Zone</div>
+        <span class="zdg-status status-bold">Ambitious, Missing a Champion</span>
+        <div class="zdg-title">Two moonshots, one of which has gone quiet</div>
+        <p class="zdg-body">Robotics has a clear owner, a public timeline and a named leader who will defend it. Energy storage does not. The Singapore battery plant is the largest manufacturing investment Dyson has ever made, and it produces the company's own proprietary cells rather than the solid-state chemistry it once bought. Nobody has replaced the commercial thesis that died with the car. Dyson Farming is the third bet, sits outside the appliance business entirely, and already feeds it through sunflower oil grown for the Omega hair care range.</p>
+        <ul class="zdg-list">
+          <li>Domestic robots targeted for homes by the end of the decade</li>
+          <li>Manipulation and stair climbing held back deliberately as not yet reliable</li>
+          <li>Tuas battery plant, the largest advanced manufacturing bet in company history</li>
+          <li>Solid state now largely absent from public communication</li>
+          <li>Dyson Farming: 36,000 acres, robotics, anaerobic digestion, circular energy</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO ALLOCATION -->
+<section class="section-warm" id="allocation">
+  <div class="container">
+    <div class="section-label">Portfolio Allocation</div>
+    <h2 class="section-title">A healthy split that hides an <em>unhealthy</em> boundary</h2>
+    <p class="lede" style="margin-bottom:3rem;">Dyson is private and publishes no zone-level breakdown, so the split below is a directional estimate built from disclosed R&amp;D spend, facility investment, hiring patterns and launch cadence. What matters is not the precision of the numbers but their shape. Dyson sits close to the 70/20/10 benchmark, which is where most large companies hope to be. The framework then asks a harder question. If the allocation is right and the outcomes are uneven, the problem is downstream of funding.</p>
+    <div class="portfolio-grid fade-up">
+      <div>
+        <div class="doughnut-wrap">
+          <canvas id="doughnutChart"></canvas>
+          <div class="doughnut-center">
+            <div class="doughnut-center-label">Funded well<br>Converted<br>unevenly</div>
+            <div class="doughnut-center-sub">Dyson 2025</div>
+          </div>
+        </div>
+      </div>
+      <div class="allocation-bars">
+        <div class="alloc-item">
+          <div class="alloc-header">
+            <span class="alloc-name">Core Zone</span>
+            <span class="alloc-pct" style="color:var(--core-green)">65%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill" style="width:65%;background:var(--core-green)"></div>
+            <div class="alloc-benchmark" style="left:70%"></div>
+          </div>
+          <div class="alloc-commentary">Slightly under benchmark, which is unusual and healthy. Three separate Core engines share the load, so no single category has to carry the company. The risk is not underinvestment, it is that the Core is being asked to defend premium pricing against rivals whose published performance now matches or exceeds it.</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-header">
+            <span class="alloc-name">Edge Zone</span>
+            <span class="alloc-pct" style="color:var(--edge-amber)">25%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill" style="width:25%;background:var(--edge-amber)"></div>
+            <div class="alloc-benchmark" style="left:20%"></div>
+          </div>
+          <div class="alloc-commentary">Above benchmark, and the most active zone in the company. Robotics alone accounts for a dedicated research centre and close to a thousand planned hires. The gap is not money and not talent. It is the absence of a repeatable route from a finished Edge product into the commercial machine that sells vacuums and hair dryers.</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-header">
+            <span class="alloc-name">Beyond Zone</span>
+            <span class="alloc-pct" style="color:var(--beyond-crimson)">10%</span>
+          </div>
+          <div class="alloc-track">
+            <div class="alloc-fill" style="width:10%;background:var(--beyond-crimson)"></div>
+            <div class="alloc-benchmark" style="left:10%"></div>
+          </div>
+          <div class="alloc-commentary">On benchmark, and more disciplined than it was. The car consumed roughly &pound;500m of Beyond capacity for four years and returned capability rather than product. What is missing now is a second named champion. Robotics has Jake Dyson. Energy storage has a factory and no public thesis.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TWO FAILURES -->
+<section class="section-white" id="failures">
+  <div class="container">
+    <div class="section-label">The Failures</div>
+    <h2 class="section-title">Three stories, <em>two</em> root causes</h2>
+    <p class="lede" style="margin-bottom:2rem;">Dyson's setbacks are usually told separately. An acquisition that did not integrate, a moonshot that could not be financed, a robot that never shipped. Two causes sit underneath them. The first two required Dyson to share control with something it did not build, and it chose control. The third required Dyson to put an unfinished product in front of customers, and the brand would not allow it.</p>
+
+    <div class="failline fade-up">
+      <div class="failline-caption">The pattern, four times</div>
+      <div class="failline-row">
+        <div class="failline-node">
+          <div class="failline-dot"></div>
+          <div class="failline-year">2001</div>
+          <div class="failline-name">DC06 robot shelved</div>
+          <div class="failline-note">Finished, then withdrawn before launch. Roomba shipped a rougher version a year later and took the category.</div>
+        </div>
+        <div class="failline-node">
+          <div class="failline-dot"></div>
+          <div class="failline-year">2015 &rarr; 2017</div>
+          <div class="failline-name">Sakti3 bought, then dropped</div>
+          <div class="failline-note">$90m acquisition. Patent licence dropped in two years, founder gone, chemistry never used.</div>
+        </div>
+        <div class="failline-node">
+          <div class="failline-dot"></div>
+          <div class="failline-year">2019</div>
+          <div class="failline-name">N526 car cancelled</div>
+          <div class="failline-note">Roughly &pound;500m spent. Engineering complete, economics impossible at Dyson's scale.</div>
+        </div>
+        <div class="failline-node">
+          <div class="failline-dot"></div>
+          <div class="failline-year">2023 &rarr; 2025</div>
+          <div class="failline-name">Zone launched, discontinued</div>
+          <div class="failline-note">Sales in the thousands. The stripped-back OnTrac sold roughly ten times as many.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="failure-grid fade-up">
+
+      <div class="failure-panel">
+        <div class="failure-tag">Failure 01 &middot; External Technology</div>
+        <div class="failure-title">Sakti3, and what money cannot buy</div>
+        <p>Sakti3 was a University of Michigan spinout in Ann Arbor, founded in 2007 by Ann Marie Sastry, working on solid-state cells with laboratory energy density roughly double conventional lithium ion. Dyson invested, then acquired outright. The logic was sound on paper. Buying the technology removed years of internal development.</p>
+        <p>What arrived was a proof of concept, not a manufacturable product, inside a company whose entire method is to manufacture what it invents. Dyson ran the acquired team alongside an internal battery effort pursuing a different approach. The internal team won. The licence on Sakti3's founding patents was dropped in 2017, its founder left, and the technology was never adopted. The Singapore plant now makes cells Dyson designed itself.</p>
+        <ul class="failure-facts">
+          <li><span>Deal</span><div>$15m investment followed by a $90m acquisition in 2015</div></li>
+          <li><span>Clash</span><div>Sastry oriented toward vehicles, Dyson toward cordless appliances</div></li>
+          <li><span>Structure</span><div>Two competing internal battery teams rather than one protected one</div></li>
+          <li><span>Outcome</span><div>Patents dropped by 2017, founder departed, chemistry unused</div></li>
+        </ul>
+        <div class="failure-lesson">
+          <p><strong>The Theta reading.</strong> You can buy intellectual property. You cannot buy a place in an organisation's identity. Dyson's culture rewards people who solve a problem from first principles inside the building, which is exactly the culture in which an acquired team is structurally certain to lose an internal competition.</p>
+        </div>
+      </div>
+
+      <div class="failure-panel">
+        <div class="failure-tag">Failure 02 &middot; Scaling a Moonshot</div>
+        <div class="failure-title">The N526, and the price of going alone</div>
+        <p>The car began quietly in 2015, was announced in 2017, and grew to five or six hundred people. Roughly &pound;500m went into it. The prototype was a seven-seat SUV with twin 200kW motors and a claimed 600-mile range, and the founder drove it himself. By any engineering measure the programme succeeded.</p>
+        <p>It failed on arithmetic that could only be run once the vehicle existed. Dyson concluded it would need to price the car around &pound;150,000 to break even while Volkswagen was committing tens of billions to electrification and Tesla had already bought its way down the manufacturing learning curve. Dyson cancelled in October 2019 rather than raise outside capital or take a partner, because either route would have meant surrendering the control the founder had protected since the Ballbarrow.</p>
+        <ul class="failure-facts">
+          <li><span>Span</span><div>2015 to 2019, announced publicly in September 2017</div></li>
+          <li><span>Scale</span><div>500 to 600 engineers, scientists and designers</div></li>
+          <li><span>Break-even</span><div>Approximately &pound;150,000 per vehicle</div></li>
+          <li><span>Salvage</span><div>Battery, motor and software capability redirected into the home</div></li>
+        </ul>
+        <div class="failure-lesson">
+          <p><strong>The Theta reading.</strong> Private ownership buys freedom and costs buffer. Dyson could fund a &pound;500m experiment without a shareholder revolt, and could not fund the decade of loss-making volume that turns an experiment into an industry. Freedom and capital are a trade, and this company has always chosen freedom.</p>
+        </div>
+      </div>
+
+      <div class="failure-panel wide">
+        <div class="failure-tag">Failure 03 &middot; Early Adopters</div>
+        <div class="failure-title">The DC06, and the customers Dyson never met</div>
+        <div class="wide-cols">
+          <div>
+            <p>Dyson's skunkworks culture is built for engineering excellence, not early adopter discovery. The DC06 was a working robot vacuum that never reached the customers who would have used it, broken it, and told Dyson what to fix. By the time Dyson returned to robotics in 2014, the category belonged to companies willing to ship imperfect products and improve them in public.</p>
+            <p>The comparison is direct. iRobot launched the Roomba in September 2002, one year after Dyson shelved the DC06. It cleaned in random zigzags, got stuck on cords and under furniture, had no memory of where it had been, could not map a room, and was loud. By any objective measure it was a flawed product.</p>
+            <p>It was not sold as a vacuum cleaner. It was sold as a gadget. iRobot expected 15,000 units in its first holiday season and sold roughly 50,000. Nobody compared it to a good vacuum, because the category did not exist. They compared it to doing nothing. Owners named theirs, dressed them up, took them on holiday.</p>
+          </div>
+          <div>
+            <p>Early adopters do not need perfection. They need potential, and they will trade rough edges for it. That tolerance funds the iteration that eventually satisfies everyone else. A million Roombas were sold by October 2004 and two million by May 2006. By 2015 iRobot held more than half the global robotic vacuum market, and lifetime sales have since passed fifty million units.</p>
+            <p>The DC06 was judged too heavy and too slow by Dyson's standards, which means it was measured against the expectations of the late majority before the innovators had been served. James Dyson was probably right about the machine and expensively wrong about the category.</p>
+            <p>Theta sees this repeatedly in large companies. An intact brand raises the floor on what can be shipped. Dyson had no way of putting a rough first robot in front of the people who would have forgiven it, and no way to sell one without the brand standing behind it. Roomba crossed the chasm because it started on the right side of it.</p>
+          </div>
+        </div>
+        <div class="failure-lesson">
+          <p><strong>The Theta reading.</strong> A premium brand is an asset in the Core and a liability at the Edge. Without a route to market that lets an unfinished product meet early adopters, every Edge bet has to launch at Core quality. Anything that cannot clear that bar gets shelved instead of tested.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- BEYOND READ -->
+<section class="section-warm" id="beyond-read">
+  <div class="container">
+    <div class="section-label">Reading the Beyond Zone</div>
+    <h2 class="section-title">The <em>silence</em> around solid state</h2>
+    <p class="lede">Dyson once told the world that solid-state batteries would become its largest source of revenue. It bought Sakti3 to get there, then built the biggest manufacturing facility in its history to make cells. What it has not done since 2019 is explain what the cells are for. Three readings fit the evidence, and they lead to very different companies.</p>
+    <div class="thesis-grid fade-up">
+      <div class="thesis-cell">
+        <div class="thesis-num">01</div>
+        <div class="thesis-title">Batteries as a component</div>
+        <p class="thesis-body">Cells exist to make Dyson's own machines lighter and longer running. Nothing is sold to anyone else. This is the modest reading and the one the Singapore plant's stated purpose supports.</p>
+        <div class="thesis-verdict"><strong>Implication.</strong> A very large factory funded by a Beyond budget, delivering a Core benefit.</div>
+      </div>
+      <div class="thesis-cell">
+        <div class="thesis-num">02</div>
+        <div class="thesis-title">Batteries as a business</div>
+        <p class="thesis-body">Dyson supplies cells or licenses chemistry to other manufacturers, turning a cost centre into a second industry. This was the original thesis and it died with the car.</p>
+        <div class="thesis-verdict"><strong>Implication.</strong> Requires partners, customers and shared roadmaps. Everything the culture resists.</div>
+      </div>
+      <div class="thesis-cell">
+        <div class="thesis-num">03</div>
+        <div class="thesis-title">Batteries as an option</div>
+        <p class="thesis-body">Keep the capability warm, stay quiet, and wait for a chemistry or a market that makes commercialisation obvious. Silence as patience rather than retreat.</p>
+        <div class="thesis-verdict"><strong>Implication.</strong> Defensible while the Core pays for it, invisible to everyone who might join or fund it.</div>
+      </div>
+    </div>
+    <div class="callout-dark" style="margin-top:2px;">
+      <div class="callout-dark-label">What the silence tells you</div>
+      <p>Dyson talks constantly about robots and almost never about cells, and the difference is not technical. Robotics has Jake Dyson standing behind it with a date and a rationale for what is being deferred. Energy storage has a factory. In a founder company, a bet without a defender is a bet without a future, whatever the physics says.</p>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:0;">
+    <div class="section-label">Contained or Absorbed</div>
+    <h2 class="section-title">Two ways Dyson has handled a <em>foreign</em> body</h2>
+    <p class="lede">Dyson Farming operates as a separate business. Sakti3 was placed inside the core business, where it faced a cultural war it could not win and eventually collapsed. The farming business survived because it was kept at arm's length.</p>
+    <div class="contain-grid fade-up">
+      <div class="contain-cell contain-out">
+        <div class="contain-label">Contained &middot; Dyson Farming</div>
+        <div class="contain-title">Ring-fenced, and still alive</div>
+        <p>Separate operation, separate leadership, separate economics, 36,000 acres of it. Nobody asks the farm to hit appliance margins, and no appliance team has to defend a budget against a glasshouse. It has been allowed to develop its own culture and its own definition of progress.</p>
+        <p>It still feeds the parent when it can, most visibly through the sunflower oil grown for the Omega hair care range. Containment did not mean isolation. It meant the connection happens where there is a genuine reason, not because an org chart demands it.</p>
+      </div>
+      <div class="contain-cell contain-in">
+        <div class="contain-label">Absorbed &middot; Sakti3</div>
+        <div class="contain-title">Placed inside, and consumed</div>
+        <p>An acquired team of specialists dropped into a culture that recruits graduates precisely because they do not yet know what is impossible, then run alongside an internal team pursuing a rival approach. The internal team won, which in that environment was the only available result.</p>
+        <p>The counterfactual is worth sitting with. Given the farm's treatment, Sakti3 kept at arm's length, with its own mandate and its own metrics, would at minimum have been judged on its own terms rather than beaten in a contest it was never structured to win.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEADERSHIP -->
+<section class="section-white" id="leadership">
+  <div class="container">
+    <div class="section-label">Leadership Through Theta</div>
+    <h2 class="section-title">A founder company that hired an <em>operator</em></h2>
+    <div class="leader-grid fade-up">
+      <div>
+        <p>Most companies of Dyson's size finished the move from founder mode to operator mode decades ago. Dyson has not, and being private means it never has to. James Dyson is still Chairman and Chief Engineer, still ruling on the weight and colour of individual products. Jake Dyson holds the same Chief Engineer title, which is the clearest succession signal the company has given.</p>
+        <p>Hanno Kirner arrived in 2024 from Jaguar Land Rover and the Tata battery programme. Four things have changed since, and none of them are products.</p>
+        <ul class="failure-facts" style="margin:0 0 1.4rem;">
+          <li><span>Metric</span><div>The company now leads with EBITDA and operating profit, not units or launches. Both rose in a year revenue fell.</div></li>
+          <li><span>Cost base</span><div>Around a thousand UK roles removed in 2024, and margins protected through a second year of declining sales.</div></li>
+          <li><span>Cadence</span><div>Thirteen launches in 2025, described internally as increased agility and speed of delivery. A founder company measuring throughput.</div></li>
+          <li><span>Price ladder</span><div>The 2026 plan to sell at a wider range of price points, aimed at millions of new customers rather than the top of the market.</div></li>
+        </ul>
+        <p>That last one is the real signal. Premium positioning is not a pricing policy at Dyson, it is the reason the engineering standard exists. Kirner is loosening the constraint that has justified every decision the founder ever made about what is good enough to ship.</p>
+        <p>The tension is already visible if you know where to look. Founder mode killed a finished robot in 2001 rather than sell a compromise. Operator mode ships thirteen products a year and asks what the cheaper version looks like. The 2024 restructuring is the clearest evidence yet, because a company that treats headcount as capability does not shed a third of its UK workforce unless someone is now measuring it differently.</p>
+        <div class="callout-dark">
+          <div class="callout-dark-label">The Unasked Question</div>
+          <p>Dyson's founder culture is an asset that has no owner after the founder. Wrong thinking, permission to fail, and the refusal to run an annual release calendar are not written into any process. They are held in place by one person's authority. Nobody outside the company knows how that culture survives a succession, or what replaces it if it does not.</p>
+        </div>
+      </div>
+      <div class="leader-panel">
+        <div class="leader-panel-title">Three founder convictions, still governing</div>
+        <p>Each of these has produced a signature Dyson strength and a matching structural cost. They are the operating system underneath every zone in the portfolio.</p>
+        <ul class="obsession-list">
+          <li>
+            <div class="obsession-num">01</div>
+            <div class="obsession-text"><strong>Total control, learned once and never revisited.</strong> The Ballbarrow taught him that assigning a patent to a company means losing the invention. That conviction produced fifty years of independence and no external shareholders. It also produced a cancelled car, because taking a partner was never really on the table.</div>
+          </li>
+          <li>
+            <div class="obsession-num">02</div>
+            <div class="obsession-text"><strong>Empiricism over theory, one variable at a time.</strong> Build it, test it, change one thing, test again. It is why the hair care lab tested more than a thousand kilometres of human hair. It is also why the true cost of the car could only be known after the car existed, which is a very expensive way to find out.</div>
+          </li>
+          <li>
+            <div class="obsession-num">03</div>
+            <div class="obsession-text"><strong>Wrong thinking, and a preference for graduates over veterans.</strong> Hiring people who do not yet know what is impossible is a genuine competitive advantage in the Chaos stage. It is also a systematic disadvantage when an acquired team of experts arrives, because expertise is the thing this culture is designed to discount.</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSIGHT 2 -->
+<div class="insight-strip insight-strip-dark fade-up">
+  <div class="insight-quote">
+    The same conviction that made the coach house work<br>is the one that made the <em>car</em> impossible.
+  </div>
+</div>
+
+<!-- COMPETITORS -->
+<section class="section-white" id="competitors">
+  <div class="container-wide">
+    <div class="section-label">Competitive Landscape</div>
+    <h2 class="section-title">Nobody is trying to <em>out-Dyson</em> Dyson</h2>
+    <p class="lede" style="margin-bottom:3rem;">The competitive threat is not a rival with better cyclones. It is a set of companies that have each picked one of Dyson's structural weaknesses and built a business model around it. SharkNinja attacks the marketing and price gap. Dreame attacks the performance claim. Roborock and Ecovacs took the robotic category while Dyson was deciding whether its robot was good enough. Xiaomi demonstrates what ecosystem leverage does to a company that insists on building everything itself.</p>
+    <div class="competitor-grid fade-up">
+
+      <div class="comp-card featured">
+        <div class="comp-name">Dyson</div>
+        <div class="comp-tag">The Engineering House &middot; Three Core engines, world-class invention, an unreliable route from Edge to Core</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">Floor care, hair care and air treatment. Profitable, premium, and increasingly matched on raw specification.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">Robotics and AI heavily funded. Spot+Scrub Ai is genuinely differentiated. Wearables and lighting did not convert.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">Home robotics by 2030, proprietary cells, and a 36,000-acre farming business. Ambition intact, energy storage thesis missing.</div></div>
+        <div class="comp-verdict verdict-crisis">Transitioning</div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-name">SharkNinja</div>
+        <div class="comp-tag">The Fast Follower &middot; Dyson's formula executed faster, marketed harder, and priced lower</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">Dozens of launches a year across cleaning and kitchen. Feature density and value rather than invention.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">FlexStyle took the Airwrap proposition to roughly half the price and holds it. Consumer research drives the roadmap.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">Essentially none, by design. No moonshots, no fundamental research, no capital tied up in a ten-year bet.</div></div>
+        <div class="comp-verdict verdict-strong">Execution Machine</div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-name">Dreame</div>
+        <div class="comp-tag">The Performance Challenger &middot; Aerospace-trained motor engineering aimed directly at Dyson's proof point</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">Cordless sticks that publish higher motor speeds and suction figures than Dyson flagships at a fraction of the price.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">Rapid category expansion into hair care, purifiers and robots using the same motor and supply chain leverage.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">Stair-climbing robot concepts. Showy, unproven, and aimed at the exact problem Dyson says is not yet reliable enough to sell.</div></div>
+        <div class="comp-verdict verdict-ascending">Direct Assault</div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-name">Roborock &amp; Ecovacs</div>
+        <div class="comp-tag">The Category Owners &middot; They built the robotic market Dyson designed for in 2001 and shelved</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">Robot vacuums as the core business rather than an adjacency. Scale, iteration speed and docking station ecosystems.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">Self-cleaning stations, mapping, arms and obstacle handling shipped years before Dyson entered the wet robotic segment.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">Limited. The advantage is cadence and cost, not fundamental research.</div></div>
+        <div class="comp-verdict verdict-focused">Incumbent Now</div>
+      </div>
+
+      <div class="comp-card">
+        <div class="comp-name">Xiaomi</div>
+        <div class="comp-tag">The Ecosystem Play &middot; The living counterfactual to Dyson's do-it-all-ourselves doctrine</div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-core"></div><div class="comp-zone-text">Partner-built appliances distributed through an existing device ecosystem and a captive retail network.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-edge"></div><div class="comp-zone-text">New categories entered in months rather than years by assembling suppliers instead of inventing components.</div></div>
+        <div class="comp-zone-row"><div class="zone-dot zone-dot-beyond"></div><div class="comp-zone-text">Shipped an electric vehicle in the same decade Dyson cancelled one. The difference was never engineering talent.</div></div>
+        <div class="comp-verdict verdict-fortress">Leverage Model</div>
+      </div>
+
+    </div>
+    <div class="radar-wrap fade-up">
+      <canvas id="radarChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- S&W -->
+<section class="section-warm" id="sw">
+  <div class="container">
+    <div class="section-label">What Dyson Owns and What It Does Not</div>
+    <h2 class="section-title">Honest capital. <em>Honest</em> gaps.</h2>
+    <div class="sw-grid fade-up">
+
+      <div class="sw-panel sw-panel-strength">
+        <div class="sw-title">Structural Strengths</div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">A platform technology that carries innovation across the company</div>
+            <p class="sw-desc">The digital motor is the most effective piece of portfolio infrastructure Dyson owns. It moved from vacuums into hand dryers, fans, purifiers, hair care and wet cleaning without a reorganisation, because every team already understood it. This is technical modularity doing the work that most companies try to achieve with process.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">Permission to fail that reaches into the Core, not just the lab</div>
+            <p class="sw-desc">At most large companies, Core innovation is risk management and failure is career limiting. At Dyson the same tolerance that funds moonshots also applies to incremental work, which is why a hair dryer gets four years and a hundred engineers. The Core is run with an Edge mentality, and that is genuinely rare.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">Patient capital with no quarterly audience</div>
+            <p class="sw-desc">A public company would have been forced to abandon the robotics programme during the two years of falling revenue. Dyson expanded it. The absence of external shareholders is what allows a ten-year research horizon to survive a bad trading year, and it is the reason the Beyond zone still exists at all.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">Disciplined problem selection in robotics</div>
+            <p class="sw-desc">Dyson has researched manipulation and stair climbing for around a decade and has refused to commercialise either until they are reliable. Choosing stain detection instead, and shipping it, is a better decision than the more spectacular alternatives. This is what learning from the car looks like in practice.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">A connected data asset that most rivals cannot replicate</div>
+            <p class="sw-desc">Millions of connected purifiers have been returning indoor air quality data for years, and the app is becoming the service and diagnostic layer for the whole portfolio. This is the raw material for the self-diagnosing machines Dyson keeps describing, and it compounds quietly while competitors compete on specifications.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">S</div>
+          <div class="sw-content">
+            <div class="sw-lead">Vertical integration that turns research into manufacturing</div>
+            <p class="sw-desc">Dyson designs its own motors and now its own battery cells, and builds them in its own plants across Singapore, Malaysia, the Philippines and Poland. Very few consumer companies can take a materials science decision all the way to a production line. That capability was largely paid for by the car.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sw-panel sw-panel-weakness">
+        <div class="sw-title">Structural Vulnerabilities</div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">No repeatable mechanism for absorbing an innovation</div>
+            <p class="sw-desc">When a bet sits close to the motor, the organisation absorbs it automatically. When it does not, there is no substitute. Finance, legal, commercial and service functions meet the innovation at a launch milestone rather than during its development, which makes them approvers instead of co-owners. This is the central finding of this case study.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">Acquisition capability that has been tested once and failed</div>
+            <p class="sw-desc">Sakti3 was run in competition with an internal team rather than protected from it, which in a culture that prizes solving problems from first principles is a decision with only one possible ending. Dyson has no visible integration playbook and no venture arm, so external technology arrives with nowhere safe to stand.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">Premium positioning under sustained specification attack</div>
+            <p class="sw-desc">When a rival publishes higher motor speeds and higher suction at half the price, the premium has to be defended on build, service, design and trust rather than performance. Dyson's 2026 move to a wider range of price points concedes the point. The execution risk is doing that without eroding the brand that justified the price in the first place.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">Late to categories it was early enough to own</div>
+            <p class="sw-desc">Robotic floor care was designed in 2001 and shelved. Wet cleaning arrived after competitors had defined it. The pattern is consistent. Dyson would rather be late and right than early and adequate, which is a defensible philosophy that has now cost it two category leadership positions.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">A Beyond bet with no public champion</div>
+            <p class="sw-desc">Robotics has Jake Dyson, a timeline and a research centre. Energy storage has the largest factory the company has ever built and almost no strategic narrative since the car was cancelled. A moonshot without a named owner tends to become a cost centre, and there is no visible commercial thesis replacing the one that died in 2019.</p>
+          </div>
+        </div>
+
+        <div class="sw-item">
+          <div class="sw-marker">W</div>
+          <div class="sw-content">
+            <div class="sw-lead">Succession as an unresolved governance risk</div>
+            <p class="sw-desc">The culture is not documented, it is embodied. Wrong thinking and permission to fail exist because the founder enforces them, not because they are written into how projects are approved. Jake Dyson is the presumptive engineering heir and a professional CEO now runs the operation. Nobody outside can model how that arrangement makes decisions in five years.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERNAL OPEN SOURCE -->
+<section class="section-white" id="internal-open-source">
+  <div class="container">
+    <div class="section-label">Scaling Without Breaking</div>
+    <h2 class="section-title">The internal <em>open source</em> test</h2>
+    <p class="lede" style="margin-bottom:3rem;">Internal open source is not about publishing code. It is about making a breakthrough legible and partly owned by the rest of the organisation before that organisation is asked to carry it. Five principles, tested against a company that is secretive by design. Dyson passes one of them convincingly, and the one it passes is the reason the digital motor spread and the Zone did not.</p>
+    <div class="os-grid fade-up">
+      <div class="os-compare">
+
+        <div class="os-dimension">Transparency</div>
+        <div class="os-row">
+          <div class="os-cell os-cell-model">
+            <div class="os-cell-label">The Principle</div>
+            <div class="os-cell-content">Narrate the reasoning while it is happening, so that by the time finance, legal and commercial encounter the innovation they have been following the story rather than receiving a verdict.</div>
+          </div>
+          <div class="os-cell os-cell-dyson">
+            <div class="os-cell-label">Dyson</div>
+            <div class="os-cell-content">Secrecy is the default and prototypes are hidden even internally. What Dyson does instead is retrospective honesty, publishing the failure after the fact and displaying the cancelled car at headquarters. Real, but backwards.</div>
+          </div>
+        </div>
+
+        <div class="os-dimension">Modularity</div>
+        <div class="os-row">
+          <div class="os-cell os-cell-model">
+            <div class="os-cell-label">The Principle</div>
+            <div class="os-cell-content">Let functions engage with a piece of the innovation rather than the whole of it, so adoption is a collaboration instead of a takeover.</div>
+          </div>
+          <div class="os-cell os-cell-dyson">
+            <div class="os-cell-label">Dyson</div>
+            <div class="os-cell-content">The strongest score in the framework, and it is entirely technical. The motor is a genuine shared module that any team can build around. There is no organisational equivalent, which is why non-motor innovations have no on-ramp.</div>
+          </div>
+        </div>
+
+        <div class="os-dimension">Meritocracy of contribution</div>
+        <div class="os-row">
+          <div class="os-cell os-cell-model">
+            <div class="os-cell-label">The Principle</div>
+            <div class="os-cell-content">Make contribution visible and credited across every function, which defuses the politics of who owns the breakthrough.</div>
+          </div>
+          <div class="os-cell os-cell-dyson">
+            <div class="os-cell-label">Dyson</div>
+            <div class="os-cell-content">A real meritocracy, bounded by engineering. Ideas win on technical merit regardless of seniority. Outside engineering, contribution is treated as support rather than authorship, which is how a function learns to behave like a gatekeeper.</div>
+          </div>
+        </div>
+
+        <div class="os-dimension">Iterative feedback</div>
+        <div class="os-row">
+          <div class="os-cell os-cell-model">
+            <div class="os-cell-label">The Principle</div>
+            <div class="os-cell-content">Embed the functions inside the development loop rather than consulting them at formal gates.</div>
+          </div>
+          <div class="os-cell os-cell-dyson">
+            <div class="os-cell-label">Dyson</div>
+            <div class="os-cell-content">The loop between engineering and the end user is exceptionally tight, running through home testing, global user trials and app data. The loop between engineering and the rest of the company is a milestone review.</div>
+          </div>
+        </div>
+
+        <div class="os-dimension">Shared ownership</div>
+        <div class="os-row">
+          <div class="os-cell os-cell-model">
+            <div class="os-cell-label">The Principle</div>
+            <div class="os-cell-content">The outcome of the other four. The innovation stops being that team's project and becomes something the organisation built.</div>
+          </div>
+          <div class="os-cell os-cell-dyson">
+            <div class="os-cell-label">Dyson</div>
+            <div class="os-cell-content">Ownership is founder-derived rather than collective. Everyone knows whose standards a product is being held to. That produces extraordinary coherence and leaves the organisation without a mechanism for claiming an innovation as its own.</div>
+          </div>
+        </div>
+
+      </div>
+      <div>
+        <p>Read down the right column and the conversion gate explains itself. Dyson is a cathedral with a bazaar inside it, and that structure is close to ideal for Chaos and Build. The cost lands at Scale. An innovation developed in secret arrives at the rest of the company as a finished object needing pricing, compliance, service design and inventory commitment from people who have never seen it. They are being asked to adopt something, not to receive something they helped build.</p>
+        <p>None of this requires Dyson to give up secrecy. Internal open source is not external openness. Legal can sit inside the robotics loop without a prototype leaving the building. Commercial can shape a wearable's price ladder before tooling is committed rather than after. The mechanism that carried the digital motor across six categories could be built on purpose for the things that are not motors.</p>
+        <div style="background:rgba(200,0,107,0.05); border-left:3px solid var(--dyson-magenta); padding:1.5rem 2rem; margin-top:1.5rem;">
+          <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dyson-magenta);margin-bottom:0.7rem;">The Counterfactual</div>
+          <p style="font-size:0.88rem;color:#555;margin:0;line-height:1.75;">The Zone was in development for years. Somewhere in that period, a commercial team with real standing could have said that people do not shop for air purification on their heads, and that the product should probably be sold as headphones with filtration rather than filtration with headphones. Dyson reached that conclusion eventually and called it the OnTrac. It sold roughly ten times as well. The information existed inside the company. The structure did not carry it to the right room in time.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HORIZONS -->
+<section class="section-warm" id="horizons">
+  <div class="container">
+    <div class="section-label">Innovation Horizons</div>
+    <h2 class="section-title">Dyson runs on a <em>longer</em> clock than the framework assumes</h2>
+    <p class="lede" style="margin-bottom:2.5rem;">The standard Theta horizons assume that Core funds Edge and Edge seeds Beyond on a broadly predictable cycle. Dyson inverts the sequence. Its Core improvements are downstream of research that started fifteen or twenty years earlier, which is why a specification bump on a hair dryer is really the visible end of a very long programme.</p>
+    <table class="horizon-table fade-up">
+      <thead>
+        <tr><th>Theta Horizon</th><th>Standard Focus</th><th>How Dyson Actually Runs It</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0 to 2 years</td>
+          <td>Core improvements</td>
+          <td>Fast on the surface, slow underneath. Thirteen launches in 2025 sit on top of motor, battery and filtration research that has been running for a decade or more. The cadence is new. The substance underneath it is not.</td>
+        </tr>
+        <tr>
+          <td>2 to 5 years</td>
+          <td>Adjacent and architectural</td>
+          <td>Closer to five or six years than two. The Supersonic took four years and more than a hundred engineers. Dyson refuses an annual release calendar on principle, which protects quality and cedes timing to competitors.</td>
+        </tr>
+        <tr>
+          <td>5 to 10 years</td>
+          <td>Disruptive innovation</td>
+          <td>Frequently longer. The robot took thirteen years from a shelved prototype to a first product and another eleven to become genuinely differentiated. Dyson would rather arrive late with something defensible than early with something adequate.</td>
+        </tr>
+        <tr>
+          <td>7 to 15 years</td>
+          <td>Transformational innovation</td>
+          <td>Roughly on schedule, with one caveat. Battery research began around 2005 and the manufacturing capability now exists. What is missing is the commercial thesis, which has been absent since the car was cancelled in 2019.</td>
+        </tr>
+        <tr>
+          <td>10 years and beyond</td>
+          <td>Frontier research</td>
+          <td>Fully committed and openly stated. Home robots by the end of the decade, self-diagnosing machines that troubleshoot themselves, and an agricultural technology business with a horizon measured in generations rather than product cycles.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- RELATIVITY -->
+<section class="section-white" id="relativity">
+  <div class="container">
+    <div class="section-label">The Relativity Principle</div>
+    <h2 class="section-title">Judge the portfolio against its <em>starting point</em></h2>
+    <p class="lede" style="margin-bottom:3rem;">Innovation is contextual. Dyson has no shareholders, no quarterly audience and no access to public capital, which makes it a fundamentally different machine from every company it competes with. Score it against a listed peer and you misread both its strengths and its failures.</p>
+    <div class="rel-grid fade-up">
+      <div class="rel-ledger">
+        <div class="rel-dimension">Funding a ten-year bet</div>
+        <div class="rel-row">
+          <div class="rel-cell rel-cell-dyson"><div class="rel-cell-head">Dyson</div>Expanded the robotics programme through two consecutive years of falling revenue. No one had to be persuaded except the founder.</div>
+          <div class="rel-cell rel-cell-public"><div class="rel-cell-head">A listed peer</div>Robotics would have been the first line cut. Falling revenue plus a research centre with no near-term product is the textbook activist target.</div>
+        </div>
+        <div class="rel-dimension">Absorbing a &pound;500m write-off</div>
+        <div class="rel-row">
+          <div class="rel-cell rel-cell-dyson"><div class="rel-cell-head">Dyson</div>Cancelled the car, kept the capability, displayed the prototype at headquarters. No revolt, because there was nobody to revolt.</div>
+          <div class="rel-cell rel-cell-public"><div class="rel-cell-head">A listed peer</div>The programme would likely have been killed years earlier, along with the battery, motor and software capability that survived it.</div>
+        </div>
+        <div class="rel-dimension">Reaching industrial scale</div>
+        <div class="rel-row">
+          <div class="rel-cell rel-cell-dyson"><div class="rel-cell-head">Dyson</div>No mechanism. Raising equity or taking a partner means diluting control, so the only options were self-fund or stop. It stopped.</div>
+          <div class="rel-cell rel-cell-public"><div class="rel-cell-head">A listed peer</div>Equity raises, joint ventures and supplier ecosystems are routine. Xiaomi shipped a car in the decade Dyson cancelled one.</div>
+        </div>
+        <div class="rel-dimension">Setting the quality bar</div>
+        <div class="rel-row">
+          <div class="rel-cell rel-cell-dyson"><div class="rel-cell-head">Dyson</div>Refuses an annual release calendar. A product ships when the founder says it is good enough, which is why the 2001 robot never shipped at all.</div>
+          <div class="rel-cell rel-cell-public"><div class="rel-cell-head">A listed peer</div>The calendar sets the bar. Ships adequate products on time, defines categories early, and iterates in public.</div>
+        </div>
+      </div>
+      <div>
+        <p>The trade is simple and it is not free. Private ownership buys Dyson permission and denies it buffer. Everything the framework praises about the Beyond zone comes from the first half of that sentence. Everything it flags about scaling comes from the second.</p>
+        <p>This also reframes the two famous failures. The car was not cancelled because Dyson misjudged the engineering, and Sakti3 was not dropped because the science was fraudulent. Both were cases where the next step required sharing control, and a company built on never sharing control did what it was designed to do.</p>
+        <p>So the honest benchmark is not Tesla or Xiaomi. It is Dyson against its own inertia. Measured that way, thirteen launches in a year, a differentiated AI robot, a battery plant and a robotics centre funded through a downturn is a strong record. Measured against companies with access to public capital, the same portfolio looks like ambition that keeps running out of runway.</p>
+        <div style="background:rgba(200,0,107,0.05); border-left:3px solid var(--dyson-magenta); padding:1.5rem 2rem; margin-top:0.6rem;">
+          <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dyson-magenta);margin-bottom:0.7rem;">The question this raises</div>
+          <p style="font-size:0.88rem;color:#555;margin:0;line-height:1.75;">If the constraint is structural rather than strategic, then no amount of better portfolio management fixes it. Either Dyson classifies capital-intensive bets as partnership candidates from day one, or it accepts that the Beyond zone will keep producing capability rather than products. Both are legitimate answers. Only one of them is currently written down.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSTIC -->
+<section class="section-ink" id="diagnostic">
+  <div class="container">
+    <div class="section-label">Innovation Health Diagnostic</div>
+    <h2 class="section-title">The <em>Theta</em> verdict</h2>
+    <div class="diagnostic-grid fade-up">
+      <div>
+        <div class="diag-block">
+          <div class="diag-label">Archetype Assessment</div>
+          <div class="diag-title">Core, Edge and Beyond, scored honestly</div>
+          <p class="diag-body">The Core is profitable and genuinely inventive, with three engines rather than one. The Edge is well funded and converting selectively. The Beyond is ambitious and half-championed. Nothing here is stagnant, which is why the verdict is transition rather than decline.</p>
+          <div class="archetype-row">
+            <span class="archetype-chip chip-ok">Core: Strong</span>
+            <span class="archetype-chip chip-mid">Edge: Mixed</span>
+            <span class="archetype-chip chip-mid">Beyond: Uneven</span>
+            <span class="archetype-chip chip-gap">Conversion: Weak</span>
+            <span class="archetype-chip chip-gap">Integration: Untested</span>
+          </div>
+        </div>
+
+        <div class="diag-block">
+          <div class="diag-label">Culture and Leadership</div>
+          <div class="diag-title">Mavericks protected, functions excluded</div>
+          <p class="diag-body">Mavericks are not tolerated at Dyson, they are recruited deliberately and shielded structurally. Intelligent failure is a learning signal rather than a career risk, and the founder's own record of five thousand failed prototypes is the proof that makes it credible. The limit is that this protection extends to engineers and to almost nobody else.</p>
+        </div>
+
+        <div class="diag-block">
+          <div class="diag-label">Signal Detection</div>
+          <div class="diag-title">Listening closely to users, less closely to itself</div>
+          <p class="diag-body">Dyson's feedback loop to the end user is world class, running through home testing, global trials and connected product data. Its internal signal detection is weaker. Commercial doubts about a product's market fit have no clear path into the development cycle before tooling is committed.</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="diag-block">
+          <div class="diag-label">Allocation vs Benchmark</div>
+          <div class="diag-title">Close to the 70/20/10 shape</div>
+          <div class="inline-bars">
+            <div class="inline-bar-row">
+              <span class="inline-bar-label">Core</span>
+              <div class="inline-bar-track"><div class="inline-bar-actual" style="width:65%;background:var(--core-green)"></div><div class="inline-bar-bench" style="left:70%"></div></div>
+              <span class="inline-bar-pct">65%</span>
+            </div>
+            <div class="inline-bar-row">
+              <span class="inline-bar-label">Edge</span>
+              <div class="inline-bar-track"><div class="inline-bar-actual" style="width:25%;background:var(--edge-amber)"></div><div class="inline-bar-bench" style="left:20%"></div></div>
+              <span class="inline-bar-pct">25%</span>
+            </div>
+            <div class="inline-bar-row">
+              <span class="inline-bar-label">Beyond</span>
+              <div class="inline-bar-track"><div class="inline-bar-actual" style="width:10%;background:var(--beyond-crimson)"></div><div class="inline-bar-bench" style="left:10%"></div></div>
+              <span class="inline-bar-pct">10%</span>
+            </div>
+          </div>
+          <p class="diag-body" style="margin-top:1.2rem;">A well-shaped portfolio is a necessary condition and not a sufficient one. Dyson demonstrates that a company can fund the future correctly and still fail to receive it.</p>
+        </div>
+
+        <div class="diag-block">
+          <div class="diag-label">The Central Tension</div>
+          <div class="tension-box">
+            <p>Total control is the reason Dyson exists and the reason its two most expensive bets failed. It produced fifteen years of solitary persistence, a bagless vacuum that beat an entire industry, and fifty years of freedom from shareholders who would have killed the robotics programme last year. It also produced an acquisition run in competition with an internal team, and a finished car cancelled rather than partnered. The framework does not resolve this tension. It insists the company name it.</p>
+          </div>
+        </div>
+
+        <div class="verdict-block">
+          <div class="verdict-headline">Transitioning</div>
+          <p class="verdict-sub">Dyson has mastered Chaos and Build to a degree almost no company can match, and has not yet built the machinery for Scale. Its Core is profitable, its Edge is funded, its Beyond is alive. The unresolved question is whether an organisation designed to protect inventors can learn to absorb their inventions without becoming the kind of company that would never have produced them.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RECOMMENDATIONS -->
+<section class="section-white" id="recommendations">
+  <div class="container">
+    <div class="section-label">Strategic Implications</div>
+    <h2 class="section-title">Four moves the framework <em>points</em> to</h2>
+    <div class="rec-grid fade-up">
+
+      <div class="rec-tile">
+        <span class="rec-zone">Conversion</span>
+        <div class="rec-title">Build an organisational equivalent of the motor</div>
+        <p class="rec-body">The digital motor proves Dyson can propagate an innovation across the company when a shared component exists. The same effect can be manufactured deliberately for non-motor bets, by giving commercial, service and legal teams a defined stake in an Edge programme long before launch. Not more governance. A shared object they help shape.</p>
+      </div>
+
+      <div class="rec-tile">
+        <span class="rec-zone">Integration</span>
+        <div class="rec-title">Never run an acquisition against an internal team</div>
+        <p class="rec-body">Sakti3 lost a competition it could not win inside a culture that discounts outside expertise by design. If Dyson acquires again, the acquired team needs protection, a distinct mandate and metrics that are not the Core's. Treat an acquisition as a Beyond bet with its own governance rather than a shortcut into an existing roadmap.</p>
+      </div>
+
+      <div class="rec-tile">
+        <span class="rec-zone">Beyond</span>
+        <div class="rec-title">Give energy storage a named champion and a thesis</div>
+        <p class="rec-body">Robotics works as a Beyond bet because Jake Dyson defends it publicly with a timeline and a clear rationale for what is being deferred. Energy storage has a factory, a research programme and no equivalent voice. A moonshot without an owner drifts toward being an overhead line, whatever the technology is worth.</p>
+      </div>
+
+      <div class="rec-tile">
+        <span class="rec-zone">Capital</span>
+        <div class="rec-title">Decide in advance which bets require a partner</div>
+        <p class="rec-body">Private ownership buys freedom and caps buffer capital. The car was cancelled because both facts were confronted at the end rather than the start. Any Beyond bet that needs industrial scale to reach viability should be classified as a partnership candidate on day one, so the choice between control and outcome is made while it is still cheap.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="section-ink" id="closing">
+  <div class="container">
+    <div class="section-label">In Closing</div>
+    <h2 class="section-title">Dyson has already done the <em>hard</em> part</h2>
+    <p style="max-width:760px;">A conversion problem is a good problem to have, because it sits downstream of everything that is genuinely difficult to build. Most companies never get here. They have the process and no invention. Dyson has the invention and an incomplete process, and only one of those two gaps can be closed by design.</p>
+    <div class="right-grid fade-up">
+      <div class="right-item">
+        <div class="right-title">Three Core engines</div>
+        <p class="right-body">Floor care, hair care and air treatment each stand on their own. Very few companies build a second engine from scratch. Dyson built two, from the same motor, in the same decade.</p>
+      </div>
+      <div class="right-item">
+        <div class="right-title">A platform that travels</div>
+        <p class="right-body">The digital motor moved across six categories without a reorganisation. That is the mechanism most companies spend years trying to manufacture with process, and Dyson already owns a working version of it.</p>
+      </div>
+      <div class="right-item">
+        <div class="right-title">A Beyond zone that survived a downturn</div>
+        <p class="right-body">Robotics expanded through two years of falling revenue. Whatever the succession brings, the appetite to fund a ten-year bet is intact and it is rare.</p>
+      </div>
+    </div>
+    <p style="max-width:760px; margin-top:2.5rem;">None of what this case study surfaces is a failure of engineering, vision or nerve. It is a question of how a breakthrough gets handed over, and to whom, and when. That is organisational design. It is the most fixable thing on the list.</p>
+  </div>
+</section>
+
+<!-- INSIGHT 3 -->
+<div class="insight-strip insight-strip-brand fade-up">
+  <div class="insight-quote">
+    A company that can build anything<br>still has to learn how to turn it into a <em>business</em>.
+  </div>
+</div>
+
+<footer>
+  <div class="footer-left"><span>Theta Innovation Framework</span> Dyson Case Study &middot; Innovation Underdogs</div>
+  <div class="footer-right"><a href="case-studies.html">All case studies</a></div>
+</footer>
+
+<script>
+const ZONE = { core:'#2D6A4F', edge:'#B5841A', beyond:'#8B1A1A' };
+const AXIS = '#8B948F';
+
+/* ---------- SCATTER: THETA MAP ---------- */
+const scatterEl = document.getElementById('scatterChart');
+if (scatterEl) {
+  new Chart(scatterEl, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Core',
+          backgroundColor: 'rgba(45,106,79,0.75)',
+          borderColor: ZONE.core,
+          pointRadius: 7, pointHoverRadius: 10,
+          data: [
+            {x:1.0, y:1.2, n:'V8 Cyclone refresh'},
+            {x:1.2, y:1.5, n:'V16 Piston Animal'},
+            {x:1.5, y:1.9, n:'Supersonic r'},
+            {x:1.4, y:2.0, n:'Airwrap Co-anda 2x'},
+            {x:1.7, y:1.8, n:'HushJet purifier'},
+            {x:1.9, y:2.5, n:'PencilVac'},
+            {x:2.2, y:2.3, n:'Clean+Wash Hygiene'}
+          ]
+        },
+        {
+          label: 'Edge',
+          backgroundColor: 'rgba(181,132,26,0.75)',
+          borderColor: ZONE.edge,
+          pointRadius: 7, pointHoverRadius: 10,
+          data: [
+            {x:1.6, y:3.2, n:'Hyperdymium motor platform'},
+            {x:2.3, y:2.1, n:'OnTrac headphones'},
+            {x:2.4, y:2.3, n:'Lightcycle Morph'},
+            {x:2.7, y:3.0, n:'360 Vis Nav robot'},
+            {x:2.9, y:3.5, n:'Spot+Scrub Ai robot'},
+            {x:3.2, y:3.6, n:'Dyson Zone (withdrawn)'}
+          ]
+        },
+        {
+          label: 'Beyond',
+          backgroundColor: 'rgba(139,26,26,0.75)',
+          borderColor: ZONE.beyond,
+          pointRadius: 7, pointHoverRadius: 10,
+          data: [
+            {x:3.6, y:4.0, n:'Proprietary cell manufacturing'},
+            {x:4.0, y:4.7, n:'Solid-state programme'},
+            {x:4.3, y:4.5, n:'N526 electric car (cancelled)'},
+            {x:4.2, y:4.6, n:'Domestic manipulation robotics'},
+            {x:4.7, y:4.3, n:'Dyson Farming agri-tech'}
+          ]
+        }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      scales: {
+        x: {
+          min:0.5, max:5, title:{display:true, text:'Market reach: existing to speculative', color:AXIS, font:{size:11}},
+          ticks:{ color:AXIS, stepSize:1, callback:v=>['','Existing','New','Emerging','Speculative','Frontier'][v]||'' },
+          grid:{ color:'rgba(0,0,0,0.05)' }
+        },
+        y: {
+          min:0.5, max:5, title:{display:true, text:'Technological change: incremental to extreme', color:AXIS, font:{size:11}},
+          ticks:{ color:AXIS, stepSize:1, callback:v=>['','Incremental','Moderate','High','Radical','Extreme'][v]||'' },
+          grid:{ color:'rgba(0,0,0,0.05)' }
+        }
+      },
+      plugins: {
+        legend:{ position:'top', labels:{ color:'#3a3a3a', usePointStyle:true, boxWidth:8, font:{size:12} } },
+        tooltip:{ callbacks:{ label: c => c.raw.n } }
+      }
+    }
+  });
+}
+
+/* ---------- DOUGHNUT: ALLOCATION ---------- */
+const doughnutEl = document.getElementById('doughnutChart');
+if (doughnutEl) {
+  new Chart(doughnutEl, {
+    type:'doughnut',
+    data:{
+      labels:['Core','Edge','Beyond'],
+      datasets:[{ data:[65,25,10], backgroundColor:[ZONE.core, ZONE.edge, ZONE.beyond], borderColor:'#ECEAE6', borderWidth:3, cutout:'72%' }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom', labels:{ color:'#3a3a3a', usePointStyle:true, boxWidth:8, font:{size:12} } },
+      tooltip:{ callbacks:{ label: c => c.label + ': ' + c.parsed + '% (benchmark ' + ({Core:70,Edge:20,Beyond:10})[c.label] + '%)' } } }
+    }
+  });
+}
+
+/* ---------- RADAR: COMPETITORS ---------- */
+const radarEl = document.getElementById('radarChart');
+if (radarEl) {
+  new Chart(radarEl, {
+    type:'radar',
+    data:{
+      labels:['Core engineering','Edge execution speed','Beyond ambition','External tech integration','Scaling and commercialisation','Price and cost agility'],
+      datasets:[
+        { label:'Dyson', data:[9,5,9,2,4,3], borderColor:'#C8006B', backgroundColor:'rgba(200,0,107,0.13)', pointBackgroundColor:'#C8006B', borderWidth:2 },
+        { label:'SharkNinja', data:[6,9,2,6,9,9], borderColor:'#2D6A4F', backgroundColor:'rgba(45,106,79,0.10)', pointBackgroundColor:'#2D6A4F', borderWidth:2 },
+        { label:'Dreame', data:[8,8,5,7,7,9], borderColor:'#B5841A', backgroundColor:'rgba(181,132,26,0.10)', pointBackgroundColor:'#B5841A', borderWidth:2 },
+        { label:'Roborock', data:[7,9,3,6,8,8], borderColor:'#1C2630', backgroundColor:'rgba(28,38,48,0.08)', pointBackgroundColor:'#1C2630', borderWidth:2 }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      scales:{ r:{ min:0, max:10, ticks:{ display:false, stepSize:2 }, grid:{ color:'rgba(0,0,0,0.08)' }, angleLines:{ color:'rgba(0,0,0,0.08)' }, pointLabels:{ color:'#3a3a3a', font:{size:11} } } },
+      plugins:{ legend:{ position:'bottom', labels:{ color:'#3a3a3a', usePointStyle:true, boxWidth:8, font:{size:12} } } }
+    }
+  });
+}
+
+/* ---------- FADE UP ---------- */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
