@@ -1,778 +1,368 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBM Case Study | The Company That Invented the Future</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IBM Through the Theta Lens · Seventy Years, Eight CEOs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* IBM-grounded palette: Big Blue, carbon ink, warm paper. Theta zones get their own hues. */
+  --ibm-blue:#0f62fe;
+  --ibm-blue-deep:#0043ce;
+  --ink:#161616;
+  --ink-soft:#393939;
+  --mute:#6f6f6f;
+  --line:#d0d0d0;
+  --paper:#f4f4f4;
+  --paper-2:#ffffff;
+  /* Theta zones */
+  --core:#0043ce;      /* deep blue = the proven engine */
+  --edge:#b58500;      /* amber = the tension zone */
+  --beyond:#8a1a3d;    /* crimson = the wild bet */
+  --core-soft:rgba(0,67,206,.10);
+  --edge-soft:rgba(181,133,0,.12);
+  --beyond-soft:rgba(138,26,61,.10);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'IBM Plex Sans',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1040px;margin:0 auto;padding:0 clamp(1.25rem,4vw,3rem);}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: #1a1a1a;
-            background: #ffffff;
-        }
+/* ---- HERO ---- */
+header{
+  background:var(--ink);
+  color:#fff;
+  padding:clamp(3rem,7vw,5.5rem) 0 clamp(2.5rem,6vw,4rem);
+  position:relative;
+  overflow:hidden;
+}
+/* the eight-bar IBM stripe motif, reinterpreted as a faint backdrop */
+header::after{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.06;
+  background:repeating-linear-gradient(180deg,#fff 0 6px,transparent 6px 14px);
+}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.72rem;letter-spacing:.04em;color:#78a9ff;
+  margin-bottom:1.4rem;position:relative;
+}
+.eyebrow b{color:#fff;font-weight:500;}
+h1{
+  font-family:'IBM Plex Serif',serif;
+  font-weight:400;
+  font-size:clamp(1.9rem,4.6vw,3.15rem);
+  line-height:1.08;
+  letter-spacing:-.01em;
+  max-width:20ch;
+  position:relative;
+}
+.dek{
+  margin-top:1.5rem;max-width:60ch;color:#c6c6c6;
+  font-size:clamp(1rem,1.6vw,1.12rem);position:relative;
+}
+.dek em{color:#fff;font-style:italic;}
 
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            background: linear-gradient(135deg, #0f62fe 0%, #001d6c 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
+/* ---- legend ---- */
+.legend{display:flex;flex-wrap:wrap;gap:1.4rem;margin-top:2.4rem;position:relative;}
+.legend div{display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:#e0e0e0;}
+.swatch{width:14px;height:14px;border-radius:2px;flex:none;}
+.sw-core{background:var(--core);box-shadow:inset 0 0 0 1px rgba(255,255,255,.25);}
+.sw-edge{background:var(--edge);}
+.sw-beyond{background:var(--beyond);}
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: gridMove 20s linear infinite;
-            opacity: 0.3;
-        }
+/* ---- intro strip ---- */
+.note{
+  background:var(--paper-2);border-left:3px solid var(--ibm-blue);
+  padding:1.1rem 1.3rem;margin:2.5rem 0 0;font-size:.92rem;color:var(--ink-soft);
+}
+.note b{color:var(--ink);font-weight:600;}
 
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
+/* ---- CHART ---- */
+.chart{margin:3rem 0 1rem;}
+.ceo{
+  display:grid;
+  grid-template-columns:170px 1fr;
+  gap:0 1.6rem;
+  padding:1.6rem 0;
+  border-top:1px solid var(--line);
+  align-items:start;
+}
+.ceo:last-child{border-bottom:1px solid var(--line);}
+.who .name{font-family:'IBM Plex Serif',serif;font-size:1.12rem;font-weight:500;line-height:1.2;}
+.who .years{font-family:'IBM Plex Mono',monospace;font-size:.74rem;color:var(--mute);margin-top:.25rem;}
+.who .tag{
+  display:inline-block;margin-top:.6rem;font-size:.68rem;font-weight:500;
+  padding:.18rem .5rem;border-radius:2px;line-height:1.3;
+}
+.tag-win{background:var(--core-soft);color:var(--core);}
+.tag-fail{background:var(--beyond-soft);color:var(--beyond);}
+.tag-mid{background:var(--edge-soft);color:var(--edge);}
 
-        .hero-content {
-            text-align: center;
-            color: white;
-            z-index: 1;
-            max-width: 900px;
-            padding: 2rem;
-        }
+.bars{min-width:0;}
+.bar{
+  display:flex;height:30px;border-radius:3px;overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.06);
+  background:#e8e8e8;
+}
+.seg{display:flex;align-items:center;justify-content:center;color:#fff;font-size:.72rem;
+  font-family:'IBM Plex Mono',monospace;font-weight:500;transition:none;white-space:nowrap;}
+.seg-core{background:var(--core);}
+.seg-edge{background:var(--edge);}
+.seg-beyond{background:var(--beyond);}
+.seg span{opacity:.95;}
+.rationale{margin-top:.7rem;font-size:.9rem;color:var(--ink-soft);}
+.rationale .driver{
+  font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--mute);
+  display:block;margin-bottom:.35rem;
+}
+.impact{margin-top:.55rem;font-size:.88rem;}
+.impact b{font-weight:600;}
+.impact.good b{color:var(--core);}
+.impact.bad b{color:var(--beyond);}
+.impact.mixed b{color:var(--edge);}
 
-        .hero-subtitle {
-            font-size: 0.9rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            opacity: 0.9;
-            margin-bottom: 1.5rem;
-            font-weight: 300;
-        }
+/* callout annotations */
+.annot{
+  margin-top:.85rem;background:var(--paper-2);
+  border:1px solid var(--line);border-left:3px solid var(--edge);
+  padding:.85rem 1rem;font-size:.85rem;color:var(--ink-soft);border-radius:2px;
+}
+.annot b{color:var(--ink);}
 
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            letter-spacing: -1px;
-        }
+/* redefinition band */
+.band{
+  margin:2.2rem 0 0;padding:1.1rem 1.3rem;
+  background:linear-gradient(90deg,var(--core-soft),transparent);
+  border-left:3px solid var(--core);font-size:.9rem;color:var(--ink-soft);
+}
+.band b{color:var(--core);font-weight:600;}
 
-        .hero-description {
-            font-size: 1.3rem;
-            opacity: 0.95;
-            font-weight: 300;
-            margin-bottom: 3rem;
-            line-height: 1.8;
-        }
+/* pattern / takeaway */
+.takeaway{background:var(--ink);color:#fff;padding:clamp(2rem,5vw,3rem);margin:3.5rem 0 0;border-radius:3px;}
+.takeaway h2{font-family:'IBM Plex Serif',serif;font-weight:400;font-size:clamp(1.4rem,3vw,1.9rem);margin-bottom:1rem;line-height:1.2;}
+.takeaway p{color:#c6c6c6;max-width:64ch;margin-bottom:1rem;}
+.takeaway p:last-child{margin-bottom:0;}
+.takeaway em{color:#fff;font-style:italic;}
+.takeaway .pull{
+  font-family:'IBM Plex Serif',serif;font-size:clamp(1.1rem,2.2vw,1.4rem);
+  color:#fff;border-top:1px solid #393939;border-bottom:1px solid #393939;
+  padding:1.2rem 0;margin:1.6rem 0;line-height:1.35;font-style:italic;
+}
 
-        .hero-author {
-            font-size: 1rem;
-            opacity: 0.8;
-            font-style: italic;
-        }
+footer{padding:2.5rem 0 3.5rem;color:var(--mute);font-size:.78rem;}
+footer .meta{font-family:'IBM Plex Mono',monospace;}
 
-        .scroll-indicator {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            opacity: 0.7;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-            40% { transform: translateX(-50%) translateY(-10px); }
-            60% { transform: translateX(-50%) translateY(-5px); }
-        }
-
-        /* Content Sections */
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        section {
-            padding: 5rem 0;
-        }
-
-        .section-number {
-            font-size: 0.8rem;
-            color: #0f62fe;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        h2 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            color: #1a1a1a;
-            font-weight: 700;
-            line-height: 1.3;
-        }
-
-        h3 {
-            font-size: 1.5rem;
-            margin: 2rem 0 1rem;
-            color: #1a1a1a;
-            font-weight: 600;
-        }
-
-        p {
-            font-size: 1.1rem;
-            color: #4a4a4a;
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
-        }
-
-        /* Timeline */
-        .timeline {
-            position: relative;
-            padding-left: 3rem;
-            margin: 3rem 0;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, #0f62fe, #001d6c);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 2rem;
-            padding-left: 2rem;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -3.5rem;
-            top: 0.5rem;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #0f62fe;
-            border: 3px solid white;
-            box-shadow: 0 0 0 2px #0f62fe;
-        }
-
-        .timeline-year {
-            font-weight: 700;
-            color: #0f62fe;
-            margin-bottom: 0.3rem;
-            font-size: 1rem;
-        }
-
-        .timeline-text {
-            color: #4a4a4a;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        /* Missed Opportunities */
-        .opportunity-grid {
-            display: grid;
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-
-        .opportunity-card {
-            background: #f8f9fa;
-            padding: 2rem;
-            border-radius: 8px;
-            border-left: 4px solid #0f62fe;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .opportunity-card:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-
-        .opportunity-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-        }
-
-        .opportunity-era {
-            font-size: 0.9rem;
-            color: #0f62fe;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .opportunity-detail {
-            margin: 0.8rem 0;
-        }
-
-        .opportunity-label {
-            font-weight: 600;
-            color: #1a1a1a;
-            font-size: 0.95rem;
-        }
-
-        .opportunity-value {
-            color: #4a4a4a;
-            font-size: 0.95rem;
-        }
-
-        /* Framework Table */
-        .framework-section {
-            background: #f8f9fa;
-            padding: 3rem;
-            border-radius: 12px;
-            margin: 3rem 0;
-        }
-
-        .era-title {
-            font-size: 1.8rem;
-            color: #1a1a1a;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-        }
-
-        .framework-table {
-            width: 100%;
-            margin: 2rem 0;
-            border-collapse: separate;
-            border-spacing: 0;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .framework-table th {
-            background: #0f62fe;
-            color: white;
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        .framework-table td {
-            padding: 1rem;
-            border-bottom: 1px solid #e8e8e8;
-            font-size: 0.95rem;
-        }
-
-        .framework-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .zone-label {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            border: 2px solid #e8e8e8;
-            text-align: center;
-            transition: border-color 0.3s ease;
-        }
-
-        .stat-card:hover {
-            border-color: #0f62fe;
-        }
-
-        .stat-zone {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-title {
-            font-size: 0.9rem;
-            color: #0f62fe;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-description {
-            font-size: 0.9rem;
-            color: #4a4a4a;
-            line-height: 1.5;
-        }
-
-        /* Key Insight Box */
-        .insight-box {
-            background: linear-gradient(135deg, #0f62fe 0%, #001d6c 100%);
-            color: white;
-            padding: 3rem;
-            border-radius: 12px;
-            margin: 3rem 0;
-            text-align: center;
-        }
-
-        .insight-box p {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 300;
-            line-height: 1.8;
-            margin: 0;
-        }
-
-        .insight-box strong {
-            font-weight: 600;
-        }
-
-        /* Conclusion */
-        .conclusion {
-            background: #1a1a1a;
-            color: white;
-            padding: 5rem 2rem;
-            text-align: center;
-        }
-
-        .conclusion h2 {
-            color: white;
-            margin-bottom: 1.5rem;
-        }
-
-        .conclusion p {
-            color: rgba(255,255,255,0.9);
-            max-width: 800px;
-            margin: 0 auto 2rem;
-            font-size: 1.2rem;
-        }
-
-        .conclusion-author {
-            font-style: italic;
-            opacity: 0.7;
-            margin-top: 3rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2rem;
-            }
-
-            .hero-description {
-                font-size: 1.1rem;
-            }
-
-            h2 {
-                font-size: 1.8rem;
-            }
-
-            section {
-                padding: 3rem 0;
-            }
-
-            .timeline {
-                padding-left: 2rem;
-            }
-
-            .framework-section {
-                padding: 2rem 1rem;
-            }
-        }
-    </style>
+@media(max-width:620px){
+  .ceo{grid-template-columns:1fr;gap:.9rem 0;}
+  .who{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem .7rem;}
+  .who .tag{margin-top:0;}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+</style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <div class="hero">
-        <div class="hero-content">
-            <div class="hero-subtitle">Case Study</div>
-            <h1 class="hero-title">The Company That Invented the Future but Lost Control of It</h1>
-            <p class="hero-description">How IBM shaped modern computing yet failed to own the platforms it created</p>
-            <div class="hero-author">By Christine Pamela</div>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">THE THETA LENS · <b>ONE COMPANY, SEVEN CEOs, SEVENTY YEARS</b></div>
+    <h1>IBM had world-class talent the whole time. What changed was where each leader pointed it.</h1>
+    <p class="dek">No company reports its Core, Edge, and Beyond split, because until now the map didn't exist. So what follows is the first time IBM's history has been read this way: not by revenue or stock price, but by <em>where leadership placed its bets</em> on the innovation map, and what happened a decade later.</p>
+    <div class="legend">
+      <div><span class="swatch sw-core"></span>Core &mdash; the proven engine</div>
+      <div><span class="swatch sw-edge"></span>Edge &mdash; the next S-curve</div>
+      <div><span class="swatch sw-beyond"></span>Beyond &mdash; the wild bet</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="note">
+    <b>How to read this.</b> The bars estimate where each CEO placed <b>investment and attention</b>, not revenue &mdash; revenue always lags a decade behind the bet. Figures are directional, built from R&amp;D mix, acquisitions, and strategic focus. The pattern matters more than any single percentage.
+  </div>
+
+  <div class="chart">
+
+    <!-- WATSON JR -->
+    <div class="ceo">
+      <div class="who">
+        <div class="name">Thomas Watson&nbsp;Jr.</div>
+        <div class="years">1956–1971</div>
+        <span class="tag tag-win">Bet Beyond from strength</span>
+      </div>
+      <div class="bars">
+        <div class="bar" role="img" aria-label="Core 45 percent, Edge 25 percent, Beyond 30 percent">
+          <div class="seg seg-core" style="width:45%"><span>Core 45</span></div>
+          <div class="seg seg-edge" style="width:25%"><span>Edge 25</span></div>
+          <div class="seg seg-beyond" style="width:30%"><span>Beyond 30</span></div>
         </div>
-        <div class="scroll-indicator">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M19 12l-7 7-7-7"/>
-            </svg>
-        </div>
+        <p class="rationale">
+          <span class="driver">DRIVER · personal conviction, from a position of strength</span>
+          Inherited a healthy business and risked it anyway. The System/360 was a ~$5B bet &mdash; more than IBM's annual revenue &mdash; to unify computing into one compatible family when the industry said it couldn't be done. Nobody forced the gamble.
+        </p>
+        <p class="impact good">Impact: <b>Built an empire.</b> The 360 became the mainframe standard and locked in enterprise computing for a generation. The Beyond bet became the Core that funded everything for the next 25 years.</p>
+      </div>
     </div>
 
-    <!-- Introduction -->
-    <section>
-        <div class="container">
-            <div class="section-number">Introduction</div>
-            <h2>The Innovation Paradox</h2>
-            <p>IBM shaped the foundations of modern computing. It built mainframes, standardized personal computers, and created technologies that transformed global business. Yet today, IBM is known not for leadership but for a legacy it struggles to escape.</p>
-            <p>This case explores how a pioneer of the future lost the ability to own it.</p>
+    <!-- CARY / OPEL -->
+    <div class="ceo">
+      <div class="who">
+        <div class="name">Cary &amp; Opel</div>
+        <div class="years">1973–1985</div>
+        <span class="tag tag-mid">Milked Core, leaked the Edge</span>
+      </div>
+      <div class="bars">
+        <div class="bar" role="img" aria-label="Core 70 percent, Edge 25 percent, Beyond 5 percent">
+          <div class="seg seg-core" style="width:70%"><span>Core 70</span></div>
+          <div class="seg seg-edge" style="width:25%"><span>Edge 25</span></div>
+          <div class="seg seg-beyond" style="width:5%"><span></span></div>
         </div>
-    </section>
-
-    <!-- Origins -->
-    <section style="background: #f8f9fa;">
-        <div class="container">
-            <div class="section-number">01</div>
-            <h2>Origins: From Machinery to Information</h2>
-            <p>IBM began with clocks and punch card tabulators rather than computers. It helped land NASA astronauts on the moon. Over time, it became the world's first true information company.</p>
-            
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-year">1911</div>
-                    <div class="timeline-text">CTR formed — Birth of data automation</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">1924</div>
-                    <div class="timeline-text">Renamed IBM — Strategic shift toward information systems</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">1950s–1980s</div>
-                    <div class="timeline-text">Mainframes and early programming — Defined enterprise computing</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">1981</div>
-                    <div class="timeline-text">IBM PC introduced — Standardized personal computing globally</div>
-                </div>
-            </div>
-
-            <div class="insight-box">
-                <p>By the 1980s, IBM controlled the technology landscape and dictated the direction of the computing industry.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- The Problem -->
-    <section>
-        <div class="container">
-            <div class="section-number">02</div>
-            <h2>How Success Turned Into Strategic Blindness</h2>
-            <p>IBM excelled at inventing the future but failed to grow and strengthen the platforms that shaped it. There were one too many missed opportunities.</p>
-
-            <div class="opportunity-grid">
-                <div class="opportunity-card">
-                    <div class="opportunity-title">Personal Computing Ownership</div>
-                    <div class="opportunity-era">1980s Era</div>
-                    <div class="opportunity-detail">
-                        <div class="opportunity-label">What IBM Did:</div>
-                        <div class="opportunity-value">Outsourced chips and OS</div>
-                    </div>
-                    <div class="opportunity-detail">
-                        <div class="opportunity-label">Outcome:</div>
-                        <div class="opportunity-value">Intel and Microsoft captured the value stack</div>
-                    </div>
-                </div>
-
-                <div class="opportunity-card">
-                    <div class="opportunity-title">Open, Modular Systems</div>
-                    <div class="opportunity-era">1990s</div>
-                    <div class="opportunity-detail">
-                        <div class="opportunity-label">What IBM Did:</div>
-                        <div class="opportunity-value">Protected proprietary stack</div>
-                    </div>
-                    <div class="opportunity-detail">
-                        <div class="opportunity-label">Outcome:</div>
-                        <div class="opportunity-value">Lost mainstream relevance</div>
-                    </div>
-                </div>
-
-                <div class="opportunity-card">
-                    <div class="opportunity-title">Cloud Infrastructure</div>
-                    <div class="opportunity-era">2000s–2010s</div>
-                    <div class="opportunity-detail">
-                        <div class="opportunity-label">What IBM Did:</div>
-                        <div class="opportunity-value">Slow and scattered strategy</div>
-                    </div>
-                    <div class="opportunity-detail">
-                        <div class="opportunity-label">Outcome:</div>
-                        <div class="opportunity-value">Became a services integrator</div>
-                    </div>
-                </div>
-
-                <div class="opportunity-card">
-                    <div class="opportunity-title">Applied AI at Scale</div>
-                    <div class="opportunity-era">2010s–2020s</div>
-                    <div class="opportunity-detail">
-                        <div class="opportunity-label">What IBM Did:</div>
-                        <div class="opportunity-value">Watson branding without product strength</div>
-                    </div>
-                    <div class="opportunity-detail">
-                        <div class="opportunity-label">Outcome:</div>
-                        <div class="opportunity-value">Lost first mover advantage</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="insight-box">
-                <p><strong>IBM kept pioneering technologies that others commercialized better.</strong></p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Culture -->
-    <section style="background: #f8f9fa;">
-        <div class="container">
-            <div class="section-number">03</div>
-            <h2>The Fortress Culture That Turned Into a Prison</h2>
-            <p>IBM built a culture that rewarded protecting legacy revenue, sales and hierarchy over fast experimentation, and closed systems rather than open ecosystems.</p>
-            <p>But the world shifted to networked value creation, developers and platforms that scale, and customers choosing flexibility over lock-in.</p>
-            
-            <div class="insight-box">
-                <p><strong>IBM struggled to adjust because it relied on control rather than influence.</strong></p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pivot -->
-    <section>
-        <div class="container">
-            <div class="section-number">04</div>
-            <h2>From Technology Creator to Services Contractor</h2>
-            <p>When hardware margins collapsed, IBM pivoted into outsourcing, enterprise maintenance, and consulting. The move stabilized finances but pushed IBM away from front-line innovation.</p>
-            <p>Today it still builds mainframes, quantum machines, and high-performance systems. Yet these breakthroughs no longer guide industry direction. IBM supports the infrastructure of yesterday while others define tomorrow.</p>
-        </div>
-    </section>
-
-    <!-- Core Flaw -->
-    <section style="background: #f8f9fa;">
-        <div class="container">
-            <div class="section-number">05</div>
-            <h2>The Core Innovation Flaw</h2>
-            <p>IBM is unmatched in scientific capability yet consistently fails in four areas:</p>
-            
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-title">Fast Delivery</div>
-                    <div class="stat-description">Struggles with fast, iterative product delivery</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Ecosystem Adoption</div>
-                    <div class="stat-description">Fails to build developer and ecosystem adoption</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Platform Ownership</div>
-                    <div class="stat-description">Cannot retain value from platform ownership</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Durable Advantage</div>
-                    <div class="stat-description">Can't convert invention into lasting advantage</div>
-                </div>
-            </div>
-
-            <h3>The Innovation Loop</h3>
-            <p style="text-align: center; font-size: 1.2rem; margin: 2rem 0;">
-                IBM proves what is possible → IBM protects the past → Someone else builds the future market
-            </p>
-        </div>
-    </section>
-
-    <!-- Framework -->
-    <section>
-        <div class="container">
-            <div class="section-number">06</div>
-            <h2>Mapping IBM with the Theta Framework</h2>
-
-            <div class="framework-section">
-                <div class="era-title">Era 1: Invention and Mainframe Dominance (1920s–1980s)</div>
-                <table class="framework-table">
-                    <thead>
-                        <tr>
-                            <th>Zone</th>
-                            <th>Type</th>
-                            <th>Example</th>
-                            <th>Interpretation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="zone-label">🟩 Core</span></td>
-                            <td>Sustaining</td>
-                            <td>System/360 to System/370</td>
-                            <td>Strong control and lock-in</td>
-                        </tr>
-                        <tr>
-                            <td><span class="zone-label">🟨 Edge</span></td>
-                            <td>Architectural</td>
-                            <td>IBM PC</td>
-                            <td>Huge win that others captured</td>
-                        </tr>
-                        <tr>
-                            <td><span class="zone-label">🟥 Beyond</span></td>
-                            <td>Transformational</td>
-                            <td>Magnetic storage, programming</td>
-                            <td>Created computing's foundation</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p style="margin-top: 1rem; font-style: italic;">IBM built the personal computer but accidentally outsourced the future to Intel and Microsoft.</p>
-            </div>
-
-            <div class="framework-section">
-                <div class="era-title">Era 2: Services Takes the Wheel (1990s–2015)</div>
-                <table class="framework-table">
-                    <thead>
-                        <tr>
-                            <th>Zone</th>
-                            <th>Type</th>
-                            <th>Example</th>
-                            <th>Interpretation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="zone-label">🟩 Core</span></td>
-                            <td>Adjacent</td>
-                            <td>IT services, enterprise middleware</td>
-                            <td>Stable income, slowed innovation</td>
-                        </tr>
-                        <tr>
-                            <td><span class="zone-label">🟨 Edge</span></td>
-                            <td>Disruptive</td>
-                            <td>Hybrid systems, Linux integration</td>
-                            <td>Mostly defensive</td>
-                        </tr>
-                        <tr>
-                            <td><span class="zone-label">🟥 Beyond</span></td>
-                            <td>Transformational</td>
-                            <td>Watson</td>
-                            <td>Hype outpaced market success</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p style="margin-top: 1rem; font-style: italic;">The new core was revenue-secure but innovation-weak.</p>
-            </div>
-
-            <div class="framework-section">
-                <div class="era-title">Era 3: Frontier Bets Without Market Engines (2015–Today)</div>
-                <table class="framework-table">
-                    <thead>
-                        <tr>
-                            <th>Zone</th>
-                            <th>Type</th>
-                            <th>Example</th>
-                            <th>Interpretation</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="zone-label">🟩 Core</span></td>
-                            <td>Core</td>
-                            <td>Z-series, Red Hat</td>
-                            <td>Relevant but stagnant</td>
-                        </tr>
-                        <tr>
-                            <td><span class="zone-label">🟨 Edge</span></td>
-                            <td>Architectural</td>
-                            <td>Hybrid cloud and applied AI</td>
-                            <td>Good technology, limited adoption</td>
-                        </tr>
-                        <tr>
-                            <td><span class="zone-label">🟥 Beyond</span></td>
-                            <td>Frontier</td>
-                            <td>Quantum computing</td>
-                            <td>Strong science, missing commercialization path</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p style="margin-top: 1rem; font-style: italic;">IBM shines in labs, not in market momentum.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Current Distribution -->
-    <section style="background: #f8f9fa;">
-        <div class="container">
-            <div class="section-number">07</div>
-            <h2>Current Innovation Distribution</h2>
-            <p>Today, IBM's innovation architecture reveals the structural problem:</p>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-zone">🟩</div>
-                    <div class="stat-title">Core</div>
-                    <div class="stat-value">55–60%</div>
-                    <div class="stat-description">Mainframes, Red Hat, hybrid cloud — where the money is</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-zone">🟨</div>
-                    <div class="stat-title">Edge</div>
-                    <div class="stat-value">25–30%</div>
-                    <div class="stat-description">Applied AI services, enterprise modernization — too slow to scale</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-zone">🟥</div>
-                    <div class="stat-title">Beyond</div>
-                    <div class="stat-value">10–15%</div>
-                    <div class="stat-description">Quantum, neuromorphic, future bets — strong science, weak go-to-market</div>
-                </div>
-            </div>
-
-            <div class="insight-box">
-                <p><strong>No pathway to convert Beyond → Edge → Core</strong><br>Great labs, poor flywheel.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Structural Diagnosis -->
-    <section>
-        <div class="container">
-            <div class="section-number">08</div>
-            <h2>Structural Diagnosis: Where the Break Occurred</h2>
-            <p>IBM repeatedly abandoned its core before a new one was ready.</p>
-            
-            <h3>Correct Innovation Architecture:</h3>
-            <p style="text-align: center; font-size: 1.2rem; margin: 2rem 0; color: #0f62fe; font-weight: 600;">
-                Beyond → Edge → New Core
-            </p>
-
-            <h3>What IBM Actually Did:</h3>
-            <p style="text-align: center; font-size: 1.2rem; margin: 2rem 0; color: #d32f2f; font-weight: 600;">
-                Beyond → Stalled → Core Collapse → Late Pivot
-            </p>
-
-            <p>It traded long-term power for short-term predictability. The result is a cycle where innovation thrives internally yet market leadership fades externally.</p>
-        </div>
-    </section>
-
-    <!-- Conclusion -->
-    <div class="conclusion">
-        <div class="container">
-            <div class="section-number" style="color: #0f62fe;">Closing Insight</div>
-            <h2>IBM's Biggest Innovation Failure Is Not Invention. It Is Continuity.</h2>
-            <p>IBM still invents the future. It just no longer owns it.</p>
-            <p>IBM shows that innovation can flourish inside a company but still consistently struggle to convert those ideas into the next core business.</p>
-            <div class="conclusion-author">Case Study by Christine Pamela</div>
-        </div>
+        <p class="rationale">
+          <span class="driver">DRIVER · dominance &amp; complacency</span>
+          IBM was printing money from mainframes, so leadership optimized the Core. The one Edge move, the IBM PC (1981), happened <em>despite</em> the company &mdash; a skunkworks team in Boca Raton, built fast and open, outside IBM's process.
+        </p>
+        <p class="impact mixed">Impact: <b>A won Edge, given away.</b> Outsourcing the OS to Microsoft and the chip to Intel created the two companies that would eat IBM's lunch. The value leaked to partners because a Core-optimized company didn't know how to own an Edge win.</p>
+      </div>
     </div>
+
+    <!-- AKERS -->
+    <div class="ceo">
+      <div class="who">
+        <div class="name">John Akers</div>
+        <div class="years">1985–1993</div>
+        <span class="tag tag-fail">Defended the Core into near-death</span>
+      </div>
+      <div class="bars">
+        <div class="bar" role="img" aria-label="Core 85 percent, Edge 12 percent, Beyond 3 percent">
+          <div class="seg seg-core" style="width:85%"><span>Core 85</span></div>
+          <div class="seg seg-edge" style="width:12%"><span></span></div>
+          <div class="seg seg-beyond" style="width:3%"><span></span></div>
+        </div>
+        <p class="rationale">
+          <span class="driver">DRIVER · denial · a culture that couldn't imagine losing</span>
+          Doubled down on mainframes and proprietary systems exactly as the market shifted to PCs, open architectures, and client-server. Not a bet from strength like Watson Jr. &mdash; a reflex, defending the Core out of institutional habit while the ground moved.
+        </p>
+        <p class="impact bad">Impact: <b>An $8B loss in 1993</b> &mdash; the largest in US corporate history at the time. The stock collapsed, the board weighed breaking IBM apart, and Akers was forced out. The framework's central warning, at maximum scale: died from overconfidence in the Core.</p>
+      </div>
+    </div>
+
+    <!-- GERSTNER -->
+    <div class="ceo">
+      <div class="who">
+        <div class="name">Lou Gerstner</div>
+        <div class="years">1993–2002</div>
+        <span class="tag tag-win">Redefined the Core to survive</span>
+      </div>
+      <div class="bars">
+        <div class="bar" role="img" aria-label="Core 75 percent, Edge 20 percent, Beyond 5 percent">
+          <div class="seg seg-core" style="width:75%"><span>Core 75</span></div>
+          <div class="seg seg-edge" style="width:20%"><span>Edge 20</span></div>
+          <div class="seg seg-beyond" style="width:5%"><span></span></div>
+        </div>
+        <p class="rationale">
+          <span class="driver">DRIVER · crisis · outsider clarity</span>
+          First non-IBM CEO ever, hired to save or dismantle the company. Famously said <em>"the last thing IBM needs right now is a vision"</em> &mdash; deliberately low on Beyond because the company was bleeding out. The move was a Core <em>redefinition</em>: stop selling hardware boxes, start selling services and integration.
+        </p>
+        <p class="impact good">Impact: <b>Stopped the dying.</b> Killed the breakup, restored profitability, rebuilt IBM around services. But the recovery <em>started</em> here; it didn't finish here.</p>
+        <div class="annot">
+          <b>The correction most people get wrong:</b> disruption of a Core business is never instantaneous. Gerstner is remembered as the man who "saved IBM in the '90s," but changing a Core business <em>and the culture around it</em> is a generational project. The pivot he began in 1993 took roughly three decades to fully pay off &mdash; arguably only firing on all cylinders now.
+        </div>
+      </div>
+    </div>
+
+    <!-- PALMISANO -->
+    <div class="ceo">
+      <div class="who">
+        <div class="name">Sam Palmisano</div>
+        <div class="years">2002–2012</div>
+        <span class="tag tag-mid">Good numbers, thinning engine</span>
+      </div>
+      <div class="bars">
+        <div class="bar" role="img" aria-label="Core 65 percent, Edge 25 percent, Beyond 10 percent">
+          <div class="seg seg-core" style="width:65%"><span>Core 65</span></div>
+          <div class="seg seg-edge" style="width:25%"><span>Edge 25</span></div>
+          <div class="seg seg-beyond" style="width:10%"><span>10</span></div>
+        </div>
+        <p class="rationale">
+          <span class="driver">DRIVER · strategy, bent by financial engineering</span>
+          Sold off commoditizing businesses (PCs to Lenovo, 2005) and pushed "Smarter Planet" as Edge. Real discipline &mdash; but increasingly bent toward the "2015 Roadmap" and its $20 EPS promise, so allocation began serving the number rather than the future.
+        </p>
+        <p class="impact mixed">Impact: <b>Strong on paper</b> (EPS up ~5×, $100B+ shareholder value) &mdash; but much of the growth was bought with buybacks, not earned in new markets. Good-looking numbers masking a thinning engine.</p>
+      </div>
+    </div>
+
+    <!-- ROMETTY -->
+    <div class="ceo">
+      <div class="who">
+        <div class="name">Ginni Rometty</div>
+        <div class="years">2012–2020</div>
+        <span class="tag tag-fail">Judged a Beyond bet like Core</span>
+      </div>
+      <div class="bars">
+        <div class="bar" role="img" aria-label="On paper Core 60 percent, Edge 30 percent, Beyond 10 percent; in practice Core in decline">
+          <div class="seg seg-core" style="width:60%"><span>Core 60</span></div>
+          <div class="seg seg-edge" style="width:30%"><span>Edge 30</span></div>
+          <div class="seg seg-beyond" style="width:10%"><span>10</span></div>
+        </div>
+        <p class="rationale">
+          <span class="driver">DRIVER · right allocation on paper, wrong execution</span>
+          Intended a big Edge/Beyond push (Watson AI, cloud), but the numbers didn't translate to shipping. The one move that mattered: buying <b>Red Hat for $34B (2019)</b> &mdash; a genuine Core-rebuild that seeded the recovery, though the harvest came later.
+        </p>
+        <p class="impact bad">Impact: <b>22 consecutive quarters of declining revenue.</b> The stock badly underperformed. The "moonshots live in PowerPoint decks" era.</p>
+        <div class="annot" style="border-left-color:var(--beyond);">
+          <b>The Watson mistake, in one line:</b> Watson was a <b>Beyond</b> bet &mdash; speculative AI, a 7&ndash;15 year payoff &mdash; but it was marketed and measured like a <b>Core</b> product, expected to book revenue and prove itself quarter by quarter. Judged by Core metrics, a Beyond bet always looks like failure. Watson didn't fail because the technology was worthless. It was strangled by expectations that belonged to a different zone.
+        </div>
+      </div>
+    </div>
+
+    <!-- KRISHNA -->
+    <div class="ceo">
+      <div class="who">
+        <div class="name">Arvind Krishna</div>
+        <div class="years">2020–present</div>
+        <span class="tag tag-win">Rebalanced all three</span>
+      </div>
+      <div class="bars">
+        <div class="bar" role="img" aria-label="Core 60 percent, Edge 25 percent, Beyond 15 percent">
+          <div class="seg seg-core" style="width:60%"><span>Core 60</span></div>
+          <div class="seg seg-edge" style="width:25%"><span>Edge 25</span></div>
+          <div class="seg seg-beyond" style="width:15%"><span>Beyond 15</span></div>
+        </div>
+        <p class="rationale">
+          <span class="driver">DRIVER · deliberate rebalancing, clear-eyed on the situation</span>
+          Spun off the dead-weight infrastructure business (Kyndryl, 2021), made software the Core engine, pushed Watsonx as real Edge, and turned quantum into a serious roadmapped Beyond with a $10B commitment. The most balanced allocation IBM has had since Watson Jr. &mdash; the first time in decades all three zones are genuinely funded and moving.
+        </p>
+        <p class="impact good">Impact: <b>Turnaround in progress.</b> Core growing, AI book of business past $12B, the industry's most credible quantum roadmap, market re-rated toward ~$2.2T. Not proven &mdash; but the direction is genuinely reversed for the first time in a generation.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="band">
+    <b>The 30-year Core redefinition.</b> Read across the timeline and one slow current runs under everything: the services-and-software Core that Gerstner <em>began</em> in 1993 only truly comes good under Krishna, thirty years and four CEOs later. Changing what a company is at its center is not a quarter's work or a CEO's work. It is generational.
+  </div>
+
+  <div class="takeaway">
+    <h2>The variable was never talent. It was allocation.</h2>
+    <p>IBM had world-class R&amp;D and brilliant people in every one of these eras. What changed, decade to decade, was <em>where leadership pointed them</em> on the Core / Edge / Beyond map &mdash; and the zone mix predicts the outcome a decade later better than almost anything else.</p>
+    <p class="pull">Watson Jr. bet Beyond and built an empire. Akers defended the Core and nearly killed it. Gerstner redefined the Core and bought survival. Rometty let the bets drift and delivered 22 quarters of decline. Krishna rebalanced, and the market turned.</p>
+    <p>Note the nuance, because it keeps the framework honest: this isn't "Beyond good, Core bad." Gerstner's near-zero Beyond was the <em>correct</em> move &mdash; for a company that was dying, the right call was redefining the Core, not chasing a moonshot. The fatal error is narrower and more specific: <em>defending the Core out of habit when the world has already moved.</em> That error has a name in this story. It was called 1993.</p>
+  </div>
+
+  <footer>
+    <p class="meta">Core / Edge / Beyond &copy; the Theta framework &middot; Innovation Underdogs</p>
+    <p style="margin-top:.4rem;">Allocations are directional estimates of investment and attention, not audited figures. IBM has never published zone-level data &mdash; the map is new.</p>
+  </footer>
+
+</div>
 </body>
 </html>
