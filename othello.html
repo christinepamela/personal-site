@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#17130f">
+<title>Othello — Black & White Chips</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#17130f; --ink-2:#211b15; --ink-3:#2b241c;
+    --parchment:#f3ead9; --parchment-2:#e9dcc2;
+    --chalk:#faf6ec; --coal:#141210;
+    --brass:#b98a3d; --brass-soft:#8a6a34;
+    --line-light:#d8c9a8; --line-dark:#3a3128;
+    --muted:#a89a84; --good:#6d8a5f; --bad:#a85440;
+    --felt:#3f5c47; --felt-line:#2f4636;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink); color:var(--parchment);
+    font-family:'Work Sans', sans-serif; line-height:1.5; min-height:100vh;
+  }
+  a{color:inherit;}
+  h1,h2,h3{font-family:'Fraunces', serif; font-weight:600; margin:0;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+  header.site{border-bottom:1px solid var(--line-dark);}
+  .site-bar{display:flex;justify-content:space-between;align-items:center;padding:18px 0;gap:16px;flex-wrap:wrap;}
+  .back-link{font-size:14px;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+  .back-link:hover{color:var(--brass);}
+  .player-box{font-size:14px;color:var(--muted);display:flex;align-items:center;gap:10px;}
+  .player-box strong{color:var(--parchment);font-weight:600;}
+  .player-box button{background:none;border:1px solid var(--line-dark);color:var(--muted);font-family:'Work Sans',sans-serif;font-size:13px;padding:5px 10px;border-radius:3px;cursor:pointer;}
+  .player-box button:hover{border-color:var(--brass);color:var(--brass);}
+
+  .title-row{padding:34px 0 10px;}
+  .title-row h1{font-size:clamp(30px,4.5vw,42px);}
+  .title-row p{color:#cabfa9;margin-top:8px;max-width:60ch;font-size:15px;}
+
+  .layout{display:grid;grid-template-columns:1fr 300px;gap:30px;padding:20px 0 70px;align-items:start;}
+  @media(max-width:860px){.layout{grid-template-columns:1fr;}}
+
+  .board-panel{
+    background:var(--ink-2);border:1px solid var(--line-dark);border-radius:6px;
+    padding:22px;display:flex;flex-direction:column;align-items:center;gap:16px;
+  }
+  .board{
+    width:100%;max-width:480px;aspect-ratio:1;background:var(--felt);
+    border-radius:4px;border:3px solid #2a3e30;
+    display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);
+    position:relative;box-shadow:inset 0 0 30px rgba(0,0,0,0.35);
+  }
+  .cell{border:1px solid var(--felt-line);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;}
+  .cell.hint::after{
+    content:"";width:22%;height:22%;border-radius:50%;
+    background:rgba(255,255,255,0.28);
+  }
+  .cell:not(.hint):hover{background:rgba(255,255,255,0.04);}
+  .disc{
+    width:80%;height:80%;border-radius:50%;
+    transition:transform 0.35s ease;
+  }
+  .disc.black{background:radial-gradient(circle at 35% 30%, #3a352e, #0c0a08 70%);box-shadow:0 2px 4px rgba(0,0,0,0.5);}
+  .disc.white{background:radial-gradient(circle at 35% 30%, #ffffff, #d8cfba 75%);box-shadow:0 2px 4px rgba(0,0,0,0.4);}
+  .disc.placed{animation:drop 0.25s ease;}
+  @keyframes drop{from{transform:scale(0.4);}to{transform:scale(1);}}
+
+  .score-strip{display:flex;gap:22px;align-items:center;font-family:'Fraunces',serif;}
+  .score-item{display:flex;align-items:center;gap:9px;font-size:20px;}
+  .score-dot{width:18px;height:18px;border-radius:50%;}
+  .score-dot.black{background:radial-gradient(circle at 35% 30%, #3a352e, #0c0a08 70%);}
+  .score-dot.white{background:radial-gradient(circle at 35% 30%, #ffffff, #d8cfba 75%);}
+  .score-item.active{color:var(--brass);}
+
+  .side{display:flex;flex-direction:column;gap:18px;}
+  .panel{background:var(--ink-2);border:1px solid var(--line-dark);border-radius:6px;padding:18px;}
+  .panel h3{font-size:14px;color:var(--brass);text-transform:none;margin-bottom:12px;font-family:'Work Sans',sans-serif;font-weight:600;}
+  .status-line{font-size:15px;margin-bottom:6px;}
+  .status-line.turn{color:var(--chalk);font-weight:500;}
+  .status-line.sub{color:var(--muted);font-size:13.5px;}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;}
+  select, .seg{width:100%;}
+  select{
+    background:var(--ink);border:1px solid var(--line-dark);color:var(--chalk);
+    padding:9px 10px;border-radius:3px;font-family:'Work Sans',sans-serif;font-size:14px;
+  }
+  .seg{display:flex;border:1px solid var(--line-dark);border-radius:3px;overflow:hidden;}
+  .seg button{
+    flex:1;background:var(--ink);color:var(--muted);border:none;padding:9px 0;
+    font-family:'Work Sans',sans-serif;font-size:13.5px;cursor:pointer;border-right:1px solid var(--line-dark);
+  }
+  .seg button:last-child{border-right:none;}
+  .seg button.active{background:var(--brass);color:var(--coal);font-weight:600;}
+
+  .btn{
+    font-family:'Work Sans',sans-serif;font-weight:600;font-size:14px;
+    padding:10px 16px;border-radius:3px;border:1px solid var(--brass);
+    background:var(--brass);color:var(--coal);cursor:pointer;width:100%;
+  }
+  .btn:hover{background:#cf9f4c;}
+  .btn.ghost{background:none;color:var(--muted);border-color:var(--line-dark);}
+  .btn.ghost:hover{color:var(--brass);border-color:var(--brass);}
+
+  .stats-row{display:flex;justify-content:space-between;font-size:13.5px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--line-dark);}
+  .stats-row:last-child{border-bottom:none;}
+  .stats-row strong{color:var(--parchment);}
+
+  .msg-overlay{
+    position:fixed;inset:0;background:rgba(10,8,6,0.75);display:none;
+    align-items:center;justify-content:center;z-index:50;padding:20px;
+  }
+  .msg-overlay.show{display:flex;}
+  .msg-card{
+    background:var(--parchment);color:var(--ink);border-radius:6px;padding:32px;
+    max-width:380px;text-align:center;
+  }
+  .msg-card h2{font-size:26px;margin-bottom:10px;}
+  .msg-card p{color:#5a5142;font-size:14.5px;margin-bottom:20px;}
+  .msg-card .btn{width:auto;padding:10px 22px;}
+
+  footer{border-top:1px solid var(--line-dark);padding:28px 0 40px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  footer a{text-decoration:none;color:var(--muted);}
+  footer a:hover{color:var(--brass);}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap site-bar">
+    <a class="back-link" href="index.html">&larr; Black &amp; White Chips</a>
+    <div class="player-box" id="playerBox"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="title-row">
+    <h1>Othello</h1>
+    <p>Sandwich your opponent's discs between two of your own to flip them. When neither side has a legal move, whoever holds the most squares wins.</p>
+  </div>
+
+  <div class="layout">
+    <div class="board-panel">
+      <div class="score-strip">
+        <div class="score-item" id="scoreBlack"><span class="score-dot black"></span><span id="blackCount">2</span></div>
+        <div class="score-item" id="scoreWhite"><span class="score-dot white"></span><span id="whiteCount">2</span></div>
+      </div>
+      <div class="board" id="board"></div>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <h3>This game</h3>
+        <div class="status-line turn" id="turnLine">Your move</div>
+        <div class="status-line sub" id="subLine">You are black. Click a highlighted square to play.</div>
+      </div>
+
+      <div class="panel">
+        <h3>Setup</h3>
+        <div class="field">
+          <label>Play as</label>
+          <div class="seg" id="colorSeg">
+            <button data-color="black" class="active">Black (first)</button>
+            <button data-color="white">White</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Computer strength</label>
+          <div class="seg" id="diffSeg">
+            <button data-diff="2">Easy</button>
+            <button data-diff="4" class="active">Medium</button>
+            <button data-diff="6">Hard</button>
+          </div>
+        </div>
+        <button class="btn" id="newGameBtn">New game</button>
+      </div>
+
+      <div class="panel">
+        <h3>Your record</h3>
+        <div id="statsBox"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="wrap">
+  <span>Black &amp; White Chips &mdash; part of <a href="https://christinepamela.com/tools.html">Pam's Corner</a></span>
+  <a href="index.html">More games</a>
+</footer>
+
+<div class="msg-overlay" id="msgOverlay">
+  <div class="msg-card">
+    <h2 id="msgTitle">Game over</h2>
+    <p id="msgBody"></p>
+    <button class="btn" id="msgCloseBtn">Play again</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const SIZE=8, EMPTY=0, BLACK=1, WHITE=2;
+  const DIRS=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+  const NAME_KEY='bwc_player_name';
+  const STATS_KEY='bwc_othello_stats';
+
+  const WEIGHTS = [
+    120,-20,20,5,5,20,-20,120,
+    -20,-40,-5,-5,-5,-5,-40,-20,
+    20,-5,15,3,3,15,-5,20,
+    5,-5,3,3,3,3,-5,5,
+    5,-5,3,3,3,3,-5,5,
+    20,-5,15,3,3,15,-5,20,
+    -20,-40,-5,-5,-5,-5,-40,-20,
+    120,-20,20,5,5,20,-20,120
+  ];
+
+  let board, humanColor, aiColor, current, depth, gameOver;
+
+  function initBoard(){
+    const b=new Array(64).fill(EMPTY);
+    b[3*8+3]=WHITE; b[4*8+4]=WHITE; b[3*8+4]=BLACK; b[4*8+3]=BLACK;
+    return b;
+  }
+  function inB(r,c){return r>=0&&r<8&&c>=0&&c<8;}
+  function opp(c){return c===BLACK?WHITE:BLACK;}
+
+  function flipsFor(bd,color,r,c){
+    if(bd[r*8+c]!==EMPTY) return [];
+    let all=[];
+    for(const [dr,dc] of DIRS){
+      let rr=r+dr, cc=c+dc, line=[];
+      while(inB(rr,cc) && bd[rr*8+cc]===opp(color)){ line.push(rr*8+cc); rr+=dr; cc+=dc; }
+      if(inB(rr,cc) && bd[rr*8+cc]===color && line.length>0) all=all.concat(line);
+    }
+    return all;
+  }
+  function legalMoves(bd,color){
+    const moves=[];
+    for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+      const f=flipsFor(bd,color,r,c);
+      if(f.length>0) moves.push({r,c,idx:r*8+c,flips:f});
+    }
+    return moves;
+  }
+  function applyMove(bd,color,r,c){
+    const f=flipsFor(bd,color,r,c);
+    const next=bd.slice();
+    next[r*8+c]=color;
+    for(const idx of f) next[idx]=color;
+    return next;
+  }
+  function countDiscs(bd){
+    let b=0,w=0;
+    for(const v of bd){ if(v===BLACK)b++; else if(v===WHITE)w++; }
+    return {black:b, white:w};
+  }
+
+  function evaluate(bd, forColor){
+    const against = opp(forColor);
+    let posScore=0;
+    for(let i=0;i<64;i++){
+      if(bd[i]===forColor) posScore+=WEIGHTS[i];
+      else if(bd[i]===against) posScore-=WEIGHTS[i];
+    }
+    const myMoves = legalMoves(bd, forColor).length;
+    const oppMoves = legalMoves(bd, against).length;
+    const mobility = (myMoves - oppMoves) * 8;
+    const {black, white} = countDiscs(bd);
+    const total = black+white;
+    let parity = 0;
+    if(total > 52){
+      const mine = forColor===BLACK?black:white;
+      const theirs = forColor===BLACK?white:black;
+      parity = (mine - theirs) * 10;
+    }
+    return posScore + mobility + parity;
+  }
+
+  function minimax(bd, color, rootColor, d, alpha, beta, maximizing){
+    const moves = legalMoves(bd, color);
+    if(d===0 || (moves.length===0 && legalMoves(bd, opp(color)).length===0)){
+      return { score: evaluate(bd, rootColor) };
+    }
+    if(moves.length===0){
+      const r = minimax(bd, opp(color), rootColor, d-1, alpha, beta, !maximizing);
+      return { score:r.score };
+    }
+    let best = null;
+    if(maximizing){
+      let val=-Infinity;
+      for(const m of moves){
+        const next = applyMove(bd, color, m.r, m.c);
+        const r = minimax(next, opp(color), rootColor, d-1, alpha, beta, false);
+        if(r.score > val){ val=r.score; best=m; }
+        alpha = Math.max(alpha, val);
+        if(alpha >= beta) break;
+      }
+      return { score: val, move: best };
+    } else {
+      let val=Infinity;
+      for(const m of moves){
+        const next = applyMove(bd, color, m.r, m.c);
+        const r = minimax(next, opp(color), rootColor, d-1, alpha, beta, true);
+        if(r.score < val){ val=r.score; best=m; }
+        beta = Math.min(beta, val);
+        if(alpha >= beta) break;
+      }
+      return { score: val, move: best };
+    }
+  }
+
+  function aiChooseMove(bd, color, d){
+    const moves = legalMoves(bd, color);
+    if(moves.length===0) return null;
+    if(moves.length===1) return moves[0];
+    const r = minimax(bd, color, color, d, -Infinity, Infinity, true);
+    return r.move || moves[0];
+  }
+
+  // ---- rendering ----
+  const boardEl = document.getElementById('board');
+  const cells = [];
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+    const cell = document.createElement('div');
+    cell.className='cell';
+    cell.dataset.r=r; cell.dataset.c=c;
+    cell.addEventListener('click', onCellClick);
+    boardEl.appendChild(cell);
+    cells.push(cell);
+  }
+
+  function render(highlightMoves){
+    const {black, white} = countDiscs(board);
+    document.getElementById('blackCount').textContent = black;
+    document.getElementById('whiteCount').textContent = white;
+    document.getElementById('scoreBlack').classList.toggle('active', current===BLACK);
+    document.getElementById('scoreWhite').classList.toggle('active', current===WHITE);
+
+    const hintSet = new Set((highlightMoves||[]).map(m=>m.idx));
+    for(let i=0;i<64;i++){
+      const cell = cells[i];
+      cell.classList.toggle('hint', hintSet.has(i) && current===humanColor && !gameOver);
+      const existing = cell.querySelector('.disc');
+      if(board[i]===EMPTY){
+        if(existing) existing.remove();
+      } else {
+        const cls = board[i]===BLACK?'black':'white';
+        if(!existing){
+          const d = document.createElement('div');
+          d.className='disc '+cls+' placed';
+          cell.appendChild(d);
+        } else if(!existing.classList.contains(cls)){
+          existing.className='disc '+cls;
+        }
+      }
+    }
+  }
+
+  function setStatus(line, sub){
+    document.getElementById('turnLine').textContent = line;
+    document.getElementById('subLine').textContent = sub;
+  }
+
+  function onCellClick(e){
+    if(gameOver || current!==humanColor) return;
+    const r = +e.currentTarget.dataset.r, c = +e.currentTarget.dataset.c;
+    const moves = legalMoves(board, humanColor);
+    const m = moves.find(mm=>mm.r===r && mm.c===c);
+    if(!m) return;
+    board = applyMove(board, humanColor, r, c);
+    current = opp(current);
+    afterMove();
+  }
+
+  function afterMove(){
+    const myMoves = legalMoves(board, current);
+    if(myMoves.length===0){
+      const otherMoves = legalMoves(board, opp(current));
+      if(otherMoves.length===0){
+        endGame();
+        return;
+      } else {
+        // current player must pass
+        const passer = current===humanColor ? "You have" : "The computer has";
+        current = opp(current);
+        render(legalMoves(board, current));
+        if(current===aiColor){
+          setStatus("Computer's move", passer + " no legal move, so that turn was skipped.");
+          setTimeout(aiTurn, 500);
+        } else {
+          setStatus("Your move", passer + " no legal move, so that turn was skipped.");
+        }
+        return;
+      }
+    }
+    render(myMoves);
+    if(current===aiColor){
+      setStatus("Computer's move", "Thinking...");
+      setTimeout(aiTurn, 450);
+    } else {
+      setStatus("Your move", "Click a highlighted square to play.");
+    }
+  }
+
+  function aiTurn(){
+    const move = aiChooseMove(board, aiColor, depth);
+    if(move){
+      board = applyMove(board, aiColor, move.r, move.c);
+    }
+    current = opp(current);
+    afterMove();
+  }
+
+  function endGame(){
+    gameOver = true;
+    const {black, white} = countDiscs(board);
+    render([]);
+    const humanScore = humanColor===BLACK?black:white;
+    const aiScore = humanColor===BLACK?white:black;
+    let title, body, result;
+    if(humanScore>aiScore){ title="You win"; body=`You finished with ${humanScore} discs to the computer's ${aiScore}.`; result='win'; }
+    else if(humanScore<aiScore){ title="Computer wins"; body=`The computer finished with ${aiScore} discs to your ${humanScore}.`; result='loss'; }
+    else { title="It's a draw"; body=`Both sides finished with ${humanScore} discs.`; result='draw'; }
+    setStatus("Game over", body);
+    recordResult(result);
+    showMsg(title, body);
+  }
+
+  function showMsg(title, body){
+    document.getElementById('msgTitle').textContent = title;
+    document.getElementById('msgBody').textContent = body;
+    document.getElementById('msgOverlay').classList.add('show');
+  }
+  document.getElementById('msgCloseBtn').addEventListener('click', () => {
+    document.getElementById('msgOverlay').classList.remove('show');
+    newGame();
+  });
+
+  // ---- stats ----
+  function getStats(){
+    try{ return JSON.parse(localStorage.getItem(STATS_KEY)) || {win:0,loss:0,draw:0}; }
+    catch(e){ return {win:0,loss:0,draw:0}; }
+  }
+  function recordResult(result){
+    const s = getStats();
+    s[result] = (s[result]||0) + 1;
+    localStorage.setItem(STATS_KEY, JSON.stringify(s));
+    renderStats();
+  }
+  function renderStats(){
+    const s = getStats();
+    document.getElementById('statsBox').innerHTML = `
+      <div class="stats-row"><span>Wins</span><strong>${s.win||0}</strong></div>
+      <div class="stats-row"><span>Losses</span><strong>${s.loss||0}</strong></div>
+      <div class="stats-row"><span>Draws</span><strong>${s.draw||0}</strong></div>
+    `;
+  }
+
+  // ---- setup controls ----
+  document.querySelectorAll('#colorSeg button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('#colorSeg button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      humanColor = btn.dataset.color==='black' ? BLACK : WHITE;
+      aiColor = opp(humanColor);
+      newGame();
+    });
+  });
+  document.querySelectorAll('#diffSeg button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('#diffSeg button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      depth = +btn.dataset.diff;
+    });
+  });
+  document.getElementById('newGameBtn').addEventListener('click', newGame);
+
+  function newGame(){
+    board = initBoard();
+    current = BLACK;
+    gameOver = false;
+    document.getElementById('msgOverlay').classList.remove('show');
+    const moves = legalMoves(board, current);
+    render(moves);
+    if(current===aiColor){
+      setStatus("Computer's move", "Thinking...");
+      setTimeout(aiTurn, 450);
+    } else {
+      setStatus("Your move", humanColor===BLACK ? "You are black. Click a highlighted square to play." : "You are white. Black always opens the game.");
+    }
+  }
+
+  // ---- player name ----
+  function getName(){ return localStorage.getItem(NAME_KEY) || ''; }
+  function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function promptName(){
+    const val = window.prompt("What should we call you?", getName());
+    if(val !== null){
+      const trimmed = val.trim();
+      if(trimmed) localStorage.setItem(NAME_KEY, trimmed); else localStorage.removeItem(NAME_KEY);
+      renderPlayerBox();
+    }
+  }
+  function renderPlayerBox(){
+    const box = document.getElementById('playerBox');
+    const name = getName();
+    box.innerHTML = name
+      ? `Playing as <strong>${escapeHtml(name)}</strong> <button id="editNameBtn">Change</button>`
+      : `<button id="addNameBtn">+ Add your name</button>`;
+    const btn = document.getElementById(name ? 'editNameBtn' : 'addNameBtn');
+    btn.addEventListener('click', promptName);
+  }
+
+  // ---- init ----
+  humanColor = BLACK; aiColor = WHITE; depth = 4;
+  renderPlayerBox();
+  renderStats();
+  newGame();
+})();
+</script>
+
+</body>
+</html>
