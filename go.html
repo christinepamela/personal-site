@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#17130f">
+<title>Go — Black & White Chips</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#17130f; --ink-2:#211b15; --ink-3:#2b241c;
+    --parchment:#f3ead9; --parchment-2:#e9dcc2;
+    --chalk:#faf6ec; --coal:#141210;
+    --brass:#b98a3d; --brass-soft:#8a6a34;
+    --line-light:#d8c9a8; --line-dark:#3a3128;
+    --muted:#a89a84; --good:#6d8a5f; --bad:#a85440;
+    --wood:#c9a35f; --wood-line:#8a6a34;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--ink); color:var(--parchment); font-family:'Work Sans', sans-serif; line-height:1.5; min-height:100vh;}
+  a{color:inherit;}
+  h1,h2,h3{font-family:'Fraunces', serif; font-weight:600; margin:0;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+  header.site{border-bottom:1px solid var(--line-dark);}
+  .site-bar{display:flex;justify-content:space-between;align-items:center;padding:18px 0;gap:16px;flex-wrap:wrap;}
+  .back-link{font-size:14px;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+  .back-link:hover{color:var(--brass);}
+  .player-box{font-size:14px;color:var(--muted);}
+  .player-box strong{color:var(--parchment);font-weight:600;}
+
+  .title-row{padding:34px 0 10px;}
+  .title-row h1{font-size:clamp(30px,4.5vw,42px);}
+  .title-row p{color:#cabfa9;margin-top:8px;max-width:64ch;font-size:15px;}
+
+  .layout{display:grid;grid-template-columns:1fr 300px;gap:30px;padding:22px 0 70px;align-items:start;}
+  @media(max-width:860px){.layout{grid-template-columns:1fr;}}
+
+  .board-panel{background:var(--ink-2);border:1px solid var(--line-dark);border-radius:6px;padding:22px;display:flex;flex-direction:column;align-items:center;gap:16px;}
+
+  .score-strip{display:flex;gap:22px;align-items:center;font-family:'Fraunces',serif;flex-wrap:wrap;justify-content:center;}
+  .score-item{display:flex;align-items:center;gap:9px;font-size:18px;}
+  .score-dot{width:16px;height:16px;border-radius:50%;}
+  .score-dot.black{background:radial-gradient(circle at 35% 30%, #3a352e, #0c0a08 70%);}
+  .score-dot.white{background:radial-gradient(circle at 35% 30%, #ffffff, #d8cfba 75%);}
+  .score-item.active{color:var(--brass);}
+  .score-item small{font-size:12px;color:var(--muted);font-family:'Work Sans',sans-serif;}
+
+  .go-board{
+    width:100%;max-width:480px;aspect-ratio:1;background:var(--wood);
+    border-radius:4px;border:3px solid #a3813f;
+    display:grid;grid-template-columns:repeat(9,1fr);grid-template-rows:repeat(9,1fr);
+    padding:26px;box-sizing:border-box;position:relative;
+    box-shadow:inset 0 0 24px rgba(0,0,0,0.2);
+  }
+  .go-point{position:relative;cursor:pointer;}
+  .go-point::before, .go-point::after{content:"";position:absolute;background:var(--wood-line);}
+  .go-point::before{height:1px;top:50%;transform:translateY(-50%);left:0;right:0;}
+  .go-point::after{width:1px;left:50%;transform:translateX(-50%);top:0;bottom:0;}
+  .go-point.edge-left::before{left:50%;}
+  .go-point.edge-right::before{right:50%;}
+  .go-point.edge-top::after{top:50%;}
+  .go-point.edge-bottom::after{bottom:50%;}
+  .hoshi-dot{position:absolute;width:7px;height:7px;border-radius:50%;background:var(--wood-line);top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;pointer-events:none;}
+
+  .stone{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:82%;height:82%;border-radius:50%;z-index:2;
+    transition:transform 0.2s ease;
+  }
+  .stone.black{background:radial-gradient(circle at 35% 30%, #3a352e, #0c0a08 70%);box-shadow:0 2px 3px rgba(0,0,0,0.5);}
+  .stone.white{background:radial-gradient(circle at 35% 30%, #ffffff, #d8cfba 75%);box-shadow:0 2px 3px rgba(0,0,0,0.4);}
+  .stone.placed{animation:drop 0.2s ease;}
+  @keyframes drop{from{transform:translate(-50%,-50%) scale(0.4);}to{transform:translate(-50%,-50%) scale(1);}}
+
+  .ghost-hint{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:70%;height:70%;border-radius:50%;background:rgba(255,255,255,0.22);
+    z-index:2;pointer-events:none;
+  }
+  .territory-dot{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:32%;height:32%;border-radius:50%;z-index:1;
+  }
+  .territory-dot.black{background:rgba(20,18,16,0.55);}
+  .territory-dot.white{background:rgba(250,246,236,0.75);}
+
+  .side{display:flex;flex-direction:column;gap:18px;}
+  .panel{background:var(--ink-2);border:1px solid var(--line-dark);border-radius:6px;padding:18px;}
+  .panel h3{font-size:14px;color:var(--brass);margin-bottom:12px;font-family:'Work Sans',sans-serif;font-weight:600;}
+  .status-line{font-size:15px;margin-bottom:6px;color:var(--chalk);font-weight:500;}
+  .status-line.sub{color:var(--muted);font-size:13.5px;font-weight:400;}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;}
+  .seg{display:flex;border:1px solid var(--line-dark);border-radius:3px;overflow:hidden;}
+  .seg button{flex:1;background:var(--ink);color:var(--muted);border:none;padding:9px 0;font-family:'Work Sans',sans-serif;font-size:13.5px;cursor:pointer;border-right:1px solid var(--line-dark);}
+  .seg button:last-child{border-right:none;}
+  .seg button.active{background:var(--brass);color:var(--coal);font-weight:600;}
+
+  .btn{font-family:'Work Sans',sans-serif;font-weight:600;font-size:14px;padding:10px 16px;border-radius:3px;border:1px solid var(--brass);background:var(--brass);color:var(--coal);cursor:pointer;width:100%;margin-bottom:8px;}
+  .btn:hover{background:#cf9f4c;}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;}
+  .btn.ghost{background:none;color:var(--muted);border-color:var(--line-dark);}
+  .btn.ghost:hover{color:var(--brass);border-color:var(--brass);}
+
+  .stats-row{display:flex;justify-content:space-between;font-size:13.5px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--line-dark);}
+  .stats-row:last-child{border-bottom:none;}
+  .stats-row strong{color:var(--parchment);}
+
+  .rules-note{font-size:12.5px;color:var(--muted);line-height:1.55;}
+
+  .msg-overlay{position:fixed;inset:0;background:rgba(10,8,6,0.75);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
+  .msg-overlay.show{display:flex;}
+  .msg-card{background:var(--parchment);color:var(--ink);border-radius:6px;padding:32px;max-width:400px;text-align:center;}
+  .msg-card h2{font-size:26px;margin-bottom:14px;}
+  .score-table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:14px;}
+  .score-table td{padding:6px 4px;border-bottom:1px solid var(--line-light);}
+  .score-table td:last-child, .score-table th:last-child{text-align:right;font-weight:600;}
+  .msg-card .btn{width:auto;padding:10px 22px;margin:0;}
+
+  footer{border-top:1px solid var(--line-dark);padding:28px 0 40px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  footer a{text-decoration:none;color:var(--muted);}
+  footer a:hover{color:var(--brass);}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap site-bar">
+    <a class="back-link" href="index.html">&larr; Black &amp; White Chips</a>
+    <div class="player-box" id="playerBox"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="title-row">
+    <h1>Go</h1>
+    <p>Place stones to surround territory and capture groups that run out of liberties (empty points touching the group). Two passes in a row ends the game; whoever holds more stones and territory wins.</p>
+  </div>
+
+  <div class="layout">
+    <div class="board-panel">
+      <div class="score-strip">
+        <div class="score-item" id="scoreBlack"><span class="score-dot black"></span> Black <small id="blackPrisoners">0 captured</small></div>
+        <div class="score-item" id="scoreWhite"><span class="score-dot white"></span> White <small id="whitePrisoners">0 captured</small></div>
+      </div>
+      <div class="go-board" id="board"></div>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <h3>This game</h3>
+        <div class="status-line" id="turnLine">Your move</div>
+        <div class="status-line sub" id="subLine"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Setup</h3>
+        <div class="field">
+          <label>Play as</label>
+          <div class="seg" id="colorSeg">
+            <button data-color="black" class="active">Black (first)</button>
+            <button data-color="white">White</button>
+          </div>
+        </div>
+        <button class="btn" id="newGameBtn">New game</button>
+        <button class="btn ghost" id="passBtn">Pass</button>
+        <button class="btn ghost" id="resignBtn">Resign</button>
+      </div>
+
+      <div class="panel">
+        <h3>Your record</h3>
+        <div id="statsBox"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Scoring note</h3>
+        <p class="rules-note">This board uses area scoring: your score is your stones plus surrounded territory. White gets a 5.5 point head start (komi) to balance Black's first move. Capture any dead stones before you pass &mdash; stones left on the board are still counted for their owner.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="wrap">
+  <span>Black &amp; White Chips &mdash; part of <a href="https://christinepamela.com/tools.html">Pam's Corner</a></span>
+  <a href="index.html">More games</a>
+</footer>
+
+<div class="msg-overlay" id="msgOverlay">
+  <div class="msg-card">
+    <h2 id="msgTitle">Game over</h2>
+    <table class="score-table" id="scoreTable"></table>
+    <p id="msgBody" style="color:#5a5142;font-size:14px;margin-bottom:16px;"></p>
+    <button class="btn" id="msgCloseBtn">Play again</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const N=9, EMPTY=0, BLACK=1, WHITE=2;
+  const NAME_KEY='bwc_player_name';
+  const STATS_KEY='bwc_go_stats';
+  const KOMI=5.5;
+
+  function idx(x,y){return y*N+x;}
+  function xy(i){return [i%N, Math.floor(i/N)];}
+  function inBounds(x,y){return x>=0&&x<N&&y>=0&&y<N;}
+  function neighbors(x,y){
+    const out=[];
+    if(inBounds(x-1,y))out.push(idx(x-1,y));
+    if(inBounds(x+1,y))out.push(idx(x+1,y));
+    if(inBounds(x,y-1))out.push(idx(x,y-1));
+    if(inBounds(x,y+1))out.push(idx(x,y+1));
+    return out;
+  }
+  function diagNeighbors(x,y){
+    const out=[];
+    [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([dx,dy])=>{ if(inBounds(x+dx,y+dy)) out.push(idx(x+dx,y+dy)); });
+    return out;
+  }
+  function opp(c){return c===BLACK?WHITE:BLACK;}
+
+  function getGroup(board,start){
+    const color=board[start];
+    const stack=[start], seen=new Set([start]);
+    while(stack.length){
+      const cur=stack.pop();
+      const [x,y]=xy(cur);
+      for(const n of neighbors(x,y)){
+        if(!seen.has(n) && board[n]===color){ seen.add(n); stack.push(n); }
+      }
+    }
+    return seen;
+  }
+  function groupLiberties(board,group){
+    const libs=new Set();
+    for(const p of group){
+      const [x,y]=xy(p);
+      for(const n of neighbors(x,y)) if(board[n]===EMPTY) libs.add(n);
+    }
+    return libs;
+  }
+  function tryMove(board,pos,color,koPoint){
+    if(board[pos]!==EMPTY) return {legal:false, reason:'occupied'};
+    if(koPoint===pos) return {legal:false, reason:'ko'};
+    const next=board.slice();
+    next[pos]=color;
+    const o=opp(color);
+    let captured=[];
+    const [x,y]=xy(pos);
+    for(const n of neighbors(x,y)){
+      if(next[n]===o){
+        const grp=getGroup(next,n);
+        if(groupLiberties(next,grp).size===0){
+          for(const p of grp){ next[p]=EMPTY; captured.push(p); }
+        }
+      }
+    }
+    const ownGroup=getGroup(next,pos);
+    const ownLibs=groupLiberties(next,ownGroup);
+    if(ownLibs.size===0) return {legal:false, reason:'suicide'};
+    let newKoPoint=null;
+    if(captured.length===1 && ownGroup.size===1 && ownLibs.size===1 && ownLibs.has(captured[0])){
+      newKoPoint=captured[0];
+    }
+    return {legal:true, board:next, captured, newKoPoint};
+  }
+  function isEyeLike(board,pos,color){
+    if(board[pos]!==EMPTY) return false;
+    const [x,y]=xy(pos);
+    for(const n of neighbors(x,y)) if(board[n]!==color) return false;
+    const diags=diagNeighbors(x,y);
+    const o=opp(color);
+    let oppCount=0;
+    for(const d of diags) if(board[d]===o) oppCount++;
+    const allowed = diags.length<4 ? 0 : 1;
+    return oppCount<=allowed;
+  }
+  function scoreArea(board){
+    const visited=new Array(N*N).fill(false);
+    let black=0, white=0;
+    const blackTerr=[], whiteTerr=[];
+    for(let i=0;i<N*N;i++){
+      if(board[i]===BLACK) black++; else if(board[i]===WHITE) white++;
+    }
+    for(let i=0;i<N*N;i++){
+      if(board[i]!==EMPTY || visited[i]) continue;
+      const region=[]; const stack=[i]; visited[i]=true;
+      const borders=new Set();
+      while(stack.length){
+        const cur=stack.pop(); region.push(cur);
+        const [x,y]=xy(cur);
+        for(const n of neighbors(x,y)){
+          if(board[n]===EMPTY && !visited[n]){ visited[n]=true; stack.push(n); }
+          else if(board[n]!==EMPTY) borders.add(board[n]);
+        }
+      }
+      if(borders.size===1){
+        const owner=[...borders][0];
+        if(owner===BLACK){ black+=region.length; blackTerr.push(...region); }
+        else { white+=region.length; whiteTerr.push(...region); }
+      }
+    }
+    return {black, white, blackTerr, whiteTerr};
+  }
+
+  // ---- AI ----
+  function legalCandidates(board,color,koPoint){
+    const moves=[];
+    for(let i=0;i<N*N;i++){
+      if(board[i]!==EMPTY) continue;
+      if(isEyeLike(board,i,color)) continue; // never fill real eyes
+      const r=tryMove(board,i,color,koPoint);
+      if(r.legal) moves.push(i);
+    }
+    return moves;
+  }
+  function positionalScore(pos){
+    const [x,y]=xy(pos);
+    const edgeDist = Math.min(x,y,N-1-x,N-1-y);
+    let s = 6 - Math.abs(edgeDist-2)*2.2;
+    if(x===4 && y===4) s += 1.5;
+    return s;
+  }
+  function aiChooseMove(board,color,koPoint){
+    const candidates = legalCandidates(board,color,koPoint);
+    if(candidates.length===0) return null;
+    const o = opp(color);
+    let best=null, bestScore=-Infinity;
+    const scored=[];
+    for(const pos of candidates){
+      const r = tryMove(board,pos,color,koPoint);
+      if(!r.legal) continue;
+      let score = 0;
+      score += r.captured.length * 55;
+
+      const ownGroup = getGroup(r.board,pos);
+      const ownLibs = groupLiberties(r.board,ownGroup).size;
+      if(ownLibs===1) score -= 45;
+      else if(ownLibs===2) score -= 6;
+
+      // rescue: does this move increase liberties of a friendly group that was in atari?
+      const [x,y]=xy(pos);
+      for(const n of neighbors(x,y)){
+        if(board[n]===color){
+          const grp = getGroup(board,n);
+          if(groupLiberties(board,grp).size===1) score += 30;
+        }
+      }
+      // put opponent groups into atari
+      for(const n of neighbors(x,y)){
+        if(r.board[n]===o){
+          const grp = getGroup(r.board,n);
+          const libs = groupLiberties(r.board,grp).size;
+          if(libs===1) score += 12 + grp.size*4;
+        }
+      }
+      score += positionalScore(pos);
+      score += Math.random()*4;
+      scored.push({pos, score});
+      if(score>bestScore){ bestScore=score; best=pos; }
+    }
+    // if nothing scores above a minimal productive threshold, pass
+    if(bestScore < 1.5) return null;
+    return best;
+  }
+
+  // ---- state ----
+  let board, humanColor, aiColor, current, koPoint, gameOver, passCount, captures, moveCount;
+
+  function newGame(){
+    board = new Array(N*N).fill(EMPTY);
+    current = BLACK;
+    koPoint = null;
+    gameOver = false;
+    passCount = 0;
+    captures = {black:0, white:0};
+    moveCount = 0;
+    document.getElementById('msgOverlay').classList.remove('show');
+    renderBoard();
+    updateScoreStrip();
+    if(current===aiColor){
+      setStatus("Computer's move", "Thinking...");
+      setTimeout(aiTurn, 500);
+    } else {
+      setStatus('Your move', humanColor===BLACK ? 'You are black. Black opens the game.' : 'You are white. Waiting for black to open.');
+    }
+  }
+
+  function setStatus(line, sub){
+    document.getElementById('turnLine').textContent = line;
+    document.getElementById('subLine').textContent = sub || '';
+  }
+  function updateScoreStrip(){
+    document.getElementById('blackPrisoners').textContent = captures.black + ' captured';
+    document.getElementById('whitePrisoners').textContent = captures.white + ' captured';
+    document.getElementById('scoreBlack').classList.toggle('active', current===BLACK && !gameOver);
+    document.getElementById('scoreWhite').classList.toggle('active', current===WHITE && !gameOver);
+  }
+
+  // ---- board rendering ----
+  const boardEl = document.getElementById('board');
+  const points = [];
+  const hoshiSet = new Set([idx(2,2), idx(2,6), idx(6,2), idx(6,6), idx(4,4)]);
+  for(let y=0;y<N;y++){
+    for(let x=0;x<N;x++){
+      const p = document.createElement('div');
+      p.className = 'go-point';
+      if(x===0) p.classList.add('edge-left');
+      if(x===N-1) p.classList.add('edge-right');
+      if(y===0) p.classList.add('edge-top');
+      if(y===N-1) p.classList.add('edge-bottom');
+      if(hoshiSet.has(idx(x,y))){
+        const dot = document.createElement('div');
+        dot.className = 'hoshi-dot';
+        p.appendChild(dot);
+      }
+      p.dataset.pos = idx(x,y);
+      p.addEventListener('click', onPointClick);
+      boardEl.appendChild(p);
+      points.push(p);
+    }
+  }
+
+  function renderBoard(showTerritory){
+    let territory = null;
+    if(showTerritory){
+      const s = scoreArea(board);
+      territory = {black: new Set(s.blackTerr), white: new Set(s.whiteTerr)};
+    }
+    const legalForHuman = (!gameOver && current===humanColor) ? legalHumanMoves() : new Set();
+    for(let i=0;i<N*N;i++){
+      const p = points[i];
+      p.querySelectorAll('.stone,.ghost-hint,.territory-dot').forEach(el=>el.remove());
+      if(board[i]===BLACK){
+        const s=document.createElement('div'); s.className='stone black placed'; p.appendChild(s);
+      } else if(board[i]===WHITE){
+        const s=document.createElement('div'); s.className='stone white placed'; p.appendChild(s);
+      } else if(territory){
+        if(territory.black.has(i)){ const d=document.createElement('div'); d.className='territory-dot black'; p.appendChild(d); }
+        else if(territory.white.has(i)){ const d=document.createElement('div'); d.className='territory-dot white'; p.appendChild(d); }
+      } else if(legalForHuman.has(i)){
+        const g=document.createElement('div'); g.className='ghost-hint'; p.appendChild(g);
+      }
+    }
+  }
+  function legalHumanMoves(){
+    const set=new Set();
+    for(let i=0;i<N*N;i++){
+      if(board[i]!==EMPTY) continue;
+      const r = tryMove(board,i,humanColor,koPoint);
+      if(r.legal) set.add(i);
+    }
+    return set;
+  }
+
+  function onPointClick(e){
+    if(gameOver || current!==humanColor) return;
+    const pos = +e.currentTarget.dataset.pos;
+    const r = tryMove(board,pos,humanColor,koPoint);
+    if(!r.legal) return;
+    applyResult(r, humanColor);
+  }
+
+  function applyResult(r, color){
+    board = r.board;
+    koPoint = r.newKoPoint;
+    const key = color===BLACK ? 'black' : 'white';
+    captures[key] += r.captured.length;
+    passCount = 0;
+    moveCount++;
+    current = opp(current);
+    renderBoard();
+    updateScoreStrip();
+    proceedTurn();
+  }
+
+  function proceedTurn(){
+    if(gameOver) return;
+    if(current===aiColor){
+      setStatus("Computer's move", 'Thinking...');
+      setTimeout(aiTurn, 500);
+    } else {
+      setStatus('Your move', 'Click an open point to play, or pass if you have nothing useful to add.');
+    }
+  }
+
+  function aiTurn(){
+    if(gameOver) return;
+    const move = aiChooseMove(board, aiColor, koPoint);
+    if(move===null){
+      doPass(aiColor);
+      return;
+    }
+    const r = tryMove(board, move, aiColor, koPoint);
+    applyResult(r, aiColor);
+  }
+
+  function doPass(color){
+    passCount++;
+    koPoint = null;
+    moveCount++;
+    if(passCount>=2){
+      endGame();
+      return;
+    }
+    current = opp(current);
+    renderBoard();
+    updateScoreStrip();
+    if(color===humanColor){
+      setStatus('You passed', 'If the computer also passes, the game will end and be scored.');
+    } else {
+      setStatus('Computer passed', 'Play on, or pass yourself to end the game and score it.');
+    }
+    proceedTurn();
+  }
+
+  document.getElementById('passBtn').addEventListener('click', ()=>{
+    if(gameOver || current!==humanColor) return;
+    doPass(humanColor);
+  });
+  document.getElementById('resignBtn').addEventListener('click', ()=>{
+    if(gameOver) return;
+    gameOver = true;
+    const humanWon = false;
+    recordResult(humanWon ? 'win' : 'loss');
+    setStatus('You resigned', 'The computer wins this one.');
+    showEndCard('You resigned', null, 'The computer wins by resignation. Start a new game whenever you like.');
+  });
+
+  function endGame(){
+    gameOver = true;
+    const s = scoreArea(board);
+    const blackTotal = s.black;
+    const whiteTotal = s.white + KOMI;
+    const humanTotal = humanColor===BLACK ? blackTotal : whiteTotal;
+    const aiTotal = humanColor===BLACK ? whiteTotal : blackTotal;
+    renderBoard(true);
+    updateScoreStrip();
+    let title, body, result;
+    if(humanTotal>aiTotal){ title='You win'; body=`Final score: you ${humanTotal} &ndash; computer ${aiTotal}.`; result='win'; }
+    else { title='Computer wins'; body=`Final score: computer ${aiTotal} &ndash; you ${humanTotal}.`; result='loss'; }
+    setStatus('Game over', 'Both players passed. See the final score.');
+    recordResult(result);
+    showEndCard(title, {blackTotal, whiteTotal}, body);
+  }
+
+  function showEndCard(title, scores, bodyHtml){
+    document.getElementById('msgTitle').textContent = title;
+    const table = document.getElementById('scoreTable');
+    if(scores){
+      table.innerHTML = `
+        <tr><td>Black</td><td>${scores.blackTotal}</td></tr>
+        <tr><td>White (incl. ${KOMI} komi)</td><td>${scores.whiteTotal}</td></tr>
+      `;
+    } else {
+      table.innerHTML = '';
+    }
+    document.getElementById('msgBody').innerHTML = bodyHtml;
+    document.getElementById('msgOverlay').classList.add('show');
+  }
+  document.getElementById('msgCloseBtn').addEventListener('click', ()=>{
+    document.getElementById('msgOverlay').classList.remove('show');
+    newGame();
+  });
+
+  // ---- stats ----
+  function getStats(){
+    try{ return JSON.parse(localStorage.getItem(STATS_KEY)) || {win:0,loss:0}; }
+    catch(e){ return {win:0,loss:0}; }
+  }
+  function recordResult(result){
+    const s=getStats();
+    s[result]=(s[result]||0)+1;
+    localStorage.setItem(STATS_KEY, JSON.stringify(s));
+    renderStats();
+  }
+  function renderStats(){
+    const s=getStats();
+    document.getElementById('statsBox').innerHTML = `
+      <div class="stats-row"><span>Wins</span><strong>${s.win||0}</strong></div>
+      <div class="stats-row"><span>Losses</span><strong>${s.loss||0}</strong></div>
+    `;
+  }
+
+  // ---- setup ----
+  document.querySelectorAll('#colorSeg button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('#colorSeg button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      humanColor = btn.dataset.color==='black' ? BLACK : WHITE;
+      aiColor = opp(humanColor);
+      newGame();
+    });
+  });
+  document.getElementById('newGameBtn').addEventListener('click', newGame);
+
+  // ---- player name ----
+  function getName(){ return localStorage.getItem(NAME_KEY) || ''; }
+  function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function promptName(){
+    const val = window.prompt("What should we call you?", getName());
+    if(val !== null){
+      const trimmed = val.trim();
+      if(trimmed) localStorage.setItem(NAME_KEY, trimmed); else localStorage.removeItem(NAME_KEY);
+      renderPlayerBox();
+    }
+  }
+  function renderPlayerBox(){
+    const box = document.getElementById('playerBox');
+    const name = getName();
+    box.innerHTML = name
+      ? `Playing as <strong>${escapeHtml(name)}</strong> <button id="editNameBtn" style="background:none;border:1px solid var(--line-dark);color:var(--muted);font-family:'Work Sans',sans-serif;font-size:12px;padding:4px 8px;border-radius:3px;cursor:pointer;margin-left:6px;">Change</button>`
+      : `<button id="addNameBtn" style="background:none;border:1px solid var(--line-dark);color:var(--muted);font-family:'Work Sans',sans-serif;font-size:13px;padding:5px 10px;border-radius:3px;cursor:pointer;">+ Add your name</button>`;
+    const btn = document.getElementById(name ? 'editNameBtn' : 'addNameBtn');
+    btn.addEventListener('click', promptName);
+  }
+
+  // ---- init ----
+  humanColor = BLACK; aiColor = WHITE;
+  renderPlayerBox();
+  renderStats();
+  newGame();
+})();
+</script>
+
+</body>
+</html>
