@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#17130f">
+<title>Mastermind — Black & White Chips</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#17130f; --ink-2:#211b15; --ink-3:#2b241c;
+    --parchment:#f3ead9; --parchment-2:#e9dcc2;
+    --chalk:#faf6ec; --coal:#141210;
+    --brass:#b98a3d; --brass-soft:#8a6a34;
+    --line-light:#d8c9a8; --line-dark:#3a3128;
+    --muted:#a89a84; --good:#6d8a5f; --bad:#a85440;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--ink); color:var(--parchment); font-family:'Work Sans', sans-serif; line-height:1.5; min-height:100vh;}
+  a{color:inherit;}
+  h1,h2,h3{font-family:'Fraunces', serif; font-weight:600; margin:0;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+  header.site{border-bottom:1px solid var(--line-dark);}
+  .site-bar{display:flex;justify-content:space-between;align-items:center;padding:18px 0;gap:16px;flex-wrap:wrap;}
+  .back-link{font-size:14px;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+  .back-link:hover{color:var(--brass);}
+  .player-box{font-size:14px;color:var(--muted);}
+  .player-box strong{color:var(--parchment);font-weight:600;}
+
+  .title-row{padding:34px 0 10px;}
+  .title-row h1{font-size:clamp(30px,4.5vw,42px);}
+  .title-row p{color:#cabfa9;margin-top:8px;max-width:62ch;font-size:15px;}
+
+  .mode-seg{display:inline-flex;border:1px solid var(--line-dark);border-radius:4px;overflow:hidden;margin-top:18px;}
+  .mode-seg button{background:var(--ink-2);color:var(--muted);border:none;padding:10px 18px;font-family:'Work Sans',sans-serif;font-size:14px;cursor:pointer;border-right:1px solid var(--line-dark);}
+  .mode-seg button:last-child{border-right:none;}
+  .mode-seg button.active{background:var(--brass);color:var(--coal);font-weight:600;}
+
+  .layout{display:grid;grid-template-columns:1fr 300px;gap:30px;padding:26px 0 70px;align-items:start;}
+  @media(max-width:860px){.layout{grid-template-columns:1fr;}}
+
+  .board-panel{background:var(--ink-2);border:1px solid var(--line-dark);border-radius:6px;padding:24px;}
+
+  .secret-row{
+    display:flex;align-items:center;gap:14px;padding-bottom:18px;margin-bottom:18px;border-bottom:1px dashed var(--line-dark);
+  }
+  .secret-row .label{font-size:13px;color:var(--muted);min-width:90px;}
+  .peg-slot{
+    width:38px;height:38px;border-radius:50%;border:2px solid var(--line-dark);
+    background:var(--ink);display:flex;align-items:center;justify-content:center;
+  }
+  .peg-slot.filled{border-color:transparent;}
+  .peg-slots{display:flex;gap:10px;}
+
+  .history{display:flex;flex-direction:column-reverse;gap:8px;max-height:420px;overflow-y:auto;padding-right:4px;}
+  .history-row{display:flex;align-items:center;gap:16px;padding:8px 10px;border-radius:4px;background:var(--ink-3);}
+  .history-row .guess-num{font-size:12px;color:var(--muted);min-width:20px;}
+  .feedback-grid{display:grid;grid-template-columns:repeat(2,9px);grid-template-rows:repeat(2,9px);gap:4px;margin-left:auto;}
+  .fb-dot{width:9px;height:9px;border-radius:50%;background:var(--line-dark);}
+  .fb-dot.black{background:#141210;border:1px solid #000;}
+  .fb-dot.white{background:#faf6ec;border:1px solid #141210;}
+
+  .current-row{
+    display:flex;align-items:center;gap:16px;margin-top:16px;padding-top:16px;border-top:1px dashed var(--line-dark);
+    flex-wrap:wrap;
+  }
+  .palette{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+  .swatch{width:34px;height:34px;border-radius:50%;border:2px solid transparent;cursor:pointer;}
+  .swatch:hover{border-color:var(--brass);}
+  .palette-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+
+  .btn{font-family:'Work Sans',sans-serif;font-weight:600;font-size:14px;padding:10px 16px;border-radius:3px;border:1px solid var(--brass);background:var(--brass);color:var(--coal);cursor:pointer;}
+  .btn:hover{background:#cf9f4c;}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;}
+  .btn.ghost{background:none;color:var(--muted);border-color:var(--line-dark);}
+  .btn.ghost:hover{color:var(--brass);border-color:var(--brass);}
+  .btn.small{padding:7px 12px;font-size:13px;}
+
+  .side{display:flex;flex-direction:column;gap:18px;}
+  .panel{background:var(--ink-2);border:1px solid var(--line-dark);border-radius:6px;padding:18px;}
+  .panel h3{font-size:14px;color:var(--brass);margin-bottom:12px;font-family:'Work Sans',sans-serif;font-weight:600;}
+  .status-line{font-size:15px;margin-bottom:6px;color:var(--chalk);font-weight:500;}
+  .status-line.sub{color:var(--muted);font-size:13.5px;font-weight:400;}
+
+  .key-explain{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:8px;}
+  .key-explain .row{display:flex;align-items:center;gap:10px;}
+  .key-dot{width:10px;height:10px;border-radius:50%;}
+  .key-dot.black{background:#141210;border:1px solid #000;}
+  .key-dot.white{background:#faf6ec;border:1px solid #141210;}
+
+  .stats-row{display:flex;justify-content:space-between;font-size:13.5px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--line-dark);}
+  .stats-row:last-child{border-bottom:none;}
+  .stats-row strong{color:var(--parchment);}
+
+  .msg-overlay{position:fixed;inset:0;background:rgba(10,8,6,0.75);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
+  .msg-overlay.show{display:flex;}
+  .msg-card{background:var(--parchment);color:var(--ink);border-radius:6px;padding:32px;max-width:400px;text-align:center;}
+  .msg-card h2{font-size:26px;margin-bottom:10px;}
+  .msg-card p{color:#5a5142;font-size:14.5px;margin-bottom:20px;}
+  .msg-card .btn{width:auto;padding:10px 22px;}
+
+  .code-reveal{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
+  .code-reveal .peg-slot{width:30px;height:30px;}
+
+  footer{border-top:1px solid var(--line-dark);padding:28px 0 40px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  footer a{text-decoration:none;color:var(--muted);}
+  footer a:hover{color:var(--brass);}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap site-bar">
+    <a class="back-link" href="index.html">&larr; Black &amp; White Chips</a>
+    <div class="player-box" id="playerBox"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="title-row">
+    <h1>Mastermind</h1>
+    <p>Break the secret four-peg code using logic and the feedback pegs: a black peg means right colour, right spot; a white peg means right colour, wrong spot.</p>
+    <div class="mode-seg" id="modeSeg">
+      <button data-mode="human" class="active">You guess</button>
+      <button data-mode="computer">Computer guesses</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="board-panel">
+
+      <!-- Computer-guesses setup -->
+      <div id="setupArea" style="display:none;">
+        <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">Choose a secret code using the palette below, then lock it in. The computer can't see it &mdash; it will deduce it purely from feedback.</p>
+        <div class="secret-row">
+          <span class="label">Your code</span>
+          <div class="peg-slots" id="secretSlots"></div>
+        </div>
+        <div class="palette-row">
+          <div class="palette" id="setupPalette"></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn ghost small" id="clearSecretBtn">Clear</button>
+            <button class="btn small" id="lockSecretBtn" disabled>Lock in code</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="playArea">
+        <div class="history" id="history"></div>
+        <div class="current-row" id="currentRow"></div>
+        <div class="palette-row" id="controlsRow">
+          <div class="palette" id="guessPalette"></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn ghost small" id="backspaceBtn">Backspace</button>
+            <button class="btn small" id="submitBtn" disabled>Submit guess</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <h3>Status</h3>
+        <div class="status-line" id="statusLine">Set up a game to begin</div>
+        <div class="status-line sub" id="statusSub"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Feedback key</h3>
+        <div class="key-explain">
+          <div class="row"><span class="key-dot black"></span> Right colour, right position</div>
+          <div class="row"><span class="key-dot white"></span> Right colour, wrong position</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Your record</h3>
+        <div id="statsBox"></div>
+      </div>
+
+      <button class="btn ghost" id="newGameBtn">New game</button>
+    </div>
+  </div>
+</div>
+
+<footer class="wrap">
+  <span>Black &amp; White Chips &mdash; part of <a href="https://christinepamela.com/tools.html">Pam's Corner</a></span>
+  <a href="index.html">More games</a>
+</footer>
+
+<div class="msg-overlay" id="msgOverlay">
+  <div class="msg-card">
+    <h2 id="msgTitle">Game over</h2>
+    <div class="code-reveal" id="codeReveal"></div>
+    <p id="msgBody"></p>
+    <button class="btn" id="msgCloseBtn">Play again</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const NAME_KEY='bwc_player_name';
+  const STATS_KEY='bwc_mastermind_stats';
+  const COLORS = [
+    {id:0, hex:'#8a3b3b', name:'red'},
+    {id:1, hex:'#3d5e8a', name:'blue'},
+    {id:2, hex:'#d9b23e', name:'gold'},
+    {id:3, hex:'#4c7a52', name:'green'},
+    {id:4, hex:'#6a4c8a', name:'violet'},
+    {id:5, hex:'#c97a3a', name:'amber'},
+  ];
+  const CODE_LEN = 4;
+  const MAX_GUESSES_HUMAN = 10;
+  const MAX_GUESSES_COMPUTER = 10;
+
+  let mode = 'human';
+  let secret = null;          // array of 4 color ids
+  let currentGuess = [];
+  let guessHistory = [];      // {guess:[...], black, white}
+  let gameOver = false;
+
+  // computer-guessing state
+  let setupSecret = [];
+  let possibleCodes = [];
+  let computerLastGuess = null;
+  let computerGuessCount = 0;
+
+  function randCode(){
+    const c = [];
+    for(let i=0;i<CODE_LEN;i++) c.push(Math.floor(Math.random()*COLORS.length));
+    return c;
+  }
+  function allCodes(){
+    const out = [];
+    const n = COLORS.length;
+    for(let a=0;a<n;a++)for(let b=0;b<n;b++)for(let c=0;c<n;c++)for(let d=0;d<n;d++){
+      out.push([a,b,c,d]);
+    }
+    return out;
+  }
+  function feedback(guess, target){
+    let black=0;
+    const gLeft=[], tLeft=[];
+    for(let i=0;i<CODE_LEN;i++){
+      if(guess[i]===target[i]) black++;
+      else { gLeft.push(guess[i]); tLeft.push(target[i]); }
+    }
+    let white=0;
+    const used = new Array(tLeft.length).fill(false);
+    for(const g of gLeft){
+      const idx = tLeft.findIndex((t,i)=>!used[i] && t===g);
+      if(idx>=0){ used[idx]=true; white++; }
+    }
+    return {black, white};
+  }
+
+  // ---- rendering helpers ----
+  function pegHtml(colorId, size){
+    if(colorId===null || colorId===undefined){
+      return `<div class="peg-slot" style="${size?`width:${size}px;height:${size}px;`:''}"></div>`;
+    }
+    const hex = COLORS[colorId].hex;
+    return `<div class="peg-slot filled" style="background:${hex};${size?`width:${size}px;height:${size}px;`:''}"></div>`;
+  }
+
+  function renderPalette(containerId, onClick){
+    const el = document.getElementById(containerId);
+    el.innerHTML = COLORS.map(c => `<div class="swatch" style="background:${c.hex}" data-id="${c.id}" title="${c.name}"></div>`).join('');
+    el.querySelectorAll('.swatch').forEach(sw=>{
+      sw.addEventListener('click', ()=> onClick(+sw.dataset.id));
+    });
+  }
+
+  function renderCurrentRow(){
+    const row = document.getElementById('currentRow');
+    const slots = [];
+    for(let i=0;i<CODE_LEN;i++){
+      slots.push(pegHtml(currentGuess[i] !== undefined ? currentGuess[i] : null));
+    }
+    row.innerHTML = `<div class="peg-slots">${slots.join('')}</div>`;
+    document.getElementById('submitBtn').disabled = currentGuess.length !== CODE_LEN || gameOver;
+  }
+
+  function renderHistory(){
+    const el = document.getElementById('history');
+    el.innerHTML = guessHistory.map((h,i) => {
+      const pegs = h.guess.map(c=>pegHtml(c,26)).join('');
+      const dots = [];
+      for(let k=0;k<h.black;k++) dots.push('<div class="fb-dot black"></div>');
+      for(let k=0;k<h.white;k++) dots.push('<div class="fb-dot white"></div>');
+      while(dots.length<4) dots.push('<div class="fb-dot"></div>');
+      return `<div class="history-row">
+        <span class="guess-num">${i+1}</span>
+        <div class="peg-slots">${pegs}</div>
+        <div class="feedback-grid">${dots.join('')}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function setStatus(line, sub){
+    document.getElementById('statusLine').textContent = line;
+    document.getElementById('statusSub').textContent = sub || '';
+  }
+
+  // ---- HUMAN GUESSES MODE ----
+  function startHumanGame(){
+    secret = randCode();
+    currentGuess = [];
+    guessHistory = [];
+    gameOver = false;
+    document.getElementById('setupArea').style.display = 'none';
+    document.getElementById('playArea').style.display = 'block';
+    document.getElementById('controlsRow').style.display = 'flex';
+    renderPalette('guessPalette', (id)=>{
+      if(gameOver || currentGuess.length>=CODE_LEN) return;
+      currentGuess.push(id);
+      renderCurrentRow();
+    });
+    renderCurrentRow();
+    renderHistory();
+    setStatus(`Guess 1 of ${MAX_GUESSES_HUMAN}`, 'Click a colour to fill the next peg, then submit.');
+  }
+
+  document.getElementById('backspaceBtn').addEventListener('click', ()=>{
+    if(gameOver) return;
+    currentGuess.pop();
+    renderCurrentRow();
+  });
+
+  document.getElementById('submitBtn').addEventListener('click', ()=>{
+    if(currentGuess.length !== CODE_LEN || gameOver) return;
+    const fb = feedback(currentGuess, secret);
+    guessHistory.push({guess: currentGuess.slice(), black: fb.black, white: fb.white});
+    renderHistory();
+    const guessNum = guessHistory.length;
+    currentGuess = [];
+    renderCurrentRow();
+
+    if(fb.black === CODE_LEN){
+      gameOver = true;
+      recordResult('win');
+      setStatus('Solved!', `You cracked it in ${guessNum} guess${guessNum===1?'':'es'}.`);
+      revealAndShow('You cracked it', `You found the code in ${guessNum} guess${guessNum===1?'':'es'}.`, secret);
+      return;
+    }
+    if(guessNum >= MAX_GUESSES_HUMAN){
+      gameOver = true;
+      recordResult('loss');
+      setStatus('Out of guesses', 'The code is revealed below.');
+      revealAndShow('Out of guesses', `You used all ${MAX_GUESSES_HUMAN} guesses. Here's the code that got away.`, secret);
+      return;
+    }
+    setStatus(`Guess ${guessNum+1} of ${MAX_GUESSES_HUMAN}`, 'Click a colour to fill the next peg, then submit.');
+  });
+
+  // ---- COMPUTER GUESSES MODE ----
+  function startComputerSetup(){
+    setupSecret = [];
+    document.getElementById('setupArea').style.display = 'block';
+    document.getElementById('playArea').style.display = 'none';
+    renderSecretSlots();
+    renderPalette('setupPalette', (id)=>{
+      if(setupSecret.length>=CODE_LEN) return;
+      setupSecret.push(id);
+      renderSecretSlots();
+    });
+    setStatus('Set your secret code', `Choose ${CODE_LEN} colours, in any order (repeats allowed).`);
+  }
+  function renderSecretSlots(){
+    const el = document.getElementById('secretSlots');
+    const slots = [];
+    for(let i=0;i<CODE_LEN;i++) slots.push(pegHtml(setupSecret[i] !== undefined ? setupSecret[i] : null));
+    el.innerHTML = slots.join('');
+    document.getElementById('lockSecretBtn').disabled = setupSecret.length !== CODE_LEN;
+  }
+  document.getElementById('clearSecretBtn').addEventListener('click', ()=>{
+    setupSecret = [];
+    renderSecretSlots();
+  });
+  document.getElementById('lockSecretBtn').addEventListener('click', ()=>{
+    if(setupSecret.length !== CODE_LEN) return;
+    secret = setupSecret.slice();
+    beginComputerGuessing();
+  });
+
+  function beginComputerGuessing(){
+    guessHistory = [];
+    gameOver = false;
+    possibleCodes = allCodes();
+    computerGuessCount = 0;
+    computerLastGuess = [1,1,0,0]; // fixed strong opening guess pattern
+    document.getElementById('setupArea').style.display = 'none';
+    document.getElementById('playArea').style.display = 'block';
+    document.getElementById('controlsRow').style.display = 'none';
+    document.getElementById('currentRow').innerHTML = `<button class="btn" id="nextGuessBtn">Reveal computer's first guess</button>`;
+    document.getElementById('nextGuessBtn').addEventListener('click', computerTakeGuess);
+    renderHistory();
+    setStatus('Code locked in', "The computer will now try to deduce your code from feedback alone.");
+  }
+
+  function computerTakeGuess(){
+    if(gameOver) return;
+    let guess;
+    if(computerGuessCount===0){
+      guess = computerLastGuess;
+    } else {
+      guess = possibleCodes[Math.floor(Math.random()*possibleCodes.length)];
+    }
+    computerGuessCount++;
+    const fb = feedback(guess, secret);
+    guessHistory.push({guess: guess.slice(), black: fb.black, white: fb.white});
+    renderHistory();
+
+    if(fb.black === CODE_LEN){
+      gameOver = true;
+      recordResult('computer_win');
+      setStatus('The computer found it', `It took ${computerGuessCount} guess${computerGuessCount===1?'':'es'}.`);
+      revealAndShow('Solved by the computer', `It deduced your code in ${computerGuessCount} guess${computerGuessCount===1?'':'es'}.`, secret);
+      return;
+    }
+    if(computerGuessCount >= MAX_GUESSES_COMPUTER){
+      gameOver = true;
+      recordResult('computer_loss');
+      setStatus('The computer ran out of guesses', 'Your code held up!');
+      revealAndShow('Your code held up', `The computer used all ${MAX_GUESSES_COMPUTER} guesses without finding it.`, secret);
+      return;
+    }
+
+    // narrow candidates
+    possibleCodes = possibleCodes.filter(x => {
+      const f2 = feedback(guess, x);
+      return f2.black===fb.black && f2.white===fb.white;
+    });
+
+    setStatus(`Guess ${computerGuessCount} of ${MAX_GUESSES_COMPUTER}`, `${possibleCodes.length} code${possibleCodes.length===1?'':'s'} still fit the clues.`);
+    document.getElementById('currentRow').innerHTML = `<button class="btn" id="nextGuessBtn">Reveal next guess</button>`;
+    document.getElementById('nextGuessBtn').addEventListener('click', computerTakeGuess);
+  }
+
+  // ---- shared: end-of-game reveal ----
+  function revealAndShow(title, body, code){
+    document.getElementById('msgTitle').textContent = title;
+    document.getElementById('msgBody').textContent = body;
+    document.getElementById('codeReveal').innerHTML = code.map(c=>pegHtml(c,30)).join('');
+    document.getElementById('msgOverlay').classList.add('show');
+  }
+  document.getElementById('msgCloseBtn').addEventListener('click', ()=>{
+    document.getElementById('msgOverlay').classList.remove('show');
+    newGame();
+  });
+
+  // ---- stats ----
+  function getStats(){
+    try{ return JSON.parse(localStorage.getItem(STATS_KEY)) || {win:0,loss:0,computer_win:0,computer_loss:0}; }
+    catch(e){ return {win:0,loss:0,computer_win:0,computer_loss:0}; }
+  }
+  function recordResult(key){
+    const s = getStats();
+    s[key] = (s[key]||0) + 1;
+    localStorage.setItem(STATS_KEY, JSON.stringify(s));
+    renderStats();
+  }
+  function renderStats(){
+    const s = getStats();
+    document.getElementById('statsBox').innerHTML = `
+      <div class="stats-row"><span>You cracked its code</span><strong>${s.win||0}</strong></div>
+      <div class="stats-row"><span>It stumped you</span><strong>${s.loss||0}</strong></div>
+      <div class="stats-row"><span>It cracked your code</span><strong>${s.computer_win||0}</strong></div>
+      <div class="stats-row"><span>You stumped it</span><strong>${s.computer_loss||0}</strong></div>
+    `;
+  }
+
+  // ---- mode switching ----
+  document.querySelectorAll('#modeSeg button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('#modeSeg button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      mode = btn.dataset.mode;
+      newGame();
+    });
+  });
+  document.getElementById('newGameBtn').addEventListener('click', newGame);
+
+  function newGame(){
+    document.getElementById('msgOverlay').classList.remove('show');
+    if(mode==='human') startHumanGame();
+    else startComputerSetup();
+  }
+
+  // ---- player name ----
+  function getName(){ return localStorage.getItem(NAME_KEY) || ''; }
+  function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function promptName(){
+    const val = window.prompt("What should we call you?", getName());
+    if(val !== null){
+      const trimmed = val.trim();
+      if(trimmed) localStorage.setItem(NAME_KEY, trimmed); else localStorage.removeItem(NAME_KEY);
+      renderPlayerBox();
+    }
+  }
+  function renderPlayerBox(){
+    const box = document.getElementById('playerBox');
+    const name = getName();
+    box.innerHTML = name
+      ? `Playing as <strong>${escapeHtml(name)}</strong> <button id="editNameBtn" style="background:none;border:1px solid var(--line-dark);color:var(--muted);font-family:'Work Sans',sans-serif;font-size:12px;padding:4px 8px;border-radius:3px;cursor:pointer;margin-left:6px;">Change</button>`
+      : `<button id="addNameBtn" style="background:none;border:1px solid var(--line-dark);color:var(--muted);font-family:'Work Sans',sans-serif;font-size:13px;padding:5px 10px;border-radius:3px;cursor:pointer;">+ Add your name</button>`;
+    const btn = document.getElementById(name ? 'editNameBtn' : 'addNameBtn');
+    btn.addEventListener('click', promptName);
+  }
+
+  renderPlayerBox();
+  renderStats();
+  newGame();
+})();
+</script>
+
+</body>
+</html>
