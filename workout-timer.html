@@ -911,6 +911,67 @@
     cursor: pointer;
   }
 
+  /* ---------- WEEK OVERRIDE BANNER + PUSH ---------- */
+  .week-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: rgba(255, 180, 60, 0.12);
+    border: 1px solid var(--rest);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--rest);
+    line-height: 1.35;
+  }
+  .week-banner .icon-btn {
+    color: var(--rest);
+    border-color: var(--rest);
+    flex-shrink: 0;
+  }
+  .push-pick {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    text-align: left;
+    padding: 12px 14px;
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    margin-bottom: 6px;
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    cursor: pointer;
+  }
+  .push-pick:active { background: var(--line); }
+  .push-pick .pp-day { font-weight: 800; font-size: 14px; }
+  .push-pick .pp-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .push-pick .pp-go {
+    color: var(--work);
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .push-note {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+  .push-note b { color: var(--text); }
+  .modal .section-label:first-child { margin-top: 0; }
+
   /* ===========================================================
      PLAN SCREEN
      =========================================================== */
@@ -1242,6 +1303,7 @@
      SCREEN: PLAN
      ============================================================ -->
 <div class="screen" id="planScreen">
+  <div id="planWeekNote"></div>
   <div class="plan-tabs" id="planTabs"></div>
 
   <div class="day-editor" id="dayEditor"></div>
@@ -1398,6 +1460,17 @@
   </div>
 </div>
 
+<!-- Push workout to another day (this week only) -->
+<div class="modal-bg" id="pushModal">
+  <div class="modal">
+    <h3>Push workout · this week only</h3>
+    <div id="pushBody"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="pushCancel" style="grid-column:1/-1;">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script>
   // ====================================================================
   // STORAGE (graceful fallback if localStorage unavailable)
@@ -1531,7 +1604,7 @@
     dayProgFill: $('dayProgFill'), weekStrip: $('weekStrip'),
     tdExercises: $('tdExercises'), tdMinutes: $('tdMinutes'), tdSets: $('tdSets'),
     // Plan
-    planTabs: $('planTabs'), dayEditor: $('dayEditor'),
+    planTabs: $('planTabs'), dayEditor: $('dayEditor'), planWeekNote: $('planWeekNote'),
     copyDayBtn: $('copyDayBtn'), clearDayBtn: $('clearDayBtn'),
     savedList: $('savedList'), chipsRow: $('chipsRow'), saveBtn: $('saveBtn'),
     goalEx: $('goalEx'), goalMin: $('goalMin'), displayMode: $('displayMode'),
@@ -1546,7 +1619,8 @@
     manageModalClose: $('manageModalClose'),
     pickerModal: $('pickerModal'), pickerChips: $('pickerChips'),
     pickerList: $('pickerList'), pickerCancel: $('pickerCancel'),
-    copyModal: $('copyModal'), copyTargets: $('copyTargets'), copyCancel: $('copyCancel')
+    copyModal: $('copyModal'), copyTargets: $('copyTargets'), copyCancel: $('copyCancel'),
+    pushModal: $('pushModal'), pushBody: $('pushBody'), pushCancel: $('pushCancel')
   };
 
   // ====================================================================
@@ -2313,7 +2387,6 @@
   }
 
   function calcStreak() {
-    const plan = getPlan();
     const dayMap = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     let streak = 0;
     for (let i = 0; i < 400; i++) {
@@ -2323,6 +2396,7 @@
       const s = store.get(`wt_stats_${key}`, null);
       const hasWork = s && ((s.exercises || 0) > 0 || (s.time || 0) > 0);
       const dayKey = dayMap[d.getDay()];
+      const plan = getEffectivePlan(d);   // respects any rearranged week
       const isPlannedRest = plan.days[dayKey] && plan.days[dayKey].isRest;
       if (hasWork || isPlannedRest) streak++;
       else if (i === 0) { /* today may be blank; don't break streak */ }
@@ -2334,9 +2408,8 @@
   function renderWeekStrip() {
     // Show Mon-Sun for the current week
     const now = new Date();
-    const jsDay = now.getDay(); // 0=Sun
-    const daysFromMon = (jsDay + 6) % 7;
-    const monday = new Date(now); monday.setDate(now.getDate() - daysFromMon);
+    const monday = mondayOf(now);
+    const plan = getEffectivePlan(now);
 
     let html = '';
     for (let i = 0; i < 7; i++) {
@@ -2346,7 +2419,6 @@
       const s = store.get(`wt_stats_${key}`, null);
       const done = s && ((s.exercises||0) > 0 || (s.time||0) > 0);
       const dayKey = DAY_KEYS[i];
-      const plan = getPlan();
       const isRest = plan.days[dayKey] && plan.days[dayKey].isRest;
       const cls = ['week-dot'];
       if (done) cls.push('done');
@@ -2365,7 +2437,7 @@
   });
 
   // ====================================================================
-  // WEEKLY PLAN
+  // WEEKLY PLAN  (base plan = repeats every week)
   // ====================================================================
   function getPlan() {
     const p = store.get('wt_plan', null);
@@ -2377,6 +2449,201 @@
   }
   function setPlan(p) { store.set('wt_plan', p); }
 
+  // ====================================================================
+  // THIS-WEEK-ONLY OVERRIDE
+  // A rearranged copy of the plan is saved under a key for the week's Monday.
+  // Next week has a different key, so it automatically uses the base plan again.
+  // ====================================================================
+  function mondayOf(date) {
+    const x = new Date(date);
+    x.setHours(0, 0, 0, 0);
+    x.setDate(x.getDate() - ((x.getDay() + 6) % 7));
+    return x;
+  }
+  function weekStoreKey(date) { return 'wt_week_' + isoDate(mondayOf(date || new Date())); }
+  function getWeekOverride(date) { return store.get(weekStoreKey(date), null); }
+  function hasWeekOverride() { const o = getWeekOverride(); return !!(o && o.days); }
+  function getEffectivePlan(date) {
+    const o = getWeekOverride(date);
+    return (o && o.days) ? o : getPlan();
+  }
+  function pruneOldWeeks() {
+    try {
+      const current = weekStoreKey(new Date());
+      const stale = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('wt_week_') && k < current) stale.push(k);
+      }
+      stale.forEach(k => localStorage.removeItem(k));
+    } catch (e) {}
+  }
+
+  // If today's content changed, the old "done" ticks no longer line up with it.
+  function todaySnapshot() {
+    const d = getEffectivePlan(new Date()).days[todayDayKey()];
+    return JSON.stringify(d || null);
+  }
+  function clearMarksIfTodayChanged(before) {
+    if (before !== todaySnapshot()) store.set(`wt_marks_${todayKey()}`, {});
+  }
+  function refreshAfterWeekChange() {
+    if (state.session) { state.session = null; doReset(); }
+    renderToday();
+    renderWeekStrip();
+    renderPlanWeekNote();
+  }
+
+  function resetWeek() {
+    if (!confirm("Put this week back to your normal plan?\n(Next week is unaffected either way.)")) return;
+    const before = todaySnapshot();
+    store.del(weekStoreKey(new Date()));
+    clearMarksIfTodayChanged(before);
+    refreshAfterWeekChange();
+  }
+
+  function weekBannerHtml(text) {
+    if (!hasWeekOverride()) return '';
+    return `<div class="week-banner"><span>${text || 'This week is rearranged. Next week goes back to normal.'}</span><button class="icon-btn" data-reset-week>Reset week</button></div>`;
+  }
+  function bindWeekBanner(root) {
+    root.querySelectorAll('[data-reset-week]').forEach(b => b.addEventListener('click', resetWeek));
+  }
+  function renderPlanWeekNote() {
+    els.planWeekNote.innerHTML = weekBannerHtml('This week is rearranged. Edits below change your base plan from next week on.');
+    bindWeekBanner(els.planWeekNote);
+  }
+
+  // ---- push modal ----
+  let pushCtx = null; // { from, to }
+
+  function dayHasWorkout(day) {
+    return !!(day && !day.isRest && (day.sections || []).some(s => (s.exercises || []).length));
+  }
+  function dayExerciseCount(day) {
+    return (day.sections || []).reduce((n, s) => n + (s.exercises || []).length, 0);
+  }
+
+  function openPushModal() {
+    const plan = getEffectivePlan(new Date());
+    const today = todayDayKey();
+    const todayIdx = DAY_KEYS.indexOf(today);
+    if (todayIdx >= DAY_KEYS.length - 1) {
+      alert("It's the last day of this week, so there's no later day to push to. Next week follows your normal plan.");
+      return;
+    }
+    // Default source: today's workout, otherwise the first day that has one
+    let from = dayHasWorkout(plan.days[today]) ? today : null;
+    if (!from) from = DAY_KEYS.find(k => dayHasWorkout(plan.days[k])) || null;
+    pushCtx = { from, to: null };
+    renderPushModal();
+    els.pushModal.classList.add('show');
+  }
+
+  function renderPushModal() {
+    const plan = getEffectivePlan(new Date());
+    const todayIdx = DAY_KEYS.indexOf(todayDayKey());
+    const { from, to } = pushCtx;
+
+    const workoutDays = DAY_KEYS.filter(k => dayHasWorkout(plan.days[k]));
+    if (!workoutDays.length || !from) {
+      els.pushBody.innerHTML = '<div class="empty">No workouts to move this week.</div>';
+      return;
+    }
+
+    // Step 2: target already has a workout -> ask swap or combine
+    if (to) {
+      const target = plan.days[to];
+      els.pushBody.innerHTML = `
+        <div class="push-note"><b>${DAY_NAMES[to]}</b> already has <b>${escapeHtml(target.theme || 'a workout')}</b> planned. What should happen?</div>
+        <button class="push-pick" data-act="swap"><div><div class="pp-day">Swap the two days</div><div class="pp-meta">${DAY_NAMES[from]} ⇄ ${DAY_NAMES[to]}</div></div><span class="pp-go">Swap</span></button>
+        <button class="push-pick" data-act="combine"><div><div class="pp-day">Do both on ${DAY_NAMES[to]}</div><div class="pp-meta">${DAY_NAMES[from]}'s workout is added after ${DAY_NAMES[to]}'s</div></div><span class="pp-go">Combine</span></button>
+        <button class="push-pick" data-act="back"><div><div class="pp-day">Back</div></div><span class="pp-go">←</span></button>
+      `;
+      els.pushBody.querySelectorAll('[data-act]').forEach(b => {
+        b.addEventListener('click', () => {
+          const act = b.dataset.act;
+          if (act === 'back') { pushCtx.to = null; renderPushModal(); return; }
+          applyMove(from, to, act);
+        });
+      });
+      return;
+    }
+
+    // Step 1: choose source day (chips) + target day (list)
+    let html = `<div class="section-label">Move which day's workout?</div><div class="chips-row" style="margin:0 -20px 14px;padding-left:20px;padding-right:20px;">`;
+    html += workoutDays.map(k => `<button class="chip${k === from ? ' active' : ''}" data-from="${k}">${k}${k === todayDayKey() ? ' · today' : ''}</button>`).join('');
+    html += `</div>`;
+    html += `<div class="push-note"><b>${escapeHtml(plan.days[from].theme || DAY_NAMES[from])}</b> · ${dayExerciseCount(plan.days[from])} exercises</div>`;
+    html += `<div class="section-label" style="margin-top:4px;">…to which day?</div>`;
+
+    const targets = DAY_KEYS.filter((k, i) => i >= todayIdx && k !== from);
+    if (!targets.length) {
+      html += '<div class="empty">No other days left this week.</div>';
+    }
+    targets.forEach(k => {
+      const d = plan.days[k];
+      let meta;
+      if (dayHasWorkout(d)) meta = escapeHtml(d.theme || 'Workout planned');
+      else if (d && d.isRest) meta = d.movedTo ? `Free · ${escapeHtml(d.theme)}` : 'Rest day';
+      else meta = 'Nothing planned';
+      html += `<button class="push-pick" data-to="${k}"><div><div class="pp-day">${DAY_NAMES[k]}${k === todayDayKey() ? ' (today)' : ''}</div><div class="pp-meta">${meta}</div></div><span class="pp-go">Push →</span></button>`;
+    });
+    els.pushBody.innerHTML = html;
+
+    els.pushBody.querySelectorAll('[data-from]').forEach(b => {
+      b.addEventListener('click', () => { pushCtx.from = b.dataset.from; renderPushModal(); });
+    });
+    els.pushBody.querySelectorAll('[data-to]').forEach(b => {
+      b.addEventListener('click', () => {
+        const target = b.dataset.to;
+        if (dayHasWorkout(plan.days[target])) {
+          pushCtx.to = target;
+          renderPushModal();
+        } else {
+          applyMove(from, target, 'move');
+        }
+      });
+    });
+  }
+
+  function applyMove(from, to, mode) {
+    const before = todaySnapshot();
+    const plan = JSON.parse(JSON.stringify(getEffectivePlan(new Date())));
+    const A = plan.days[from];
+    const B = plan.days[to];
+    const emptyWithNote = () => ({
+      theme: `Moved to ${DAY_NAMES[to]}`, goal: '', isRest: true, movedTo: to, sections: []
+    });
+
+    if (mode === 'swap') {
+      plan.days[from] = B;
+      plan.days[to] = A;
+    } else if (mode === 'combine') {
+      B.sections = [...(B.sections || []), ...(A.sections || [])];
+      B.theme = [B.theme, A.theme].filter(Boolean).join(' + ');
+      B.isRest = false;
+      delete B.movedTo;
+      plan.days[from] = emptyWithNote();
+    } else { // 'move' into an empty / rest day
+      A.movedFrom = from;
+      plan.days[to] = A;
+      plan.days[from] = emptyWithNote();
+    }
+
+    plan.weekOf = isoDate(mondayOf(new Date()));
+    store.set(weekStoreKey(new Date()), plan);
+    clearMarksIfTodayChanged(before);
+    els.pushModal.classList.remove('show');
+    pushCtx = null;
+    refreshAfterWeekChange();
+  }
+
+  els.pushCancel.addEventListener('click', () => { els.pushModal.classList.remove('show'); pushCtx = null; });
+
+  // ====================================================================
+  // PLAN EDITOR (edits the base plan that repeats every week)
+  // ====================================================================
   let currentPlanDay = todayDayKey();
 
   function renderPlanTabs() {
@@ -2701,9 +2968,11 @@
   els.loadSampleBtn.addEventListener('click', () => {
     if (!confirm('Install the sample weekly plan?\nThis overwrites your current plan.')) return;
     setPlan(SAMPLE_PLAN());
+    store.del(weekStoreKey(new Date()));   // drop any this-week rearrangement
     currentPlanDay = todayDayKey();
     renderPlanTabs();
     renderDayEditor();
+    renderPlanWeekNote();
     renderToday();
     renderWeekStrip();
     // Also add any missing exercises to library
@@ -2736,9 +3005,14 @@
     return store.get(`wt_marks_${todayKey()}`, {});
   }
 
+  function setTodayBody(html) {
+    els.todayBody.innerHTML = weekBannerHtml() + html;
+    bindWeekBanner(els.todayBody);
+  }
+
   function renderToday() {
     const dayKey = todayDayKey();
-    const plan = getPlan();
+    const plan = getEffectivePlan(new Date());
     const day = plan.days[dayKey] || { theme:'', goal:'', isRest:false, sections:[] };
     const now = new Date();
     els.todayDayName.textContent = DAY_NAMES[dayKey].toUpperCase();
@@ -2749,22 +3023,31 @@
 
     // Body
     if (day.isRest) {
-      els.todayBody.innerHTML = `
-        <div class="today-rest-note">
-          <div class="big">REST DAY</div>
-          <div>Take it easy. A gentle walk is fine — no training today.</div>
-          <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:var(--work);text-transform:uppercase;">Streak stays safe 🔥</div>
-        </div>`;
+      if (day.movedTo) {
+        setTodayBody(`
+          <div class="today-rest-note">
+            <div class="big">MOVED</div>
+            <div>Today's workout was pushed to <b style="color:var(--text);">${DAY_NAMES[day.movedTo]}</b> this week.</div>
+            <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:var(--work);text-transform:uppercase;">Streak stays safe 🔥</div>
+          </div>`);
+      } else {
+        setTodayBody(`
+          <div class="today-rest-note">
+            <div class="big">REST DAY</div>
+            <div>Take it easy. A gentle walk is fine — no training today.</div>
+            <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.15em;color:var(--work);text-transform:uppercase;">Streak stays safe 🔥</div>
+          </div>`);
+      }
       renderTodayStats();
       return;
     }
 
     if (!(day.sections || []).length) {
-      els.todayBody.innerHTML = `
+      setTodayBody(`
         <div class="today-empty">
           <div style="font-size:15px;margin-bottom:8px;">No exercises scheduled.</div>
           <div>Go to <a onclick="switchScreen('plan')">Plan</a> to build ${DAY_NAMES[dayKey]}.</div>
-        </div>`;
+        </div>`);
       renderTodayStats();
       return;
     }
@@ -2807,10 +3090,11 @@
         <button class="btn" id="startSessionBtn" style="width:100%;">
           ${doneCount === totalEx ? '↺ RESTART SESSION' : (doneCount > 0 ? '▶ CONTINUE SESSION' : `▶ START FULL SESSION · ${totalEx} EXERCISES`)}
         </button>
+        <button class="btn btn-ghost" id="pushDayBtn" style="width:100%;margin-top:10px;font-size:14px;padding:16px;">⇢ Can't make it? Push to another day</button>
       </div>
     `;
 
-    els.todayBody.innerHTML = html;
+    setTodayBody(html);
 
     els.todayBody.querySelectorAll('[data-check]').forEach(b => {
       b.addEventListener('click', (e) => {
@@ -2828,12 +3112,14 @@
     });
     const ssb = $('startSessionBtn');
     ssb && ssb.addEventListener('click', () => startFullSession(dayKey));
+    const pdb = $('pushDayBtn');
+    pdb && pdb.addEventListener('click', openPushModal);
 
     renderTodayStats();
   }
 
   function loadDayExercise(dayKey, sIdx, eIdx, autoStart) {
-    const plan = getPlan();
+    const plan = getEffectivePlan(new Date());
     const ex = plan.days[dayKey]?.sections?.[sIdx]?.exercises?.[eIdx];
     if (!ex) return;
     // Load into timer settings
@@ -2858,7 +3144,7 @@
   }
 
   function startFullSession(dayKey) {
-    const plan = getPlan();
+    const plan = getEffectivePlan(new Date());
     const day = plan.days[dayKey];
     if (!day) return;
     const marks = getTodayMarks();
@@ -2929,7 +3215,7 @@
       b.classList.toggle('active', b.dataset.nav === name);
     });
     if (name === 'today') renderToday();
-    if (name === 'plan') { renderPlanTabs(); renderDayEditor(); }
+    if (name === 'plan') { renderPlanWeekNote(); renderPlanTabs(); renderDayEditor(); }
     window.scrollTo(0, 0);
   }
   window.switchScreen = switchScreen;
@@ -2938,7 +3224,7 @@
   });
 
   // Click outside modal to close
-  [els.saveModal, els.manageModal, els.pickerModal, els.copyModal].forEach(m => {
+  [els.saveModal, els.manageModal, els.pickerModal, els.copyModal, els.pushModal].forEach(m => {
     m.addEventListener('click', (e) => { if (e.target === m) m.classList.remove('show'); });
   });
 
@@ -3243,16 +3529,18 @@
   // ====================================================================
   // INIT
   // ====================================================================
+  pruneOldWeeks();   // drop last week's rearrangement so the base plan applies again
   syncInputs();
   renderChips();
   renderSaved();
   renderTodayStats();
   renderToday();
+  renderPlanWeekNote();
   renderPlanTabs();
   renderDayEditor();
 
   // Default to Today screen if a plan exists for today; otherwise Timer
-  const initialPlan = getPlan();
+  const initialPlan = getEffectivePlan(new Date());
   const initialDay = initialPlan.days[todayDayKey()];
   const hasPlan = initialDay && (initialDay.isRest || (initialDay.sections && initialDay.sections.length));
   if (hasPlan) switchScreen('today');
