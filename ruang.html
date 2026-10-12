@@ -1,0 +1,498 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Ruang Home Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: step index on the left, a phone-sized planner in the middle, notes on the right. Drafting-grid ground, teal ink. */
+:root{
+  --bg:#edf2f1; --surface:#fbfdfc; --ink:#1b2b2a; --muted:#566b68; --line:#c3d2cf;
+  --accent:#0b6e63; --accent-ink:#ffffff; --accent-soft:#d6ebe7;
+  --ok:#2c7a4b; --warn:#a8650f; --bad:#b4325a;
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1918; --surface:#172524; --ink:#e3eeec; --muted:#8fa7a3; --line:#2b4240;
+  --accent:#4cc4b0; --accent-ink:#06261f; --accent-soft:#1d3b37;
+  --ok:#6fcf97; --warn:#e6b25a; --bad:#f08aa8; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1918; --surface:#172524; --ink:#e3eeec; --muted:#8fa7a3; --line:#2b4240;
+  --accent:#4cc4b0; --accent-ink:#06261f; --accent-soft:#1d3b37;
+  --ok:#6fcf97; --warn:#e6b25a; --bad:#f08aa8; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.5;
+  padding-inline:16px;padding-block:20px 40px;
+  background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:22px 22px}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin-inline:auto}
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin-bottom:20px}
+header.top h1{font-family:var(--display);font-size:28px;line-height:1.1;margin:0;font-weight:700;letter-spacing:-.01em}
+header.top p{margin:0;color:var(--muted);max-width:62ch}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.grid{display:grid;grid-template-columns:200px minmax(0,400px) minmax(0,1fr);gap:28px;align-items:start}
+nav.steps{display:flex;flex-direction:column;gap:2px;position:sticky;top:16px}
+nav.steps button{display:flex;gap:10px;align-items:baseline;text-align:left;background:none;border:0;border-left:2px solid var(--line);padding:9px 12px;color:var(--muted)}
+nav.steps button .n{font-family:var(--mono);font-size:11px}
+nav.steps button[aria-current="step"]{border-left-color:var(--accent);color:var(--ink);background:var(--accent-soft);font-weight:600}
+.phone{background:var(--surface);border:1.5px solid var(--ink);border-radius:30px;overflow:hidden;display:flex;flex-direction:column;width:100%;max-width:400px;box-shadow:8px 8px 0 var(--line)}
+.phone-head{padding:16px 18px 10px;border-bottom:1px solid var(--line)}
+.phone-head h2{font-family:var(--display);font-size:22px;line-height:1.15;margin:2px 0 0;font-weight:700;text-wrap:balance}
+.screen{height:620px;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:16px}
+.phone-foot{display:flex;gap:10px;padding:12px 18px;border-top:1px solid var(--line)}
+.btn{border:1.5px solid var(--ink);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:600}
+.btn.small{padding:5px 10px;font-size:12px;border-radius:8px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.phone-foot .btn.primary{flex:1}
+.btn:disabled{opacity:.4;cursor:default}
+label.f{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:13px}
+.hint{font-weight:400;color:var(--muted);font-size:12px;margin:0}
+input[type=text],input[type=number],input[type=url],select{font:inherit;padding:9px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%;min-width:0}
+.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--line);background:none;border-radius:999px;padding:5px 12px;font-size:13px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.sec{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+.slots{display:grid;gap:10px}
+.slotw{display:flex;gap:8px;align-items:center}
+.slot{display:flex;flex:1;gap:12px;align-items:center;border:1.5px dashed var(--muted);border-radius:12px;padding:10px;cursor:pointer;min-width:0}
+.slot:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.slot input{position:absolute;opacity:0;width:1px;height:1px}
+.slot .ph{width:64px;height:64px;border-radius:8px;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--mono);font-size:10px;color:var(--muted);flex:none;overflow:hidden}
+.slot .ph img{width:100%;height:100%;object-fit:cover}
+.slot b{display:block}
+.compass{display:grid;grid-template-columns:repeat(3,56px);grid-auto-rows:44px;gap:6px;justify-content:center}
+.compass .mid{display:grid;place-items:center;font-family:var(--mono);font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:8px}
+.box{border:1.5px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.box.ok{border-color:var(--ok)} .box.warn{border-color:var(--warn)} .box.bad{border-color:var(--bad)}
+.box ul{margin:0;padding-left:18px}
+.pill{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;border:1px solid currentColor;border-radius:999px;padding:1px 8px;white-space:nowrap;align-self:flex-start}
+.pill.ok{color:var(--ok)} .pill.warn{color:var(--warn)} .pill.bad{color:var(--bad)}
+.season{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;font-family:var(--mono);font-size:9px;text-align:center}
+.season span{padding:6px 0;border-radius:3px;background:var(--bg)}
+.season .ne{background:var(--accent-soft)} .season .sw{background:var(--accent);color:var(--accent-ink)} .season .im{background:var(--line)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pick{border:1.5px solid var(--line);border-radius:14px;background:none;padding:8px;display:flex;flex-direction:column;gap:8px;text-align:left}
+.pick:hover{border-color:var(--accent)}
+.sw{display:grid;grid-template-columns:repeat(3,1fr);height:84px;border-radius:8px;overflow:hidden}
+.prog{display:flex;gap:4px} .prog i{flex:1;height:4px;border-radius:2px;background:var(--line)} .prog i.on{background:var(--accent)}
+.card{border:1.5px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;text-align:left;background:none;width:100%}
+.card[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.pal{display:flex;height:26px;border-radius:6px;overflow:hidden}.pal.s{height:14px;width:120px}.pal i{flex:1}
+.card h3,.box h3{font-family:var(--display);font-size:17px;margin:0;line-height:1.2}
+.split{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.items{display:flex;flex-direction:column}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.item small{color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+.bar{height:12px;border-radius:6px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)} .bar i.over{background:var(--bad)}
+.gal{display:grid;gap:12px}
+.ins{border:1.5px solid var(--line);border-radius:12px;overflow:hidden;min-width:0}
+.ins img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.ins .b{padding:10px;display:flex;flex-direction:column;gap:8px}
+.site{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line)}
+.site div{min-width:0;overflow-wrap:anywhere}
+aside.notes{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+aside.notes h3{font-family:var(--display);font-size:20px;margin:0}
+aside.notes ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+aside.notes p{margin:0;max-width:62ch}
+@media (max-width:1020px){
+  .grid{grid-template-columns:minmax(0,1fr)}
+  nav.steps{flex-direction:row;overflow-x:auto;position:static;padding-bottom:4px}
+  nav.steps button{border-left:0;border-bottom:2px solid var(--line);white-space:nowrap}
+  nav.steps button[aria-current="step"]{border-bottom-color:var(--accent)}
+  .phone{margin-inline:auto}
+}
+@media (max-width:420px){.compass{grid-template-columns:repeat(3,52px)} .screen{height:min(72vh,620px)}}
+@media (prefers-reduced-motion:no-preference){.screen>*{animation:in .25s ease both}@keyframes in{from{opacity:.4;transform:translateY(4px)}}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Ruang Home Planner</h1>
+    <p>Upload a photo or floor plan, set the climate, find your taste and get three designs with shops in Klang Valley, the Peninsula or Borneo.</p>
+    <span class="tag" id="status">Loading…</span>
+  </header>
+  <div class="grid">
+    <nav class="steps" id="nav" aria-label="Screens"></nav>
+    <div class="phone">
+      <div class="phone-head"><div class="tag" id="stepTag"></div><h2 id="title"></h2></div>
+      <div class="screen" id="screen" aria-live="polite"></div>
+      <div class="phone-foot"><button class="btn" id="back">Back</button><button class="btn primary" id="next">Next</button></div>
+    </div>
+    <aside class="notes" id="notes"></aside>
+  </div>
+</div>
+
+<script>
+const STEPS=[
+ {t:'Your home',s:'Home',collect:['Property type and home age','Budget in RM','Rooms to remodel','Known problems (damp, wiring, leaks, termites)','Where you will shop'],why:'The order of work depends on the home. Damp walls or old wiring must be fixed before paint and lights, so the planner asks first.'},
+ {t:'Show us the space',s:'Capture',collect:['Photo of the hall','Photo of one wall','Floor plan or blueprint image','Sizes and condition read from your images'],why:'Photos show style and condition. A plan gives true sizes. Claude reads the plan and photos, then you confirm before anything is used.'},
+ {t:'Room and climate',s:'Climate',collect:['Hall length, width and ceiling height','Which sides have windows or doors','Wind and humidity pattern','Afternoon sun direction'],why:'Heat and humidity decide materials, colours and layout. Openings on the same wind axis as the monsoons let the house breathe, which cuts mould and cooling cost.'},
+ {t:'Your taste',s:'Taste',collect:['Four quick either/or choices','A style profile that feeds the designs'],why:'Four fast choices beat a long form. Each choice nudges a style score that the designs start from.'},
+ {t:'Inspiration',s:'Inspire',collect:['Images that inspire you','Shops and websites you like, with notes','Claude\'s check of each image against your room size, light and humidity'],why:'You can keep adding images and sources as you find them. Each image is checked against your hall, so you learn what works before you buy.'},
+ {t:'Design options',s:'Designs',collect:['Three options: starter or tailored','Palette, materials and furniture sizes','Estimated cost against budget'],why:'Starter options come from your taste. Tailoring uses your sizes, climate, inspiration and saved shops. Prices are rough estimates.'},
+ {t:'Where to buy',s:'Shop',collect:['Items, sizes, estimated price and source','Region: Klang Valley, Peninsula, Borneo','Products you found yourself, with sizes'],why:'Prices and freight differ by region. Add products you find, with their size, and the fit check will test them against your room.'},
+ {t:'Budget and fit check',s:'Check',collect:['Total against budget','Walkway and wall clearances','Ceiling height for fans','Ventilation, damp, delivery and inspiration warnings'],why:'This screen stops expensive mistakes: a sofa that blocks the walkway, a fan on a low ceiling, or paint over a damp wall.'}
+];
+const DIRS=['NW','N','NE','W','C','E','SW','S','SE'];
+const OPP={N:'S',S:'N',E:'W',W:'E',NE:'SW',SW:'NE',NW:'SE',SE:'NW'};
+const REG={kv:'Klang Valley',pen:'Peninsula',bor:'Borneo'};
+const ROLES=['sofa','console','tile','paint','fan','blinds','dehumidifier','other'];
+const QUIZ=[
+ {q:'Which materials feel more like home?',o:[{l:'Light oak and rattan',c:['#d9c3a0','#b8975f','#ece3d2'],p:{A:2,B:1}},{l:'Dark teak and brass',c:['#4a2e22','#8a5a3a','#c9a24a'],p:{C:2}}]},
+ {q:'Pick a colour mood.',o:[{l:'Soft white, sage, sand',c:['#f1efe8','#a9b79a','#d8cdb4'],p:{A:1,B:2}},{l:'Deep teal, red, gold',c:['#0f5c5c','#b8412e','#e3b866'],p:{C:2}}]},
+ {q:'How should the hall feel?',o:[{l:'Open and airy, few things',c:['#ffffff','#e6ebec','#c9d1d3'],p:{B:2,A:1}},{l:'Layered, collected, patterned',c:['#7a3b2e','#2d6a6a','#e9d7b0'],p:{C:2}}]},
+ {q:'Which floor would you walk on?',o:[{l:'Wood-look tile, plain',c:['#cdb592','#bfa57f','#d8c4a4'],p:{A:2,B:1}},{l:'Patterned cement tile',c:['#1f6a6a','#e8dcc2','#b8412e'],p:{C:2}}]}
+];
+const ITEMS=[
+ {n:'Wood-look porcelain tile, hall, laid',sp:'About 35 m²',role:'tile',w:null,dp:null,p:{kv:4200,pen:3900,bor:4600},s:{kv:'Tile showrooms, Klang Valley',pen:'Tile traders, Johor Bahru',bor:'Kuching tile wholesalers'}},
+ {n:'Mould-resistant interior paint',sp:'2 × 18 L, low-VOC',role:'paint',w:null,dp:null,p:{kv:1100,pen:1050,bor:1200},s:{kv:'Paint dealers, Klang Valley',pen:'Paint dealers, Penang',bor:'Paint dealers, Kuching'}},
+ {n:'3-seater sofa, washable fabric',sp:'2.1 m wide, 0.95 m deep',role:'sofa',w:2.1,dp:0.95,p:{kv:2400,pen:2100,bor:2600},s:{kv:'Furniture stores, Klang Valley',pen:'Muar furniture makers',bor:'Kuching workshops'}},
+ {n:'Rattan and timber TV console',sp:'1.8 m wide, 0.45 m deep',role:'console',w:1.8,dp:0.45,p:{kv:1300,pen:1100,bor:1000},s:{kv:'Klang Valley furniture shops',pen:'Muar furniture makers',bor:'Sarawak rattan and belian craftsmen'}},
+ {n:'DC ceiling fan with light',sp:'52 inch, quiet motor',role:'fan',w:null,dp:null,p:{kv:650,pen:620,bor:720},s:{kv:'Hardware and lighting shops',pen:'Electrical shops, Ipoh',bor:'Electrical shops, Kota Kinabalu'}},
+ {n:'Bamboo roller blinds, west windows',sp:'2 pieces',role:'blinds',w:null,dp:null,p:{kv:320,pen:300,bor:240},s:{kv:'Online and home stores',pen:'Local blind makers',bor:'Local weavers, Sarawak and Sabah'}},
+ {n:'Dehumidifier',sp:'20 L per day',role:'dehumidifier',w:null,dp:null,p:{kv:900,pen:880,bor:980},s:{kv:'Appliance stores',pen:'Appliance stores',bor:'Appliance stores'}}
+];
+const OPTS={
+ A:{n:'Tropical Japandi',cost:38000,pal:['#e7dfcf','#a9b79a','#7a5a42','#2d3b36'],d:'Light oak, rattan and linen on sage walls. Low furniture, bare floor, lots of air.',fit:[['ok','Rattan and oak handle humidity'],['ok','Open layout keeps wind moving']],items:ITEMS},
+ B:{n:'Bright Modern Minimal',cost:32000,pal:['#f4f6f7','#c9d1d3','#3f4a4f','#d9a441'],d:'White walls, porcelain floor and sealed built-in storage. Clean lines, easy to wipe down.',fit:[['ok','Sealed surfaces resist mould'],['warn','Plain white shows stains fast']],items:ITEMS},
+ C:{n:'Peranakan Layered',cost:45000,pal:['#0f5c5c','#b8412e','#e3b866','#efe3cc'],d:'Patterned cement tiles, carved teak and deep teal. Rich and collected.',fit:[['ok','Cement tile stays cool underfoot'],['warn','Dark walls run hot in a west-facing hall']],items:ITEMS}
+};
+const KEYS=['name','prop','age','budget','scope','issues','L','W','H','open','quiz','opt','region','designs','planRead','photoRead'];
+const S={step:0,name:'My home',prop:'Terrace house',age:'10 to 20 years',budget:50000,scope:['Hall'],issues:[],L:5.2,W:3.8,H:2.8,open:['E','W'],quiz:[null,null,null,null],opt:'A',region:'kv',
+  designs:null,planRead:null,photoRead:null,photos:{hall:null,wall:null,plan:null},inspo:[],shops:[],finds:[],err:'',dirty:false};
+const AI={key:null,ctl:null};
+const ST={db:null,pdoc:null,ok:false,ro:false,loaded:false,state:''};
+let SMP=null,IMGOK=false;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rm=n=>'RM '+Math.round(n).toLocaleString('en-MY');
+const use=n=>{try{return window.claude&&window.claude.use?window.claude.use(n):Promise.resolve(null)}catch(e){return Promise.resolve(null)}};
+const num=v=>typeof v==='number'&&isFinite(v)&&v>0&&v<1000?Math.round(v*100)/100:null;
+const str=v=>typeof v==='string'?v.slice(0,300):'';
+const arr=(a,k)=>(Array.isArray(a)?a:[]).slice(0,k).map(str).filter(Boolean);
+const hex=v=>typeof v==='string'&&/^#[0-9a-f]{6}$/i.test(v);
+const design=k=>(S.designs&&S.designs[k])||OPTS[k];
+const items=()=>design(S.opt).items;
+const chip=(k,v)=>`<button class="chip" data-act="toggle" data-k="${k}" data-v="${esc(v)}" aria-pressed="${S[k].includes(v)}">${esc(v)}</button>`;
+function scores(){const t={A:0,B:0,C:0};S.quiz.forEach((a,i)=>{if(a!==null){const p=QUIZ[i].o[a].p;for(const k in p)t[k]+=p[k]}});return t}
+function topStyle(){const t=scores();return Object.keys(t).sort((a,b)=>t[b]-t[a])[0]}
+function vent(){
+  const o=S.open,sun=['W','SW','NW'].some(d=>o.includes(d));let lv='warn',tx;
+  if(!o.length)tx='Select every side that has a window or door that opens.';
+  else if(o.includes('NE')&&o.includes('SW')){lv='ok';tx='Openings sit on the NE to SW wind axis. Air can cross the hall in both monsoon seasons.'}
+  else if(o.some(d=>o.includes(OPP[d]))){lv='ok';tx='Openings face each other, so air can cross. They are off the main monsoon axis, so flow will be weaker in some months.'}
+  else tx='No opposite openings, so air will not cross. Plan a ceiling fan and a vent or louvre on the far wall.';
+  return{lv,tx,sun};
+}
+function roleItem(r){return items().find(i=>i.role===r)}
+function fits(){
+  const v=vent(),r=[],sofa=roleItem('sofa'),con=roleItem('console');
+  const sw=(sofa&&sofa.w)||2.1,sd=(sofa&&sofa.dp)||0.95,cd=(con&&con.dp)||0.45;
+  const walk=S.W-sd-cd,rem=S.L-sw;
+  r.push([walk>=0.9?'ok':'warn',`Walkway between sofa and console is ${walk.toFixed(2)} m. You need at least 0.90 m.`]);
+  r.push([rem>=0.6?'ok':'warn',`The ${sw} m sofa leaves ${rem.toFixed(2)} m on the long wall for a side table.`]);
+  r.push([S.H>=2.6?'ok':'warn',`Ceiling is ${S.H.toFixed(1)} m. A 52 inch fan needs about 2.6 m to hang safely.`]);
+  r.push([v.lv,v.tx]);
+  S.finds.filter(f=>f.w).forEach(f=>{const left=S.L-f.w;r.push([left>=0.3?'ok':'warn',`Your find "${f.name}" is ${f.w} m wide. The long wall is ${S.L} m, so ${left.toFixed(2)} m remains.`])});
+  S.inspo.filter(i=>i.analysis&&i.analysis.verdict==='poor').slice(0,3).forEach(i=>r.push(['warn',`Inspiration image "${i.analysis.style||'saved image'}" is a poor fit: ${i.analysis.reasons[0]||'see the Inspiration screen'}.`]));
+  if(S.issues.includes('Damp walls'))r.push(['warn','Damp walls reported. Find and fix the source before painting, because mould-resistant paint will not stop a leak.']);
+  if(S.issues.includes('Old wiring'))r.push(['warn','Old wiring reported. Have a licensed electrician check it before adding fans and lights.']);
+  if(S.photoRead&&S.photoRead.issues.length)r.push(['warn','Your photos show possible issues: '+S.photoRead.issues.join('; ')+'. This is from the images only, so have it checked on site.']);
+  if(S.region==='bor')r.push(['warn','Borneo sourcing: sea freight adds time. Order early and confirm lead times (estimate 2 to 3 weeks).']);
+  if(!S.photos.plan)r.push(['warn','No floor plan uploaded yet, so all sizes are manual. Add the plan on the Capture screen.']);
+  return r;
+}
+/* ---------- storage ---------- */
+function setStatus(){
+  let t;
+  if(!ST.loaded)t='Loading…';
+  else if(ST.ok&&!ST.ro)t=ST.state==='saving'?'Saving…':ST.state==='error'?'Could not save. Try again':'Saved to your account';
+  else t='Not saved: changes last until you close this page';
+  $('status').textContent=t;
+}
+function projectData(){const d={};KEYS.forEach(k=>{if(S[k]!==undefined)d[k]=S[k]});d.ts=Date.now();return d}
+let saveT=null,saving=false,again=false;
+function queueSave(){S.dirty=true;if(!ST.ok||ST.ro)return setStatus();clearTimeout(saveT);ST.state='saving';setStatus();saveT=setTimeout(flush,700)}
+async function flush(){
+  if(saving){again=true;return}
+  saving=true;
+  try{await ST.pdoc.set(projectData());ST.state='saved'}
+  catch(e){if(e&&e.code==='invalid_argument')ST.ro=true;ST.state='error'}
+  finally{saving=false;setStatus();if(again){again=false;flush()}}
+}
+async function putDoc(coll,id,data){
+  if(!ST.ok||ST.ro)return;
+  try{await ST.pdoc.collection(coll).doc(id).set(data)}catch(e){if(e&&e.code==='invalid_argument')ST.ro=true;ST.state='error';setStatus();throw e}
+}
+async function delDoc(coll,id){if(!ST.ok||ST.ro)return;try{await ST.pdoc.collection(coll).doc(id).delete()}catch(e){}}
+const newId=()=>ST.ok?ST.pdoc.collection('x').doc().id:'l'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+async function initStore(){
+  try{
+    const [user,db]=await Promise.all([use('user'),use('db')]);
+    const uid=user&&user.id?await user.id():null;
+    if(db&&uid){ST.db=db;ST.pdoc=db.doc('data/users/'+uid+'/project');ST.ok=true;await loadAll()}
+  }catch(e){ST.ok=false}
+  ST.loaded=true;setStatus();render();
+  try{SMP=await use('sample');if(SMP&&SMP.limits){const l=await SMP.limits().catch(()=>null);IMGOK=!!(l&&l.images)}}catch(e){SMP=null}
+  render();
+}
+async function loadAll(){
+  try{
+    const snap=await ST.pdoc.get();
+    if(snap.exists&&!S.dirty){const d=snap.data();KEYS.forEach(k=>{if(d[k]!==undefined)S[k]=d[k]})}
+    const P=ST.pdoc.collection.bind(ST.pdoc);
+    const [ph,ins,sh,fd]=await Promise.all([P('photos').get(),P('inspo').orderBy('ts').get(),P('shops').orderBy('ts').get(),P('finds').orderBy('ts').get()]);
+    ph.docs.forEach(d=>{const u=d.data().dataUrl;if(typeof u==='string'&&u.startsWith('data:image/'))S.photos[d.id]=u});
+    S.inspo=ins.docs.filter(d=>typeof d.data().dataUrl==='string'&&d.data().dataUrl.startsWith('data:image/')).map(d=>({id:d.id,...d.data()}));
+    S.shops=sh.docs.map(d=>({id:d.id,...d.data()}));
+    S.finds=fd.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){ST.state='error'}
+}
+/* ---------- images ---------- */
+function shrink(file,tries){
+  return new Promise((res,rej)=>{
+    const url=URL.createObjectURL(file),img=new Image();
+    img.onload=()=>{URL.revokeObjectURL(url);let out='';
+      for(const [mx,q] of tries){const k=Math.min(1,mx/Math.max(img.width,img.height)),c=document.createElement('canvas');
+        c.width=Math.max(1,Math.round(img.width*k));c.height=Math.max(1,Math.round(img.height*k));
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);out=c.toDataURL('image/jpeg',q);if(out.length<190000)break}
+      out.length<190000?res(out):rej(new Error('large'))};
+    img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('type'))};
+    img.src=url;
+  });
+}
+function dataUrlToBlob(du){const p=du.split(','),m=/data:([^;]+)/.exec(p[0]),b=atob(p[1]),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new Blob([u],{type:m?m[1]:'image/jpeg'})}
+const PHOTO_TRIES=[[900,.72],[700,.6],[520,.5]],PLAN_TRIES=[[1400,.75],[1100,.65],[900,.55]];
+/* ---------- Claude ---------- */
+const ERR={not_granted:'Claude access was declined for this page, so this feature is off.',sampling_disabled:'Claude is not available for this account.',rate_limited:'Too many requests just now. Wait a minute, then try again.',image_rejected:'That image could not be read. Try a clear JPG or PNG.',images_unavailable:'Reading images is not available in this view.',invalid_json:'Claude replied in a form the page could not read. Try again.',refused:'Claude declined this request. Try a different image.',session_expired:'Please sign in again.',prompt_too_large:'Too much to send at once.'};
+const aiOff=()=>!SMP||AI.key!==null;
+async function aiRun(key,fn){
+  if(AI.key||!SMP)return;
+  AI.key=key;AI.ctl=new AbortController();S.err='';render();
+  try{await fn(AI.ctl.signal)}catch(e){if(!e||e.code!=='cancelled')S.err=ERR[e&&e.code]||'Something went wrong. Try again.'}
+  finally{AI.key=null;AI.ctl=null;render()}
+}
+function roomCtx(){return{home_type:S.prop,home_age:S.age,hall_m:{length:S.L,width:S.W,ceiling:S.H},sides_with_openings:S.open,climate:'Hot and humid Malaysian climate, humidity 70 to 90 percent, north-east monsoon winds Nov to Mar, south-west monsoon winds May to Sep, afternoon storms',budget_rm:S.budget,region:REG[S.region],rooms_to_remodel:S.scope,known_issues:S.issues,taste_profile:OPTS[topStyle()].n}}
+const PLAN_PROMPT='This image is a floor plan or blueprint of a Malaysian home. Read only what is printed or clearly drawn. Convert feet and inches to metres. Use null when a value is not shown; never guess. Identify the main living hall or lounge as the hall. Reply with only one JSON object: {"hall":{"length_m":number|null,"width_m":number|null},"ceiling_m":number|null,"rooms":[{"name":string,"length_m":number|null,"width_m":number|null}],"confidence":"low"|"medium"|"high","notes":"one short sentence about what was hard to read"}';
+const PHOTO_PROMPT='These photos show the hall and a wall of a Malaysian home. Describe what is visible. Reply with only one JSON object: {"style_now":"short description of the current look","colours":["#rrggbb","#rrggbb","#rrggbb"],"issues":["up to 4 short visible problems, each starting with possible, such as possible damp stain near the ceiling"],"light":"bright"|"medium"|"dim","notes":"one short sentence"}. Report only what you can see. This is not a building survey.';
+function cleanPlan(r){r=r||{};const h=r.hall||{};return{L:num(h.length_m),W:num(h.width_m),H:num(r.ceiling_m),rooms:(Array.isArray(r.rooms)?r.rooms:[]).slice(0,8).map(x=>({n:str(x&&x.name),L:num(x&&x.length_m),W:num(x&&x.width_m)})),conf:['low','medium','high'].includes(r.confidence)?r.confidence:'low',notes:str(r.notes)}}
+function cleanPhoto(r){r=r||{};return{style:str(r.style_now),cols:(Array.isArray(r.colours)?r.colours:[]).filter(hex).slice(0,5),issues:arr(r.issues,4),light:['bright','medium','dim'].includes(r.light)?r.light:'medium',notes:str(r.notes)}}
+function cleanInspo(r){r=r||{};return{style:str(r.style),pal:(Array.isArray(r.palette)?r.palette:[]).filter(hex).slice(0,5),pieces:(Array.isArray(r.key_pieces)?r.key_pieces:[]).slice(0,5).map(p=>({n:str(p&&p.name),w:num(p&&p.approx_width_m),d:num(p&&p.approx_depth_m)})),verdict:['good','adapt','poor'].includes(r.verdict)?r.verdict:'adapt',reasons:arr(r.reasons,3),adapt:arr(r.adapt,3),note:str(r.note)}}
+function cleanDesigns(r){
+  const list=Array.isArray(r)?r:(r&&Array.isArray(r.options)?r.options:[]),out={};
+  list.slice(0,3).forEach((o,i)=>{
+    if(!o)return;const its=(Array.isArray(o.items)?o.items:[]).slice(0,10).map(x=>{
+      x=x||{};const p=x.p||{},s=x.s||{},kv=num(p.kv)||0;
+      return{n:str(x.n),sp:str(x.sp),role:ROLES.includes(x.role)?x.role:'other',w:num(x.w),dp:num(x.dp),p:{kv,pen:num(p.pen)||kv,bor:num(p.bor)||kv},s:{kv:str(s.kv),pen:str(s.pen),bor:str(s.bor)}}}).filter(x=>x.n&&x.p.kv);
+    if(!its.length)return;
+    out['ABC'[i]]={n:str(o.n)||'Option '+'ABC'[i],d:str(o.d),cost:num(o.cost)||its.reduce((a,x)=>a+x.p.kv,0),pal:(Array.isArray(o.pal)?o.pal:[]).filter(hex).slice(0,4),
+      fit:(Array.isArray(o.fit)?o.fit:[]).slice(0,3).map(f=>[f&&f[0]==='warn'?'warn':'ok',str(f&&f[1])]).filter(f=>f[1]),items:its};
+  });
+  return out.A?out:null;
+}
+async function readPlan(signal){const r=await SMP.json(PLAN_PROMPT,{images:[dataUrlToBlob(S.photos.plan)],signal});S.planRead=cleanPlan(r);queueSave()}
+async function readPhotos(signal){const im=['hall','wall'].filter(k=>S.photos[k]).map(k=>dataUrlToBlob(S.photos[k]));const r=await SMP.json(PHOTO_PROMPT,{images:im,signal});S.photoRead=cleanPhoto(r);queueSave()}
+async function checkInspo(id,signal){
+  const it=S.inspo.find(i=>i.id===id);if(!it)return;
+  const prompt='You are an interior designer for Malaysian homes. The image is something the homeowner saved as inspiration. Judge how well it would work in their hall.\nHome details: '+JSON.stringify(roomCtx())+'\nSizes are rough estimates from the image. Do not name brands. Use null when unsure. Reply with only one JSON object: {"style":"short style name","palette":["#rrggbb","#rrggbb","#rrggbb","#rrggbb"],"key_pieces":[{"name":string,"approx_width_m":number|null,"approx_depth_m":number|null}],"verdict":"good"|"adapt"|"poor","reasons":["up to 3 short reasons that refer to the hall size, light, humidity or ventilation"],"adapt":["up to 3 practical changes to make it work here"],"note":"one sentence on how it copes with heat and humidity"}';
+  const r=await SMP.json(prompt,{images:[dataUrlToBlob(it.dataUrl)],signal});
+  it.analysis=cleanInspo(r);
+  await putDoc('inspo',id,{dataUrl:it.dataUrl,ts:it.ts,analysis:it.analysis}).catch(()=>{});
+}
+async function tailor(signal){
+  const ins=S.inspo.filter(i=>i.analysis).map(i=>({style:i.analysis.style,palette:i.analysis.pal,verdict:i.analysis.verdict}));
+  const shops=S.shops.map(s=>({name:s.name,note:s.note}));
+  const prompt='You are an interior designer for Malaysian homes. Create three clearly different design options for this home.\nHome: '+JSON.stringify(roomCtx())+'\nTaste scores (A tropical japandi, B bright modern minimal, C peranakan layered): '+JSON.stringify(scores())+'\nInspiration the person saved: '+JSON.stringify(ins)+'\nShops the person likes: '+JSON.stringify(shops)+'\nProducts the person already found: '+JSON.stringify(S.finds.map(f=>({name:f.name,price_rm:f.price,width_m:f.w,depth_m:f.d})))+
+  '\nRules: Option 1 follows the taste scores most closely. At least one option should lean on the saved inspiration if any exists. Every option must suit heat, humidity and the opening sides. Sofa width must leave at least 0.6 m free on the long wall and keep a 0.9 m walkway. Prices are rough RM estimates for Malaysia and the three regions kv (Klang Valley), pen (Peninsula) and bor (Borneo), where Borneo includes sea freight when relevant. Source names (s) should use the shops the person likes when they fit, otherwise a plain store type such as "Furniture shops, Klang Valley". Never invent product names, model numbers or web addresses. Keep each option total near the budget. Use 6 to 8 items. role is one of sofa, console, tile, paint, fan, blinds, dehumidifier, other. w and dp are metres or null.\nReply with only a JSON array of 3 objects: {"n":"option name","d":"one sentence","cost":number,"pal":["#rrggbb","#rrggbb","#rrggbb","#rrggbb"],"fit":[["ok"|"warn","short climate note"],["ok"|"warn","short climate note"]],"items":[{"n":"item","sp":"size or spec","role":"sofa","w":2.1,"dp":0.95,"p":{"kv":0,"pen":0,"bor":0},"s":{"kv":"","pen":"","bor":""}}]}';
+  const r=await SMP.json(prompt,{signal});const d=cleanDesigns(r);
+  if(!d)throw{code:'invalid_json'};
+  S.designs=d;S.opt='A';queueSave();
+}
+/* ---------- views ---------- */
+const busyBar=()=>AI.key?`<div class="box"><span>Claude is working. This can take up to a minute.</span><button class="btn small" data-act="stop" style="align-self:flex-start">Stop</button></div>`:'';
+const errBox=()=>S.err?`<div class="box warn"><span class="pill warn">Problem</span><span>${esc(S.err)}</span></div>`:'';
+const noAI=()=>!SMP?'<p class="hint">Claude features are off in this view. Everything else still works.</p>':'';
+function planBox(){const p=S.planRead;if(!p)return'';
+  const ok=p.L&&p.W;
+  return`<div class="box ${p.conf==='low'?'warn':'ok'}"><div class="split"><h3>Plan read</h3><span class="pill ${p.conf==='low'?'warn':'ok'}">${p.conf} confidence</span></div>
+  <span>Hall: ${p.L?p.L+' m':'?'} × ${p.W?p.W+' m':'?'}${p.H?', ceiling '+p.H+' m':''}</span>
+  ${p.rooms.length?`<span class="hint">Other rooms: ${p.rooms.map(r=>esc(r.n)+(r.L&&r.W?' '+r.L+' × '+r.W:'')).join(', ')}</span>`:''}
+  ${p.notes?`<span class="hint">${esc(p.notes)}</span>`:''}
+  <button class="btn small primary" data-act="useplan" style="align-self:flex-start" ${ok?'':'disabled'}>Use these sizes</button><span class="hint">Check the numbers against your plan before you rely on them.</span></div>`}
+function photoBox(){const p=S.photoRead;if(!p)return'';
+  return`<div class="box"><h3>Photos read</h3><span>${esc(p.style)}</span>
+  ${p.cols.length?`<div class="pal s">${p.cols.map(c=>`<i style="background:${c}"></i>`).join('')}</div>`:''}
+  <span class="hint">Light looks ${p.light}.</span>
+  ${p.issues.length?`<ul>${p.issues.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`:'<span class="hint">No problems visible.</span>'}
+  ${p.notes?`<span class="hint">${esc(p.notes)}</span>`:''}<span class="hint">From the images only. Not a building survey.</span></div>`}
+function inspoRes(a){const v={good:['ok','Good fit'],adapt:['warn','Needs changes'],poor:['bad','Poor fit']}[a.verdict];
+  return`<div class="split"><b>${esc(a.style||'Saved image')}</b><span class="pill ${v[0]}">${v[1]}</span></div>
+  ${a.pal.length?`<div class="pal s">${a.pal.map(c=>`<i style="background:${c}"></i>`).join('')}</div>`:''}
+  ${a.reasons.length?`<ul>${a.reasons.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
+  ${a.adapt.length?`<span class="sec">To make it work</span><ul>${a.adapt.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
+  ${a.pieces.length?`<span class="hint">Rough sizes: ${a.pieces.map(p=>esc(p.n)+(p.w?' '+p.w+(p.d?' × '+p.d:'')+' m':'')).join('; ')}. Estimated from the image.</span>`:''}
+  ${a.note?`<span class="hint">${esc(a.note)}</span>`:''}`}
+const V={
+0(){return`
+ <label class="f">Project name<input type="text" id="name" data-bind="name" value="${esc(S.name)}"></label>
+ <div class="row2">
+  <label class="f">Property<select id="prop" data-bind="prop">${['Terrace house','Semi-detached','Condominium','Bungalow'].map(x=>`<option${x===S.prop?' selected':''}>${x}</option>`).join('')}</select></label>
+  <label class="f">Home age<select id="age" data-bind="age">${['Under 10 years','10 to 20 years','20 to 30 years','Over 30 years'].map(x=>`<option${x===S.age?' selected':''}>${x}</option>`).join('')}</select></label>
+ </div>
+ <label class="f">Total budget (RM)<input type="number" id="budget" min="0" step="1000" data-bind="budget" value="${S.budget}"></label>
+ <div><p class="sec">Where will you shop?</p><div class="chips" style="margin-top:8px">${Object.keys(REG).map(k=>`<button class="chip" data-act="set" data-k="region" data-v="${k}" aria-pressed="${S.region===k}">${REG[k]}</button>`).join('')}</div></div>
+ <div><p class="sec">Rooms to remodel</p><div class="chips" style="margin-top:8px">${['Hall','Dining','Kitchen','Bedrooms','Bathrooms','Whole house'].map(v=>chip('scope',v)).join('')}</div></div>
+ <div><p class="sec">Known problems</p><div class="chips" style="margin-top:8px">${['Damp walls','Old wiring','Roof leaks','Termites'].map(v=>chip('issues',v)).join('')}</div></div>`},
+1(){
+ const slot=(k,t,h)=>`<div class="slotw"><label class="slot"><input type="file" accept="image/*" data-slot="${k}"><span class="ph">${S.photos[k]?`<img src="${esc(S.photos[k])}" alt="${t}">`:'ADD'}</span><span><b>${t}</b><span class="hint">${h}</span></span></label>${S.photos[k]?`<button class="btn small" data-act="delphoto" data-slot="${k}">Remove</button>`:''}</div>`;
+ return`${errBox()}${busyBar()}<p class="hint">Tap a box to add an image. Images are shrunk and kept in your own private storage.</p>
+ <div class="slots">${slot('hall','Photo of the hall','Stand in a corner and capture the whole room')}${slot('wall','Photo of one wall','Shows colour, texture and any stains')}${slot('plan','Floor plan or blueprint','Take a flat, well-lit photo of the plan')}</div>
+ ${noAI()}
+ <div class="chips"><button class="btn small primary" data-act="readplan" ${aiOff()||!IMGOK||!S.photos.plan?'disabled':''}>${AI.key==='plan'?'Reading…':'Read my floor plan'}</button><button class="btn small primary" data-act="readphotos" ${aiOff()||!IMGOK||!(S.photos.hall||S.photos.wall)?'disabled':''}>${AI.key==='photos'?'Reading…':'Read my photos'}</button></div>
+ ${planBox()}${photoBox()}`},
+2(){const v=vent();const m=['J','F','M','A','M','J','J','A','S','O','N','D'],cls=['ne','ne','ne','im','sw','sw','sw','sw','sw','im','ne','ne'];
+ return`<div class="row"><label class="f">Length (m)<input type="number" id="L" step="0.1" min="1" data-bind="L" value="${S.L}"></label><label class="f">Width (m)<input type="number" id="W" step="0.1" min="1" data-bind="W" value="${S.W}"></label><label class="f">Height (m)<input type="number" id="H" step="0.1" min="2" data-bind="H" value="${S.H}"></label></div>
+ <div><p class="sec">Which sides open to outside?</p><div class="compass" style="margin-top:10px">${DIRS.map(d=>d==='C'?'<div class="mid">HALL</div>':`<button class="chip" style="border-radius:8px" data-act="toggle" data-k="open" data-v="${d}" aria-pressed="${S.open.includes(d)}">${d}</button>`).join('')}</div></div>
+ <div class="box ${v.lv}"><div class="split"><h3>Ventilation</h3><span class="pill ${v.lv}">${v.lv==='ok'?'Good':'Check'}</span></div><span>${v.tx}</span>${v.sun?'<span>West-facing opening: strong afternoon sun. Favour light, reflective colours and add shading.</span>':''}</div>
+ <div><p class="sec">Typical Malaysian climate</p>
+  <div class="season" style="margin-top:8px">${m.map((x,i)=>`<span class="${cls[i]}">${x}</span>`).join('')}</div>
+  <p class="hint" style="margin-top:8px">Light teal: north-east monsoon (Nov to Mar). Dark teal: south-west monsoon (May to Sep). Grey: inter-monsoon with afternoon storms. Humidity is usually 70 to 90%. This is the general Peninsular pattern. Borneo is similar, but local hills and coast change it, so confirm on site.</p></div>`},
+3(){const i=S.quiz.findIndex(a=>a===null);
+ if(i===-1){const t=scores(),w=topStyle();return`<div class="prog">${QUIZ.map(()=>'<i class="on"></i>').join('')}</div>
+  <div class="box ok"><span class="sec">Your style profile</span><h3>${OPTS[w].n}</h3><span>${OPTS[w].d}</span></div>
+  ${['A','B','C'].map(k=>`<div><div class="split"><span>${OPTS[k].n}</span><span class="mono">${t[k]} / 8</span></div><div class="bar"><i style="width:${t[k]/8*100}%"></i></div></div>`).join('')}
+  <button class="btn" data-act="redo">Retake the quiz</button>`}
+ const q=QUIZ[i];return`<div class="prog">${QUIZ.map((_,j)=>`<i class="${j<=i?'on':''}"></i>`).join('')}</div><p class="sec">Question ${i+1} of 4</p><h3 style="font-family:var(--display);font-size:19px;margin:0">${q.q}</h3>
+  <div class="pair">${q.o.map((o,j)=>`<button class="pick" data-act="pick" data-i="${i}" data-j="${j}"><div class="sw">${o.c.map(c=>`<span style="background:${c}"></span>`).join('')}</div><b>${o.l}</b></button>`).join('')}</div>`},
+4(){
+ const g=S.inspo.map(i=>`<div class="ins"><img src="${esc(i.dataUrl)}" alt="Saved inspiration image"><div class="b">${i.analysis?inspoRes(i.analysis):'<span class="hint">Not checked yet.</span>'}<div class="chips"><button class="btn small primary" data-act="check" data-id="${esc(i.id)}" ${aiOff()||!IMGOK?'disabled':''}>${AI.key==='inspo:'+i.id?'Checking…':i.analysis?'Check again':'Check against my room'}</button><button class="btn small" data-act="delinspo" data-id="${esc(i.id)}">Remove</button></div></div></div>`).join('');
+ const sh=S.shops.map(s=>`<div class="site"><div><b>${esc(s.name)}</b><br><a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.host||s.url)}</a>${s.note?`<br><span class="hint">${esc(s.note)}</span>`:''}</div><button class="btn small" data-act="delshop" data-id="${esc(s.id)}">Remove</button></div>`).join('');
+ return`${errBox()}${busyBar()}
+ <div><p class="sec">Images that inspire you</p>
+ <label class="btn small" style="display:inline-block;margin-top:8px;cursor:pointer"><input type="file" accept="image/*" multiple data-inspo="1" style="position:absolute;opacity:0;width:1px;height:1px">Add images</label>
+ <p class="hint" style="margin-top:8px">Add as many as you like, now or later. Each can be checked against your hall size, light and humidity.</p></div>
+ ${noAI()}<div class="gal">${g||'<div class="box"><span>No images yet. Add a room you love and the planner will tell you what would work in your home.</span></div>'}</div>
+ <div><p class="sec">Shops and sites you like</p>
+ <form data-form="site" style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+  <input type="text" id="sn" placeholder="Name, for example a shop or website" aria-label="Shop name">
+  <input type="url" id="su" placeholder="https://" aria-label="Website address">
+  <input type="text" id="sx" placeholder="Note, for example good rattan, cheap tiles" aria-label="Note">
+  <button class="btn small" type="submit" style="align-self:flex-start">Save site</button></form>
+  <div style="margin-top:6px">${sh}</div>
+  <p class="hint" style="margin-top:8px">Claude cannot open these websites from here. It uses the names and notes you save when it tailors designs, and each link opens in a new tab.</p></div>`},
+5(){const w=topStyle(),tailored=!!S.designs;
+ return`${errBox()}${busyBar()}
+ <div class="box"><span class="sec">${tailored?'Tailored for your home':'Starter options'}</span><span>${tailored?'Built from your hall size, climate, saved inspiration and shops. Prices are rough estimates.':'Starter options come from your taste quiz. Tailoring uses your room sizes, climate, inspiration and shops.'}</span>
+ ${noAI()}
+ <div class="chips"><button class="btn small primary" data-act="tailor" ${aiOff()?'disabled':''}>${AI.key==='design'?'Designing…':tailored?'Tailor again':'Tailor to my home'}</button>${tailored?'<button class="btn small" data-act="resetdesigns">Back to starters</button>':''}</div></div>
+ ${['A','B','C'].filter(k=>design(k)).map(k=>{const o=design(k);return`<button class="card" data-act="set" data-k="opt" data-v="${k}" aria-pressed="${S.opt===k}">
+  <div class="split"><h3>${esc(o.n)}</h3>${!tailored&&k===w?'<span class="pill ok">Best match</span>':''}</div>${o.pal.length?`<div class="pal">${o.pal.map(c=>`<i style="background:${c}"></i>`).join('')}</div>`:''}<span>${esc(o.d)}</span>
+  ${o.fit.map(f=>`<span><span class="pill ${f[0]}">${f[0]==='ok'?'Climate fit':'Watch'}</span> ${esc(f[1])}</span>`).join('')}
+  <span class="mono">Estimate ${rm(o.cost)}</span></button>`}).join('')}`},
+6(){const its=items(),t=its.reduce((a,i)=>a+i.p[S.region],0)+S.finds.reduce((a,f)=>a+(f.price||0),0);
+ const fd=S.finds.map(f=>`<div class="item"><b>${esc(f.name)}</b><span class="mono">${f.price?rm(f.price):'No price'}</span><small>${f.w?f.w+(f.d?' × '+f.d:'')+' m · ':''}${f.url?`<a href="${esc(f.url)}" target="_blank" rel="noopener noreferrer">${esc(f.host||'Link')}</a>`:'Added by you'} · <button class="btn small" data-act="delfind" data-id="${esc(f.id)}">Remove</button></small></div>`).join('');
+ return`<p class="hint">Shopping list for <b>${esc(design(S.opt).n)}</b>. Prices and sources are estimates until you confirm them in store or online.</p>
+ <div class="chips">${Object.keys(REG).map(k=>`<button class="chip" data-act="set" data-k="region" data-v="${k}" aria-pressed="${S.region===k}">${REG[k]}</button>`).join('')}</div>
+ <div class="items">${its.map(i=>`<div class="item"><b>${esc(i.n)}</b><span class="mono">${rm(i.p[S.region])}</span><small>${esc(i.sp)}${i.s[S.region]?' · '+esc(i.s[S.region]):''}</small></div>`).join('')}${fd}</div>
+ <div class="split"><b>Total listed</b><b class="mono">${rm(t)}</b></div>
+ ${S.region==='bor'?'<div class="box warn"><span class="pill warn">Freight</span><span>Sea freight to or from Borneo adds cost and 2 to 3 weeks. Local rattan and belian are cheaper at source.</span></div>':''}
+ ${S.shops.length?`<div><p class="sec">Your saved sites</p><div class="chips" style="margin-top:8px">${S.shops.map(s=>`<a class="chip" style="text-decoration:none;color:var(--ink)" href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.name)}</a>`).join('')}</div></div>`:''}
+ <div><p class="sec">Add a product you found</p>${errBox()}
+ <form data-form="find" style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+  <input type="text" id="fn" placeholder="Product name" aria-label="Product name">
+  <div class="row"><input type="number" id="fp" min="0" step="1" placeholder="Price RM" aria-label="Price in RM"><input type="number" id="fw" min="0" step="0.01" placeholder="Width m" aria-label="Width in metres"><input type="number" id="fd" min="0" step="0.01" placeholder="Depth m" aria-label="Depth in metres"></div>
+  <input type="url" id="fl" placeholder="Link (optional)" aria-label="Product link">
+  <button class="btn small" type="submit" style="align-self:flex-start">Add product</button></form>
+  <p class="hint" style="margin-top:6px">Products with a width are tested against your hall on the fit check.</p></div>`},
+7(){const o=design(S.opt),pct=o.cost/S.budget*100,over=o.cost>S.budget,its=items(),t=its.reduce((a,i)=>a+i.p[S.region],0)+S.finds.reduce((a,f)=>a+(f.price||0),0);
+ return`<div><div class="split"><b>${esc(o.n)}</b><span class="mono">${rm(o.cost)} of ${rm(S.budget)}</span></div><div class="bar" style="margin-top:6px"><i class="${over?'over':''}" style="width:${Math.min(100,pct||0)}%"></i></div>
+ <p class="hint" style="margin-top:6px">${over?`Over budget by ${rm(o.cost-S.budget)}.`:`${rm(S.budget-o.cost)} left. Items listed (${REG[S.region]}): ${rm(t)}.`}</p></div>
+ <p class="sec">Fit check</p>${fits().map(f=>`<div class="box ${f[0]}"><span class="pill ${f[0]}">${f[0]==='ok'?'OK':'Warning'}</span><span>${esc(f[1])}</span></div>`).join('')}`}
+};
+let lastStep=-1;
+function render(){
+  const keep=S.step===lastStep?$('screen').scrollTop:0;
+  $('nav').innerHTML=STEPS.map((s,i)=>`<button data-act="go" data-i="${i}" ${i===S.step?'aria-current="step"':''}><span class="n">${i+1}</span>${s.s}</button>`).join('');
+  $('stepTag').textContent=`Screen ${S.step+1} of ${STEPS.length}`;
+  $('title').textContent=STEPS[S.step].t;
+  $('screen').innerHTML=V[S.step]();
+  $('screen').scrollTop=keep;lastStep=S.step;
+  $('back').disabled=S.step===0;
+  $('next').textContent=S.step===STEPS.length-1?'Back to start':'Next';
+  const s=STEPS[S.step];
+  $('notes').innerHTML=`<span class="tag">What this screen collects</span><h3>${s.t}</h3><ul>${s.collect.map(c=>`<li>${c}</li>`).join('')}</ul><span class="tag">Why it matters</span><p>${s.why}</p>`;
+}
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;let save=false;
+  if(a==='go'){S.step=+b.dataset.i;S.err=''}
+  else if(a==='toggle'){const k=b.dataset.k,v=b.dataset.v,i=S[k].indexOf(v);i<0?S[k].push(v):S[k].splice(i,1);save=true}
+  else if(a==='set'){S[b.dataset.k]=b.dataset.v;save=true}
+  else if(a==='pick'){S.quiz[+b.dataset.i]=+b.dataset.j;save=true}
+  else if(a==='redo'){S.quiz=[null,null,null,null];save=true}
+  else if(a==='stop'){if(AI.ctl)AI.ctl.abort();return}
+  else if(a==='readplan'){aiRun('plan',readPlan);return}
+  else if(a==='readphotos'){aiRun('photos',readPhotos);return}
+  else if(a==='check'){const id=b.dataset.id;aiRun('inspo:'+id,s=>checkInspo(id,s));return}
+  else if(a==='tailor'){aiRun('design',tailor);return}
+  else if(a==='resetdesigns'){S.designs=null;S.opt='A';save=true}
+  else if(a==='useplan'){const p=S.planRead;if(p){if(p.L)S.L=p.L;if(p.W)S.W=p.W;if(p.H)S.H=p.H;S.step=2;save=true}}
+  else if(a==='delphoto'){const k=b.dataset.slot;S.photos[k]=null;if(k==='plan')S.planRead=null;else S.photoRead=null;delDoc('photos',k);save=true}
+  else if(a==='delinspo'){const id=b.dataset.id;S.inspo=S.inspo.filter(i=>i.id!==id);delDoc('inspo',id)}
+  else if(a==='delshop'){const id=b.dataset.id;S.shops=S.shops.filter(i=>i.id!==id);delDoc('shops',id)}
+  else if(a==='delfind'){const id=b.dataset.id;S.finds=S.finds.filter(i=>i.id!==id);delDoc('finds',id)}
+  if(a==='useplan'||a==='go'||a==='delphoto'||a==='delinspo'||a==='delshop'||a==='delfind'||a==='set'||a==='toggle'||a==='pick'||a==='redo'||a==='resetdesigns'){if(save)queueSave();render()}
+});
+document.addEventListener('submit',async e=>{
+  const f=e.target.closest('[data-form]');if(!f)return;e.preventDefault();S.err='';
+  const v=id=>(document.getElementById(id)||{}).value||'';
+  const cleanUrl=u=>{u=u.trim();if(!u)return null;if(!/^https?:\/\//i.test(u))u='https://'+u;try{const x=new URL(u);return x.protocol.startsWith('http')?x:null}catch(_){return null}};
+  try{
+    if(f.dataset.form==='site'){
+      const name=v('sn').trim().slice(0,80),u=cleanUrl(v('su'));
+      if(!name||!u){S.err='Enter a name and a valid website address.';render();return}
+      const d={name,url:u.href,host:u.hostname,note:v('sx').trim().slice(0,160),ts:Date.now()},id=newId();
+      await putDoc('shops',id,d);S.shops.push({id,...d});
+    }else{
+      const name=v('fn').trim().slice(0,80);
+      if(!name){S.err='Enter a product name.';render();return}
+      const u=v('fl').trim()?cleanUrl(v('fl')):null;
+      if(v('fl').trim()&&!u){S.err='That link is not a valid web address.';render();return}
+      const d={name,price:num(parseFloat(v('fp')))||0,w:num(parseFloat(v('fw'))),d:num(parseFloat(v('fd'))),url:u?u.href:'',host:u?u.hostname:'',ts:Date.now()},id=newId();
+      await putDoc('finds',id,d);S.finds.push({id,...d});
+    }
+  }catch(_){S.err='Could not save this. It will last until you close the page.'}
+  render();
+});
+document.addEventListener('change',async e=>{
+  const t=e.target;
+  if(t.dataset.bind){const k=t.dataset.bind;S[k]=t.type==='number'?(parseFloat(t.value)||0):t.value;queueSave();render()}
+  else if(t.dataset.slot&&t.files&&t.files[0]){
+    const k=t.dataset.slot;S.err='';
+    try{const du=await shrink(t.files[0],k==='plan'?PLAN_TRIES:PHOTO_TRIES);S.photos[k]=du;if(k==='plan')S.planRead=null;else S.photoRead=null;
+      await putDoc('photos',k,{dataUrl:du,ts:Date.now()}).catch(()=>{});queueSave()}
+    catch(er){S.err=er.message==='large'?'That image is too detailed to store. Try a smaller photo.':'This image type is not supported. Use a JPG or PNG.'}
+    render();
+  }else if(t.dataset.inspo&&t.files&&t.files.length){
+    S.err='';const files=Array.from(t.files).slice(0,6);
+    for(const f of files){
+      if(S.inspo.length>=24){S.err='You can keep up to 24 images.';break}
+      try{const du=await shrink(f,PHOTO_TRIES),id=newId(),ts=Date.now();
+        await putDoc('inspo',id,{dataUrl:du,ts}).catch(()=>{});S.inspo.push({id,dataUrl:du,ts});render()}
+      catch(er){S.err=er.message==='large'?'One image was too detailed to store.':'One image type is not supported. Use JPG or PNG.'}
+    }
+    render();
+  }
+});
+$('back').onclick=()=>{if(S.step>0){S.step--;S.err='';render()}};
+$('next').onclick=()=>{S.step=S.step===STEPS.length-1?0:S.step+1;S.err='';render()};
+render();setStatus();initStore();
+</script>
+
+</body></html>
