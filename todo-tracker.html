@@ -98,8 +98,6 @@
 
         .card h2 { font-size: 1.5em; margin-bottom: 20px; color: var(--text); }
 
-        .card-sub { color: var(--text-light); font-size: 0.9em; margin: -12px 0 16px; }
-
         .date-display { color: var(--text-light); font-size: 0.95em; margin-bottom: 12px; }
 
         /* Daily priority ritual */
@@ -353,38 +351,6 @@
         .goals-empty { text-align: center; color: var(--text-light); padding: 20px; }
         .goals-hint { text-align: center; color: var(--text-light); font-size: 0.8em; }
 
-        /* Incomplete tasks */
-        .history-completed-tasks {
-            padding: 16px;
-            background: var(--bg);
-            border-radius: 10px;
-            margin-bottom: 10px;
-        }
-
-        .completed-task {
-            padding: 10px;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            border-left: 3px solid var(--coral);
-            font-size: 0.95em;
-        }
-        .completed-task-name { font-weight: 600; margin-bottom: 4px; }
-        .completed-task-meta { font-size: 0.85em; color: var(--text-light); }
-
-        .mini-btn {
-            margin-left: 10px;
-            padding: 4px 12px;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85em;
-            font-family: inherit;
-        }
-        .mini-btn.primary { background: var(--primary); }
-        .mini-btn.danger { background: var(--coral); margin-left: 6px; }
-
         .analytics-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -609,12 +575,6 @@
                 <p class="goals-empty" id="goals-empty">Add your first goal! 🎯</p>
                 <p class="goals-hint" id="goals-hint">Click a legend item to rename or delete a goal.</p>
             </div>
-        </div>
-
-        <div class="card">
-            <h2>Incomplete Tasks</h2>
-            <p class="card-sub">Unfinished tasks from earlier days.</p>
-            <div id="incomplete-tasks-list"></div>
         </div>
 
         <div class="analytics-grid">
@@ -1117,7 +1077,6 @@
             renderTasks();
             renderTimeSummary();
             renderGoalsChart();
-            renderIncompleteTasks();
             renderAnalytics();
             renderCalendar();
         }
@@ -1277,53 +1236,6 @@
             document.getElementById('completion-rate').textContent = Math.round(avgCompletion) + '%';
             document.getElementById('time-efficiency').textContent = Math.round(avgEfficiency) + '%';
             document.getElementById('goals-progress').textContent = Math.round(calculateGoalProgress()) + '%';
-        }
-
-        function renderIncompleteTasks() {
-            const container = document.getElementById('incomplete-tasks-list');
-            const currentDateStr = todayStr();
-
-            const byDate = {};
-            state.tasks.forEach(task => {
-                if (!task.completed && task.date < currentDateStr) {
-                    (byDate[task.date] = byDate[task.date] || []).push(task);
-                }
-            });
-
-            const dates = Object.keys(byDate).sort().reverse();
-
-            if (dates.length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:20px;">No incomplete tasks from previous days. Great job staying on top of things! 🎉</p>';
-                return;
-            }
-
-            container.innerHTML = dates.map(date => {
-                const label = new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-                const tasks = byDate[date];
-
-                const tasksHtml = tasks.map(task => {
-                    const goal = task.goalId ? state.goals.find(g => g.id === task.goalId) : null;
-                    const goalTag = goal ? `<span class="goal-tag">${esc(goal.text)}</span>` : '';
-
-                    return `
-                        <div class="completed-task">
-                            <div class="completed-task-name">${esc(task.text)}</div>
-                            <div class="completed-task-meta">
-                                ⏱️ ${task.estimatedTime}min ${goalTag}
-                                <button class="mini-btn primary" onclick="quickReschedule(${task.id})">Reschedule</button>
-                                <button class="mini-btn danger" onclick="deleteTask(${task.id})">Delete</button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                return `
-                    <div class="history-completed-tasks">
-                        <div style="font-weight: 700; color: var(--coral); margin-bottom: 12px;">${label} (${tasks.length} incomplete)</div>
-                        ${tasksHtml}
-                    </div>
-                `;
-            }).join('');
         }
 
         function renderCalendar() {
