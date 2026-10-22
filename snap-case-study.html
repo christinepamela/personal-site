@@ -1,0 +1,455 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Snap Inc Theta Case Study</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: full-bleed yellow masthead, then a white editorial column. One Theta map, a flow map of where the Edge went, era cards, tables.
+   Palette: Snap yellow, ink black, white, camera blue for Edge, coral for closed ventures. */
+:root{
+  --ink:#111111; --ink-light:#3E3E3A; --ink-faint:#6C6C66;
+  --paper:#FFFFFF; --card:#FFFFFF; --grey:#F5F5F0; --rule:#E4E4DC;
+  --yellow:#FFFC00; --yellow-ink:#111111;
+  --core:#111111; --edge:#0877B5; --beyond:#FFFC00;
+  --label:#0877B5; --warn:#D93A4E;
+  --z-core:rgba(17,17,17,.14); --z-edge:rgba(15,173,255,.16); --z-beyond:rgba(255,252,0,.42); --z-line:rgba(17,17,17,.22);
+  --font-display:'Nunito','Avenir Next Rounded','Avenir Next',Arial,sans-serif; --font-body:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; --font-mono:'DM Mono',ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#F5F5F0; --ink-light:#C9C9C2; --ink-faint:#8E8E86;
+    --paper:#0D0D0D; --card:#171717; --grey:#212121; --rule:#2E2E2B;
+    --core:#F5F5F0; --edge:#35B8FF; --label:#4DBDFF; --warn:#FF6B7D;
+    --z-core:rgba(245,245,240,.14); --z-edge:rgba(15,173,255,.22); --z-beyond:rgba(255,252,0,.17); --z-line:rgba(245,245,240,.25);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#F5F5F0; --ink-light:#C9C9C2; --ink-faint:#8E8E86;
+  --paper:#0D0D0D; --card:#171717; --grey:#212121; --rule:#2E2E2B;
+  --core:#F5F5F0; --edge:#35B8FF; --label:#4DBDFF; --warn:#FF6B7D;
+  --z-core:rgba(245,245,240,.14); --z-edge:rgba(15,173,255,.22); --z-beyond:rgba(255,252,0,.17); --z-line:rgba(245,245,240,.25);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font-body);background:var(--paper);color:var(--ink);line-height:1.62;font-weight:300;-webkit-font-smoothing:antialiased;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* Masthead */
+.masthead{background:var(--yellow);color:var(--yellow-ink);padding-block:4.5rem 3.4rem;position:relative;overflow:hidden}
+.masthead::after{content:"";position:absolute;right:-90px;top:-90px;width:300px;height:300px;border-radius:50%;border:34px solid rgba(17,17,17,.10);pointer-events:none}
+.masthead .wrap{position:relative;z-index:1}
+.kicker{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--yellow-ink);margin-bottom:1.4rem;display:inline-block;border:2px solid var(--yellow-ink);border-radius:999px;padding:.3rem .9rem}
+h1{font-family:var(--font-display);font-weight:900;font-size:clamp(2.3rem,6.2vw,4.3rem);line-height:1.04;letter-spacing:-.02em;margin:0;text-wrap:balance;max-width:20ch}
+h1 em{font-style:normal;background:var(--yellow-ink);color:var(--yellow);padding:0 .22em;border-radius:.2em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.standfirst{font-size:clamp(1.05rem,2vw,1.28rem);line-height:1.6;font-weight:400;color:var(--yellow-ink);max-width:56ch;margin:1.7rem 0 0}
+
+section{padding-block:3.5rem}
+section + section{border-top:1px solid var(--rule)}
+.eyebrow{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;background:var(--yellow);color:var(--yellow-ink);display:inline-block;padding:.28rem .75rem;border-radius:999px;margin-bottom:1rem}
+h2{font-family:var(--font-display);font-weight:800;font-size:clamp(1.6rem,3.4vw,2.3rem);line-height:1.15;margin:0 0 1.1rem;text-wrap:balance;letter-spacing:-.01em}
+h3{font-family:var(--font-display);font-weight:800;font-size:1.2rem;line-height:1.25;margin:0 0 .6rem}
+p{max-width:70ch;margin:0 0 1rem;color:var(--ink-light)}
+p strong{font-weight:500;color:var(--ink)}
+.note{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.03em;line-height:1.6;color:var(--ink-faint);border:1px dashed var(--ink-faint);border-radius:12px;padding:.9rem 1.1rem;margin:1.5rem 0;max-width:82ch}
+.legend{display:flex;flex-wrap:wrap;gap:.8rem 2rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.05em;color:var(--ink-light);margin:1.2rem 0}
+.legend span{display:flex;align-items:center;gap:.5rem}
+.dot{width:12px;height:12px;border-radius:50%;flex:none;display:inline-block}
+.dot.core{background:var(--core)} .dot.edge{background:var(--edge)} .dot.beyond{background:var(--beyond);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.dot.ghost{background:transparent;box-shadow:inset 0 0 0 1.5px var(--warn)}
+
+/* Charts */
+.chart-frame{background:var(--card);border:1px solid var(--rule);border-radius:16px;padding:1.4rem .9rem 1rem;overflow-x:auto;margin:1.4rem 0 1rem}
+.chart-frame svg{display:block;width:100%;height:auto;max-width:100%}
+.chart-frame svg.theta{min-width:660px}
+.chart-frame svg.flow{min-width:700px}
+svg text{font-family:var(--font-body);font-size:12.5px;fill:var(--ink)}
+svg .m{font-family:var(--font-mono);font-size:10px;letter-spacing:1.6px;fill:var(--ink-faint)}
+svg .a{font-size:11.5px;fill:var(--ink-light)}
+svg .ax{font-family:var(--font-display);font-weight:800;font-size:15px}
+svg .n{font-family:var(--font-mono);font-size:10px;font-weight:500;text-anchor:middle}
+svg .closed{fill:var(--warn)}
+.key{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.35rem 1.4rem;font-size:.84rem;color:var(--ink-light)}
+.key li{display:flex;gap:.55rem;align-items:baseline}
+.key b{font-family:var(--font-mono);font-weight:500;font-size:.72rem;color:var(--ink);min-width:1.6rem}
+.key .grp{grid-column:1/-1;font-family:var(--font-mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--label);margin-top:.5rem}
+
+/* Era cards */
+.eras{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:16px;overflow:hidden;margin-top:2rem}
+.era{background:var(--card);padding:1.6rem 1.5rem;display:grid;gap:1rem 2rem;min-width:0}
+@media(min-width:820px){.era{grid-template-columns:15rem 1fr}}
+.era-when{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;color:var(--yellow-ink);background:var(--yellow);display:inline-block;padding:.2rem .65rem;border-radius:999px;text-transform:uppercase}
+.era h3{margin:.6rem 0 .8rem}
+.bar{display:flex;height:16px;width:100%;border:1px solid var(--rule);border-radius:999px;overflow:hidden;background:var(--grey)}
+.bar i{display:block;height:100%}
+.bar .c{background:var(--core)} .bar .e{background:var(--edge)} .bar .b{background:var(--beyond)}
+.bar-key{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.05em;color:var(--ink-faint);margin:.4rem 0 1rem;display:flex;flex-wrap:wrap;gap:.2rem 1rem}
+.era p{font-size:.93rem;margin-bottom:.7rem}
+.driver{font-family:var(--font-mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--label);margin-right:.5rem}
+
+.pull{font-family:var(--font-display);font-weight:800;font-size:clamp(1.35rem,3vw,1.9rem);line-height:1.3;color:var(--ink);border-left:8px solid var(--yellow);padding-left:1.4rem;margin:2.2rem 0;max-width:36ch}
+
+.cards{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:16px;overflow:hidden;margin-top:2rem}
+@media(min-width:760px){.cards.two{grid-template-columns:1fr 1fr}.cards.three{grid-template-columns:repeat(3,1fr)}}
+.card{background:var(--card);padding:1.6rem 1.5rem;min-width:0}
+.card-head{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--label);margin-bottom:.6rem}
+.card p{font-size:.92rem;margin:0 0 .6rem}
+.card p:last-child{margin-bottom:0}
+
+.ledger{overflow-x:auto;margin-top:1.5rem;border:1px solid var(--rule);border-radius:16px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.88rem}
+th,td{text-align:left;padding:.8rem 1rem;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-light)}
+th{font-family:var(--font-mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);font-weight:500;border-bottom:3px solid var(--yellow)}
+td:first-child{font-weight:500;color:var(--ink)}
+tr:last-child td{border-bottom:none}
+
+.verdict{list-style:none;margin:1.5rem 0 0;padding:0}
+.verdict li{padding:1.3rem 0;border-top:1px solid var(--rule);display:grid;gap:.35rem 1.6rem}
+@media(min-width:720px){.verdict li{grid-template-columns:13rem 1fr}}
+.verdict li:last-child{border-bottom:1px solid var(--rule)}
+.verdict p{margin:0;font-size:.94rem}
+.coda{margin-top:2.4rem;padding:1.6rem 1.6rem;background:var(--yellow);color:var(--yellow-ink);border-radius:16px;font-family:var(--font-display);font-weight:800;font-size:1.3rem;line-height:1.45;max-width:58ch}
+.coda em{font-style:normal;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:4px}
+footer{padding-block:3rem 4.5rem;border-top:1px solid var(--rule);font-family:var(--font-mono);font-size:.7rem;letter-spacing:.06em;line-height:1.7;color:var(--ink-faint)}
+footer p{font-size:.7rem;color:var(--ink-faint);max-width:90ch}
+</style>
+
+<header class="masthead">
+<div class="wrap">
+  <div class="kicker">The Theta Lens &nbsp;·&nbsp; Snap Inc</div>
+  <h1>A company with a Core and a Beyond, and <em>a missing Edge</em></h1>
+  <p class="standfirst">Snap’s existential crisis lies in the disconnect between how it views its internal roadmap vs how it is actually positioned on the Theta map. The Edge that should grow into the next Core has been bought, absorbed or shut down.</p>
+</div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">How to read this page</div>
+  <h2>Three zones, one founder holding the pen</h2>
+  <p>Theta sorts innovation by technological complexity and market reach into <strong>Core</strong> (extend what already sells), <strong>Edge</strong> (new products and markets that can grow into the next Core) and <strong>Beyond</strong> (long-horizon bets that rebuild the company's footing). The book's warning about companies with only Core and Beyond is blunt: when the Core slows, there is nothing to take over.</p>
+
+  <div class="chart-frame">
+    <svg class="theta" viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Snap on the Theta Innovation Map, technological change against market reach. Nine live products sit in the Core, four in the Beyond, and the Edge holds only five closed ventures: Zenly, Pixy, Originals, Minis and Games, and Voisey.">
+      <polygon points="120,120 840,60 840,500 620,500" fill="var(--z-beyond)"/>
+      <polygon points="120,340 120,120 620,500 300,500" fill="var(--z-edge)"/>
+      <polygon points="120,500 120,340 300,500" fill="var(--z-core)"/>
+      <path d="M120 340L300 500M120 120L620 500" stroke="var(--z-line)" fill="none"/>
+
+      <text class="m" x="124" y="514">CORE · 0–2 YRS</text>
+      <text class="m" x="236" y="352">EDGE · 2–5 YRS · NOTHING LIVE</text>
+      <text class="m" x="832" y="486" text-anchor="end">BEYOND · 7–15 YRS</text>
+
+      <g stroke="var(--rule)" stroke-width="1" stroke-dasharray="2 5">
+        <line x1="120" y1="480" x2="860" y2="480"/><line x1="120" y1="385" x2="860" y2="385"/><line x1="120" y1="290" x2="860" y2="290"/><line x1="120" y1="195" x2="860" y2="195"/><line x1="120" y1="100" x2="860" y2="100"/>
+      </g>
+      <line x1="120" y1="55" x2="120" y2="520" stroke="var(--ink-faint)"/>
+      <line x1="120" y1="520" x2="860" y2="520" stroke="var(--ink-faint)"/>
+
+      <g class="a" text-anchor="end">
+        <text x="108" y="484">Level 1 · Incremental</text><text x="108" y="389">Level 2 · Moderate</text><text x="108" y="294">Level 3 · High</text><text x="108" y="199">Level 4 · Radical</text><text x="108" y="104">Level 5 · Extreme</text>
+      </g>
+      <text class="ax" x="24" y="290" text-anchor="middle" transform="rotate(-90 24 290)">Technological Change</text>
+      <g class="a" text-anchor="middle">
+        <text x="190" y="545">Existing</text><text x="380" y="545">New</text><text x="570" y="545">Emerging</text><text x="760" y="545">Speculative</text>
+      </g>
+      <text class="ax" x="490" y="583" text-anchor="middle">Market Reach</text>
+
+      <!-- Closed ventures sit where the Edge should be -->
+      <g stroke="var(--warn)" stroke-width="2.4" fill="none" stroke-linecap="round">
+        <path d="M334 379l12 12M346 379l-12 12"/>
+        <path d="M314 439l12 12M326 439l-12 12"/>
+        <path d="M414 374l12 12M426 374l-12 12"/>
+        <path d="M434 419l12 12M446 419l-12 12"/>
+        <path d="M494 464l12 12M506 464l-12 12"/>
+      </g>
+      <g class="closed" style="font-size:12.5px">
+        <text class="closed" x="356" y="390">Zenly</text>
+        <text class="closed" x="336" y="450">Pixy</text>
+        <text class="closed" x="436" y="385">Originals</text>
+        <text class="closed" x="456" y="430">Voisey</text>
+        <text class="closed" x="516" y="475">Minis and Games</text>
+      </g>
+
+      <!-- Core markers (numbered) -->
+      <g fill="var(--core)">
+        <circle cx="146" cy="484" r="10"/><circle cx="178" cy="484" r="10"/><circle cx="210" cy="484" r="10"/><circle cx="242" cy="484" r="10"/>
+        <circle cx="150" cy="456" r="10"/><circle cx="182" cy="456" r="10"/><circle cx="214" cy="456" r="10"/>
+        <circle cx="150" cy="428" r="10"/><circle cx="182" cy="428" r="10"/>
+      </g>
+      <g class="n" style="fill:var(--paper)">
+        <text class="n" x="146" y="487.5" style="fill:var(--paper)">1</text><text class="n" x="178" y="487.5" style="fill:var(--paper)">2</text><text class="n" x="210" y="487.5" style="fill:var(--paper)">3</text><text class="n" x="242" y="487.5" style="fill:var(--paper)">4</text>
+        <text class="n" x="150" y="459.5" style="fill:var(--paper)">5</text><text class="n" x="182" y="459.5" style="fill:var(--paper)">6</text><text class="n" x="214" y="459.5" style="fill:var(--paper)">7</text>
+        <text class="n" x="150" y="431.5" style="fill:var(--paper)">8</text><text class="n" x="182" y="431.5" style="fill:var(--paper)">9</text>
+      </g>
+
+      <!-- Beyond markers -->
+      <g fill="var(--beyond)" stroke="var(--ink)" stroke-width="1.5">
+        <circle cx="724" cy="150" r="10"/><circle cx="650" cy="215" r="10"/><circle cx="590" cy="300" r="10"/><circle cx="540" cy="370" r="10"/>
+      </g>
+      <g>
+        <text class="n" x="724" y="153.5" style="fill:#111">10</text><text class="n" x="650" y="218.5" style="fill:#111">11</text><text class="n" x="590" y="303.5" style="fill:#111">12</text><text class="n" x="540" y="373.5" style="fill:#111">13</text>
+      </g>
+      <g class="a">
+        <text x="738" y="154">Specs</text><text x="664" y="219">Snap OS</text><text x="604" y="304">WaveOptics</text><text x="554" y="374">Snap Cloud</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><i class="dot core"></i>Core · live</span>
+    <span><i class="dot edge"></i>Edge · 2 to 5 years</span>
+    <span><i class="dot beyond"></i>Beyond · live</span>
+    <span><i class="dot ghost"></i>Built, then closed</span>
+  </div>
+
+  <ul class="key">
+    <li class="grp">Core, all live</li>
+    <li><b>1</b>Camera and Chat</li><li><b>2</b>Stories</li><li><b>3</b>Spotlight</li><li><b>4</b>Snap Map</li><li><b>5</b>Lenses</li><li><b>6</b>Snapchat+</li><li><b>7</b>Lens monetisation</li><li><b>8</b>Camera Kit</li><li><b>9</b>ARES, AR Enterprise suite</li>
+    <li class="grp">Beyond, all live</li>
+    <li><b>10</b>Spectacles and Specs</li><li><b>11</b>Snap OS</li><li><b>12</b>WaveOptics</li><li><b>13</b>Snap Cloud</li>
+  </ul>
+</section>
+
+<section>
+  <div class="eyebrow">Part one · the illusion of the Edge</div>
+  <h2>Two maps of the same company</h2>
+  <p>Snap describes Stories, Spotlight, Snap Map and Lenses as new bets that grew out of the camera. Read on Theta's axes they are extensions of one product, sold to the same users, funded by the same ad engine. The Edge that was once real is a list of things that no longer exist.</p>
+
+  <div class="chart-frame">
+    <svg class="flow" viewBox="0 0 900 570" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A flow map. On the left, ten ideas Snap treats as Edge. Five (Stories, Spotlight, Snap Map, Lenses with Camera Kit and ARES, and Snapchat+) flow into one Core box on the right. Five (Zenly, Pixy, Originals, Minis and Games, and Voisey) run to a dead end at an empty Edge box. A Beyond box below holds Spectacles and Specs, Snap OS, WaveOptics and Snap Cloud.">
+      <text class="m" x="30" y="40">WHAT SNAP CALLS ITS EDGE</text>
+      <text class="m" x="30" y="242" style="fill:var(--warn)">TRIED, THEN CLOSED</text>
+
+      <!-- absorbed flows -->
+      <g fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round">
+        <path d="M230 83 C440 83 440 100 640 100"/>
+        <path d="M230 117 C440 117 440 125 640 125"/>
+        <path d="M230 151 C440 151 440 150 640 150"/>
+        <path d="M230 185 C440 185 440 175 640 175"/>
+        <path d="M230 219 C440 219 440 200 640 200"/>
+      </g>
+      <g fill="var(--ink)"><circle cx="646" cy="100" r="5"/><circle cx="646" cy="125" r="5"/><circle cx="646" cy="150" r="5"/><circle cx="646" cy="175" r="5"/><circle cx="646" cy="200" r="5"/></g>
+      <text class="m" x="440" y="60" text-anchor="middle">ABSORBED INTO THE CORE</text>
+
+      <!-- closed flows -->
+      <g fill="none" stroke="var(--warn)" stroke-width="2" stroke-dasharray="6 5" stroke-linecap="round">
+        <path d="M230 263H610"/><path d="M230 297H610"/><path d="M230 331H610"/><path d="M230 365H610"/><path d="M230 399H610"/>
+      </g>
+      <g stroke="var(--warn)" stroke-width="2.6" fill="none" stroke-linecap="round">
+        <path d="M624 257l12 12M636 257l-12 12"/><path d="M624 291l12 12M636 291l-12 12"/><path d="M624 325l12 12M636 325l-12 12"/><path d="M624 359l12 12M636 359l-12 12"/><path d="M624 393l12 12M636 393l-12 12"/>
+      </g>
+      <text class="m" x="420" y="250" text-anchor="middle" style="fill:var(--warn)">CLOSED, NO SUCCESSOR</text>
+
+      <!-- left pills: absorbed -->
+      <g fill="var(--card)" stroke="var(--ink)" stroke-width="1.5">
+        <rect x="30" y="70" width="200" height="26" rx="13"/><rect x="30" y="104" width="200" height="26" rx="13"/><rect x="30" y="138" width="200" height="26" rx="13"/><rect x="30" y="172" width="200" height="26" rx="13"/><rect x="30" y="206" width="200" height="26" rx="13"/>
+      </g>
+      <g>
+        <text x="46" y="87">Stories</text><text x="46" y="121">Spotlight</text><text x="46" y="155">Snap Map</text><text x="46" y="189">Lenses, Camera Kit, ARES</text><text x="46" y="223">Snapchat+</text>
+      </g>
+      <!-- left pills: closed -->
+      <g fill="none" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="4 3">
+        <rect x="30" y="250" width="200" height="26" rx="13"/><rect x="30" y="284" width="200" height="26" rx="13"/><rect x="30" y="318" width="200" height="26" rx="13"/><rect x="30" y="352" width="200" height="26" rx="13"/><rect x="30" y="386" width="200" height="26" rx="13"/>
+      </g>
+      <g class="closed">
+        <text class="closed" x="46" y="267">Zenly</text><text class="closed" x="46" y="301">Pixy</text><text class="closed" x="46" y="335">Originals</text><text class="closed" x="46" y="369">Minis and Games</text><text class="closed" x="46" y="403">Voisey</text>
+      </g>
+
+      <!-- right: Core -->
+      <rect x="650" y="50" width="230" height="190" rx="18" fill="var(--ink)"/>
+      <text x="670" y="78" style="fill:var(--paper);font-family:var(--font-mono);font-size:10px;letter-spacing:1.6px">CORE</text>
+      <text x="670" y="214" style="fill:var(--paper);font-family:var(--font-display);font-weight:800;font-size:17px">One product,</text>
+      <text x="670" y="234" style="fill:var(--paper);font-family:var(--font-display);font-weight:800;font-size:17px">one user, one ad engine</text>
+
+      <!-- right: Edge, empty -->
+      <rect x="650" y="262" width="230" height="150" rx="18" fill="none" stroke="var(--warn)" stroke-width="2" stroke-dasharray="6 5"/>
+      <text class="m" x="670" y="290">EDGE</text>
+      <text x="670" y="346" style="font-family:var(--font-display);font-weight:900;font-size:40px;fill:var(--warn)">Empty</text>
+      <text class="a" x="670" y="386">Five tried, none left</text>
+
+      <!-- right: Beyond -->
+      <rect x="650" y="434" width="230" height="116" rx="18" fill="var(--yellow)"/>
+      <text x="670" y="460" style="fill:#111;font-family:var(--font-mono);font-size:10px;letter-spacing:1.6px">BEYOND · HELD</text>
+      <g style="fill:#111"><text x="670" y="486" style="fill:#111">Spectacles and Specs</text><text x="670" y="505" style="fill:#111">Snap OS · WaveOptics</text><text x="670" y="524" style="fill:#111">Snap Cloud</text></g>
+    </svg>
+  </div>
+
+  <div class="pull">The Edge was not neglected. It was pruned.</div>
+
+  <p>Snap ran acquired ventures on their own as Edge bets. <strong>Zenly</strong> stayed a separate app, with a reported 40 million monthly users but Snap shut it in August 2022. Pixy, Originals, Minis and Games, and Voisey went the same way. Snap tried, but it had limited patience or vision to establish new Cores. What survived was what could be re-directed into the exact same Core.</p>
+  <p>Camera Kit, the AR Enterprise suite (ARES) and Lens monetisation began as outward-facing, separate-looking bets. They now sit inside the Core as extensions of Lenses and ad sales. An Edge innovation has the potential to become a new Core. At Snap, an Edge idea either becomes a Core feature or it is closed.</p>
+</section>
+
+<section>
+  <div class="eyebrow">Part two · allocation over time</div>
+  <h2>One founder, six allocation eras</h2>
+  <p>Evan Spiegel has been CEO since 2011, so Snap's history is a single allocator making repeated choices under different pressure. The eras below follow his decisions rather than a change of management.</p>
+  <div class="note">How to read the bars: each bar is the author's directional estimate of where Snap's attention and investment went in that era. It is not revenue and not a reported figure. Adjust the weights if you hold better data.</div>
+
+  <div class="eras">
+    <div class="era">
+      <div><div class="era-when">2011 to 2016</div><h3>The founding Chaos</h3></div>
+      <div>
+        <div class="bar" role="img" aria-label="Directional allocation: Core 45, Edge 40, Beyond 15"><i class="c" style="width:45%"></i><i class="e" style="width:40%"></i><i class="b" style="width:15%"></i></div>
+        <div class="bar-key"><span>Core 45</span><span>Edge 40</span><span>Beyond 15</span></div>
+        <p><span class="driver">Driver</span>Disappearing messages, Stories and Lenses were each unfinished and new. The company was its own maverick team, and the Edge was most of the company.</p>
+        <p><span class="driver">Impact</span>Acquisitions such as Looksery and Bitstrips fed the camera. Spectacles began as a side experiment that would later grow into the Beyond.</p>
+      </div>
+    </div>
+    <div class="era">
+      <div><div class="era-when">2017 to 2019</div><h3>IPO and the first write-down</h3></div>
+      <div>
+        <div class="bar" role="img" aria-label="Directional allocation: Core 65, Edge 15, Beyond 20"><i class="c" style="width:65%"></i><i class="e" style="width:15%"></i><i class="b" style="width:20%"></i></div>
+        <div class="bar-key"><span>Core 65</span><span>Edge 15</span><span>Beyond 20</span></div>
+        <p><span class="driver">Driver</span>Public markets arrived with a dual-class structure that left voting control with the founders. Spectacles took a $39.9M inventory write-down in 2017 and the product was redesigned.</p>
+        <p><span class="driver">Impact</span>Zenly and Placed were bought. Redesign pressure hit the Core, and Spectacles became a standing Beyond line.</p>
+      </div>
+    </div>
+    <div class="era">
+      <div><div class="era-when">2020 to 2021</div><h3>The peak</h3></div>
+      <div>
+        <div class="bar" role="img" aria-label="Directional allocation: Core 60, Edge 10, Beyond 30"><i class="c" style="width:60%"></i><i class="e" style="width:10%"></i><i class="b" style="width:30%"></i></div>
+        <div class="bar-key"><span>Core 60</span><span>Edge 10</span><span>Beyond 30</span></div>
+        <p><span class="driver">Driver</span>Growth was easy and cash was cheap. Snap bought WaveOptics, a waveguide maker, and moved the AR hardware thesis in-house.</p>
+        <p><span class="driver">Impact</span>The Beyond became a vertically integrated bet. The Edge stayed small and kept its separate apps for the time being.</p>
+      </div>
+    </div>
+    <div class="era">
+      <div><div class="era-when">2022</div><h3>The reset</h3></div>
+      <div>
+        <div class="bar" role="img" aria-label="Directional allocation: Core 70, Edge 5, Beyond 25"><i class="c" style="width:70%"></i><i class="e" style="width:5%"></i><i class="b" style="width:25%"></i></div>
+        <div class="bar-key"><span>Core 70</span><span>Edge 5</span><span>Beyond 25</span></div>
+        <p><span class="driver">Driver</span>Apple's App Tracking Transparency hit ad revenue. Under a restructuring Snap named three priorities: community growth, revenue growth and augmented reality.</p>
+        <p><span class="driver">Impact</span>That is a Core plus Beyond list. Zenly, Pixy, Originals, Minis and Games, and Voisey were closed. This is the year the Edge column emptied.</p>
+      </div>
+    </div>
+    <div class="era">
+      <div><div class="era-when">2023 to 2025</div><h3>Subscriptions and Spectacles Gen 5</h3></div>
+      <div>
+        <div class="bar" role="img" aria-label="Directional allocation: Core 70, Edge 5, Beyond 25"><i class="c" style="width:70%"></i><i class="e" style="width:5%"></i><i class="b" style="width:25%"></i></div>
+        <div class="bar-key"><span>Core 70</span><span>Edge 5</span><span>Beyond 25</span></div>
+        <p><span class="driver">Driver</span>Snapchat+ and AI Lenses lifted the Core. Spectacles Gen 5 went to developers while the AR bill kept running at about $500M of cash burn a year.</p>
+        <p><span class="driver">Impact</span>The AI features are Core extensions. The Beyond is carried by the Core's cash, a point the next section returns to.</p>
+      </div>
+    </div>
+    <div class="era">
+      <div><div class="era-when">2026</div><h3>The crucible</h3></div>
+      <div>
+        <div class="bar" role="img" aria-label="Directional allocation: Core 68, Edge 3, Beyond 29"><i class="c" style="width:68%"></i><i class="e" style="width:3%"></i><i class="b" style="width:29%"></i></div>
+        <div class="bar-key"><span>Core 68</span><span>Edge 3</span><span>Beyond 29</span></div>
+        <p><span class="driver">Driver</span>Specs was unveiled on 16 June at AWE with pre-orders at $2,195, and the platform event followed on 16 September. Shipping is described as later this fall in the US, UK and France. A Perplexity deal ended in Q1. Activists Irenic and Blue Duck are pressing the board.</p>
+        <p><span class="driver">Impact</span>The AR bet was moved into a subsidiary, Specs Inc., a structural separation that most companies use to fund and protect an Edge.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Part three · who holds the pen</div>
+  <h2>The Beyond survives because the vote does not move</h2>
+  <p>Snap's public Class A shares carry no votes. The founders hold roughly 97% of the voting power. In a company with ordinary governance, a Beyond line burning about $500M a year, and more than $3.5B cumulatively, would be a standing target. Snap reports a GAAP net loss ($164M in Q2 2026) while generating positive free cash flow, so the AR bill is paid from the Core.</p>
+
+  <div class="pull">Activists chop the Edge. Here the founder holds the pen, and the founder has chopped it himself.</div>
+
+  <p>The book names the usual pattern: activists and financial desperation cut the Edge first, because it earns nothing yet. Snap inverts it. Irenic and Blue Duck can make noise, but they cannot take control. The risk is inside the structure: one allocator, no outside check on the portfolio's shape, and a Core that the Beyond depends on. This is also the contrast with PayPal's case, where the pen sat with a board that could change hands.</p>
+
+  <div class="cards two">
+    <div class="card">
+      <div class="card-head">What the structure protects</div>
+      <h3>Long bets nobody can vote down</h3>
+      <p>A decade of AR funding survived a $39.9M write-down, redesigns and a cash-burn bill that outside shareholders would likely have ended.</p>
+    </div>
+    <div class="card">
+      <div class="card-head">What the structure cannot protect</div>
+      <h3>An Edge nobody is accountable for</h3>
+      <p>The 2022 closures were a founder's decision made under ad-revenue pressure. No one else was positioned to argue that Zenly's users were a future Core.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Part four · where Snap departs from the framework</div>
+  <h2>Breakthrough, built a different way</h2>
+  <p>The book's route to breakthrough innovation runs through three stages: Chaos with a few mavericks, Growth as a skunkworks that crosses the chasm with early adopters, and Scale, where the breakthrough is opened internally so the existing Core can adapt it. Snap does it differently in four ways.</p>
+
+  <div class="ledger">
+    <table>
+      <thead><tr><th>Theta framework</th><th>What Snap does</th><th>Consequence</th></tr></thead>
+      <tbody>
+        <tr><td>Open the breakthrough inside the company so Core teams co-author it</td><td>The AR effort is kept in a separate hardware and platform organisation, now Specs Inc.</td><td>Core ad sales, legal and supply chain are customers of AR, not co-owners of it.</td></tr>
+        <tr><td>Stages: Chaos, Growth, Scale, each with its own funding</td><td>One funding source, the Core's cash, and one overall allocator</td><td>No stage gate that lets AR fail cleanly or prove itself with outside capital.</td></tr>
+        <tr><td>Cross the chasm through early adopters</td><td>Developer programmes and a consumer launch in the same window</td><td>Specs opens pre-orders at $2,195, a consumer launch, before an enterprise or developer base has carried it.</td></tr>
+        <tr><td>An Edge that feeds the next Core</td><td>Edge ventures run and then closed or absorbed</td><td>When the Core slows, nothing is ready to take over.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p style="margin-top:1.4rem"><strong>One more difference sits outside Snap.</strong> Meta's glasses strategy is an Edge-to-Core path: a product already selling to a mass audience, extended toward richer displays. Snap's is Beyond-first, with no mass-market glasses revenue underneath. The relativity principle in the book matters here: the same product is Edge for one company and Core for another, depending on where its customers already are.</p>
+</section>
+
+<section>
+  <div class="eyebrow">Part five · the status quo</div>
+  <h2>If nothing changes</h2>
+  <p>These are the author's scenarios, not forecasts, and they carry no probabilities.</p>
+
+  <div class="cards three">
+    <div class="card">
+      <div class="card-head">Scenario A</div>
+      <h3>Specs finds a niche</h3>
+      <p>Early buyers make AR a paying Beyond. Core ad products gain a new surface.</p>
+      <p>Theta reading: Beyond matures into a business, but Snap still has no Edge to take over from a slowing camera.</p>
+    </div>
+    <div class="card">
+      <div class="card-head">Scenario B</div>
+      <h3>Specs stalls, pressure builds</h3>
+      <p>Sales undershoot, losses continue and activists use the burn to demand cuts.</p>
+      <p>Theta reading: the structure resists a forced sale. The founder trims the Beyond, and Snap becomes a Core-only company.</p>
+    </div>
+    <div class="card">
+      <div class="card-head">Scenario C</div>
+      <h3>A larger platform wins the glasses</h3>
+      <p>Meta, Apple or Google ships a mass-market device first and sets the standard.</p>
+      <p>Theta reading: Snap's seven-year Beyond becomes a stepping stone for someone else, and the Core is the only asset left.</p>
+    </div>
+  </div>
+  <p style="margin-top:1.4rem">In all three, the camera business carries the company. The case turns on whether that Core is given something to hand over to.</p>
+</section>
+
+<section>
+  <div class="eyebrow">Part six · the Theta path</div>
+  <h2>Restore the Edge, and build the bridge both ways</h2>
+  <p>Using the book's method means two changes: put an Edge back on the map, and run the AR bet through Chaos, Growth and Scale instead of one long funding line.</p>
+
+  <ul class="verdict">
+    <li>
+      <h3>Rebuild the Edge</h3>
+      <p>Take the closed ventures seriously as seeds. Zenly's location graph, Minis and Games as a developer platform, and Camera Kit as a business that sells outside Snapchat are three candidates. Give each a protected budget, separate metrics from the Core's, and a stated review date.</p>
+    </li>
+    <li>
+      <h3>AR in three stages</h3>
+      <p><strong>Chaos:</strong> a small maverick team per use case. <strong>Growth:</strong> enterprise and developer early adopters as the chasm crossing, before consumer scale. <strong>Scale:</strong> open the platform internally so Core ad sales, legal, supply chain and the Lens community co-own what ships.</p>
+    </li>
+    <li>
+      <h3>A two-way bridge</h3>
+      <p>Specs Inc. separates the bet. Theta needs the other half: named people who move from Core to AR and back, and a rule that Core products adopt AR capabilities on a schedule. Without it the separation is only an accounting boundary.</p>
+    </li>
+    <li>
+      <h3>A second check on the pen</h3>
+      <p>The founder's control is the reason the Beyond has lasted. A portfolio review that includes independent directors would keep that protection and answer the question nobody currently asks of the Edge.</p>
+    </li>
+  </ul>
+
+  <div class="coda">
+    Snap shows what a company looks like when it lets the camera absorb every idea and funds the future out of the present. <em>What will the Core hand over to, on the day it slows?</em>
+  </div>
+</section>
+
+<footer>
+  Core / Edge / Beyond © the Theta framework · Innovation Underdogs
+  <p style="margin-top:1rem">Core, Edge and Beyond allocation is to our best knowledge. It reflects our reading of public information and is not company-reported.</p>
+  <p>Figures from Snap's Q2 2026 results, press coverage of Specs, the 2022 restructuring, Snap's governance filings and reporting on the Irenic and Blue Duck campaigns. Era weights are the author's directional estimates. This case study is analysis for discussion and not investment advice. Specs shipping date is not confirmed as of 22 October 2026.</p>
+</footer>
+
+</div>
+
+</body></html>
