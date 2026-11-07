@@ -3229,83 +3229,113 @@
   });
 
   // ====================================================================
-  // SAMPLE PLAN (pam's typed plan)
+  // SAMPLE PLAN (v3 weekly schedule)
   // ====================================================================
-    function SAMPLE_PLAN() {
+  function SAMPLE_PLAN() {
     // ============================================================
-    // REVISED WEEKLY PLAN (v2)
-    // Heavy strength: Sat, Sun, Mon (mid-morning)
-    // Light movement: Tue-Fri (walk + 10-min evening stretch)
-    // Swim: Friday evening
+    // WEEKLY PLAN (v3)
+    // Sat Pilates (light) · Sun Core · Mon Pilates (heavier) · Tue Arms
+    // Wed Pilates (heavier) · Thu Legs · Fri Core + Swimming
+    // Every day: morning walk. Hanging bar on strength days.
+    // Reps are a single number (per side / per direction where relevant).
     // ============================================================
 
-    const lightDay = (title) => ({
-      theme: title,
+    const walk = () => ({ name:'Morning walk', note:'7-10k steps', exercises: [
+      { name:'Walk', work:3600, rest:0, sets:1, reps:0 }
+    ]});
+    const warmup = () => ({ name:'Warm-up', exercises: [
+      { name:'Wall Angel', work:45, rest:15, sets:2, reps:10 }
+    ]});
+    const cooldown = () => ({ name:'Cool-down', exercises: [
+      { name:'Heel Slide', work:45, rest:15, sets:2, reps:10 }
+    ]});
+    const hang = () => ({ name:'Hanging bar (easy start)', exercises: [
+      { name:'Dead Hang', work:20, rest:30, sets:2, reps:0 }
+    ]});
+
+    const pilatesHeavy = (theme) => ({
+      theme,
       isRest: false,
       sections: [
-        { name:'Morning walk', note:'7-10k steps', exercises: [
-          { name:'Walk', work:3600, rest:0, sets:1, reps:0 }
+        walk(),
+        warmup(),
+        { name:'Pilates (heavier stretch focus)', note:'3 sets main moves · 60s holds', exercises: [
+          { name:'Pilates Hundred', work:60, rest:20, sets:3, reps:0 },
+          { name:'Bird Dog', work:45, rest:15, sets:3, reps:10 },
+          { name:'Glute Bridge', work:45, rest:15, sets:3, reps:15 },
+          { name:'Side Plank', work:30, rest:15, sets:3, reps:0 },
+          { name:'Cobra Pose', work:60, rest:5, sets:3, reps:0 },
+          { name:'Downward Dog', work:60, rest:5, sets:3, reps:0 },
+          { name:'Crescent Lunge', work:60, rest:5, sets:2, reps:0 },
+          { name:'Warrior II', work:60, rest:5, sets:2, reps:0 },
+          { name:'Figure Four', work:60, rest:5, sets:2, reps:0 },
+          { name:'Supine Spinal Twist', work:60, rest:5, sets:2, reps:0 }
         ]},
-        { name:'Evening reset (10 min)', exercises: [
-          { name:'Wall Angel', work:45, rest:15, sets:2, reps:10 },
-          { name:'Ankle Mobility Circles', work:60, rest:15, sets:2, reps:0 },
-          { name:'Shoulder Rotations', work:45, rest:15, sets:2, reps:20 },
-          { name:'Heel Slide', work:45, rest:15, sets:2, reps:10 }
-        ]}
+        cooldown()
       ]
     });
 
+    const coreExercises = () => ([
+      { name:'Kettlebell Dead Bug', work:45, rest:20, sets:3, reps:8 },
+      { name:'Kettlebell Russian Twist', work:45, rest:20, sets:3, reps:12 },
+      { name:'Kettlebell Suitcase Carry', work:60, rest:20, sets:3, reps:20 },
+      { name:'Kettlebell Single-Arm Overhead March', work:45, rest:20, sets:3, reps:10 },
+      { name:'Kettlebell Around the World', work:45, rest:20, sets:3, reps:8 },
+      { name:'Kettlebell Halos', work:45, rest:20, sets:3, reps:8 },
+      { name:'Kettlebell Atlas Swing', work:45, rest:20, sets:3, reps:10 },
+      { name:'Kettlebell Figure 8', work:45, rest:20, sets:3, reps:8 },
+      { name:'Kettlebell Side Crunch', work:45, rest:20, sets:3, reps:10 },
+      { name:'Plank', work:45, rest:20, sets:3, reps:0 },
+      { name:'Side Plank', work:30, rest:15, sets:3, reps:0 },
+      { name:'Bird Dog', work:45, rest:15, sets:3, reps:10 }
+    ]);
+
     return {
       days: {
-        // ============================================================
-        // SATURDAY - CORE + PILATES (heavier day)
-        // ============================================================
+        // SATURDAY - PILATES (light)
         Sat: {
-          theme: 'Core + Pilates',
+          theme: 'Pilates (Light)',
           isRest: false,
           sections: [
-            { name:'Morning walk', note:'7-10k steps', exercises: [
-              { name:'Walk', work:3600, rest:0, sets:1, reps:0 }
+            walk(),
+            warmup(),
+            { name:'Pilates (light)', note:'2 sets · moderate holds', exercises: [
+              { name:'Pilates Hundred', work:45, rest:20, sets:2, reps:0 },
+              { name:'Bird Dog', work:45, rest:15, sets:2, reps:10 },
+              { name:'Glute Bridge', work:45, rest:15, sets:2, reps:15 },
+              { name:'Side Plank', work:30, rest:15, sets:2, reps:0 },
+              { name:'Figure Four', work:45, rest:5, sets:2, reps:0 },
+              { name:'Child Pose', work:45, rest:5, sets:2, reps:0 }
             ]},
-            { name:'Warm-up', exercises: [
-              { name:'Wall Angel', work:45, rest:15, sets:2, reps:10 }
-            ]},
-            { name:'Core circuit', note:'3 rounds', exercises: [
-              { name:'Kettlebell Dead Bug', work:45, rest:20, sets:3, reps:8 },
-              { name:'Kettlebell Russian Twist', work:45, rest:20, sets:3, reps:12 },
-              { name:'Kettlebell Suitcase Carry', work:60, rest:20, sets:3, reps:20 },
-              { name:'Plank', work:45, rest:20, sets:3, reps:0 },
-              { name:'Side Plank', work:30, rest:15, sets:3, reps:0 },
-              { name:'Glute Bridge', work:45, rest:15, sets:3, reps:15 },
-              { name:'Pilates Hundred', work:45, rest:20, sets:3, reps:0 },
-              { name:'Bird Dog', work:45, rest:15, sets:3, reps:10 }
-            ]},
+            cooldown()
+          ]
+        },
+
+        // SUNDAY - CORE (strength)
+        Sun: {
+          theme: 'Core',
+          isRest: false,
+          sections: [
+            walk(),
+            { name:'Core (kettlebell + bodyweight)', exercises: coreExercises() },
+            hang(),
             { name:'Stretch', exercises: [
               { name:'Cobra Pose', work:45, rest:5, sets:2, reps:0 },
               { name:'Child Pose', work:45, rest:5, sets:2, reps:0 },
-              { name:'Downward Dog', work:45, rest:5, sets:2, reps:0 },
-              { name:'Figure Four', work:45, rest:5, sets:2, reps:0 },
               { name:'Supine Spinal Twist', work:45, rest:5, sets:2, reps:0 }
-            ]},
-            { name:'Cool-down', exercises: [
-              { name:'Heel Slide', work:45, rest:15, sets:2, reps:10 }
             ]}
           ]
         },
 
-        // ============================================================
-        // SUNDAY - ARMS (kettlebell) + SKIPPING (heavier day)
-        // ============================================================
-        Sun: {
-          theme: 'Arms + Skipping',
+        // MONDAY - PILATES (heavier stretches)
+        Mon: pilatesHeavy('Pilates (Heavier Stretches)'),
+
+        // TUESDAY - ARMS (strength)
+        Tue: {
+          theme: 'Arms',
           isRest: false,
           sections: [
-            { name:'Morning walk', note:'7-10k steps', exercises: [
-              { name:'Walk', work:3600, rest:0, sets:1, reps:0 }
-            ]},
-            { name:'Warm-up', exercises: [
-              { name:'Wall Angel', work:45, rest:15, sets:2, reps:10 }
-            ]},
+            walk(),
             { name:'Arms (kettlebell)', exercises: [
               { name:'Kettlebell Bicep Curls', work:45, rest:20, sets:3, reps:12 },
               { name:'Kettlebell Hammer Curls', work:45, rest:20, sets:3, reps:12 },
@@ -3313,35 +3343,25 @@
               { name:'Kettlebell High Pulls', work:45, rest:20, sets:3, reps:10 },
               { name:'Kettlebell Rocket Press', work:45, rest:30, sets:3, reps:10 }
             ]},
-            { name:'Skipping', note:'3 rounds — stop if Achilles hurts', exercises: [
-              { name:'Skipping', work:60, rest:60, sets:3, reps:0 }
-            ]},
+            hang(),
             { name:'Stretch', exercises: [
               { name:'Cobra', work:45, rest:5, sets:2, reps:0 },
               { name:'Child Pose', work:45, rest:5, sets:2, reps:0 },
               { name:'Downward Dog', work:45, rest:5, sets:2, reps:0 },
               { name:'Figure Four', work:45, rest:5, sets:2, reps:0 }
-            ]},
-            { name:'Cool-down', exercises: [
-              { name:'Heel Slide', work:45, rest:15, sets:2, reps:10 }
             ]}
           ]
         },
 
-        // ============================================================
-        // MONDAY - LEGS (kettlebell) + STRETCH (heavier day)
-        // ============================================================
-        Mon: {
-          theme: 'Legs + Stretch',
+        // WEDNESDAY - PILATES (heavier stretches), same as Monday
+        Wed: pilatesHeavy('Pilates (Heavier Stretches)'),
+
+        // THURSDAY - LEGS (strength)
+        Thu: {
+          theme: 'Legs',
           isRest: false,
           sections: [
-            { name:'Morning walk', note:'7-10k steps', exercises: [
-              { name:'Walk', work:3600, rest:0, sets:1, reps:0 }
-            ]},
-            { name:'Warm-up', exercises: [
-              { name:'Wall Angel', work:45, rest:15, sets:2, reps:10 },
-              { name:'Ankle Rocks', work:45, rest:15, sets:2, reps:10 }
-            ]},
+            walk(),
             { name:'Legs (kettlebell)', exercises: [
               { name:'Kettlebell Goblet Squat', work:60, rest:20, sets:3, reps:10 },
               { name:'Kettlebell Romanian Deadlift', work:60, rest:20, sets:3, reps:12 },
@@ -3349,50 +3369,30 @@
               { name:'Side Leg Raise', work:45, rest:15, sets:3, reps:15 },
               { name:'Calf Raises', work:45, rest:15, sets:2, reps:15 }
             ]},
+            hang(),
             { name:'Stretch', exercises: [
               { name:'Crescent Lunge', work:45, rest:5, sets:2, reps:0 },
               { name:'Warrior II', work:45, rest:5, sets:2, reps:0 },
               { name:'Figure Four', work:45, rest:5, sets:2, reps:0 },
               { name:'Supine Spinal Twist', work:45, rest:5, sets:2, reps:0 }
-            ]},
-            { name:'Cool-down', exercises: [
-              { name:'Heel Slide', work:45, rest:15, sets:2, reps:10 }
             ]}
           ]
         },
 
-        // ============================================================
-        // TUESDAY - Walk + light evening reset
-        // ============================================================
-        Tue: lightDay('Walk + Evening Reset'),
-
-        // ============================================================
-        // WEDNESDAY - Walk + light evening reset
-        // ============================================================
-        Wed: lightDay('Walk + Evening Reset'),
-
-        // ============================================================
-        // THURSDAY - Walk + light evening reset
-        // ============================================================
-        Thu: lightDay('Walk + Evening Reset'),
-
-        // ============================================================
-        // FRIDAY - Walk + Swim + light evening reset
-        // ============================================================
+        // FRIDAY - CORE (strength) + SWIMMING
         Fri: {
-          theme: 'Walk + Swim',
+          theme: 'Core + Swimming',
           isRest: false,
           sections: [
-            { name:'Morning walk', note:'7-10k steps', exercises: [
-              { name:'Walk', work:3600, rest:0, sets:1, reps:0 }
-            ]},
+            walk(),
+            { name:'Core (kettlebell + bodyweight)', exercises: coreExercises() },
+            hang(),
             { name:'Evening swim', note:'class', exercises: [
               { name:'Swimming', work:2700, rest:0, sets:1, reps:0 }
             ]},
             { name:'Post-swim reset', exercises: [
               { name:'Ankle Mobility Circles', work:60, rest:15, sets:2, reps:0 },
-              { name:'Shoulder Rotations', work:45, rest:15, sets:2, reps:20 },
-              { name:'Heel Slide', work:45, rest:15, sets:2, reps:10 }
+              { name:'Shoulder Rotations', work:45, rest:15, sets:2, reps:20 }
             ]}
           ]
         }
@@ -3421,7 +3421,7 @@
   }
 
   // ====================================================================
-  // RESTORE LIBRARY — Christine's saved exercises, recovered from screenshots
+  // RESTORE LIBRARY — Pam's saved exercises, recovered from screenshots
   // ====================================================================
   function RESTORE_LIBRARY() {
     return [
