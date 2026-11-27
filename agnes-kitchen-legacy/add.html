@@ -6,6 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Agnes' Kitchen">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#fdf8f0">
 <meta name="robots" content="noindex, nofollow">
 <title>Add to Agnes' Kitchen</title>
@@ -440,7 +442,11 @@
         renderThumbs();
         updateSaveState();
       }).catch(function () {
-        showToast('Could not add that photo — try again', 'warn');
+        // Never lose a photo she took: keep the original if we cannot decode it
+        // (e.g. an iPhone HEIC that Safari would not hand over as JPEG).
+        photos.push({ blob: file, url: URL.createObjectURL(file), w: 0, h: 0, original: true });
+        renderThumbs();
+        updateSaveState();
       });
     });
   }
