@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fdf8f0">
+<meta name="robots" content="noindex, nofollow">
+<title>Agnes' Kitchen — everything saved</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root {
+    --bg: #fdf8f0;
+    --card: #ffffff;
+    --ink: #2f2721;
+    --ink-soft: #6b5f55;
+    --line: #e8ddcd;
+    --accent: #b4552d;
+    --accent-soft: #f6e7de;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { padding: 20px 18px 60px; max-width: 760px; margin: 0 auto; min-height: 100dvh; }
+
+  header { padding-bottom: 18px; }
+  h1 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; }
+  .lede { color: var(--ink-soft); font-size: 0.92rem; margin-top: 4px; }
+
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 22px; }
+  .bar a, .bar button {
+    font-family: inherit; font-size: 0.9rem; font-weight: 600;
+    padding: 11px 16px; border-radius: 11px; text-decoration: none;
+    border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+    cursor: pointer;
+  }
+  .bar a.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    overflow: hidden; cursor: pointer; text-align: left; font: inherit; color: inherit;
+    padding: 0; display: flex; flex-direction: column;
+  }
+  .card .shot { aspect-ratio: 4 / 3; background: var(--accent-soft); display: grid; place-items: center; font-size: 1.6rem; }
+  .card .shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card .body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+  .card .words {
+    font-weight: 600; font-size: 0.92rem; line-height: 1.35;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card .meta { font-size: 0.76rem; color: var(--ink-soft); margin-top: auto; padding-top: 4px; }
+  .card .words.none { color: var(--ink-soft); font-weight: 400; font-style: italic; }
+
+  .empty { color: var(--ink-soft); padding: 40px 0; text-align: center; }
+
+  /* detail */
+  .detail { position: fixed; inset: 0; background: var(--bg); z-index: 20; overflow-y: auto; padding: 18px; display: none; }
+  .detail.open { display: block; }
+  .detail-inner { max-width: 720px; margin: 0 auto; }
+  .detail-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  #closeBtn { background: var(--card); border: 1.5px solid var(--line); border-radius: 11px; padding: 10px 16px; font: inherit; font-weight: 600; cursor: pointer; }
+  .shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin-bottom: 16px; }
+  .shots img { width: 100%; border-radius: 10px; display: block; }
+  .detail h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; margin-bottom: 6px; }
+  .detail .when { color: var(--ink-soft); font-size: 0.85rem; margin-bottom: 14px; }
+  .detail p.notes { white-space: pre-wrap; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .detail audio { width: 100%; margin-top: 14px; }
+  .hint { font-size: 0.78rem; color: var(--ink-soft); margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Agnes&rsquo; Kitchen</h1>
+  <p class="lede">Everything saved on this device. Nothing is published anywhere yet.</p>
+</header>
+
+<div class="bar">
+  <a class="primary" href="add.html">+ Add a recipe</a>
+  <button id="exportBtn" type="button">Export as JSON</button>
+</div>
+
+<div id="grid" class="grid"></div>
+<div id="empty" class="empty" hidden>Nothing saved yet. Tap <strong>Add a recipe</strong> to start.</div>
+<p id="storage" class="hint"></p>
+
+<div id="detail" class="detail" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+  <div class="detail-inner">
+    <div class="detail-top">
+      <span></span>
+      <button id="closeBtn" type="button">Close</button>
+    </div>
+    <div id="detailShots" class="shots"></div>
+    <h2 id="detailTitle">—</h2>
+    <div id="detailWhen" class="when"></div>
+    <p id="detailNotes" class="notes"></p>
+    <audio id="detailAudio" controls></audio>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var DB_NAME = 'agnes-kitchen';
+  var STORE = 'entries';
+  var entries = [];
+  var objectUrls = [];
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  function openDb() {
+    return new Promise(function (resolve, reject) {
+      var req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = function () {
+        var db = req.result;
+        if (!db.objectStoreNames.contains(STORE)) {
+          var store = db.createObjectStore(STORE, { keyPath: 'id' });
+          store.createIndex('createdAt', 'createdAt');
+        }
+      };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error); };
+    });
+  }
+
+  function loadAll() {
+    return openDb().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        var out = [];
+        var tx = db.transaction(STORE, 'readonly');
+        var req = tx.objectStore(STORE).openCursor(null, 'prev');
+        req.onsuccess = function () {
+          var cur = req.result;
+          if (cur) { out.push(cur.value); cur.continue(); } else resolve(out);
+        };
+        req.onerror = function () { reject(req.error); };
+      });
+    });
+  }
+
+  function blobUrl(blob) {
+    if (!blob) return '';
+    var url = URL.createObjectURL(blob);
+    objectUrls.push(url);
+    return url;
+  }
+
+  function formatWhen(iso) {
+    var d = new Date(iso);
+    return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) +
+      ' · ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  }
+
+  function preview(entry) {
+    if (entry.notes) return { text: entry.notes.length > 70 ? entry.notes.slice(0, 70) + '…' : entry.notes, none: false };
+    if (entry.audio) return { text: 'Voice note', none: false };
+    return { text: 'No words yet', none: true };
+  }
+
+  function render() {
+    var grid = $('grid');
+    grid.textContent = '';
+    objectUrls.forEach(function (u) { URL.revokeObjectURL(u); });
+    objectUrls = [];
+
+    $('empty').hidden = entries.length > 0;
+
+    entries.forEach(function (entry) {
+      var card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'card';
+
+      var shot = document.createElement('div');
+      shot.className = 'shot';
+      var first = entry.photos && entry.photos[0];
+      if (first && first.blob) {
+        var img = document.createElement('img');
+        img.src = blobUrl(first.blob);
+        img.alt = '';
+        shot.appendChild(img);
+      } else {
+        shot.textContent = entry.audio ? '🎙' : '📝';
+      }
+
+      var body = document.createElement('div');
+      body.className = 'body';
+      var p = preview(entry);
+      var words = document.createElement('div');
+      words.className = 'words' + (p.none ? ' none' : '');
+      words.textContent = p.text;
+      var meta = document.createElement('div');
+      meta.className = 'meta';
+      var n = entry.photos ? entry.photos.length : 0;
+      meta.textContent = formatWhen(entry.createdAt) + (n ? ' · ' + n + (n === 1 ? ' photo' : ' photos') : '');
+      body.appendChild(words);
+      body.appendChild(meta);
+
+      card.appendChild(shot);
+      card.appendChild(body);
+      card.addEventListener('click', function () { openDetail(entry); });
+      grid.appendChild(card);
+    });
+  }
+
+  function openDetail(entry) {
+    var shots = $('detailShots');
+    shots.textContent = '';
+    (entry.photos || []).forEach(function (photo, i) {
+      if (!photo.blob) return;
+      var img = document.createElement('img');
+      img.src = blobUrl(photo.blob);
+      img.alt = 'Photo ' + (i + 1);
+      shots.appendChild(img);
+    });
+    var firstLine = (entry.notes || '').split('\n')[0].trim();
+    var heading = entry.notes
+      ? (firstLine.length > 46 ? firstLine.slice(0, 46) + '…' : firstLine)
+      : 'Untitled';
+    $('detailTitle').textContent = heading;
+    $('detailWhen').textContent = 'Draft · saved ' + formatWhen(entry.createdAt);
+    var notesEl = $('detailNotes');
+    // Only repeat the words when there is more than the heading shows.
+    if (entry.notes && (entry.notes.trim() !== firstLine || entry.notes.length > 46)) {
+      notesEl.textContent = entry.notes;
+      notesEl.hidden = false;
+    } else {
+      notesEl.textContent = '';
+      notesEl.hidden = true;
+    }
+    var audio = $('detailAudio');
+    if (entry.audio) {
+      audio.src = blobUrl(entry.audio);
+      audio.hidden = false;
+    } else {
+      audio.removeAttribute('src');
+      audio.hidden = true;
+    }
+    $('detail').classList.add('open');
+  }
+
+  function closeDetail() {
+    $('detail').classList.remove('open');
+    var audio = $('detailAudio');
+    audio.pause();
+  }
+
+  function exportJson() {
+    var payload = entries.map(function (entry) {
+      return {
+        id: entry.id,
+        createdAt: entry.createdAt,
+        notes: entry.notes,
+        status: entry.status,
+        photoCount: entry.photos ? entry.photos.length : 0,
+        hasVoiceNote: !!entry.audio
+      };
+    });
+    var blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), entries: payload }, null, 2)],
+      { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'agnes-kitchen-export-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+  }
+
+  function showStorage() {
+    if (!navigator.storage || !navigator.storage.estimate) return;
+    navigator.storage.estimate().then(function (est) {
+      if (!est || !est.usage) return;
+      var bytes = est.usage;
+      var label = bytes >= 1024 * 1024
+        ? (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+        : Math.max(1, Math.round(bytes / 1024)) + ' KB';
+      $('storage').textContent = 'Saved on this device: ' + entries.length +
+        (entries.length === 1 ? ' entry' : ' entries') + ' · ' + label + ' (photos already shrunk for you).';
+    }).catch(function () {});
+  }
+
+  $('closeBtn').addEventListener('click', closeDetail);
+  $('exportBtn').addEventListener('click', exportJson);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeDetail();
+  });
+
+  loadAll().then(function (rows) {
+    entries = rows;
+    render();
+    showStorage();
+  }).catch(function (err) {
+    console.error(err);
+    $('empty').hidden = false;
+    $('empty').textContent = 'This browser would not let the page read its storage.';
+  });
+})();
+</script>
+</body>
+</html>

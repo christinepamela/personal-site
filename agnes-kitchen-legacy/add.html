@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Agnes' Kitchen">
+<meta name="theme-color" content="#fdf8f0">
+<meta name="robots" content="noindex, nofollow">
+<title>Add to Agnes' Kitchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root {
+    --bg: #fdf8f0;
+    --card: #ffffff;
+    --ink: #2f2721;
+    --ink-soft: #6b5f55;
+    --line: #e8ddcd;
+    --accent: #b4552d;
+    --accent-soft: #f6e7de;
+    --ok: #3f7a4a;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bot: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 18px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: calc(var(--safe-top) + 10px) 18px calc(var(--safe-bot) + 96px);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 2px 14px;
+  }
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  .hint { font-size: 0.8rem; color: var(--ink-soft); }
+  .hint a { color: var(--accent); text-decoration: none; }
+
+  main { flex: 1; display: flex; flex-direction: column; gap: 22px; }
+
+  /* —— photos —— */
+  .shots { display: flex; flex-direction: column; gap: 10px; }
+
+  button {
+    font-family: inherit;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border: 0;
+    border-radius: 14px;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    padding: 20px 18px;
+    font-size: 1.2rem;
+    box-shadow: 0 6px 18px rgba(180, 85, 45, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .btn-primary:active { transform: translateY(1px); box-shadow: 0 3px 10px rgba(180,85,45,0.2); }
+  .btn-quiet {
+    background: var(--card);
+    color: var(--ink);
+    border: 1.5px solid var(--line);
+    padding: 15px 18px;
+    font-weight: 500;
+  }
+  .btn-quiet:active { background: var(--accent-soft); }
+
+  .thumbs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .thumb {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--accent-soft);
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb .x {
+    position: absolute;
+    top: 5px; right: 5px;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: rgba(30, 24, 20, 0.72);
+    color: #fff;
+    font-size: 17px;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+    font-weight: 400;
+  }
+
+  /* —— words —— */
+  label.field { display: block; font-weight: 600; font-size: 1.05rem; margin-bottom: 8px; }
+  .sub { display: block; font-size: 0.85rem; color: var(--ink-soft); font-weight: 400; margin-top: 2px; }
+
+  textarea {
+    width: 100%;
+    font-family: inherit;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--card);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 14px;
+    resize: none;
+    min-height: 96px;
+  }
+  textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+
+  .voice { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  #recBtn { background: var(--accent-soft); color: var(--accent); padding: 16px; font-size: 1.05rem; }
+  #recBtn.recording { background: var(--accent); color: #fff; }
+  .rec-note { font-size: 0.85rem; color: var(--ink-soft); }
+  audio { width: 100%; }
+
+  /* —— recent —— */
+  .recent { border-top: 1px solid var(--line); padding-top: 16px; }
+  .recent h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .recent-list { display: flex; flex-direction: column; gap: 8px; }
+  .recent-item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 8px;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+  }
+  .recent-item img, .recent-item .noimg {
+    width: 46px; height: 46px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex: 0 0 auto;
+    background: var(--accent-soft);
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+  }
+  .recent-item b { display: block; color: var(--ink); font-weight: 600; }
+  .recent-item .when { font-size: 0.75rem; }
+
+  /* —— save bar —— */
+  .savebar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    padding: 12px 18px calc(var(--safe-bot) + 12px);
+    background: linear-gradient(to top, var(--bg) 72%, rgba(253, 248, 240, 0));
+    z-index: 10;
+  }
+  .savebar .inner { max-width: 600px; margin: 0 auto; }
+  #saveBtn {
+    width: 100%;
+    background: var(--ink);
+    color: #fff;
+    padding: 19px;
+    font-size: 1.2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 22px rgba(47, 39, 33, 0.22);
+  }
+  #saveBtn:disabled { opacity: 0.55; }
+  #saveBtn.done {
+    background: var(--ok);
+    font-size: 1.05rem;
+  }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--safe-bot) + 88px);
+    transform: translate(-50%, 16px);
+    background: var(--ok);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 14px 22px;
+    border-radius: 999px;
+    box-shadow: 0 10px 26px rgba(63, 122, 74, 0.32);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    max-width: 88vw;
+    text-align: center;
+    z-index: 30;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .toast.warn { background: #8a4b1e; }
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Agnes&rsquo; Kitchen</h1>
+  <span class="hint"><a href="index.html">See all</a></span>
+</header>
+
+<main>
+  <section class="shots" aria-labelledby="photosLabel">
+    <h2 id="photosLabel" class="visually-hidden">Photos</h2>
+    <button id="cameraBtn" class="btn-primary" type="button">
+      <span aria-hidden="true">📷</span> Take a photo
+    </button>
+    <button id="libraryBtn" class="btn-quiet" type="button">Choose from my photos</button>
+    <input id="cameraInput" class="visually-hidden" type="file" accept="image/*" capture="environment">
+    <input id="libraryInput" class="visually-hidden" type="file" accept="image/*" multiple>
+    <div id="thumbs" class="thumbs" aria-live="polite"></div>
+  </section>
+
+  <section>
+    <label class="field" for="notes">What are you making?
+      <span class="sub">&mdash; a few words is plenty</span>
+    </label>
+    <textarea id="notes" rows="3" enterkeyhint="done"
+      placeholder="E.g. Sambal prawns, the one with the shallots"></textarea>
+
+    <div class="voice">
+      <button id="recBtn" type="button">🎙 Hold to talk</button>
+      <div id="recNote" class="rec-note">Optional &mdash; say it out loud instead of typing.</div>
+      <audio id="playback" controls hidden></audio>
+    </div>
+  </section>
+
+  <section class="recent" id="recentBlock" hidden>
+    <h2>Saved</h2>
+    <div id="recentList" class="recent-list"></div>
+  </section>
+</main>
+
+<div class="savebar">
+  <div class="inner">
+    <button id="saveBtn" type="button">Save</button>
+  </div>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var DB_NAME = 'agnes-kitchen';
+  var DB_VERSION = 1;
+  var STORE = 'entries';
+  var MAX_EDGE = 1600;
+  var QUALITY = 0.78;
+
+  var photos = [];          // { blob, url, w, h }
+  var audioBlob = null;
+  var audioUrl = null;
+  var recorder = null;
+  var chunks = [];
+  var dbPromise = null;
+  var saving = false;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var cameraInput = $('cameraInput');
+  var libraryInput = $('libraryInput');
+  var thumbsEl = $('thumbs');
+  var notesEl = $('notes');
+  var recBtn = $('recBtn');
+  var recNote = $('recNote');
+  var playback = $('playback');
+  var saveBtn = $('saveBtn');
+  var toastEl = $('toast');
+  var recentBlock = $('recentBlock');
+  var recentList = $('recentList');
+
+  /* ---------------- storage ---------------- */
+
+  function openDb() {
+    if (dbPromise) return dbPromise;
+    dbPromise = new Promise(function (resolve, reject) {
+      if (!('indexedDB' in window)) { reject(new Error('no-indexeddb')); return; }
+      var req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = function () {
+        var db = req.result;
+        if (!db.objectStoreNames.contains(STORE)) {
+          var store = db.createObjectStore(STORE, { keyPath: 'id' });
+          store.createIndex('createdAt', 'createdAt');
+        }
+      };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error || new Error('db-open-failed')); };
+    });
+    return dbPromise;
+  }
+
+  function withStore(mode, fn) {
+    return openDb().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        var tx = db.transaction(STORE, mode);
+        var store = tx.objectStore(STORE);
+        var out = fn(store);
+        tx.oncomplete = function () { resolve(out && out.result !== undefined ? out.result : out); };
+        tx.onerror = function () { reject(tx.error); };
+        tx.onabort = function () { reject(tx.error || new Error('tx-aborted')); };
+      });
+    });
+  }
+
+  function putEntry(entry) {
+    return withStore('readwrite', function (store) { return store.put(entry); });
+  }
+
+  function allEntries() {
+    return withStore('readonly', function (store) {
+      var out = [];
+      var req = store.openCursor(null, 'prev');
+      req.onsuccess = function () {
+        var cur = req.result;
+        if (cur) { out.push(cur.value); cur.continue(); }
+      };
+      return { get result() { return out; } };
+    });
+  }
+
+  /* ---------------- photo handling ---------------- */
+
+  function newId() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  function loadBitmap(file) {
+    if (window.createImageBitmap) {
+      return createImageBitmap(file).catch(function () { return loadViaImage(file); });
+    }
+    return loadViaImage(file);
+  }
+
+  function loadViaImage(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () { resolve({ img: img, revoke: url, width: img.naturalWidth, height: img.naturalHeight }); };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('decode-failed')); };
+      img.src = url;
+    });
+  }
+
+  function compress(file) {
+    return loadBitmap(file).then(function (src) {
+      var w = src.width;
+      var h = src.height;
+      var scale = Math.min(1, MAX_EDGE / Math.max(w, h));
+      var tw = Math.max(1, Math.round(w * scale));
+      var th = Math.max(1, Math.round(h * scale));
+      var canvas = document.createElement('canvas');
+      canvas.width = tw;
+      canvas.height = th;
+      var ctx = canvas.getContext('2d');
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(src.img || src, 0, 0, tw, th);
+      if (src.revoke) URL.revokeObjectURL(src.revoke);
+      if (src.close) src.close();
+
+      var out = new Promise(function (resolve, reject) {
+        canvas.toBlob(function (blob) {
+          if (blob) resolve(blob);
+          else reject(new Error('encode-failed'));
+        }, 'image/webp', QUALITY);
+      });
+
+      return out.then(function (blob) {
+        // Some browsers silently fall back to PNG for webp; re-encode as JPEG if it grew.
+        if (blob.type !== 'image/webp' || blob.size > file.size * 1.1) {
+          return new Promise(function (resolve) {
+            canvas.toBlob(function (b) {
+              resolve(b || blob);
+            }, 'image/jpeg', QUALITY);
+          });
+        }
+        return blob;
+      }).then(function (blob) {
+        return { blob: blob, w: tw, h: th };
+      });
+    });
+  }
+
+  function addFiles(fileList) {
+    var files = Array.prototype.slice.call(fileList || []);
+    if (!files.length) return;
+    var limit = Math.max(0, 12 - photos.length);
+    if (limit === 0) { showToast('That is plenty of photos', 'warn'); return; }
+    files.slice(0, limit).forEach(function (file) {
+      if (!file.type || file.type.indexOf('image/') !== 0) return;
+      compress(file).then(function (result) {
+        result.url = URL.createObjectURL(result.blob);
+        photos.push(result);
+        renderThumbs();
+        updateSaveState();
+      }).catch(function () {
+        showToast('Could not add that photo — try again', 'warn');
+      });
+    });
+  }
+
+  function renderThumbs() {
+    thumbsEl.textContent = '';
+    photos.forEach(function (p, i) {
+      var wrap = document.createElement('div');
+      wrap.className = 'thumb';
+      var img = document.createElement('img');
+      img.src = p.url;
+      img.alt = 'Photo ' + (i + 1);
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'x';
+      btn.setAttribute('aria-label', 'Remove photo ' + (i + 1));
+      btn.textContent = '×';
+      btn.addEventListener('click', function () {
+        URL.revokeObjectURL(p.url);
+        photos.splice(i, 1);
+        renderThumbs();
+        updateSaveState();
+      });
+      wrap.appendChild(img);
+      wrap.appendChild(btn);
+      thumbsEl.appendChild(wrap);
+    });
+  }
+
+  /* ---------------- voice ---------------- */
+
+  function pickMime() {
+    var options = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/aac', ''];
+    if (!window.MediaRecorder) return null;
+    for (var i = 0; i < options.length; i++) {
+      if (options[i] === '' || MediaRecorder.isTypeSupported(options[i])) return options[i];
+    }
+    return null;
+  }
+
+  function startRecording() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      recNote.textContent = 'Voice is not available in this browser — typing is fine.';
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+      var mime = pickMime();
+      try {
+        recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+      } catch (err) {
+        stream.getTracks().forEach(function (t) { t.stop(); });
+        recNote.textContent = 'Voice is not available in this browser — typing is fine.';
+        return;
+      }
+      chunks = [];
+      recorder.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+      recorder.onstop = function () {
+        stream.getTracks().forEach(function (t) { t.stop(); });
+        if (!chunks.length) return;
+        audioBlob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+        if (audioUrl) URL.revokeObjectURL(audioUrl);
+        audioUrl = URL.createObjectURL(audioBlob);
+        playback.src = audioUrl;
+        playback.hidden = false;
+        var seconds = Math.round(audioBlob.size / 4000);
+        recNote.textContent = 'Voice note saved' + (seconds > 2 ? ' (~' + seconds + 's)' : '') + ' — tap to listen.';
+        recBtn.textContent = '🎙 Record again';
+        updateSaveState();
+      };
+      recorder.start();
+      recBtn.classList.add('recording');
+      recBtn.textContent = '⏺ Talking… tap to stop';
+    }).catch(function () {
+      recNote.textContent = 'I could not reach the microphone. Typing works just as well.';
+    });
+  }
+
+  function stopRecording() {
+    if (recorder && recorder.state !== 'inactive') recorder.stop();
+    recBtn.classList.remove('recording');
+  }
+
+  /* ---------------- save ---------------- */
+
+  function hasContent() {
+    return photos.length > 0 || notesEl.value.trim().length > 0 || !!audioBlob;
+  }
+
+  function updateSaveState() {
+    // Hold the "Saved" confirmation until she starts a new entry.
+    if (saveBtn.classList.contains('done') && !hasContent()) return;
+    saveBtn.classList.remove('done');
+    saveBtn.disabled = saving;
+    saveBtn.textContent = saving ? 'Saving…' : 'Save';
+  }
+
+  function flashSaved() {
+    saveBtn.classList.add('done');
+    saveBtn.textContent = 'Saved \u2713  add more later';
+    clearTimeout(flashSaved._t);
+    flashSaved._t = setTimeout(function () {
+      saveBtn.classList.remove('done');
+      updateSaveState();
+    }, 2400);
+  }
+
+  function showToast(message, kind) {
+    toastEl.textContent = message;
+    toastEl.className = 'toast show' + (kind === 'warn' ? ' warn' : '');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(function () { toastEl.className = 'toast'; }, 3200);
+  }
+
+  function save() {
+    if (saving) return;
+    if (!photos.length && !notesEl.value.trim() && !audioBlob) {
+      showToast('Add a photo or a few words first', 'warn');
+      notesEl.focus();
+      return;
+    }
+    saving = true;
+    updateSaveState();
+
+    var entry = {
+      id: newId(),
+      createdAt: new Date().toISOString(),
+      notes: notesEl.value.trim(),
+      photos: photos.map(function (p, i) {
+        return { blob: p.blob, order: i, w: p.w, h: p.h };
+      }),
+      audio: audioBlob || null,
+      status: 'draft',
+      title: '',
+      category: null,
+      synced: false
+    };
+
+    putEntry(entry).then(function () {
+      saving = false;
+      reset();
+      flashSaved();
+      loadRecent();
+    }).catch(function (err) {
+      console.error(err);
+      saving = false;
+      updateSaveState();
+      showToast('Could not save — storage may be full', 'warn');
+    });
+  }
+
+  function reset() {
+    photos.forEach(function (p) { URL.revokeObjectURL(p.url); });
+    photos = [];
+    notesEl.value = '';
+    audioBlob = null;
+    if (audioUrl) { URL.revokeObjectURL(audioUrl); audioUrl = null; }
+    playback.removeAttribute('src');
+    playback.hidden = true;
+    recNote.textContent = 'Optional — say it out loud instead of typing.';
+    recBtn.textContent = '🎙 Hold to talk';
+    renderThumbs();
+    updateSaveState();
+  }
+
+  /* ---------------- recent ---------------- */
+
+  function formatWhen(iso) {
+    var d = new Date(iso);
+    var now = new Date();
+    var sameDay = d.toDateString() === now.toDateString();
+    var time = d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+    if (sameDay) return 'Today ' + time;
+    return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short' }) + ' ' + time;
+  }
+
+  function loadRecent() {
+    allEntries().then(function (entries) {
+      recentList.textContent = '';
+      if (!entries.length) { recentBlock.hidden = true; return; }
+      recentBlock.hidden = false;
+      entries.slice(0, 4).forEach(function (entry) {
+        var row = document.createElement('div');
+        row.className = 'recent-item';
+
+        if (entry.photos && entry.photos.length && entry.photos[0].blob) {
+          var img = document.createElement('img');
+          img.src = URL.createObjectURL(entry.photos[0].blob);
+          img.alt = '';
+          row.appendChild(img);
+        } else {
+          var ph = document.createElement('div');
+          ph.className = 'noimg';
+          ph.textContent = entry.audio ? '🎙' : '📝';
+          row.appendChild(ph);
+        }
+
+        var text = document.createElement('div');
+        var title = document.createElement('b');
+        title.textContent = entry.notes || '(no words yet)';
+        var when = document.createElement('span');
+        when.className = 'when';
+        var count = entry.photos ? entry.photos.length : 0;
+        when.textContent = formatWhen(entry.createdAt) + (count ? ' · ' + count + (count === 1 ? ' photo' : ' photos') : '');
+        text.appendChild(title);
+        text.appendChild(when);
+        row.appendChild(text);
+
+        recentList.appendChild(row);
+      });
+    }).catch(function () { /* storage unavailable: recent list stays hidden */ });
+  }
+
+  /* ---------------- wiring ---------------- */
+
+  $('cameraBtn').addEventListener('click', function () { cameraInput.click(); });
+  $('libraryBtn').addEventListener('click', function () { libraryInput.click(); });
+
+  cameraInput.addEventListener('change', function (e) { addFiles(e.target.files); e.target.value = ''; });
+  libraryInput.addEventListener('change', function (e) { addFiles(e.target.files); e.target.value = ''; });
+
+  recBtn.addEventListener('click', function () {
+    if (recorder && recorder.state === 'recording') stopRecording();
+    else startRecording();
+  });
+
+  notesEl.addEventListener('input', updateSaveState);
+  saveBtn.addEventListener('click', save);
+
+  window.addEventListener('beforeunload', function (e) {
+    if (photos.length || notesEl.value.trim() || audioBlob) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  // Do not let voice note length run away; 3 minutes is plenty for a recipe hint.
+  setInterval(function () {
+    if (recorder && recorder.state === 'recording') {
+      var elapsed = chunks.reduce(function (n, c) { return n + c.size; }, 0);
+      if (elapsed > 12 * 1024 * 1024) stopRecording();
+    }
+  }, 5000);
+
+  updateSaveState();
+  loadRecent();
+})();
+</script>
+</body>
+</html>
